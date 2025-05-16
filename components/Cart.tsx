@@ -28,7 +28,7 @@ export default function Cart() {
       {/* Cart Button */}
       <Button
         onClick={toggleCart}
-        variant="outline"
+        variant="link"
         size="icon"
         className="relative"
         aria-label="Open shopping cart"

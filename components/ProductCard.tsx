@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { formatPrice } from '@/lib/utils';
-import { ShopifyProduct } from '@/types/shopify';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, Check } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
@@ -52,7 +51,6 @@ export default function ProductCard({ product }: ProductCardProps) {
         duration: 3000,
       });
     } catch (error) {
-      console.error('Error adding product to cart:', error);
       toast.error('Error', {
         description: 'There was an error adding the product to your cart. Please try again.',
         position: 'top-right',
@@ -62,41 +60,55 @@ export default function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <div className="group flex flex-col h-full">
+    <div className="group flex flex-col h-full bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
       {/* Product Information */}
       <div className="flex-grow">
         <Link
           href={`/products/${handle}`}
           className="block"
         >
-          <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200">
-            <div className="relative h-64 w-full">
+          <div className="relative overflow-hidden bg-gray-100">
+            <div className="relative aspect-square w-full">
               <Image
                 src={imageUrl}
                 alt={imageAlt}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="h-full w-full object-cover object-center group-hover:opacity-75"
+                className="h-full w-full object-contain object-center transition-transform duration-500 group-hover:scale-105 p-2"
               />
             </div>
+
+            {/* Price tag overlay */}
+            <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-md">
+              <p className="text-sm font-semibold text-green-600">
+                {formatPrice(price, currency)}
+              </p>
+            </div>
           </div>
-          <h3 className="mt-4 text-sm text-gray-700">{title}</h3>
-          <p className="mt-1 text-lg font-medium text-gray-900">
-            {formatPrice(price, currency)}
-          </p>
+
+          <div className="p-4">
+            <h3 className="text-base font-medium text-gray-800 line-clamp-2 min-h-[3rem]">{title}</h3>
+
+            <div className="mt-2 flex items-center text-sm text-gray-500">
+              <div className="flex items-center">
+                <div className="h-2 w-2 rounded-full bg-green-500 mr-2"></div>
+                <span>En stock</span>
+              </div>
+            </div>
+          </div>
         </Link>
       </div>
 
-      {/* Add to Cart Button - Completely separate from the Link */}
-      <div className="mt-3">
+      {/* Add to Cart Button */}
+      <div className="px-4 pb-4 mt-auto">
         <Button
           onClick={handleAddToCart}
-          className="w-full bg-black hover:bg-gray-800 text-white"
-          size="sm"
+          className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-full shadow-sm hover:shadow-md transition-all duration-300"
+          size="default"
           type="button"
         >
           <ShoppingCart className="mr-2 h-4 w-4" />
-          Add to Cart
+          Ajouter au panier
         </Button>
       </div>
     </div>
