@@ -23,18 +23,21 @@ import {
 } from "@/components/ui/pagination";
 
 function Products() {
-  const [allProducts, setAllProducts] = useState<ShopifyProduct[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<ShopifyProduct[]>([]);
+  // Define a type for the product with node structure
+  type ProductWithNode = { node: ShopifyProduct };
+
+  const [allProducts, setAllProducts] = useState<ProductWithNode[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<ProductWithNode[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOption, setSortOption] = useState('');
-  const [displayedProducts, setDisplayedProducts] = useState<ShopifyProduct[]>([]);
+  const [displayedProducts, setDisplayedProducts] = useState<ProductWithNode[]>([]);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(12);
-  const [paginatedProducts, setPaginatedProducts] = useState<ShopifyProduct[]>([]);
+  const [paginatedProducts, setPaginatedProducts] = useState<ProductWithNode[]>([]);
 
   // Fetch products from API
   useEffect(() => {

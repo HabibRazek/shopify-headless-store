@@ -97,12 +97,12 @@ export async function GET(request: NextRequest) {
 
     console.log('API response status:', status);
 
-    if (status === 200 && body.data?.collection) {
-      console.log(`Found collection: ${body.data.collection.title}`);
-      console.log(`Number of products: ${body.data.collection.products.edges.length}`);
+    if (status === 200 && (body as any).data?.collection) {
+      console.log(`Found collection: ${(body as any).data.collection.title}`);
+      console.log(`Number of products: ${(body as any).data.collection.products.edges.length}`);
 
       return NextResponse.json({
-        collection: body.data.collection
+        collection: (body as any).data.collection
       });
     } else {
       console.error('Error or empty response:', body);

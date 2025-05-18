@@ -1,11 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { handle: string } }
-) {
+export async function GET(request, { params }) {
   try {
-    // In Next.js 14+, params needs to be awaited
+    // Get the handle from params
     const handle = params.handle;
     console.log('Fetching collection with handle using Admin API:', handle);
 

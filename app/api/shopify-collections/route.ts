@@ -83,8 +83,8 @@ export async function GET() {
     console.log('Shopify API response body:', JSON.stringify(body));
 
     if (status === 200) {
-      if (body.data?.collections?.edges) {
-        const collections = body.data.collections.edges;
+      if ((body as any).data?.collections?.edges) {
+        const collections = (body as any).data.collections.edges;
         console.log(`Found ${collections.length} collections`);
 
         // Log each collection

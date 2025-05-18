@@ -66,10 +66,10 @@ export async function GET(request: NextRequest) {
 
     console.log('API response status:', status);
 
-    if (status === 200 && body.products?.edges) {
+    if (status === 200 && (body as any).products?.edges) {
       // Filter products that belong to the FullViewKraft collection
       // We'll check product collections, tags, and title
-      const fullViewKraftProducts = body.products.edges.filter((edge: any) => {
+      const fullViewKraftProducts = (body as any).products.edges.filter((edge: any) => {
         const product = edge.node;
 
         // Check if product belongs to FullViewKraft collection

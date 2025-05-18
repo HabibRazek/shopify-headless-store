@@ -31,10 +31,7 @@ const QUERY_ALL_PRODUCTS = `
   }
 `;
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { collection: string } }
-) {
+export async function GET(request, { params }) {
   try {
     // Get the collection name from the URL
     const collection = params.collection;
@@ -57,9 +54,9 @@ export async function GET(
       variables: { first: 100 },
     });
 
-    if (status === 200 && body.data?.products?.edges) {
+    if (status === 200 && (body as any).data?.products?.edges) {
       // Filter products that match the collection search terms
-      const allProducts = body.data.products.edges;
+      const allProducts = (body as any).data.products.edges;
       console.log(`Found ${allProducts.length} total products`);
 
       const filteredProducts = allProducts.filter((product: any) => {

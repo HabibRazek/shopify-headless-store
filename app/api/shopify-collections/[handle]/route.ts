@@ -41,29 +41,26 @@ const QUERY_COLLECTION_BY_HANDLE_WITH_PRODUCTS = `
   }
 `;
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { handle: string } }
-) {
+export async function GET(request, { params }) {
   try {
-    const { handle } = params;
-    
+    const handle = params.handle;
+
     // Decode the handle if it's URL encoded
     let decodedHandle = decodeURIComponent(handle);
     if (decodedHandle.includes('%')) {
       decodedHandle = decodeURIComponent(decodedHandle);
     }
-    
+
     // Clean up the handle - remove trademark symbols and other special characters
     decodedHandle = decodedHandle.replace('™', '').trim();
-    
+
     const { status, body } = await shopifyFetch({
       query: QUERY_COLLECTION_BY_HANDLE_WITH_PRODUCTS,
       variables: { handle: decodedHandle, first: 50 },
     });
 
     if (status === 200) {
-      if (body.data && body.data.collection) {
+      if ((body as any).data && (body as any).data.collection) {
         return NextResponse.json(body);
       } else {
         return NextResponse.json(

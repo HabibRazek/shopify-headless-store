@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { shopifyFetch } from '@/lib/shopify';
 import { QUERY_COLLECTION_BY_HANDLE } from '@/lib/queries';
 
-export async function GET(request: NextRequest, { params }: { params: { handle: string } }) {
+export async function GET(request, { params }) {
   try {
     // Get the handle directly from the route params
     const rawHandle = params.handle;
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest, { params }: { params: { handle: 
     });
 
     if (status === 200) {
-      if (body.data && body.data.collection) {
+      if ((body as any).data && (body as any).data.collection) {
         return NextResponse.json(body);
       } else {
         return NextResponse.json(
