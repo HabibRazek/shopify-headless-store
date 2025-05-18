@@ -65,6 +65,10 @@ const COLLECTIONS_INFO: Record<string, CollectionInfo> = {
   'blackview': {
     title: 'BlackView™ – Pochettes Zip Noir avec Fenêtre Transparente',
     description: 'Pochettes zippées en noir avec fenêtre transparente, parfaites pour un look élégant et moderne. Idéales pour les produits premium qui nécessitent une présentation sophistiquée.'
+  },
+  'fullalu': {
+    title: 'FullAlu™ – Pochettes Zip en Aluminium',
+    description: 'Pochettes zippées entièrement en aluminium, offrant une barrière optimale contre l\'humidité, l\'oxygène et la lumière pour une conservation parfaite. Idéales pour les produits sensibles nécessitant une protection maximale.'
   }
 };
 
@@ -88,6 +92,8 @@ export default function CollectionPage() {
         return 'bg-amber-50'; // Very light brown for full view kraft
       case 'blackview':
         return 'bg-gray-800'; // Dark gray/black for black view
+      case 'fullalu':
+        return 'bg-slate-300'; // Silver/metallic for aluminum
       default:
         return 'bg-gray-200'; // Default gray
     }
@@ -118,15 +124,29 @@ export default function CollectionPage() {
       'whiteview': 'whiteview',
       'kraftalu': 'kraftalu',
       'fullviewkraft': 'fullviewkraft',
-      'blackview': 'blackview'
+      'blackview': 'blackview',
+      'fullalu': 'fullalu'
     };
 
-    // Check if the handle contains any of our known collection names
-    for (const [key, value] of Object.entries(collectionHandleMap)) {
-      if (decodedHandle.toLowerCase().includes(key.toLowerCase())) {
-        simplifiedHandle = value;
-        break;
+    // First check for exact matches
+    if (collectionHandleMap[simplifiedHandle]) {
+      simplifiedHandle = collectionHandleMap[simplifiedHandle];
+    } else {
+      // Then check if the handle contains any of our known collection names
+      for (const [key, value] of Object.entries(collectionHandleMap)) {
+        if (decodedHandle.toLowerCase().includes(key.toLowerCase())) {
+          simplifiedHandle = value;
+          break;
+        }
       }
+    }
+
+    // Special case for FullAlu collection which might have a complex handle
+    if (decodedHandle.toLowerCase().includes('fullalu') ||
+        decodedHandle.toLowerCase().includes('full-alu') ||
+        decodedHandle.toLowerCase().includes('full alu') ||
+        decodedHandle.toLowerCase().includes('aluminium')) {
+      simplifiedHandle = 'fullalu';
     }
 
     setHandle(simplifiedHandle);

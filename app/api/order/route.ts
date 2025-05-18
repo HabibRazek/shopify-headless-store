@@ -7,17 +7,88 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { customerInfo, cart } = body;
 
+    // Log the received data for debugging
+    console.log('Received order data:', {
+      customerInfoReceived: !!customerInfo,
+      cartReceived: !!cart,
+      cartIsArray: Array.isArray(cart),
+      cartLength: cart ? (Array.isArray(cart) ? cart.length : 'not an array') : 'no cart',
+      bodyKeys: Object.keys(body)
+    });
+
     // Validate required fields
     if (!customerInfo) {
+      console.log('Validation failed: Missing customer information');
       return NextResponse.json(
         { error: 'Missing customer information' },
         { status: 400 }
       );
     }
 
+    // Validate customer info fields
+    const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'address', 'city', 'state', 'postalCode', 'country'];
+    const missingFields = requiredFields.filter(field => !customerInfo[field]);
+
+    if (missingFields.length > 0) {
+      console.log('Validation failed: Missing customer fields:', missingFields);
+      return NextResponse.json(
+        { error: `Missing required customer information: ${missingFields.join(', ')}` },
+        { status: 400 }
+      );
+    }
+
     if (!cart || !Array.isArray(cart) || cart.length === 0) {
+      console.log('Validation failed: Missing or invalid cart items');
       return NextResponse.json(
         { error: 'Missing or invalid cart items' },
+        { status: 400 }
+      );
+    }
+
+    // Validate each cart item has the minimum required fields
+    try {
+      // Log the cart items for debugging
+      console.log('Cart items to validate:', cart.map(item => ({
+        variantId: item.variantId,
+        id: (item as any).id,
+        title: item.title,
+        price: item.price,
+        quantity: item.quantity
+      })));
+
+      // Check if each cart item has the required fields
+      const invalidItems = cart.filter(item => {
+        // Check for required fields
+        const hasRequiredFields =
+          item.title &&
+          item.price &&
+          item.quantity &&
+          typeof item.quantity === 'number';
+
+        // Check for either variantId or id
+        const hasIdentifier = item.variantId || (item as any).id;
+
+        return !hasRequiredFields || !hasIdentifier;
+      });
+
+      if (invalidItems.length > 0) {
+        console.log('Validation failed: Invalid cart items:', invalidItems);
+        return NextResponse.json(
+          { error: 'One or more items in your cart are invalid' },
+          { status: 400 }
+        );
+      }
+
+      // Log the valid cart items
+      console.log('Valid cart items:', cart.map(item => ({
+        title: item.title,
+        price: item.price,
+        quantity: item.quantity
+      })));
+    } catch (error) {
+      console.error('Error validating cart items:', error);
+      return NextResponse.json(
+        { error: 'Error validating cart items' },
         { status: 400 }
       );
     }

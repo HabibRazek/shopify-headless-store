@@ -5,6 +5,13 @@ import { Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 
 // Define the filter options types
 interface FilterOptions {
@@ -51,6 +58,8 @@ export default function ProductFilters({ products, onFilterChange }: ProductFilt
       if (node.title.toLowerCase().includes('kraft blanc')) colors.add('Kraft Blanc');
       if (node.title.toLowerCase().includes('aluminium') || node.title.toLowerCase().includes('alu')) colors.add('Aluminium');
       if (node.title.toLowerCase().includes('noir') || node.title.toLowerCase().includes('black')) colors.add('Noir');
+      // Add FullAlu products to Aluminium color
+      if (node.title.toLowerCase().includes('fullalu')) colors.add('Aluminium');
 
       // Extract sizes from product titles using regex for different formats (x, ×, *)
       // First, normalize the title by replacing × and * with x
@@ -78,6 +87,7 @@ export default function ProductFilters({ products, onFilterChange }: ProductFilt
       if (node.title.toLowerCase().includes('kraftalu')) categories.add('KraftAlu');
       if (node.title.toLowerCase().includes('fullviewkraft')) categories.add('FullViewKraft');
       if (node.title.toLowerCase().includes('blackview')) categories.add('BlackView');
+      if (node.title.toLowerCase().includes('fullalu')) categories.add('FullAlu');
 
       // Extract price range
       const price = parseFloat(node.priceRange?.minVariantPrice?.amount || '0');
@@ -122,7 +132,9 @@ export default function ProductFilters({ products, onFilterChange }: ProductFilt
         return selectedColors.some(color => {
           if (color === 'Kraft Brun') return node.title.toLowerCase().includes('kraft brun');
           if (color === 'Kraft Blanc') return node.title.toLowerCase().includes('kraft blanc');
-          if (color === 'Aluminium') return node.title.toLowerCase().includes('aluminium') || node.title.toLowerCase().includes('alu');
+          if (color === 'Aluminium') return node.title.toLowerCase().includes('aluminium') ||
+                                           node.title.toLowerCase().includes('alu') ||
+                                           node.title.toLowerCase().includes('fullalu');
           if (color === 'Transparent') return node.title.toLowerCase().includes('transparent');
           if (color === 'Noir') return node.title.toLowerCase().includes('noir') || node.title.toLowerCase().includes('black');
           return false;
@@ -169,6 +181,7 @@ export default function ProductFilters({ products, onFilterChange }: ProductFilt
           if (category === 'KraftAlu') return node.title.toLowerCase().includes('kraftalu');
           if (category === 'FullViewKraft') return node.title.toLowerCase().includes('fullviewkraft');
           if (category === 'BlackView') return node.title.toLowerCase().includes('blackview');
+          if (category === 'FullAlu') return node.title.toLowerCase().includes('fullalu');
           return false;
         });
       });
@@ -238,6 +251,7 @@ export default function ProductFilters({ products, onFilterChange }: ProductFilt
           if (category === 'WhiteView') return node.title.toLowerCase().includes('whiteview');
           if (category === 'KraftAlu') return node.title.toLowerCase().includes('kraftalu');
           if (category === 'FullViewKraft') return node.title.toLowerCase().includes('fullviewkraft');
+          if (category === 'FullAlu') return node.title.toLowerCase().includes('fullalu');
           return false;
         }).length;
         categoryProductCounts[category] = count;
@@ -409,45 +423,45 @@ export default function ProductFilters({ products, onFilterChange }: ProductFilt
               {filterOptions.sizes.length > 0 && (
                 <div className="border-b pb-4">
                   <h3 className="text-sm font-medium mb-4">Tailles</h3>
-                  <div className="space-y-2">
-                    {/* All Sizes option */}
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="size-all"
-                        checked={selectedSizes.length === 0}
-                        onCheckedChange={() => {
-                          if (selectedSizes.length > 0) {
-                            setSelectedSizes([]);
-                          }
-                        }}
-                      />
-                      <label
-                        htmlFor="size-all"
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        Toutes les tailles
-                      </label>
-                    </div>
+                  <div className="space-y-4">
+                    <Select
+                      value={selectedSizes.length === 1 ? selectedSizes[0] : "all_sizes"}
+                      onValueChange={(value) => {
+                        if (value === "all_sizes") {
+                          setSelectedSizes([]);
+                        } else {
+                          setSelectedSizes([value]);
+                        }
+                      }}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Toutes les tailles" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all_sizes">Toutes les tailles</SelectItem>
+                        {filterOptions.sizes.map((size) => (
+                          <SelectItem key={size} value={size}>
+                            {size} cm
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
 
-                    {/* Divider */}
-                    <div className="my-2 border-t border-gray-200"></div>
-
-                    {/* Individual sizes */}
-                    {filterOptions.sizes.map((size) => (
-                      <div key={size} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`size-${size}`}
-                          checked={selectedSizes.includes(size)}
-                          onCheckedChange={() => toggleSize(size)}
-                        />
-                        <label
-                          htmlFor={`size-${size}`}
-                          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    {selectedSizes.length > 0 && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-green-600 font-medium">
+                          Taille sélectionnée: {selectedSizes[0]} cm
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setSelectedSizes([])}
+                          className="text-xs text-gray-500 hover:text-gray-700 h-6 px-2"
                         >
-                          {size}
-                        </label>
+                          Réinitialiser
+                        </Button>
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
               )}

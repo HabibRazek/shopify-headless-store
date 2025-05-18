@@ -62,6 +62,15 @@ export async function createShopifyOrder(orderData: any) {
       };
     }
 
+    // Log the cart items for debugging
+    console.log('Creating order with cart items:', orderData.cart.map((item: any) => ({
+      variantId: item.variantId,
+      id: item.id,
+      title: item.title,
+      price: item.price,
+      quantity: item.quantity
+    })));
+
     // Format line items for the order
     const lineItems = [
       // Product items

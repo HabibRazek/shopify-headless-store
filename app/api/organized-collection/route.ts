@@ -11,32 +11,38 @@ const COLLECTION_FILTERS: Record<string, {
   'kraftview': {
     required: [],
     optional: [],
-    excluded: ['blanc', 'white', 'alu', 'aluminium', 'stand up', 'stand-up', 'fenêtre pleine', 'noir', 'black', 'fullviewkraft'],
+    excluded: ['blanc', 'white', 'alu', 'aluminium', 'stand up', 'stand-up', 'fenêtre pleine', 'noir', 'black', 'fullviewkraft', 'fullalu'],
     exactMatch: ['KraftView™']
   },
   'whiteview': {
     required: [],
     optional: [],
-    excluded: ['alu', 'aluminium', 'stand up', 'stand-up', 'fenêtre pleine', 'noir', 'black', 'fullviewkraft'],
+    excluded: ['alu', 'aluminium', 'stand up', 'stand-up', 'fenêtre pleine', 'noir', 'black', 'fullviewkraft', 'fullalu'],
     exactMatch: ['WhiteView™']
   },
   'kraftalu': {
     required: [],
     optional: [],
-    excluded: ['stand up', 'stand-up', 'fenêtre pleine', 'noir', 'black', 'fullviewkraft'],
+    excluded: ['stand up', 'stand-up', 'fenêtre pleine', 'noir', 'black', 'fullviewkraft', 'fullalu'],
     exactMatch: ['KraftAlu™']
   },
   'fullviewkraft': {
     required: [],
     optional: [],
-    excluded: [],
+    excluded: ['fullalu'],
     exactMatch: ['FullViewKraft™', 'Stand Up Kraft']
   },
   'blackview': {
     required: [],
     optional: [],
-    excluded: ['alu', 'aluminium', 'stand up', 'stand-up', 'fullviewkraft'],
+    excluded: ['alu', 'aluminium', 'stand up', 'stand-up', 'fullviewkraft', 'fullalu'],
     exactMatch: ['BlackView™']
+  },
+  'fullalu': {
+    required: [],
+    optional: [],
+    excluded: [],
+    exactMatch: ['FullAlu™']
   }
 };
 
@@ -61,6 +67,10 @@ const COLLECTION_INFO: Record<string, { title: string, description: string }> = 
   'blackview': {
     title: 'BlackView™',
     description: 'Pochettes zippées en noir avec fenêtre transparente, parfaites pour un look élégant et moderne.'
+  },
+  'fullalu': {
+    title: 'FullAlu™ – Pochettes Zip en Aluminium',
+    description: 'Pochettes zippées entièrement en aluminium, offrant une barrière optimale contre l\'humidité, l\'oxygène et la lumière pour une conservation parfaite.'
   }
 };
 

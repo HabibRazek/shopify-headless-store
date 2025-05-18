@@ -1,6 +1,6 @@
 "use client"
 
-import { Phone, Mail, MapPin, Clock, HelpCircle, ArrowRight, Send } from "lucide-react"
+import { Phone, Mail, MapPin, Clock, ArrowRight, Send } from "lucide-react"
 import { FacebookIcon, InstagramIcon, LinkedinIcon } from "@/components/SocialIcons"
 import Link from "next/link"
 import Image from "next/image"
@@ -58,7 +58,7 @@ export default function Footer() {
     }
 
     return (
-        <footer className="relative text-white pt-16 pb-8 overflow-hidden">
+        <footer className="relative text-white pt-10 pb-6 overflow-hidden">
             {/* Innovative Background */}
             <div className="absolute inset-0 -z-10">
                 {/* Main gradient background */}
@@ -83,124 +83,105 @@ export default function Footer() {
 
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <motion.div
-                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12"
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
                     variants={containerVariants}
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.1 }}
                 >
                     {/* Contact Information */}
-                    <motion.div className="lg:col-span-2 bg-white/5 backdrop-blur-sm rounded-2xl p-6 shadow-lg" variants={itemVariants}>
+                    <motion.div className="lg:col-span-2 bg-white/5 backdrop-blur-sm rounded-2xl p-4 shadow-lg" variants={itemVariants}>
                         {/* Logo */}
-                        <div className="flex items-center justify-start mb-8">
+                        <div className="flex items-center justify-start mb-4">
                             <Image
                                 src="/logo-white.svg"
                                 alt="Packedin.tn Logo"
-                                width={80}
-                                height={80}
+                                width={60}
+                                height={60}
                                 className="opacity-90"
                             />
-                            <div className="ml-4">
-                                <h2 className="text-3xl font-bold text-white">Packedin.tn</h2>
-                                <p className="text-green-300 text-sm">Solutions d'emballage éco-responsables</p>
+                            <div className="ml-3">
+                                <h2 className="text-2xl font-bold text-white">Packedin.tn</h2>
+                                <p className="text-green-300 text-xs">Solutions d'emballage éco-responsables</p>
                             </div>
                         </div>
 
-                        <div className="flex items-center mb-6">
-                            <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center mr-4">
-                                <HelpCircle className="h-6 w-6 text-green-300" />
-                            </div>
-                            <h3 className="text-2xl font-bold">Nous Contacter</h3>
-                        </div>
+                        <h3 className="text-xl font-bold mb-3 border-b border-green-600/30 pb-2">Nous Contacter</h3>
 
-                        <p className="text-gray-100 mb-6 leading-relaxed">
-                            Vous avez besoin d&apos;aide ? Gagnez du temps en trouvant une réponse en quelques clics !
-                        </p>
-
-                        <p className="text-gray-100 mb-8 leading-relaxed">
-                            Chez Packedin.tn, notre équipe motivée et passionnée travaille avec enthousiasme chaque jour
-                            pour vous offrir les meilleures solutions d&apos;emballage éco-responsable. Vous avez des questions
-                            ou besoin de conseils ? N&apos;hésitez pas à nous contacter !
-                        </p>
-
-                        <div className="space-y-5">
-                            <div className="flex items-start group">
-                                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mr-4 group-hover:bg-white/20 transition-colors">
-                                    <MapPin className="h-5 w-5 text-green-300" />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                            <div className="flex items-center group">
+                                <div className="h-6 w-6 rounded-full bg-white/5 flex items-center justify-center mr-2 group-hover:bg-white/10 transition-colors">
+                                    <MapPin className="h-3 w-3 text-green-300" />
                                 </div>
-                                <span className="text-gray-100 mt-2">Jasmin 8000 Nabeul, Tunisie</span>
+                                <span className="text-gray-100 group-hover:text-white transition-colors">Jasmin 8000 Nabeul, Tunisie</span>
                             </div>
 
-                            <div className="flex items-start group">
-                                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mr-4 group-hover:bg-white/20 transition-colors">
-                                    <Phone className="h-5 w-5 text-green-300" />
+                            <div className="flex items-center group">
+                                <div className="h-6 w-6 rounded-full bg-white/5 flex items-center justify-center mr-2 group-hover:bg-white/10 transition-colors">
+                                    <Phone className="h-3 w-3 text-green-300" />
                                 </div>
-                                <div className="space-y-1 mt-1">
-                                    <a href="tel:+21650095115" className="block text-gray-100 hover:text-white transition-colors">
+                                <div>
+                                    <a href="tel:+21650095115" className="text-gray-100 group-hover:text-white transition-colors">
                                         +216 50 095 115
                                     </a>
-                                    <a href="tel:+21620387333" className="block text-gray-100 hover:text-white transition-colors">
-                                        +216 20 387 333
-                                    </a>
                                 </div>
                             </div>
 
-                            <div className="flex items-start group">
-                                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mr-4 group-hover:bg-white/20 transition-colors">
-                                    <Mail className="h-5 w-5 text-green-300" />
+                            <div className="flex items-center group">
+                                <div className="h-6 w-6 rounded-full bg-white/5 flex items-center justify-center mr-2 group-hover:bg-white/10 transition-colors">
+                                    <Mail className="h-3 w-3 text-green-300" />
                                 </div>
-                                <a href="mailto:contact@packedin.tn" className="text-gray-100 hover:text-white transition-colors mt-2">
+                                <a href="mailto:contact@packedin.tn" className="text-gray-100 group-hover:text-white transition-colors">
                                     contact@packedin.tn
                                 </a>
                             </div>
 
-                            <div className="flex items-start group">
-                                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mr-4 group-hover:bg-white/20 transition-colors">
-                                    <Clock className="h-5 w-5 text-green-300" />
+                            <div className="flex items-center group">
+                                <div className="h-6 w-6 rounded-full bg-white/5 flex items-center justify-center mr-2 group-hover:bg-white/10 transition-colors">
+                                    <Clock className="h-3 w-3 text-green-300" />
                                 </div>
-                                <span className="text-gray-100 mt-2">Lun-Ven: 8h00 - 17h00</span>
+                                <span className="text-gray-100 group-hover:text-white transition-colors">Lun-Ven: 8h00 - 17h00</span>
                             </div>
                         </div>
                     </motion.div>
 
                     {/* Quick Links */}
-                    <motion.div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 shadow-lg" variants={itemVariants}>
-                        <h3 className="text-xl font-bold mb-8 pb-2 border-b border-green-600/30">Liens Rapides</h3>
-                        <ul className="space-y-4">
+                    <motion.div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 shadow-lg" variants={itemVariants}>
+                        <h3 className="text-xl font-bold mb-3 pb-2 border-b border-green-600/30">Liens Rapides</h3>
+                        <div className="grid grid-cols-2 gap-2 text-sm">
                             {[
                                 { href: "/products", label: "Nos Produits" },
                                 { href: "/collections", label: "Collections" },
-                                { href: "/about", label: "À Propos de Nous" },
-                                { href: "/blog", label: "Blog & Actualités" },
+                                { href: "/about", label: "À Propos" },
+                                { href: "/blog", label: "Blog" },
                                 { href: "/faq", label: "FAQ" },
                                 { href: "/contact", label: "Contact" }
                             ].map((link, index) => (
-                                <li key={index}>
-                                    <Link
-                                        href={link.href}
-                                        className="text-gray-100 hover:text-white transition-colors flex items-center group"
-                                    >
-                                        <ArrowRight className="h-4 w-0 mr-0 opacity-0 group-hover:w-4 group-hover:mr-2 group-hover:opacity-100 transition-all duration-300 text-green-300" />
-                                        {link.label}
-                                    </Link>
-                                </li>
+                                <Link
+                                    key={index}
+                                    href={link.href}
+                                    className="text-gray-100 hover:text-white transition-colors flex items-center group"
+                                >
+                                    <ArrowRight className="h-3 w-3 mr-0 opacity-0 group-hover:mr-1 group-hover:opacity-100 transition-all duration-300 text-green-300" />
+                                    {link.label}
+                                </Link>
                             ))}
-                        </ul>
+                        </div>
                     </motion.div>
 
                     {/* Social Media & Newsletter */}
-                    <motion.div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 shadow-lg" variants={itemVariants}>
-                        <h3 className="text-xl font-bold mb-8 pb-2 border-b border-green-600/30">Suivez-Nous</h3>
-                        <div className="flex space-x-4 mb-8">
+                    <motion.div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 shadow-lg" variants={itemVariants}>
+                        <h3 className="text-xl font-bold mb-3 pb-2 border-b border-green-600/30">Suivez-Nous</h3>
+                        <div className="flex space-x-3 mb-4">
                             {[
-                                { icon: <FacebookIcon className="h-5 w-5" />, label: "Facebook", href: "#" },
-                                { icon: <InstagramIcon className="h-5 w-5" />, label: "Instagram", href: "#" },
-                                { icon: <LinkedinIcon className="h-5 w-5" />, label: "LinkedIn", href: "#" }
+                                { icon: <FacebookIcon className="h-4 w-4" />, label: "Facebook", href: "#" },
+                                { icon: <InstagramIcon className="h-4 w-4" />, label: "Instagram", href: "#" },
+                                { icon: <LinkedinIcon className="h-4 w-4" />, label: "LinkedIn", href: "#" }
                             ].map((social, index) => (
                                 <a
                                     key={index}
                                     href={social.href}
-                                    className="bg-white/10 hover:bg-white/20 h-12 w-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+                                    className="bg-white/10 hover:bg-green-500/30 h-8 w-8 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-md hover:shadow-green-500/20"
                                     aria-label={social.label}
                                 >
                                     <span className="sr-only">{social.label}</span>
@@ -209,29 +190,26 @@ export default function Footer() {
                             ))}
                         </div>
 
-                        <div className="mt-8">
-                            <h4 className="text-lg font-semibold mb-4 flex items-center">
-                                <Send className="h-5 w-5 mr-2 text-green-300" />
+                        <div>
+                            <h4 className="text-sm font-semibold mb-2 flex items-center">
+                                <Send className="h-4 w-4 mr-1 text-green-300" />
                                 Newsletter
                             </h4>
-                            <p className="text-gray-100 mb-4 text-sm">
-                                Abonnez-vous pour recevoir nos dernières actualités et offres spéciales.
-                            </p>
-                            <form onSubmit={handleSubmit} className="flex flex-col space-y-3">
+                            <form onSubmit={handleSubmit} className="flex space-x-2">
                                 <Input
                                     type="email"
                                     placeholder="Votre email"
-                                    className="bg-white/10 border-white/20 text-white placeholder:text-gray-300 focus:border-green-400"
+                                    className="bg-white/10 border-white/20 text-white placeholder:text-gray-300 focus:border-green-400 h-8 text-sm"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
                                 />
                                 <Button
                                     type="submit"
-                                    className="bg-green-500 hover:bg-green-400 text-white font-medium transition-colors w-full"
+                                    className="bg-green-500 hover:bg-green-400 text-white font-medium transition-all h-8 px-3 text-xs hover:shadow-md hover:shadow-green-500/20 hover:translate-y-[-1px]"
                                     disabled={isSubmitting}
                                 >
-                                    {isSubmitting ? "Inscription..." : "S'inscrire"}
+                                    OK
                                 </Button>
                             </form>
                         </div>
@@ -239,34 +217,39 @@ export default function Footer() {
                 </motion.div>
 
                 {/* Divider */}
-                <div className="h-px bg-gradient-to-r from-transparent via-green-500/30 to-transparent my-12"></div>
+                <div className="text-center my-6">
+                    <p className="text-sm text-gray-300/80 italic max-w-2xl mx-auto">
+                        "Chez Packedin.tn, nous nous engageons à fournir des solutions d'emballage éco-responsables qui respectent l'environnement tout en répondant aux besoins de votre entreprise."
+                    </p>
+                    <div className="h-px bg-gradient-to-r from-transparent via-green-500/30 to-transparent mt-6"></div>
+                </div>
 
                 {/* Copyright */}
-                <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 shadow-lg flex flex-col md:flex-row justify-between items-center">
-                    <div className="flex items-center mb-6 md:mb-0">
-                        <div className="mr-4">
+                <div className="bg-white/5 backdrop-blur-sm rounded-xl p-3 shadow-lg flex flex-col md:flex-row justify-between items-center text-xs">
+                    <div className="flex items-center mb-3 md:mb-0">
+                        <div className="mr-2">
                             <Image
                                 src="/logo-white.svg"
                                 alt="Packedin.tn Logo"
-                                width={50}
-                                height={50}
+                                width={30}
+                                height={30}
                                 className="opacity-90"
                             />
                         </div>
-                        <p className="text-gray-300 text-sm">
+                        <p className="text-gray-300">
                             © {currentYear} Packedin.tn. Tous droits réservés.
                         </p>
                     </div>
-                    <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
+                    <div className="flex flex-wrap justify-center gap-x-4 gap-y-1">
                         {[
                             { href: "/mentions-legales", label: "Mentions Légales" },
-                            { href: "/privacy", label: "Politique de Confidentialité" },
-                            { href: "/terms", label: "Conditions Générales" }
+                            { href: "/privacy", label: "Confidentialité" },
+                            { href: "/terms", label: "CGV" }
                         ].map((link, index) => (
                             <Link
                                 key={index}
                                 href={link.href}
-                                className="text-gray-300 hover:text-white text-sm transition-colors"
+                                className="text-gray-300 hover:text-white transition-colors hover:underline decoration-green-400 underline-offset-2"
                             >
                                 {link.label}
                             </Link>

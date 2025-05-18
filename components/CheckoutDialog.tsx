@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useShopContext } from '@/context/ShopContext';
+import { useState, useEffect } from 'react';
+import { useCart } from '@/context/CartContext';
 import { formatPrice } from '@/lib/utils';
 import { toast } from 'sonner';
 import { Check } from 'lucide-react';
@@ -39,7 +39,33 @@ interface CheckoutDialogProps {
 }
 
 export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogProps) {
-  const { cart, clearCart } = useShopContext();
+  const { cartItems, clearCart, cartTotal } = useCart();
+
+  // Debug cart state
+  useEffect(() => {
+    if (open) {
+      console.log('CheckoutDialog: Cart state:', cartItems);
+    }
+  }, [open, cartItems]);
+
+  // Prevent opening the checkout dialog if cart is empty
+  useEffect(() => {
+    if (open) {
+      // Check if cart exists and has items
+      const hasItems = Array.isArray(cartItems) && cartItems.length > 0;
+
+      if (!hasItems) {
+        console.log('CheckoutDialog: Cart is empty or invalid:', cartItems);
+        toast.error('Empty Cart', {
+          description: 'Your cart is empty. Please add items to your cart before checking out.',
+          duration: 5000,
+        });
+        onOpenChange(false);
+      } else {
+        console.log('CheckoutDialog: Cart has items:', cartItems.length);
+      }
+    }
+  }, [open, cartItems, onOpenChange]);
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
@@ -49,7 +75,7 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
     city: '',
     state: '',
     postalCode: '',
-    country: '',
+    country: 'TN', // Default to Tunisia
     paymentMethod: 'cashOnDelivery',
     notes: '',
   });
@@ -62,14 +88,11 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
   // Delivery fee in TND
   const deliveryFee = 8;
 
-  // Calculate subtotal (items only)
-  const subtotal = cart.reduce(
-    (total, item) => total + parseFloat(item.price) * item.quantity,
-    0
-  );
+  // Calculate subtotal (items only) - cartTotal is already provided by useCart()
+  const subtotal = cartTotal;
 
-  // Calculate cart total (including delivery fee)
-  const cartTotal = subtotal + deliveryFee;
+  // Calculate total with delivery fee
+  const totalWithDelivery = subtotal + deliveryFee;
 
   // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -113,6 +136,35 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
     setIsSubmitting(true);
 
     try {
+      // Log cart data for debugging
+      console.log('Submitting order with cart:', cartItems);
+
+      // Make sure cart is an array and has items
+      if (!Array.isArray(cartItems) || cartItems.length === 0) {
+        throw new Error('Your cart is empty. Please add items to your cart before checking out.');
+      }
+
+      // Convert CartContext items to the format expected by the API
+      const validatedCart = cartItems.map(item => {
+        console.log('Processing cart item:', item);
+
+        if (!item.id || !item.title || !item.price || !item.quantity) {
+          console.error('Invalid cart item:', item);
+          throw new Error('One or more items in your cart are invalid. Please try refreshing the page.');
+        }
+
+        // Convert CartContext item to the format expected by the API
+        return {
+          variantId: item.id, // Use id as variantId
+          title: item.title,
+          price: item.price,
+          quantity: item.quantity,
+          image: item.imageUrl || ''
+        };
+      });
+
+      console.log('Validated cart:', validatedCart);
+
       // Send the order to our API endpoint
       const response = await fetch('/api/order', {
         method: 'POST',
@@ -121,13 +173,14 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
         },
         body: JSON.stringify({
           customerInfo: formData,
-          cart: cart
+          cart: validatedCart
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
+        console.error('Server returned error:', data);
         throw new Error(data.error || 'Error completing checkout');
       }
 
@@ -159,8 +212,14 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
 
     } catch (error) {
       console.error('Error submitting order:', error);
+
+      // Get the error message
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'There was an error processing your order. Please try again.';
+
       toast.error('Error', {
-        description: 'There was an error processing your order. Please try again.',
+        description: errorMessage,
         duration: 5000,
       });
     } finally {
@@ -264,8 +323,8 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
           <div className="bg-gray-50 p-4 rounded-lg mb-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">Order Summary</h3>
             <div className="space-y-3 mb-4">
-              {cart.map((item) => (
-                <div key={item.variantId} className="flex justify-between">
+              {cartItems.map((item) => (
+                <div key={item.id} className="flex justify-between">
                   <div className="flex-1">
                     <p className="text-sm font-medium text-gray-900">{item.title}</p>
                     <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
@@ -286,7 +345,7 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
             </div>
             <div className="border-t border-gray-200 mt-2 pt-4 flex justify-between">
               <p className="text-base font-medium text-gray-900">Total</p>
-              <p className="text-base font-medium text-gray-900">{formatPrice(String(cartTotal), 'TND')}</p>
+              <p className="text-base font-medium text-gray-900">{formatPrice(String(totalWithDelivery), 'TND')}</p>
             </div>
           </div>
 
