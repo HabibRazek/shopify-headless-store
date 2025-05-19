@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createShopifyOrder } from '@/lib/shopifyAdmin';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/auth-options';
+import prisma from '@/lib/prisma';
+import { createOrUpdateShopifyCustomer } from '@/lib/shopifyCustomer';
 
 export async function POST(request: NextRequest) {
   try {
@@ -110,8 +114,57 @@ export async function POST(request: NextRequest) {
       total: total
     });
 
+    // Get the current user session
+    const session = await getServerSession(authOptions);
+
+    // Create or update Shopify customer
+    let shopifyCustomerId = null;
+    try {
+      // Create or update the customer in Shopify
+      const shopifyCustomer = await createOrUpdateShopifyCustomer({
+        email: customerInfo.email,
+        firstName: customerInfo.firstName,
+        lastName: customerInfo.lastName,
+        phone: customerInfo.phone,
+        address: {
+          address1: customerInfo.address,
+          city: customerInfo.city,
+          province: customerInfo.state,
+          zip: customerInfo.postalCode,
+          country: customerInfo.country
+        }
+      });
+
+      if (shopifyCustomer && shopifyCustomer.id) {
+        shopifyCustomerId = shopifyCustomer.id;
+        console.log('Using Shopify customer ID:', shopifyCustomerId);
+
+        // If user is logged in but doesn't have a Shopify customer ID, update their record
+        if (session?.user?.id) {
+          const user = await prisma.user.findUnique({
+            where: { id: session.user.id }
+          });
+
+          if (user && !user.shopifyCustomerId) {
+            await prisma.user.update({
+              where: { id: session.user.id },
+              data: { shopifyCustomerId }
+            });
+            console.log('Updated user with Shopify customer ID');
+          }
+        }
+      }
+    } catch (shopifyError) {
+      console.error('Error with Shopify customer:', shopifyError);
+      // Continue with order creation even if customer creation fails
+    }
+
     // Create the order in Shopify (or simulate if no API token)
-    const orderData = { customerInfo, cart };
+    const orderData = {
+      customerInfo,
+      cart,
+      shopifyCustomerId // Pass the Shopify customer ID to link the order
+    };
     const shopifyOrderResult = await createShopifyOrder(orderData);
 
     // Generate a random order number if not provided by Shopify
@@ -121,6 +174,42 @@ export async function POST(request: NextRequest) {
     // Get the total price from the Shopify order or calculate it
     const totalPrice = shopifyOrderResult.order?.totalPriceSet?.shopMoney?.amount ||
                       (subtotal + deliveryFee).toString();
+
+    // Save the order to the database if user is logged in
+    let savedOrder = null;
+    if (session?.user?.id) {
+      try {
+        // Create the order in the database
+        savedOrder = await prisma.order.create({
+          data: {
+            userId: session.user.id,
+            orderNumber: orderNumber,
+            shopifyOrderId: shopifyOrderResult.order?.id || null,
+            status: 'pending',
+            total: parseFloat(totalPrice),
+            items: {
+              create: cart.map(item => ({
+                productId: item.variantId || 'unknown',
+                title: item.title,
+                price: parseFloat(item.price),
+                quantity: item.quantity,
+                image: item.image || null
+              }))
+            }
+          },
+          include: {
+            items: true
+          }
+        });
+
+        console.log('Order saved to database:', savedOrder.id);
+      } catch (error) {
+        console.error('Error saving order to database:', error);
+        // Continue with the order process even if saving to database fails
+      }
+    } else {
+      console.log('User not logged in, order not saved to database');
+    }
 
     // Return success with order information
     return NextResponse.json({
@@ -143,7 +232,9 @@ export async function POST(request: NextRequest) {
         }
       },
       shopifyOrder: shopifyOrderResult.simulated ? null : shopifyOrderResult.order,
-      simulated: shopifyOrderResult.simulated || false
+      simulated: shopifyOrderResult.simulated || false,
+      savedToDatabase: !!savedOrder,
+      userLoggedIn: !!session?.user
     });
   } catch (error) {
     console.error('Order API Error:', error);

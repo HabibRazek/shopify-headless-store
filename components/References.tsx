@@ -11,7 +11,7 @@ export default function References() {
             id: 1,
             name: "Kartago",
             logo: "/logo_kartago.png",
-            website: "https://kartagodattes.tn/"
+            website: "https://kartagodattes.com/"
         },
         {
             id: 2,
@@ -23,7 +23,7 @@ export default function References() {
             id: 3,
             name: "Masmoudi",
             logo: "/logo-circle-small.webp",
-            website: "https://masmoudi.tn/"
+            website: "https://masmoudi.com/"
         },
         {
             id: 4,
@@ -290,7 +290,7 @@ export default function References() {
                                 <div>
                                     <p className="font-semibold text-gray-900">Responsable Production</p>
                                     <a
-                                        href="https://kartagodattes.tn/"
+                                        href="https://kartagodattes.com/"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="text-green-600 hover:text-green-700 hover:underline transition-colors focus:outline-none"

@@ -126,45 +126,53 @@ export async function createShopifyOrder(orderData: any) {
 
     // Calculate the total price including delivery fee
 
+    const draftOrderInput: any = {
+      // Add delivery fee as a separate line item
+      appliedDiscount: null,
+      // Only include product items - we'll add shipping fee separately
+      lineItems: lineItems,
+      // Add shipping line for delivery fee
+      shippingLine: {
+        title: "Delivery Fee",
+        price: deliveryFeeAmount.toFixed(2)
+      },
+      shippingAddress: {
+        address1: shippingAddress.address1,
+        city: shippingAddress.city,
+        province: shippingAddress.province,
+        zip: shippingAddress.zip,
+        country: shippingAddress.country,
+        firstName: shippingAddress.firstName,
+        lastName: shippingAddress.lastName,
+        phone: shippingAddress.phone
+      },
+      billingAddress: {
+        address1: shippingAddress.address1,
+        city: shippingAddress.city,
+        province: shippingAddress.province,
+        zip: shippingAddress.zip,
+        country: shippingAddress.country,
+        firstName: shippingAddress.firstName,
+        lastName: shippingAddress.lastName,
+        phone: shippingAddress.phone
+      },
+      customAttributes: [
+        { key: "payment_method", value: "Cash on Delivery" },
+        { key: "delivery_fee", value: "8.00 TND" }
+      ],
+      note: `${deliveryFeeNote}\n${orderData.customerInfo.notes || "Cash on Delivery order"}`,
+      email: orderData.customerInfo.email,
+      tags: ["cash-on-delivery", "headless-store"]
+    };
+
+    // If we have a Shopify customer ID, associate the order with the customer
+    if (orderData.shopifyCustomerId) {
+      draftOrderInput.customerId = orderData.shopifyCustomerId;
+      console.log(`Associating order with Shopify customer ID: ${orderData.shopifyCustomerId}`);
+    }
+
     const variables = {
-      input: {
-        // Add delivery fee as a separate line item
-        appliedDiscount: null,
-        // Only include product items - we'll add shipping fee separately
-        lineItems: lineItems,
-        // Add shipping line for delivery fee
-        shippingLine: {
-          title: "Delivery Fee",
-          price: deliveryFeeAmount.toFixed(2)
-        },
-        shippingAddress: {
-          address1: shippingAddress.address1,
-          city: shippingAddress.city,
-          province: shippingAddress.province,
-          zip: shippingAddress.zip,
-          country: shippingAddress.country,
-          firstName: shippingAddress.firstName,
-          lastName: shippingAddress.lastName,
-          phone: shippingAddress.phone
-        },
-        billingAddress: {
-          address1: shippingAddress.address1,
-          city: shippingAddress.city,
-          province: shippingAddress.province,
-          zip: shippingAddress.zip,
-          country: shippingAddress.country,
-          firstName: shippingAddress.firstName,
-          lastName: shippingAddress.lastName,
-          phone: shippingAddress.phone
-        },
-        customAttributes: [
-          { key: "payment_method", value: "Cash on Delivery" },
-          { key: "delivery_fee", value: "8.00 TND" }
-        ],
-        note: `${deliveryFeeNote}\n${orderData.customerInfo.notes || "Cash on Delivery order"}`,
-        email: orderData.customerInfo.email,
-        tags: ["cash-on-delivery", "headless-store"]
-      }
+      input: draftOrderInput
     };
 
 
@@ -282,4 +290,23 @@ function calculateTotal(cart: Array<{ price: string; quantity: number }>): strin
   }, 0).toFixed(2);
 }
 
+// Generic function to fetch from Shopify Admin API
+export async function shopifyAdminFetch({ query, variables = {} }: { query: string; variables?: any }) {
+  try {
+    if (!shopifyAdminAccessToken) {
+      console.warn('No Shopify Admin access token provided. API call will fail.');
+      return { status: 401, body: { error: 'No access token' } };
+    }
 
+    const data = await adminClient.request(query, variables);
+    return { status: 200, body: data };
+  } catch (error) {
+    console.error('Shopify Admin API error:', error);
+    return {
+      status: 500,
+      body: {
+        error: error instanceof Error ? error.message : String(error)
+      }
+    };
+  }
+}

@@ -3,13 +3,24 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, User, X } from 'lucide-react';
+import { Menu, User, X, LogIn, LogOut } from 'lucide-react';
 import { useShopContext } from '@/context/ShopContext';
 import { Button } from '@/components/ui/button';
 import Cart from '@/components/Cart';
+import { useSession } from 'next-auth/react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export default function Navbar() {
   const { } = useShopContext(); // We don't need any context values here
+  const { data: session, status } = useSession();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -67,7 +78,7 @@ export default function Navbar() {
               Collections
             </Link>
             <Link
-              href="/about"
+              href="/apropos"
               className="px-4 py-2 rounded-full text-sm font-medium text-gray-700 hover:text-green-600 hover:bg-gray-100 transition-all duration-200"
             >
               À propos
@@ -76,15 +87,52 @@ export default function Navbar() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-3">
-
-
             <Button className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 rounded-full text-white text-sm font-medium hover:shadow-lg transform hover:scale-105 transition-all duration-200 shadow-md hover:shadow-green-500/30">
               Demander un devis
             </Button>
             <Cart />
-            <Link href="/account" className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200">
-              <User className="h-5 w-5 text-gray-700" />
-            </Link>
+
+            {status === 'authenticated' ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={session?.user?.image || ''} alt={session?.user?.name || ''} />
+                      <AvatarFallback className="bg-green-100 text-green-800">
+                        {session?.user?.name ? session.user.name.charAt(0).toUpperCase() : 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{session?.user?.name}</p>
+                      <p className="text-xs leading-none text-gray-500">{session?.user?.email}</p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/auth/signout">
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Log out</span>
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link href="/auth/signin" className="flex items-center space-x-1 p-2 rounded-full hover:bg-gray-100 transition-colors duration-200">
+                <LogIn className="h-5 w-5 text-gray-700" />
+                <span className="text-sm font-medium text-gray-700">Sign in</span>
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -133,19 +181,41 @@ export default function Navbar() {
                 <span className="text-sm font-medium">Collections</span>
               </Link>
               <Link
-                href="/about"
+                href="/apropos"
                 className="px-4 py-2.5 rounded-full text-gray-700 hover:bg-gray-100 hover:text-green-600 transition-colors duration-200 flex items-center"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <span className="text-sm font-medium">À propos</span>
               </Link>
-              <Link
-                href="/account"
-                className="px-4 py-2.5 rounded-full text-gray-700 hover:bg-gray-100 hover:text-green-600 transition-colors duration-200 flex items-center"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <span className="text-sm font-medium">Mon Compte</span>
-              </Link>
+              {status === 'authenticated' ? (
+                <>
+                  <Link
+                    href="/profile"
+                    className="px-4 py-2.5 rounded-full text-gray-700 hover:bg-gray-100 hover:text-green-600 transition-colors duration-200 flex items-center"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <User className="h-4 w-4 mr-2" />
+                    <span className="text-sm font-medium">Mon Profil</span>
+                  </Link>
+                  <Link
+                    href="/auth/signout"
+                    className="px-4 py-2.5 rounded-full text-gray-700 hover:bg-gray-100 hover:text-green-600 transition-colors duration-200 flex items-center"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    <span className="text-sm font-medium">Déconnexion</span>
+                  </Link>
+                </>
+              ) : (
+                <Link
+                  href="/auth/signin"
+                  className="px-4 py-2.5 rounded-full text-gray-700 hover:bg-gray-100 hover:text-green-600 transition-colors duration-200 flex items-center"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <LogIn className="h-4 w-4 mr-2" />
+                  <span className="text-sm font-medium">Connexion</span>
+                </Link>
+              )}
 
               <div className="pt-2">
                 <Button

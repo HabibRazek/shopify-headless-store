@@ -6,6 +6,8 @@ import { CartProvider } from "@/context/CartContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/toaster";
+import { Toaster as SonnerToaster } from "sonner";
+import { Providers } from "./providers";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -33,16 +35,19 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ShopProvider>
-          <CartProvider>
-            <Navbar />
-            <main className="pt-16">
-              {children}
-            </main>
-            <Footer />
-            <Toaster />
-          </CartProvider>
-        </ShopProvider>
+        <Providers>
+          <ShopProvider>
+            <CartProvider>
+              <Navbar />
+              <main className="pt-16">
+                {children}
+              </main>
+              <Footer />
+              <Toaster />
+              <SonnerToaster position="top-center" richColors closeButton />
+            </CartProvider>
+          </ShopProvider>
+        </Providers>
       </body>
     </html>
   );

@@ -95,13 +95,13 @@ export default function Footer() {
                         <div className="flex items-center justify-start mb-4">
                             <Image
                                 src="/logo-white.svg"
-                                alt="Packedin.tn Logo"
+                                alt="Packedin Logo"
                                 width={60}
                                 height={60}
                                 className="opacity-90"
                             />
                             <div className="ml-3">
-                                <h2 className="text-2xl font-bold text-white">Packedin.tn</h2>
+                                <h2 className="text-2xl font-bold text-white">Packedin</h2>
                                 <p className="text-green-300 text-xs">Solutions d'emballage éco-responsables</p>
                             </div>
                         </div>
@@ -131,8 +131,8 @@ export default function Footer() {
                                 <div className="h-6 w-6 rounded-full bg-white/5 flex items-center justify-center mr-2 group-hover:bg-white/10 transition-colors">
                                     <Mail className="h-3 w-3 text-green-300" />
                                 </div>
-                                <a href="mailto:contact@packedin.tn" className="text-gray-100 group-hover:text-white transition-colors">
-                                    contact@packedin.tn
+                                <a href="mailto:contact@packedin.com" className="text-gray-100 group-hover:text-white transition-colors">
+                                    contact@packedin.com
                                 </a>
                             </div>
 
@@ -219,7 +219,7 @@ export default function Footer() {
                 {/* Divider */}
                 <div className="text-center my-6">
                     <p className="text-sm text-gray-300/80 italic max-w-2xl mx-auto">
-                        "Chez Packedin.tn, nous nous engageons à fournir des solutions d'emballage éco-responsables qui respectent l'environnement tout en répondant aux besoins de votre entreprise."
+                        "Chez Packedin, nous nous engageons à fournir des solutions d'emballage éco-responsables qui respectent l'environnement tout en répondant aux besoins de votre entreprise."
                     </p>
                     <div className="h-px bg-gradient-to-r from-transparent via-green-500/30 to-transparent mt-6"></div>
                 </div>
@@ -230,14 +230,14 @@ export default function Footer() {
                         <div className="mr-2">
                             <Image
                                 src="/logo-white.svg"
-                                alt="Packedin.tn Logo"
+                                alt="Packedin Logo"
                                 width={30}
                                 height={30}
                                 className="opacity-90"
                             />
                         </div>
                         <p className="text-gray-300">
-                            © {currentYear} Packedin.tn. Tous droits réservés.
+                            © {currentYear} Packedin. Tous droits réservés.
                         </p>
                     </div>
                     <div className="flex flex-wrap justify-center gap-x-4 gap-y-1">
