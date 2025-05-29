@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import prisma from '@/lib/prisma';
-import { authOptions } from '@/app/api/auth/[...nextauth]/auth-options';
+
+// Simple auth options for server-side session checking
+const authOptions = {
+  session: {
+    strategy: "jwt" as const,
+  },
+  secret: process.env.NEXTAUTH_SECRET || "fallback-secret-for-build",
+};
 
 export async function GET(request: NextRequest) {
   try {

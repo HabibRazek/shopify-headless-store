@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createShopifyOrder } from '@/lib/shopifyAdmin';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/auth-options';
+// Simple auth options for server-side session checking
+const authOptions = {
+  session: {
+    strategy: "jwt" as const,
+  },
+  secret: process.env.NEXTAUTH_SECRET || "fallback-secret-for-build",
+};
 import prisma from '@/lib/prisma';
 import { createOrUpdateShopifyCustomer } from '@/lib/shopifyCustomer';
 
