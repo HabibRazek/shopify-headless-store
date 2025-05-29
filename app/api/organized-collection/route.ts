@@ -218,7 +218,7 @@ export async function GET(request: NextRequest) {
         handle: handle,
         description: collectionInfo.description,
         products: {
-          edges: finalProducts.map(product => ({
+          edges: finalProducts.map((product: any) => ({
             node: product
           }))
         }

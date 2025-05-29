@@ -5,11 +5,13 @@ const shopifyAdminDomain = process.env.SHOPIFY_ADMIN_DOMAIN || 'udcrg6-jn.myshop
 const shopifyAdminApiVersion = process.env.SHOPIFY_ADMIN_API_VERSION || '2024-07';
 const shopifyAdminAccessToken = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN || '';
 
-// For debugging
-console.log('Shopify Admin API Configuration:');
-console.log('Domain:', shopifyAdminDomain);
-console.log('API Version:', shopifyAdminApiVersion);
-console.log('Access Token Available:', !!shopifyAdminAccessToken);
+// For debugging (only in development)
+if (process.env.NODE_ENV === 'development') {
+  console.log('Shopify Admin API Configuration:');
+  console.log('Domain:', shopifyAdminDomain);
+  console.log('API Version:', shopifyAdminApiVersion);
+  console.log('Access Token Available:', !!shopifyAdminAccessToken);
+}
 
 // Create a GraphQL client for the Shopify Admin API
 const adminClient = new GraphQLClient(
@@ -22,18 +24,20 @@ const adminClient = new GraphQLClient(
   }
 );
 
-// IMPORTANT MESSAGE FOR STORE OWNER
-console.log('\n==================================================');
-console.log('IMPORTANT MESSAGE FOR STORE OWNER:');
-console.log('==================================================');
-console.log('To create real orders in Shopify, you need to:');
-console.log('1. Create a custom app in your Shopify admin');
-console.log('2. Generate an Admin API access token with these permissions:');
-console.log('   - write_orders');
-console.log('   - write_draft_orders');
-console.log('   - write_customers');
-console.log('3. Update your .env.local file with the new token');
-console.log('==================================================\n');
+// IMPORTANT MESSAGE FOR STORE OWNER (only in development)
+if (process.env.NODE_ENV === 'development') {
+  console.log('\n==================================================');
+  console.log('IMPORTANT MESSAGE FOR STORE OWNER:');
+  console.log('==================================================');
+  console.log('To create real orders in Shopify, you need to:');
+  console.log('1. Create a custom app in your Shopify admin');
+  console.log('2. Generate an Admin API access token with these permissions:');
+  console.log('   - write_orders');
+  console.log('   - write_draft_orders');
+  console.log('   - write_customers');
+  console.log('3. Update your .env.local file with the new token');
+  console.log('==================================================\n');
+}
 
 // Function to create an order in Shopify (simplified version)
 export async function createShopifyOrder(orderData: any) {

@@ -73,7 +73,7 @@ export async function findCustomerByEmail(email: string) {
     // Type assertion for the response body
     const typedBody = body as { data?: { customers?: { edges?: Array<{ node: any }> } } };
 
-    if (status === 200 && typedBody?.data?.customers?.edges?.length > 0) {
+    if (status === 200 && typedBody?.data?.customers?.edges && typedBody.data.customers.edges.length > 0) {
       return typedBody.data.customers.edges[0].node;
     }
 
@@ -152,7 +152,7 @@ export async function createShopifyCustomer(customerData: {
     };
 
     if (status === 200) {
-      if (typedBody?.data?.customerCreate?.userErrors?.length > 0) {
+      if (typedBody?.data?.customerCreate?.userErrors && typedBody.data.customerCreate.userErrors.length > 0) {
         console.error('Shopify customer creation errors:', typedBody.data.customerCreate.userErrors);
         throw new Error(typedBody.data.customerCreate.userErrors[0].message);
       }
@@ -231,7 +231,7 @@ export async function updateShopifyCustomer(
     };
 
     if (status === 200) {
-      if (typedBody?.data?.customerUpdate?.userErrors?.length > 0) {
+      if (typedBody?.data?.customerUpdate?.userErrors && typedBody.data.customerUpdate.userErrors.length > 0) {
         console.error('Shopify customer update errors:', typedBody.data.customerUpdate.userErrors);
         throw new Error(typedBody.data.customerUpdate.userErrors[0].message);
       }

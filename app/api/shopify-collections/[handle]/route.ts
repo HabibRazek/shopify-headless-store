@@ -41,7 +41,7 @@ const QUERY_COLLECTION_BY_HANDLE_WITH_PRODUCTS = `
   }
 `;
 
-export async function GET(request, { params }) {
+export async function GET(request: NextRequest, { params }: { params: { handle: string } }) {
   try {
     const handle = params.handle;
 

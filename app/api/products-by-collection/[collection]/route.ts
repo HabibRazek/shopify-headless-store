@@ -31,7 +31,7 @@ const QUERY_ALL_PRODUCTS = `
   }
 `;
 
-export async function GET(request, { params }) {
+export async function GET(request: NextRequest, { params }: { params: { collection: string } }) {
   try {
     // Get the collection name from the URL
     const collection = params.collection;

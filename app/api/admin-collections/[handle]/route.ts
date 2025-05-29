@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request, { params }) {
+export async function GET(request: NextRequest, { params }: { params: { handle: string } }) {
   try {
     // Get the handle from params
     const handle = params.handle;

@@ -2,14 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
-    console.log('Fetching all products from Shopify Admin API...');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Fetching all products from Shopify Admin API...');
+    }
 
     // Get Shopify Admin API credentials from environment variables
     const shopifyAdminDomain = process.env.SHOPIFY_ADMIN_DOMAIN;
     const shopifyAdminAccessToken = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
 
-    console.log('Using Shopify Admin domain:', shopifyAdminDomain);
-    console.log('Using Admin access token:', shopifyAdminAccessToken ? 'Token exists' : 'Token missing');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Using Shopify Admin domain:', shopifyAdminDomain);
+      console.log('Using Admin access token:', shopifyAdminAccessToken ? 'Token exists' : 'Token missing');
+    }
 
     if (!shopifyAdminDomain || !shopifyAdminAccessToken) {
       return NextResponse.json(
