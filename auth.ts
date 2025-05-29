@@ -4,8 +4,6 @@ import Credentials from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { compare } from "bcrypt"
 import { ZodError } from "zod"
-import { signInSchema } from "./lib/validations/auth"
-import { prisma } from "./lib/prisma"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   // Temporarily remove adapter to avoid account linking issues
@@ -46,9 +44,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       async authorize(credentials) {
         try {
+          // Check if we're in build mode
+          if (!process.env.DATABASE_URL) {
+            return null
+          }
+
           if (!credentials?.email || !credentials?.password) {
             throw new Error("Email and password are required")
           }
+
+          // Dynamic imports to avoid build-time issues
+          const { signInSchema } = await import("./lib/validations/auth")
+          const { prisma } = await import("./lib/prisma")
 
           // Validate credentials with Zod
           const { email, password } = await signInSchema.parseAsync(credentials)

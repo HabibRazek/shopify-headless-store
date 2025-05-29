@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { hash } from 'bcrypt';
 import { ZodError } from 'zod';
 import { z } from 'zod';
-import { prisma } from '@/lib/prisma';
-import { createOrUpdateShopifyCustomer } from '@/lib/shopifyCustomer';
 
 // Simple registration schema without confirmPassword
 const registrationSchema = z.object({
@@ -14,6 +12,18 @@ const registrationSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if we're in build mode (no DATABASE_URL)
+    if (!process.env.DATABASE_URL) {
+      return NextResponse.json(
+        { message: 'Service temporarily unavailable' },
+        { status: 503 }
+      );
+    }
+
+    // Dynamic imports to avoid build-time issues
+    const { prisma } = await import('@/lib/prisma');
+    const { createOrUpdateShopifyCustomer } = await import('@/lib/shopifyCustomer');
+
     const body = await request.json();
 
     // Validate input with simple schema

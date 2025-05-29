@@ -1,5 +1,3 @@
-import { shopifyAdminFetch } from './shopifyAdmin';
-
 /**
  * Create or update a customer in Shopify
  * @param customerData Customer data to create or update
@@ -19,6 +17,15 @@ export async function createOrUpdateShopifyCustomer(customerData: {
   };
 }) {
   try {
+    // Check if Shopify credentials are available
+    if (!process.env.SHOPIFY_STORE_DOMAIN || !process.env.SHOPIFY_ADMIN_ACCESS_TOKEN) {
+      console.warn('Shopify credentials not available, skipping customer creation');
+      return null;
+    }
+
+    // Dynamic import to avoid build-time issues
+    const { shopifyAdminFetch } = await import('./shopifyAdmin');
+
     // First, check if the customer already exists
     const existingCustomer = await findCustomerByEmail(customerData.email);
 
@@ -42,6 +49,14 @@ export async function createOrUpdateShopifyCustomer(customerData: {
  */
 export async function findCustomerByEmail(email: string) {
   try {
+    // Check if Shopify credentials are available
+    if (!process.env.SHOPIFY_STORE_DOMAIN || !process.env.SHOPIFY_ADMIN_ACCESS_TOKEN) {
+      return null;
+    }
+
+    // Dynamic import to avoid build-time issues
+    const { shopifyAdminFetch } = await import('./shopifyAdmin');
+
     const query = `
       query FindCustomerByEmail($email: String!) {
         customers(first: 1, query: $email) {
@@ -103,6 +118,14 @@ export async function createShopifyCustomer(customerData: {
   };
 }) {
   try {
+    // Check if Shopify credentials are available
+    if (!process.env.SHOPIFY_STORE_DOMAIN || !process.env.SHOPIFY_ADMIN_ACCESS_TOKEN) {
+      return null;
+    }
+
+    // Dynamic import to avoid build-time issues
+    const { shopifyAdminFetch } = await import('./shopifyAdmin');
+
     const mutation = `
       mutation CustomerCreate($input: CustomerInput!) {
         customerCreate(input: $input) {
@@ -190,6 +213,14 @@ export async function updateShopifyCustomer(
   }
 ) {
   try {
+    // Check if Shopify credentials are available
+    if (!process.env.SHOPIFY_STORE_DOMAIN || !process.env.SHOPIFY_ADMIN_ACCESS_TOKEN) {
+      return null;
+    }
+
+    // Dynamic import to avoid build-time issues
+    const { shopifyAdminFetch } = await import('./shopifyAdmin');
+
     const mutation = `
       mutation CustomerUpdate($input: CustomerInput!) {
         customerUpdate(input: $input) {
