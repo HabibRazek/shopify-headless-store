@@ -1,232 +1,329 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useCollections } from '@/lib/hooks';
 import {
-  ShopifyCollection,
-  getSimplifiedHandle,
-  getBrandName,
-  getCollectionImage,
-  getCollectionMetadata,
-  stripHtml,
-  getFixedProductCount
-} from '@/lib/collection-utils';
+  getCollectionSortOptions,
+  filterCollections,
+  sortCollections
+} from '@/lib/utils/collection';
+import {
+  Search,
+  Grid3X3,
+  List,
+  Package,
+  ArrowRight,
+  Loader2,
+  AlertCircle,
+  Eye,
+  ShoppingBag,
+  Star,
+  TrendingUp
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 
-function ShopifyCollections() {
-  const [collections, setCollections] = useState<ShopifyCollection[]>([]);
-  const [allProducts, setAllProducts] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+// Collection Card Component
+function CollectionCard({ collection, viewMode, variants }: any) {
+  const productCount = collection.productCount || 0;
+  const hasProducts = productCount > 0;
 
-  // Fetch all collections
-  useEffect(() => {
-    async function fetchCollections() {
-      try {
-        // Fetch collections using the Admin API
-        const response = await fetch('/api/admin-collections');
-        const data = await response.json();
+  return (
+    <motion.div variants={variants}>
+      <Link href={`/collections/${collection.handle}`}>
+        <Card className={`group overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
+          viewMode === 'list' ? 'flex' : ''
+        }`}>
+          {/* Image */}
+          <div className={`relative overflow-hidden ${
+            viewMode === 'list' ? 'w-48 h-32' : 'h-64'
+          }`}>
+            {collection.image?.url ? (
+              <Image
+                src={collection.image.url}
+                alt={collection.title}
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-110"
+                sizes={viewMode === 'list' ? '192px' : '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'}
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                <Package className="h-12 w-12 text-gray-400" />
+              </div>
+            )}
 
-        if (data.data?.collections?.edges) {
-          const shopifyCollections = data.data.collections.edges.map((edge: any) => edge.node);
-          console.log('Fetched collections from Shopify:', shopifyCollections);
-          setCollections(shopifyCollections);
-        }
-      } catch (error) {
-        console.error('Error fetching collections:', error);
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+
+            {/* Product Count Badge */}
+            <div className="absolute top-3 right-3">
+              <Badge variant={hasProducts ? "default" : "secondary"} className="bg-white/90 text-gray-900">
+                {productCount} {productCount === 1 ? 'produit' : 'produits'}
+              </Badge>
+            </div>
+
+            {/* Trending Badge */}
+            {productCount > 10 && (
+              <div className="absolute top-3 left-3">
+                <Badge className="bg-green-500 text-white">
+                  <TrendingUp className="h-3 w-3 mr-1" />
+                  Populaire
+                </Badge>
+              </div>
+            )}
+          </div>
+
+          {/* Content */}
+          <CardContent className={`p-6 ${viewMode === 'list' ? 'flex-1' : ''}`}>
+            <div className="flex items-start justify-between mb-2">
+              <h3 className="text-xl font-bold text-gray-900 group-hover:text-green-600 transition-colors line-clamp-2">
+                {collection.title}
+              </h3>
+              <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-green-600 group-hover:translate-x-1 transition-all duration-300 flex-shrink-0 ml-2" />
+            </div>
+
+            {collection.description && (
+              <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                {collection.description.replace(/<[^>]*>/g, '')}
+              </p>
+            )}
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Eye className="h-4 w-4 text-gray-400" />
+                <span className="text-sm text-gray-500">Voir la collection</span>
+              </div>
+
+              {hasProducts && (
+                <div className="flex items-center gap-1">
+                  <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                  <span className="text-sm font-medium text-gray-700">Disponible</span>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </Link>
+    </motion.div>
+  );
+}
+
+function ModernCollections() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [sortBy, setSortBy] = useState<'name' | 'products' | 'recent'>('products');
+
+  // Fetch collections with products for better UX
+  const { collections, isLoading, isError } = useCollections(true, 20, 10);
+
+  // Filter and sort collections using utility functions
+  const filteredCollections = sortCollections(
+    filterCollections(collections, searchTerm),
+    sortBy
+  );
+
+  // Get sort options dynamically
+  const sortOptions = getCollectionSortOptions();
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
       }
     }
-
-    fetchCollections();
-  }, []);
-
-  // Fetch all products for accurate product counts
-  useEffect(() => {
-    async function fetchProducts() {
-      try {
-        const response = await fetch('/api/products');
-        const data = await response.json();
-
-        if (data.products?.edges) {
-          const products = data.products.edges.map((edge: any) => edge.node);
-          setAllProducts(products);
-        }
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchProducts();
-  }, []);
-
-  if (isLoading) {
-    return <div className="text-center py-10">Loading collections...</div>;
-  }
-
-  // Log all products to help with debugging
-  console.log('All products from Shopify:', allProducts.map(p => p.title));
-
-  // We're now using utility functions from lib/collection-utils.ts instead of hardcoded values
-
-  // Define the required collections
-  const requiredCollections = ['kraftview', 'whiteview', 'kraftalu', 'fullviewkraft', 'blackview', 'fullalu'];
-
-  // Map Shopify collection handles to our simplified handles
-  const existingHandles = collections.map(c => getSimplifiedHandle(c.title));
-
-  // Create custom collections for any missing collections
-  const customCollections: ShopifyCollection[] = [];
-  for (const handle of requiredCollections) {
-    if (!existingHandles.includes(handle)) {
-      const metadata = getCollectionMetadata(handle);
-      customCollections.push({
-        id: `custom-${handle}`,
-        title: metadata.title,
-        handle: handle,
-        description: metadata.description,
-        image: null,
-        products: { edges: [] }
-      });
-    }
-  }
-
-  // Combine Shopify collections with our custom collections
-  const allCollections = [...collections, ...customCollections];
-
-  // Function to get accurate product count for a collection
-  const getProductCount = (collectionHandle: string): number => {
-    // If we have a fixed product count for this collection, use it
-    const fixedCount = getFixedProductCount(collectionHandle);
-    if (fixedCount !== undefined) {
-      console.log(`Using fixed product count for ${collectionHandle}: ${fixedCount}`);
-      return fixedCount;
-    }
-
-    if (allProducts.length === 0) return 0;
-
-    // Get the collection's exact match brand name
-    const brandName = getBrandName(collectionHandle);
-
-    // Count products that match this collection's brand name
-    const count = allProducts.filter(product => {
-      const productTitle = product.title;
-      return productTitle.includes(brandName);
-    }).length;
-
-    console.log(`Collection ${collectionHandle} (${brandName}) has ${count} products`);
-    return count;
   };
 
-  // We're now using the utility function from lib/collection-utils.ts
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5
+      }
+    }
+  };
 
-  // Render collections
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <Loader2 className="h-12 w-12 animate-spin text-green-600 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Chargement des collections...
+              </h3>
+              <p className="text-gray-500">
+                Nous récupérons toutes nos collections pour vous
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Erreur de chargement
+              </h3>
+              <p className="text-gray-500 mb-4">
+                Impossible de charger les collections
+              </p>
+              <Button onClick={() => window.location.reload()}>
+                Réessayer
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-16">
-      {/* Featured Collections */}
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center" aria-hidden="true">
-          <div className="w-full border-t border-gray-200" />
-        </div>
-        <div className="relative flex justify-center">
-          <span className="bg-white px-4 text-sm font-medium text-gray-500">COLLECTIONS POPULAIRES</span>
-        </div>
-      </div>
+    <div className="space-y-8">
+      {/* Search and Filters */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="mb-8"
+      >
+        <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+          {/* Search */}
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              type="text"
+              placeholder="Rechercher une collection..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {allCollections.length > 0 ? (
-          allCollections.map((collection) => {
-            // Simplify the collection handle for the URL
-            const simplifiedHandle = getSimplifiedHandle(collection.title);
+          {/* Controls */}
+          <div className="flex items-center gap-2">
+            {/* Sort */}
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+            >
+              {sortOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
 
-            // Get accurate product count
-            const actualProductCount = getProductCount(simplifiedHandle);
-
-            // Get collection image
-            const collectionImage = getCollectionImage(collection, simplifiedHandle);
-
-            // Get collection title parts (split at the first dash)
-            const titleParts = collection.title.split('–');
-            const mainTitle = titleParts[0].trim();
-            const subtitle = titleParts.length > 1 ? titleParts[1].trim() : '';
-
-            return (
-              <Link
-                key={collection.id}
-                href={`/collections/${simplifiedHandle}`}
-                className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+            {/* View Mode */}
+            <div className="flex border border-gray-300 rounded-md overflow-hidden">
+              <Button
+                variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('grid')}
+                className="rounded-none"
               >
-                {/* Collection Image */}
-                <div className="relative h-80 w-full overflow-hidden">
-                  <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-110">
-                    <Image
-                      src={collectionImage}
-                      alt={collection.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-contain object-center"
-                      priority={true}
-                    />
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-                </div>
+                <Grid3X3 className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === 'list' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setViewMode('list')}
+                className="rounded-none"
+              >
+                <List className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
 
-                {/* Collection Info */}
-                <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
-                  <div className="mb-2">
-                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                      {actualProductCount} {actualProductCount === 1 ? 'produit' : 'produits'}
-                    </span>
-                  </div>
-                  <h3 className="text-2xl font-bold mb-1 group-hover:text-green-300 transition-colors">
-                    {mainTitle}
-                  </h3>
-                  {subtitle && (
-                    <p className="text-sm text-gray-300 mb-3">
-                      {subtitle}
-                    </p>
-                  )}
-                  <div className="h-0.5 w-16 bg-green-500 mb-3 transform origin-left transition-all duration-300 group-hover:w-24 group-hover:bg-green-400" />
-                  <p className="text-sm text-gray-300 line-clamp-2 mb-4 max-w-md">
-                    {stripHtml(collection.description)}
-                  </p>
-                  <div className="flex items-center mt-auto">
-                    <span className="text-sm font-medium text-white group-hover:text-green-300 transition-colors">
-                      Voir la collection
-                    </span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 ml-1 transform transition-transform duration-300 group-hover:translate-x-1"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </div>
-              </Link>
-            );
-          })
-        ) : (
-          <div className="col-span-3 text-center py-10">No collections found</div>
+        {/* Results count */}
+        {searchTerm && (
+          <div className="mt-4 text-sm text-gray-600">
+            {filteredCollections.length} collection(s) trouvée(s) pour "{searchTerm}"
+          </div>
         )}
-      </div>
+      </motion.div>
+
+      {/* Collections Grid/List */}
+      <AnimatePresence mode="wait">
+        {filteredCollections.length === 0 ? (
+          <motion.div
+            key="no-results"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="text-center py-12"
+          >
+            <Package className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Aucune collection trouvée
+            </h3>
+            <p className="text-gray-500">
+              Essayez de modifier vos critères de recherche
+            </p>
+          </motion.div>
+        ) : (
+          <motion.div
+            key={`${viewMode}-${sortBy}`}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className={
+              viewMode === 'grid'
+                ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+                : 'space-y-4'
+            }
+          >
+            {filteredCollections.map((collection: any) => (
+              <CollectionCard
+                key={collection.id}
+                collection={collection}
+                viewMode={viewMode}
+                variants={itemVariants}
+              />
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
 export default function CollectionsPage() {
+  const { collections, total } = useCollections(true, 20, 10);
+
   return (
-    <div className="bg-white sm:mt-[-64px]">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
       {/* Hero Section */}
-      <div className="relative overflow-hidden">
+      <div className="relative overflow-hidden bg-white">
         <div className="absolute inset-0">
           <div className="absolute top-[-10rem] right-[5rem] h-[30rem] w-[70rem] bg-gradient-to-b from-[#bdffad] to-transparent rounded-full blur-[9rem] opacity-70" />
           <div className="absolute inset-0 bg-[url('/pattern-bg.png')] opacity-5" />
         </div>
-        <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
+        <div className="relative mx-auto max-w-7xl px-4 py-24 lg:py-32 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-3xl"
+          >
             <div className="inline-block mb-4">
               <div className="bg-white/80 backdrop-blur-sm px-4 py-1 rounded-full text-green-700 text-sm font-medium shadow-sm">
                 Nos collections
@@ -238,29 +335,37 @@ export default function CollectionsPage() {
             <p className="mt-6 max-w-2xl text-xl text-gray-700">
               Découvrez notre gamme complète de pochettes zippées stand-up (Doypack) conçues pour divers usages alimentaires et non alimentaires.
             </p>
-          </div>
+
+            {/* Stats */}
+            <div className="mt-8 flex items-center gap-6 text-sm text-gray-600">
+              <div className="flex items-center gap-2">
+                <Package className="h-5 w-5 text-green-600" />
+                <span className="font-medium">{total || 0} collections</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <ShoppingBag className="h-5 w-5 text-green-600" />
+                <span className="font-medium">
+                  {collections.reduce((acc: number, col: any) => acc + (col.productCount || 0), 0)} produits
+                </span>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
 
       {/* Navigation Section */}
-      <div className="bg-white shadow-sm">
+      <div className="bg-white shadow-sm border-b">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <nav className="flex justify-center space-x-1 p-2" aria-label="Tabs">
-            <div
-              className="bg-green-50 text-green-700 shadow-sm rounded-lg py-3 px-6 font-medium text-sm transition-all duration-200 flex items-center space-x-2"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
+            <div className="bg-green-50 text-green-700 shadow-sm rounded-lg py-3 px-6 font-medium text-sm transition-all duration-200 flex items-center space-x-2">
+              <Package className="h-5 w-5" />
               <span>Nos Collections</span>
             </div>
             <Link
               href="/products"
               className="bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-700 rounded-lg py-3 px-6 font-medium text-sm transition-all duration-200 flex items-center space-x-2"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-              </svg>
+              <ShoppingBag className="h-5 w-5" />
               <span>Tous les Produits</span>
             </Link>
           </nav>
@@ -269,70 +374,7 @@ export default function CollectionsPage() {
 
       {/* Collections Section */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
-        <div className="pb-8">
-          <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900">
-              Nos Collections
-            </h2>
-            <p className="mt-4 text-lg text-gray-500">
-              Chaque collection est conçue pour répondre à des besoins spécifiques en matière d'emballage.
-            </p>
-          </div>
-        </div>
-
-        <ShopifyCollections />
-      </div>
-
-      {/* Features Section */}
-      <div className="bg-green-50 py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900">
-              Pourquoi choisir ZIPBAGS®?
-            </h2>
-            <p className="mt-4 text-lg text-gray-500 max-w-3xl mx-auto">
-              Nos pochettes offrent une combinaison unique de qualité, de fonctionnalité et d'esthétique pour mettre en valeur vos produits.
-            </p>
-          </div>
-
-          <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-              <div className="text-green-600 mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-medium text-gray-900 mb-2">Qualité Supérieure</h3>
-              <p className="text-gray-500">
-                Nos pochettes sont fabriquées avec des matériaux de haute qualité pour garantir la fraîcheur et la protection de vos produits.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-              <div className="text-green-600 mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-medium text-gray-900 mb-2">Présentation Optimale</h3>
-              <p className="text-gray-500">
-                Nos pochettes avec fenêtre offrent une visibilité optimale de vos produits, améliorant leur présentation sur les étagères.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-              <div className="text-green-600 mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-medium text-gray-900 mb-2">Durée de Conservation</h3>
-              <p className="text-gray-500">
-                Nos pochettes hermétiques et refermables prolongent la durée de conservation de vos produits et préservent leur fraîcheur.
-              </p>
-            </div>
-          </div>
-        </div>
+        <ModernCollections />
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import NextAuth from "next-auth";
+import { JWT } from "next-auth/jwt";
 
 declare module "next-auth" {
   /**
@@ -17,6 +18,8 @@ declare module "next-auth" {
       /** The user's role. */
       role?: string | null;
     };
+    /** OAuth access token */
+    accessToken?: string;
   }
 
   interface User {
@@ -25,5 +28,13 @@ declare module "next-auth" {
     email?: string | null;
     image?: string | null;
     role?: string | null;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+    role?: string | null;
+    accessToken?: string;
   }
 }

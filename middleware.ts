@@ -6,18 +6,21 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Check if the pathname is a protected route
-  const isProtectedRoute = 
-    pathname.startsWith('/profile') || 
+  const isProtectedRoute =
+    pathname.startsWith('/profile') ||
     pathname.startsWith('/orders') ||
     pathname.startsWith('/checkout');
 
   // Check if the pathname is an auth route
-  const isAuthRoute = 
-    pathname.startsWith('/auth/signin') || 
+  const isAuthRoute =
+    pathname.startsWith('/auth/signin') ||
     pathname.startsWith('/auth/signup');
 
   // Get the token
-  const token = await getToken({ req: request });
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET
+  });
 
   // If it's a protected route and there's no token, redirect to signin
   if (isProtectedRoute && !token) {

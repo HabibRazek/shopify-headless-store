@@ -298,7 +298,7 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
           <DialogFooter>
             <Button
               onClick={() => handleOpenChange(false)}
-              className="w-full bg-black hover:bg-gray-800"
+              className="w-full"
             >
               Continue Shopping
             </Button>
@@ -568,7 +568,6 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-black hover:bg-gray-800"
             >
               {isSubmitting ? 'Processing...' : 'Place Order'}
             </Button>

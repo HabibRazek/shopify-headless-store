@@ -1,12 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-// Simple auth options for server-side session checking
-const authOptions = {
-  session: {
-    strategy: "jwt" as const,
-  },
-  secret: process.env.NEXTAUTH_SECRET || "fallback-secret-for-build",
-};
+import { auth } from '@/auth';
 
 export async function GET(request: NextRequest) {
   try {
@@ -21,7 +14,7 @@ export async function GET(request: NextRequest) {
     // Dynamic import to avoid build-time issues
     const { default: prisma } = await import('@/lib/prisma');
 
-    const session = await getServerSession(authOptions);
+    const session = await auth();
 
     if (!session || !session.user) {
       return NextResponse.json(
@@ -83,7 +76,7 @@ export async function PUT(request: NextRequest) {
     // Dynamic import to avoid build-time issues
     const { default: prisma } = await import('@/lib/prisma');
 
-    const session = await getServerSession(authOptions);
+    const session = await auth();
 
     if (!session || !session.user) {
       return NextResponse.json(

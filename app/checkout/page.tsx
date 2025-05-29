@@ -206,7 +206,6 @@ export default function CheckoutPage() {
                          Math.floor(100000 + Math.random() * 900000).toString();
 
       // Redirect to success page with order number
-      console.log('Order successful, redirecting to success page');
       window.location.href = `/checkout/success?order=${orderNumber}`;
     } catch (error) {
       console.error('Error submitting order:', error);

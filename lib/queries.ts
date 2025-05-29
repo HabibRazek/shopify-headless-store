@@ -76,7 +76,7 @@ export const QUERY_PRODUCT_BY_HANDLE = `
   }
 `;
 
-// Get all collections
+// Get all collections with enhanced data
 export const QUERY_ALL_COLLECTIONS = `
   query GetAllCollections($first: Int = 20) {
     collections(first: $first) {
@@ -86,10 +86,107 @@ export const QUERY_ALL_COLLECTIONS = `
           title
           handle
           description
+          descriptionHtml
           image {
             url
             altText
+            width
+            height
           }
+          products(first: 1) {
+            edges {
+              node {
+                id
+              }
+            }
+          }
+          updatedAt
+        }
+      }
+    }
+  }
+`;
+
+// Get all collections with their products
+export const QUERY_ALL_COLLECTIONS_WITH_PRODUCTS = `
+  query GetAllCollectionsWithProducts($first: Int = 20, $productsFirst: Int = 50) {
+    collections(first: $first) {
+      edges {
+        node {
+          id
+          title
+          handle
+          description
+          descriptionHtml
+          image {
+            url
+            altText
+            width
+            height
+          }
+          products(first: $productsFirst) {
+            edges {
+              node {
+                id
+                title
+                handle
+                description
+                priceRange {
+                  minVariantPrice {
+                    amount
+                    currencyCode
+                  }
+                  maxVariantPrice {
+                    amount
+                    currencyCode
+                  }
+                }
+                compareAtPriceRange {
+                  minVariantPrice {
+                    amount
+                    currencyCode
+                  }
+                }
+                images(first: 3) {
+                  edges {
+                    node {
+                      url
+                      altText
+                      width
+                      height
+                    }
+                  }
+                }
+                variants(first: 5) {
+                  edges {
+                    node {
+                      id
+                      title
+                      price {
+                        amount
+                        currencyCode
+                      }
+                      compareAtPrice {
+                        amount
+                        currencyCode
+                      }
+                      availableForSale
+                      selectedOptions {
+                        name
+                        value
+                      }
+                    }
+                  }
+                }
+                tags
+                availableForSale
+                totalInventory
+                createdAt
+                updatedAt
+              }
+            }
+          }
+          updatedAt
         }
       }
     }

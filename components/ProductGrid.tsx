@@ -31,7 +31,7 @@ export default function ProductGrid({ products, className = '' }: ProductGridPro
   };
 
   return (
-    <div className={`grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:gap-x-8 ${className}`}>
+    <div className={`grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8 ${className}`}>
       {products.map((product, index) => (
         <motion.div
           key={product.node?.id || product.id || index}

@@ -35,7 +35,7 @@ export default function Cart() {
       >
         <ShoppingCart className="h-5 w-5" />
         {cartCount > 0 && (
-          <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-black text-xs text-white">
+          <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-green-600 text-xs text-white">
             {cartCount}
           </span>
         )}
@@ -134,7 +134,7 @@ export default function Cart() {
                 <div className="space-y-2">
                   {/* Primary checkout button */}
                   <Button
-                    className="w-full bg-black hover:bg-gray-800 text-white"
+                    className="w-full"
                     onClick={handleCheckout}
                   >
                     Checkout

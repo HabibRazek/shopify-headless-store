@@ -6,6 +6,7 @@ import { ShopifyProduct } from '@/types/shopify';
 import ProductGrid from '@/components/ProductGrid';
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Button } from './ui/button';
 
 export default function FeaturedProducts() {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
@@ -123,34 +124,41 @@ export default function FeaturedProducts() {
   };
 
   return (
-    <section className="py-16 bg-gradient-to-b from-white to-gray-50">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-12">
+    <section className="py-24 bg-gradient-to-br from-white via-green-50/30 to-white relative overflow-hidden">
+      {/* Soft Decorative Background Elements */}
+      <div className="absolute top-0 left-0 w-72 h-72 bg-green-100/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-green-200/20 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
+
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="flex flex-col lg:flex-row justify-between items-center mb-16">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-6 md:mb-0"
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="mb-8 lg:mb-0 text-center lg:text-left"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-              Produits Populaires
+            <div className="inline-flex items-center mb-4 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg border border-green-200/50">
+              <div className="w-2 h-2 bg-green-500 rounded-full mr-3 animate-pulse" />
+              <span className="text-sm font-semibold text-green-700 tracking-wide">SÉLECTION PREMIUM</span>
+            </div>
+            <h2 className="text-4xl lg:text-5xl font-bold text-green-800 mb-4 leading-tight">
+              Produits <span className="bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent">Populaires</span>
             </h2>
-            <p className="text-gray-600 max-w-xl">
-              Découvrez notre sélection de produits les plus appréciés par nos clients
+            <p className="text-xl text-green-700/80 max-w-2xl leading-relaxed">
+              Découvrez notre sélection exclusive de produits les plus appréciés par nos clients professionnels
             </p>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
           >
-            <Link
-              href="/products"
-              className="group inline-flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-full text-green-600 font-medium hover:border-green-600 hover:shadow-md transition-all duration-300"
-            >
-              <span>Voir tous les produits</span>
-              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            <Link href="/products">
+              <Button size="lg" className="group">
+                <span>Voir tous les produits</span>
+                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
+              </Button>
             </Link>
           </motion.div>
         </div>
@@ -161,20 +169,19 @@ export default function FeaturedProducts() {
           animate="visible"
           className="mt-6"
         >
-          <ProductGrid products={featuredProducts} />
+          <ProductGrid products={featuredProducts} className="lg:grid-cols-4" />
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-          className="mt-12 text-center"
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="mt-16 text-center"
         >
-          <Link
-            href="/products"
-            className="inline-block rounded-full border border-transparent bg-gradient-to-r from-green-600 to-green-700 px-8 py-3 text-center font-medium text-white hover:shadow-lg transition-all hover:scale-105 duration-300"
-          >
-            Explorer notre catalogue complet
+          <Link href="/products">
+            <Button size="lg" className="text-lg px-12">
+              Explorer notre catalogue complet
+            </Button>
           </Link>
         </motion.div>
       </div>

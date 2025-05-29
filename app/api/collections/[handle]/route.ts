@@ -1,46 +1,208 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { shopifyFetch } from '@/lib/shopify';
-import { QUERY_COLLECTION_BY_HANDLE } from '@/lib/queries';
+import {
+  parseQueryParams,
+  validatePaginationParams,
+  validateSortParams,
+  handleApiOperation
+} from '@/lib/utils/api';
+import {
+  normalizeHandle,
+  sortProducts,
+  filterProducts,
+  isValidCollection,
+  isValidProduct,
+  formatPrice,
+  isProductOnSale,
+  getPrimaryImage
+} from '@/lib/utils/collection';
 
-export async function GET(request: NextRequest, { params }: { params: { handle: string } }) {
-  try {
-    // Get the handle directly from the route params
-    const rawHandle = params.handle;
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ handle: string }> }
+) {
+  return handleApiOperation(async () => {
+    const { handle: rawHandle } = await params;
+    const { searchParams } = new URL(request.url);
+    const queryParams = parseQueryParams(searchParams);
 
-    // Decode the handle if it's URL encoded
+    // Validate parameters
+    const { limit } = validatePaginationParams(queryParams);
+    const { sortBy, reverse } = validateSortParams(queryParams);
+
+    // Clean and normalize the handle
     let handle = decodeURIComponent(rawHandle);
     if (handle.includes('%')) {
       handle = decodeURIComponent(handle);
     }
 
-    // Clean up the handle - remove trademark symbols and other special characters
-    handle = handle.replace('™', '').trim();
+    // Try the original handle first, then try normalized versions
+    const originalHandle = handle;
+    const cleanHandle = handle.replace('™', '').trim();
+    const normalizedHandle = normalizeHandle(cleanHandle);
 
-    // Fetch the collection from Shopify
-    const { status, body } = await shopifyFetch({
-      query: QUERY_COLLECTION_BY_HANDLE,
-      variables: { handle, first: 20 },
-    });
 
-    if (status === 200) {
-      if ((body as any).data && (body as any).data.collection) {
-        return NextResponse.json(body);
-      } else {
-        return NextResponse.json(
-          { error: 'Collection not found' },
-          { status: 404 }
-        );
+
+    const productsLimit = Math.min(100, limit || 50);
+    const sortKey = sortBy || 'BEST_SELLING';
+    const search = queryParams.search;
+
+    // Enhanced query for collection with sorting
+    const query = `
+      query GetCollectionByHandle($handle: String!, $first: Int!, $sortKey: ProductCollectionSortKeys!, $reverse: Boolean!) {
+        collection(handle: $handle) {
+          id
+          title
+          handle
+          description
+          descriptionHtml
+          image {
+            url
+            altText
+            width
+            height
+          }
+          products(first: $first, sortKey: $sortKey, reverse: $reverse) {
+            edges {
+              node {
+                id
+                title
+                handle
+                description
+                priceRange {
+                  minVariantPrice {
+                    amount
+                    currencyCode
+                  }
+                  maxVariantPrice {
+                    amount
+                    currencyCode
+                  }
+                }
+                compareAtPriceRange {
+                  minVariantPrice {
+                    amount
+                    currencyCode
+                  }
+                }
+                images(first: 5) {
+                  edges {
+                    node {
+                      url
+                      altText
+                      width
+                      height
+                    }
+                  }
+                }
+                variants(first: 10) {
+                  edges {
+                    node {
+                      id
+                      title
+                      price {
+                        amount
+                        currencyCode
+                      }
+                      compareAtPrice {
+                        amount
+                        currencyCode
+                      }
+                      availableForSale
+                      selectedOptions {
+                        name
+                        value
+                      }
+                    }
+                  }
+                }
+                tags
+                availableForSale
+                totalInventory
+                createdAt
+                updatedAt
+              }
+            }
+          }
+          updatedAt
+        }
       }
-    } else {
-      return NextResponse.json(
-        { error: 'Error fetching collection' },
-        { status }
-      );
+    `;
+
+    // Try different handle variants until we find the collection
+    const handleVariants = [originalHandle, cleanHandle, normalizedHandle];
+    let collection = null;
+    let usedHandle = '';
+
+    for (const handleVariant of handleVariants) {
+      const { status, body } = await shopifyFetch({
+        query,
+        variables: { handle: handleVariant, first: productsLimit, sortKey, reverse: reverse || false },
+      });
+
+      if (status === 200 && (body as any)?.collection) {
+        collection = (body as any).collection;
+        usedHandle = handleVariant;
+        break;
+      }
     }
-  } catch (error) {
-    return NextResponse.json(
-      { error: 'Error fetching collection' },
-      { status: 500 }
-    );
-  }
+
+    if (!collection || !isValidCollection(collection)) {
+      throw new Error(`Collection not found with any handle variant: ${handleVariants.join(', ')}`);
+    }
+
+    // Transform and validate products
+    let products = (collection as any).products?.edges?.map((edge: any) => {
+      const product = edge.node;
+
+      if (!isValidProduct(product)) {
+        return null;
+      }
+
+      return {
+        ...product,
+        images: (product as any).images?.edges?.map((imgEdge: any) => imgEdge.node) || [],
+        variants: (product as any).variants?.edges?.map((varEdge: any) => varEdge.node) || [],
+        onSale: isProductOnSale(product),
+        primaryImage: getPrimaryImage(product),
+        formattedPrice: formatPrice(
+          product.priceRange?.minVariantPrice?.amount || '0',
+          product.priceRange?.minVariantPrice?.currencyCode || 'EUR'
+        ),
+        formattedCompareAtPrice: product.compareAtPriceRange?.minVariantPrice?.amount
+          ? formatPrice(
+              product.compareAtPriceRange.minVariantPrice.amount,
+              product.compareAtPriceRange.minVariantPrice.currencyCode || 'EUR'
+            )
+          : null
+      };
+    }).filter(Boolean) || [];
+
+    // Apply search filter if provided
+    if (search) {
+      products = filterProducts(products, search);
+    }
+
+    // Apply additional sorting if needed (client-side refinement)
+    if (sortBy && sortBy !== sortKey) {
+      products = sortProducts(products, sortBy, reverse);
+    }
+
+    const transformedCollection = {
+      ...collection,
+      productCount: products.length,
+      products,
+      pagination: {
+        limit: productsLimit,
+        hasMore: products.length === productsLimit
+      },
+      filters: {
+        search,
+        sortBy: sortKey,
+        reverse
+      }
+    };
+
+    return transformedCollection;
+  }, `Failed to fetch collection`);
 }

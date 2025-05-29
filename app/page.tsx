@@ -9,9 +9,14 @@ import References from '@/components/References';
 
 export default function Home() {
   return (
-    <div>
-      {/* Hero Carousel */}
-      <HeroCarousel />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden">
+        <HeroCarousel />
+        {/* Decorative Elements */}
+        <div className="absolute top-20 left-10 w-20 h-20 bg-primary/10 rounded-full blur-xl animate-float" />
+        <div className="absolute bottom-20 right-10 w-32 h-32 bg-primary/5 rounded-full blur-2xl animate-float" style={{ animationDelay: '2s' }} />
+      </section>
 
       {/* Featured Products Section */}
       <Suspense fallback={
@@ -71,10 +76,17 @@ export default function Home() {
       </Suspense>
 
       {/* Advantages Section */}
-      <Advantages />
+      <section className="relative py-20 bg-gradient-to-br from-green-50/30 via-white to-green-50/30">
+        <div className="absolute inset-0 bg-gradient-to-r from-green-100/20 via-transparent to-green-100/20" />
+        <Advantages />
+      </section>
 
       {/* References Section */}
-      <References />
+      <section className="relative py-20 bg-gradient-to-br from-white to-green-50/30">
+        <References />
+        {/* Decorative Bottom Elements */}
+        <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-green-300/30 to-transparent" />
+      </section>
     </div>
   );
 }

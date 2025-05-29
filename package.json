@@ -43,7 +43,7 @@
     "graphql-request": "^7.1.2",
     "lucide-react": "^0.510.0",
     "next": "15.0.1",
-    "next-auth": "^4.24.11",
+    "next-auth": "5.0.0-beta.25",
     "next-themes": "^0.4.6",
     "prisma": "^6.8.2",
     "react": "19.0.0-rc-69d4b800-20241021",
@@ -54,7 +54,7 @@
     "swr": "^2.3.3",
     "tailwind-merge": "^3.3.0",
     "tailwindcss-animate": "^1.0.7",
-    "zod": "^3.24.4"
+    "zod": "^3.25.36"
   },
   "devDependencies": {
     "typescript": "^5",

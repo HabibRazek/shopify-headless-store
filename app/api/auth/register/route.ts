@@ -1,34 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { hash } from 'bcrypt';
+import { ZodError } from 'zod';
+import { z } from 'zod';
+import { prisma } from '@/lib/prisma';
+import { createOrUpdateShopifyCustomer } from '@/lib/shopifyCustomer';
+
+// Simple registration schema without confirmPassword
+const registrationSchema = z.object({
+  name: z.string().min(1, "Name is required").min(2, "Name must be at least 2 characters"),
+  email: z.string().min(1, "Email is required").email("Invalid email"),
+  password: z.string().min(1, "Password is required").min(8, "Password must be at least 8 characters"),
+});
 
 export async function POST(request: NextRequest) {
   try {
-    // Check if we're in build time or missing database
-    if (!process.env.DATABASE_URL || process.env.SKIP_ENV_VALIDATION === '1') {
-      return NextResponse.json(
-        { message: 'Registration not available during build' },
-        { status: 503 }
-      );
-    }
+    const body = await request.json();
 
-    // Dynamic imports to avoid build-time issues
-    const { default: prisma } = await import('@/lib/prisma');
-    const { hash } = await import('bcrypt');
-    const { createOrUpdateShopifyCustomer } = await import('@/lib/shopifyCustomer');
-
-    const { name, email, password } = await request.json();
-
-    // Validate input
-    if (!name || !email || !password) {
-      return NextResponse.json(
-        { message: 'Missing required fields' },
-        { status: 400 }
-      );
-    }
+    // Validate input with simple schema
+    const { name, email, password } = await registrationSchema.parseAsync(body);
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
       where: {
-        email,
+        email: email.toLowerCase(),
       },
     });
 
@@ -69,9 +63,10 @@ export async function POST(request: NextRequest) {
     const user = await prisma.user.create({
       data: {
         name,
-        email,
+        email: email.toLowerCase(),
         password: hashedPassword,
-        shopifyCustomerId: shopifyCustomerId
+        shopifyCustomerId: shopifyCustomerId,
+        role: 'USER', // Default role
       },
     });
 
@@ -79,11 +74,26 @@ export async function POST(request: NextRequest) {
     const { password: _, ...userWithoutPassword } = user;
 
     return NextResponse.json(
-      { message: 'User created successfully', user: userWithoutPassword },
+      {
+        message: 'User created successfully',
+        user: userWithoutPassword
+      },
       { status: 201 }
     );
   } catch (error) {
     console.error('Registration error:', error);
+
+    // Handle Zod validation errors
+    if (error instanceof ZodError) {
+      return NextResponse.json(
+        {
+          message: 'Validation error',
+          errors: error.errors
+        },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(
       { message: 'Something went wrong' },
       { status: 500 }

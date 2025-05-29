@@ -160,13 +160,7 @@ export default function ProductFilters({ products, onFilterChange }: ProductFilt
             new RegExp(`\\b${size}[\\s+]`, 'i')     // Size followed by space or +
           ];
 
-          const matches = patterns.some(regex => regex.test(normalizedTitle));
-
-          if (matches) {
-            console.log(`Size match found: ${size} matches product: ${node.title}`);
-          }
-
-          return matches;
+          return patterns.some(regex => regex.test(normalizedTitle));
         });
       });
     }
@@ -204,63 +198,7 @@ export default function ProductFilters({ products, onFilterChange }: ProductFilt
     if (priceRange[0] > filterOptions.priceRange[0] || priceRange[1] < filterOptions.priceRange[1]) count++;
     setActiveFiltersCount(count);
 
-    // Log filter results
-    console.log(`Filters applied: ${count} active filters`);
 
-    // Log size filter details
-    if (selectedSizes.length > 0) {
-      console.log(`Size filter: ${selectedSizes.join(', ')}`);
-
-      // Count products by size for debugging
-      const sizeProductCounts: Record<string, number> = {};
-      selectedSizes.forEach(size => {
-        const count = filteredProducts.filter(product => {
-          const node = product.node || product;
-
-          // Normalize the title
-          const normalizedTitle = node.title.replace(/[×*]/g, 'x');
-
-          // Create regex patterns to match the size in different formats
-          const patterns = [
-            new RegExp(`\\b${size}\\b`, 'i'),       // Exact match with word boundaries
-            new RegExp(`\\b${size}\\+`, 'i'),       // Size followed by +
-            new RegExp(`\\b${size}\\s`, 'i'),       // Size followed by space
-            new RegExp(`\\b${size}[\\s+]`, 'i')     // Size followed by space or +
-          ];
-
-          return patterns.some(regex => regex.test(normalizedTitle));
-        }).length;
-
-        sizeProductCounts[size] = count;
-      });
-
-      console.log('Products per size after filtering:', sizeProductCounts);
-    }
-
-    // Log category filter details
-    if (selectedCategories.length > 0) {
-      console.log(`Category filter: ${selectedCategories.join(', ')}`);
-
-      // Count products by category for debugging
-      const categoryProductCounts: Record<string, number> = {};
-      selectedCategories.forEach(category => {
-        const count = filteredProducts.filter(product => {
-          const node = product.node || product;
-          if (category === 'BlackView') return node.title.toLowerCase().includes('blackview');
-          if (category === 'KraftView') return node.title.toLowerCase().includes('kraftview');
-          if (category === 'WhiteView') return node.title.toLowerCase().includes('whiteview');
-          if (category === 'KraftAlu') return node.title.toLowerCase().includes('kraftalu');
-          if (category === 'FullViewKraft') return node.title.toLowerCase().includes('fullviewkraft');
-          if (category === 'FullAlu') return node.title.toLowerCase().includes('fullalu');
-          return false;
-        }).length;
-        categoryProductCounts[category] = count;
-      });
-
-      console.log('Products per category after filtering:', categoryProductCounts);
-    }
-
-    console.log(`Total filtered products: ${filteredProducts.length}`);
 
     // Update parent component with filtered products
     onFilterChange(filteredProducts);

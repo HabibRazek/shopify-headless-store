@@ -346,8 +346,8 @@ function Products() {
 
 export default function ProductsPage() {
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-      <div className="pb-8">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <div className="pb-8 lg:pb-12">
         <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">
           Tous les produits
         </h1>

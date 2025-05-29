@@ -74,6 +74,7 @@ const COLLECTIONS_INFO: Record<string, CollectionInfo> = {
 
 export default function CollectionPage() {
   const [handle, setHandle] = useState<string>('');
+  const [metadataHandle, setMetadataHandle] = useState<string>('');
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [title, setTitle] = useState<string>('');
@@ -115,50 +116,31 @@ export default function CollectionPage() {
       decodedHandle = decodeURIComponent(decodedHandle);
     }
 
-    // Extract the base collection name from the complex handle
-    let simplifiedHandle = decodedHandle.toLowerCase();
+    // Use the original handle for API calls - no simplification needed
+    // The API will handle the normalization
+    setHandle(decodedHandle);
 
-    // Map of known collection handles
-    const collectionHandleMap: Record<string, string> = {
-      'kraftview': 'kraftview',
-      'whiteview': 'whiteview',
-      'kraftalu': 'kraftalu',
-      'fullviewkraft': 'fullviewkraft',
-      'blackview': 'blackview',
-      'fullalu': 'fullalu'
-    };
+    // Extract a simple handle for metadata lookup
+    let simpleHandle = decodedHandle.toLowerCase();
 
-    // First check for exact matches
-    if (collectionHandleMap[simplifiedHandle]) {
-      simplifiedHandle = collectionHandleMap[simplifiedHandle];
-    } else {
-      // Then check if the handle contains any of our known collection names
-      for (const [key, value] of Object.entries(collectionHandleMap)) {
-        if (decodedHandle.toLowerCase().includes(key.toLowerCase())) {
-          simplifiedHandle = value;
-          break;
-        }
-      }
-    }
+    // Map complex handles to simple ones for metadata
+    if (simpleHandle.includes('kraftalu')) simpleHandle = 'kraftalu';
+    else if (simpleHandle.includes('kraftview')) simpleHandle = 'kraftview';
+    else if (simpleHandle.includes('whiteview')) simpleHandle = 'whiteview';
+    else if (simpleHandle.includes('fullviewkraft')) simpleHandle = 'fullviewkraft';
+    else if (simpleHandle.includes('blackview')) simpleHandle = 'blackview';
+    else if (simpleHandle.includes('fullalu')) simpleHandle = 'fullalu';
 
-    // Special case for FullAlu collection which might have a complex handle
-    if (decodedHandle.toLowerCase().includes('fullalu') ||
-        decodedHandle.toLowerCase().includes('full-alu') ||
-        decodedHandle.toLowerCase().includes('full alu') ||
-        decodedHandle.toLowerCase().includes('aluminium')) {
-      simplifiedHandle = 'fullalu';
-    }
-
-    setHandle(simplifiedHandle);
+    setMetadataHandle(simpleHandle);
 
     // Set collection metadata from our mapping
-    if (COLLECTIONS_INFO[simplifiedHandle]) {
-      const info = COLLECTIONS_INFO[simplifiedHandle];
+    if (COLLECTIONS_INFO[simpleHandle]) {
+      const info = COLLECTIONS_INFO[simpleHandle];
       setTitle(info.title);
       setDescription(info.description);
     } else {
       // Default values if collection not found in our mapping
-      setTitle(simplifiedHandle.charAt(0).toUpperCase() + simplifiedHandle.slice(1));
+      setTitle(decodedHandle.charAt(0).toUpperCase() + decodedHandle.slice(1));
       setDescription('');
     }
   }, []);
@@ -170,354 +152,31 @@ export default function CollectionPage() {
     async function fetchCollectionProducts() {
       try {
         setIsLoading(true);
-        console.log(`Fetching products for collection: ${handle}`);
+        // Use the new collections API to fetch products by collection handle
+        // First try with the original URL handle
+        const pathParts = window.location.pathname.split('/');
+        const originalHandle = pathParts[pathParts.length - 1];
 
-        // Use our organized-collection API to fetch products by collection handle
-        const response = await fetch(`/api/organized-collection?handle=${handle}`);
+        const response = await fetch(`/api/collections/${originalHandle}`);
         const data = await response.json();
 
-        console.log('Organized Collection API response:', data);
-
-        if (data.collection?.products?.edges) {
-          const collectionProducts = data.collection.products.edges.map((edge: any) => edge.node);
-          console.log(`Found ${collectionProducts.length} products for collection ${handle}`);
+        if (data.success && data.data?.products) {
+          const collectionProducts = data.data.products;
 
           setProducts(collectionProducts);
 
           // If we got collection data from the API, update our metadata
-          if (data.collection.title) {
-            setTitle(data.collection.title);
+          if (data.data.title) {
+            setTitle(data.data.title);
           }
 
-          if (data.collection.description) {
-            setDescription(data.collection.description);
+          if (data.data.description) {
+            setDescription(data.data.description);
           }
         } else {
-          console.error('No products found for this collection');
-
-          // For specific collections, use hardcoded products if API returns none
-          if (handle === 'fullviewkraft') {
-            console.log('Using hardcoded products for FullViewKraft collection');
-
-            // Create exactly 4 hardcoded products for FullViewKraft
-            const fullViewKraftProducts = [
-              {
-                id: "gid://shopify/Product/8747271553344",
-                title: "FullViewKraft™ – Pochette Stand Up Kraft avec fenêtre pleine 16x26 cm (Lot de 50)",
-                handle: "fullviewkraft-pochette-stand-up-kraft-avec-fenetre-pleine-16x26-cm-lot-de-50",
-                description: "Pochettes Stand Up en kraft avec fenêtre pleine, parfaites pour présenter vos produits avec style.",
-                priceRange: {
-                  minVariantPrice: {
-                    amount: "45.00",
-                    currencyCode: "TND"
-                  }
-                },
-                images: {
-                  edges: [
-                    {
-                      node: {
-                        url: "https://cdn.shopify.com/s/files/1/0792/1761/6464/files/fullviewkraft-sample.jpg",
-                        altText: "FullViewKraft Pochette"
-                      }
-                    }
-                  ]
-                },
-                variants: {
-                  edges: [
-                    {
-                      node: {
-                        id: "gid://shopify/ProductVariant/47295035146560",
-                        title: "Default Title",
-                        price: {
-                          amount: "45.00",
-                          currencyCode: "TND"
-                        },
-                        availableForSale: true
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                id: "gid://shopify/Product/8747271553345",
-                title: "FullViewKraft™ – Pochette Stand Up Kraft avec fenêtre pleine 12x20 cm (Lot de 50)",
-                handle: "fullviewkraft-pochette-stand-up-kraft-avec-fenetre-pleine-12x20-cm-lot-de-50",
-                description: "Pochettes Stand Up en kraft avec fenêtre pleine, parfaites pour présenter vos produits avec style.",
-                priceRange: {
-                  minVariantPrice: {
-                    amount: "40.00",
-                    currencyCode: "TND"
-                  }
-                },
-                images: {
-                  edges: [
-                    {
-                      node: {
-                        url: "https://cdn.shopify.com/s/files/1/0792/1761/6464/files/fullviewkraft-sample.jpg",
-                        altText: "FullViewKraft Pochette"
-                      }
-                    }
-                  ]
-                },
-                variants: {
-                  edges: [
-                    {
-                      node: {
-                        id: "gid://shopify/ProductVariant/47295035146561",
-                        title: "Default Title",
-                        price: {
-                          amount: "40.00",
-                          currencyCode: "TND"
-                        },
-                        availableForSale: true
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                id: "gid://shopify/Product/8747271553346",
-                title: "FullViewKraft™ – Pochette Stand Up Kraft avec fenêtre pleine 10x18 cm (Lot de 50)",
-                handle: "fullviewkraft-pochette-stand-up-kraft-avec-fenetre-pleine-10x18-cm-lot-de-50",
-                description: "Pochettes Stand Up en kraft avec fenêtre pleine, parfaites pour présenter vos produits avec style.",
-                priceRange: {
-                  minVariantPrice: {
-                    amount: "35.00",
-                    currencyCode: "TND"
-                  }
-                },
-                images: {
-                  edges: [
-                    {
-                      node: {
-                        url: "https://cdn.shopify.com/s/files/1/0792/1761/6464/files/fullviewkraft-sample.jpg",
-                        altText: "FullViewKraft Pochette"
-                      }
-                    }
-                  ]
-                },
-                variants: {
-                  edges: [
-                    {
-                      node: {
-                        id: "gid://shopify/ProductVariant/47295035146562",
-                        title: "Default Title",
-                        price: {
-                          amount: "35.00",
-                          currencyCode: "TND"
-                        },
-                        availableForSale: true
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                id: "gid://shopify/Product/8747271553347",
-                title: "FullViewKraft™ – Pochette Stand Up Kraft avec fenêtre pleine 8x14 cm (Lot de 50)",
-                handle: "fullviewkraft-pochette-stand-up-kraft-avec-fenetre-pleine-8x14-cm-lot-de-50",
-                description: "Pochettes Stand Up en kraft avec fenêtre pleine, parfaites pour présenter vos produits avec style.",
-                priceRange: {
-                  minVariantPrice: {
-                    amount: "30.00",
-                    currencyCode: "TND"
-                  }
-                },
-                images: {
-                  edges: [
-                    {
-                      node: {
-                        url: "https://cdn.shopify.com/s/files/1/0792/1761/6464/files/fullviewkraft-sample.jpg",
-                        altText: "FullViewKraft Pochette"
-                      }
-                    }
-                  ]
-                },
-                variants: {
-                  edges: [
-                    {
-                      node: {
-                        id: "gid://shopify/ProductVariant/47295035146563",
-                        title: "Default Title",
-                        price: {
-                          amount: "30.00",
-                          currencyCode: "TND"
-                        },
-                        availableForSale: true
-                      }
-                    }
-                  ]
-                }
-              }
-            ];
-
-            // Ensure we have exactly 4 products
-            setProducts(fullViewKraftProducts.slice(0, 4));
-            console.log('Set exactly 4 hardcoded products for FullViewKraft collection');
-          } else if (handle === 'blackview') {
-            console.log('Using hardcoded products for BlackView collection');
-
-            // Create exactly 4 hardcoded products for BlackView
-            const blackViewProducts = [
-              {
-                id: "gid://shopify/Product/8747271553348",
-                title: "BlackView™ – Pochette Zip Noire avec Fenêtre Transparente 10x15+3 (Lot de 50)",
-                handle: "blackview-pochette-zip-noire-avec-fenetre-transparente-10x15-3-lot-de-50",
-                description: "Pochettes zippées en noir avec fenêtre transparente, parfaites pour un look élégant et moderne.",
-                priceRange: {
-                  minVariantPrice: {
-                    amount: "45.00",
-                    currencyCode: "TND"
-                  }
-                },
-                images: {
-                  edges: [
-                    {
-                      node: {
-                        url: "https://cdn.shopify.com/s/files/1/0792/1761/6464/files/blackview-sample.jpg",
-                        altText: "BlackView Pochette"
-                      }
-                    }
-                  ]
-                },
-                variants: {
-                  edges: [
-                    {
-                      node: {
-                        id: "gid://shopify/ProductVariant/47295035146564",
-                        title: "Default Title",
-                        price: {
-                          amount: "45.00",
-                          currencyCode: "TND"
-                        },
-                        availableForSale: true
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                id: "gid://shopify/Product/8747271553349",
-                title: "BlackView™ – Pochette Zip Noire avec Fenêtre Transparente 12x20+4 (Lot de 50)",
-                handle: "blackview-pochette-zip-noire-avec-fenetre-transparente-12x20-4-lot-de-50",
-                description: "Pochettes zippées en noir avec fenêtre transparente, parfaites pour un look élégant et moderne.",
-                priceRange: {
-                  minVariantPrice: {
-                    amount: "50.00",
-                    currencyCode: "TND"
-                  }
-                },
-                images: {
-                  edges: [
-                    {
-                      node: {
-                        url: "https://cdn.shopify.com/s/files/1/0792/1761/6464/files/blackview-sample.jpg",
-                        altText: "BlackView Pochette"
-                      }
-                    }
-                  ]
-                },
-                variants: {
-                  edges: [
-                    {
-                      node: {
-                        id: "gid://shopify/ProductVariant/47295035146565",
-                        title: "Default Title",
-                        price: {
-                          amount: "50.00",
-                          currencyCode: "TND"
-                        },
-                        availableForSale: true
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                id: "gid://shopify/Product/8747271553350",
-                title: "BlackView™ – Pochette Zip Noire avec Fenêtre Transparente 14x20+4 (Lot de 50)",
-                handle: "blackview-pochette-zip-noire-avec-fenetre-transparente-14x20-4-lot-de-50",
-                description: "Pochettes zippées en noir avec fenêtre transparente, parfaites pour un look élégant et moderne.",
-                priceRange: {
-                  minVariantPrice: {
-                    amount: "55.00",
-                    currencyCode: "TND"
-                  }
-                },
-                images: {
-                  edges: [
-                    {
-                      node: {
-                        url: "https://cdn.shopify.com/s/files/1/0792/1761/6464/files/blackview-sample.jpg",
-                        altText: "BlackView Pochette"
-                      }
-                    }
-                  ]
-                },
-                variants: {
-                  edges: [
-                    {
-                      node: {
-                        id: "gid://shopify/ProductVariant/47295035146566",
-                        title: "Default Title",
-                        price: {
-                          amount: "55.00",
-                          currencyCode: "TND"
-                        },
-                        availableForSale: true
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                id: "gid://shopify/Product/8747271553351",
-                title: "BlackView™ – Pochette Zip Noire avec Fenêtre Transparente 15x22+4 (Lot de 50)",
-                handle: "blackview-pochette-zip-noire-avec-fenetre-transparente-15x22-4-lot-de-50",
-                description: "Pochettes zippées en noir avec fenêtre transparente, parfaites pour un look élégant et moderne.",
-                priceRange: {
-                  minVariantPrice: {
-                    amount: "60.00",
-                    currencyCode: "TND"
-                  }
-                },
-                images: {
-                  edges: [
-                    {
-                      node: {
-                        url: "https://cdn.shopify.com/s/files/1/0792/1761/6464/files/blackview-sample.jpg",
-                        altText: "BlackView Pochette"
-                      }
-                    }
-                  ]
-                },
-                variants: {
-                  edges: [
-                    {
-                      node: {
-                        id: "gid://shopify/ProductVariant/47295035146567",
-                        title: "Default Title",
-                        price: {
-                          amount: "60.00",
-                          currencyCode: "TND"
-                        },
-                        availableForSale: true
-                      }
-                    }
-                  ]
-                }
-              }
-            ];
-
-            // Ensure we have exactly 4 products
-            setProducts(blackViewProducts.slice(0, 4));
-            console.log('Set exactly 4 hardcoded products for BlackView collection');
-          } else {
-            setProducts([]);
-          }
+          setProducts([]);
         }
       } catch (error) {
-        console.error(`Error fetching products for collection ${handle}:`, error);
         setProducts([]);
       } finally {
         setIsLoading(false);
@@ -534,13 +193,13 @@ export default function CollectionPage() {
   return (
     <div className="bg-white">
       {/* Collection Banner */}
-      <div className={`w-full h-64 md:h-80 lg:h-96 flex items-center justify-center ${getCollectionBgColor(handle)}`}>
+      <div className={`w-full h-64 md:h-80 lg:h-96 flex items-center justify-center ${getCollectionBgColor(metadataHandle)}`}>
         <div className="text-center px-4">
-          <h1 className={`text-3xl md:text-4xl lg:text-5xl font-bold ${getTextColor(handle)} mb-4`}>
+          <h1 className={`text-3xl md:text-4xl lg:text-5xl font-bold ${getTextColor(metadataHandle)} mb-4`}>
             {title}
           </h1>
           {description && (
-            <p className={`${getTextColor(handle)} text-sm md:text-base max-w-3xl mx-auto opacity-80`}>
+            <p className={`${getTextColor(metadataHandle)} text-sm md:text-base max-w-3xl mx-auto opacity-80`}>
               {description}
             </p>
           )}

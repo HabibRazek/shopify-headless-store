@@ -9,7 +9,8 @@ export const signInSchema = z.object({
   password: z
     .string()
     .min(1, { message: 'Password is required' })
-    .min(6, { message: 'Password must be at least 6 characters' }),
+    .min(8, { message: 'Password must be at least 8 characters' })
+    .max(32, { message: 'Password must be less than 32 characters' }),
 });
 
 export type SignInFormValues = z.infer<typeof signInSchema>;
@@ -20,7 +21,8 @@ export const signUpSchema = z
     name: z
       .string()
       .min(1, { message: 'Name is required' })
-      .min(2, { message: 'Name must be at least 2 characters' }),
+      .min(2, { message: 'Name must be at least 2 characters' })
+      .max(50, { message: 'Name must be less than 50 characters' }),
     email: z
       .string()
       .min(1, { message: 'Email is required' })
@@ -28,7 +30,8 @@ export const signUpSchema = z
     password: z
       .string()
       .min(1, { message: 'Password is required' })
-      .min(6, { message: 'Password must be at least 6 characters' }),
+      .min(8, { message: 'Password must be at least 8 characters' })
+      .max(32, { message: 'Password must be less than 32 characters' }),
     confirmPassword: z
       .string()
       .min(1, { message: 'Please confirm your password' }),

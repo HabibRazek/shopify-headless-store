@@ -1,15 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createShopifyOrder } from '@/lib/shopifyAdmin';
-import { getServerSession } from 'next-auth';
+import { auth } from '@/auth';
 import { createOrUpdateShopifyCustomer } from '@/lib/shopifyCustomer';
-
-// Simple auth options for server-side session checking
-const authOptions = {
-  session: {
-    strategy: "jwt" as const,
-  },
-  secret: process.env.NEXTAUTH_SECRET || "fallback-secret-for-build",
-};
 
 export async function POST(request: NextRequest) {
   try {
@@ -121,7 +113,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Get the current user session
-    const session = await getServerSession(authOptions);
+    const session = await auth();
 
     // Create or update Shopify customer
     let shopifyCustomerId = null;

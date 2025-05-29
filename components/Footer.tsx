@@ -58,26 +58,19 @@ export default function Footer() {
     }
 
     return (
-        <footer className="relative text-white pt-10 pb-6 overflow-hidden">
-            {/* Innovative Background */}
+        <footer className="relative text-green-800 pt-16 pb-8 overflow-hidden">
+            {/* Simple Soft Background */}
             <div className="absolute inset-0 -z-10">
-                {/* Main gradient background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-green-800 via-green-700 to-green-900"></div>
+                {/* Main soft gradient background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-green-50 via-white to-green-50"></div>
 
-                {/* Animated gradient overlay */}
-                <div className="absolute inset-0 opacity-30 bg-[linear-gradient(40deg,transparent_25%,rgba(68,64,60,0.2)_50%,transparent_75%)] bg-[length:20px_20px] animate-gradient-shift"></div>
-
-                {/* Mesh gradient effect */}
-                <div className="absolute inset-0 opacity-40">
-                    <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-gradient-radial from-green-400/20 to-transparent rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/3"></div>
-                    <div className="absolute bottom-0 left-0 w-2/3 h-2/3 bg-gradient-radial from-emerald-500/20 to-transparent rounded-full blur-3xl transform -translate-x-1/4 translate-y-1/4"></div>
-                    <div className="absolute top-1/2 left-1/3 w-1/2 h-1/2 bg-gradient-radial from-teal-400/20 to-transparent rounded-full blur-3xl transform -translate-y-1/2"></div>
+                {/* Soft floating elements */}
+                <div className="absolute inset-0 opacity-20">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-green-100 rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/3 animate-float"></div>
+                    <div className="absolute bottom-0 left-0 w-80 h-80 bg-green-200/50 rounded-full blur-3xl transform -translate-x-1/4 translate-y-1/4 animate-float" style={{ animationDelay: '3s' }}></div>
                 </div>
 
-                {/* Subtle pattern overlay */}
-                <div className="absolute inset-0 bg-[url('/footer-pattern.svg')] bg-repeat opacity-5"></div>
-
-                {/* Glass highlight at the top */}
+                {/* Soft top border */}
                 <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-green-300/50 to-transparent"></div>
             </div>
 
@@ -90,7 +83,7 @@ export default function Footer() {
                     viewport={{ once: true, amount: 0.1 }}
                 >
                     {/* Contact Information */}
-                    <motion.div className="lg:col-span-2 bg-white/5 backdrop-blur-sm rounded-2xl p-4 shadow-lg" variants={itemVariants}>
+                    <motion.div className="lg:col-span-2 bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-green-200/50 hover:border-green-300/70 transition-all duration-300" variants={itemVariants}>
                         {/* Logo */}
                         <div className="flex items-center justify-start mb-4">
                             <Image
@@ -106,48 +99,54 @@ export default function Footer() {
                             </div>
                         </div>
 
-                        <h3 className="text-xl font-bold mb-3 border-b border-green-600/30 pb-2">Nous Contacter</h3>
+                        <h3 className="text-xl font-bold mb-4 border-b border-green-200/50 pb-3 flex items-center text-green-800">
+                            <div className="w-2 h-2 bg-green-500 rounded-full mr-3 animate-pulse" />
+                            Nous Contacter
+                        </h3>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                             <div className="flex items-center group">
-                                <div className="h-6 w-6 rounded-full bg-white/5 flex items-center justify-center mr-2 group-hover:bg-white/10 transition-colors">
-                                    <MapPin className="h-3 w-3 text-green-300" />
+                                <div className="h-6 w-6 rounded-full bg-green-100/50 flex items-center justify-center mr-2 group-hover:bg-green-200/50 transition-colors">
+                                    <MapPin className="h-3 w-3 text-green-600" />
                                 </div>
-                                <span className="text-gray-100 group-hover:text-white transition-colors">Jasmin 8000 Nabeul, Tunisie</span>
+                                <span className="text-green-700 group-hover:text-green-800 transition-colors">Jasmin 8000 Nabeul, Tunisie</span>
                             </div>
 
                             <div className="flex items-center group">
-                                <div className="h-6 w-6 rounded-full bg-white/5 flex items-center justify-center mr-2 group-hover:bg-white/10 transition-colors">
-                                    <Phone className="h-3 w-3 text-green-300" />
+                                <div className="h-6 w-6 rounded-full bg-green-100/50 flex items-center justify-center mr-2 group-hover:bg-green-200/50 transition-colors">
+                                    <Phone className="h-3 w-3 text-green-600" />
                                 </div>
                                 <div>
-                                    <a href="tel:+21650095115" className="text-gray-100 group-hover:text-white transition-colors">
+                                    <a href="tel:+21650095115" className="text-green-700 group-hover:text-green-800 transition-colors">
                                         +216 50 095 115
                                     </a>
                                 </div>
                             </div>
 
                             <div className="flex items-center group">
-                                <div className="h-6 w-6 rounded-full bg-white/5 flex items-center justify-center mr-2 group-hover:bg-white/10 transition-colors">
-                                    <Mail className="h-3 w-3 text-green-300" />
+                                <div className="h-6 w-6 rounded-full bg-green-100/50 flex items-center justify-center mr-2 group-hover:bg-green-200/50 transition-colors">
+                                    <Mail className="h-3 w-3 text-green-600" />
                                 </div>
-                                <a href="mailto:contact@packedin.com" className="text-gray-100 group-hover:text-white transition-colors">
+                                <a href="mailto:contact@packedin.com" className="text-green-700 group-hover:text-green-800 transition-colors">
                                     contact@packedin.com
                                 </a>
                             </div>
 
                             <div className="flex items-center group">
-                                <div className="h-6 w-6 rounded-full bg-white/5 flex items-center justify-center mr-2 group-hover:bg-white/10 transition-colors">
-                                    <Clock className="h-3 w-3 text-green-300" />
+                                <div className="h-6 w-6 rounded-full bg-green-100/50 flex items-center justify-center mr-2 group-hover:bg-green-200/50 transition-colors">
+                                    <Clock className="h-3 w-3 text-green-600" />
                                 </div>
-                                <span className="text-gray-100 group-hover:text-white transition-colors">Lun-Ven: 8h00 - 17h00</span>
+                                <span className="text-green-700 group-hover:text-green-800 transition-colors">Lun-Ven: 8h00 - 17h00</span>
                             </div>
                         </div>
                     </motion.div>
 
                     {/* Quick Links */}
-                    <motion.div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 shadow-lg" variants={itemVariants}>
-                        <h3 className="text-xl font-bold mb-3 pb-2 border-b border-green-600/30">Liens Rapides</h3>
+                    <motion.div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-green-200/50 hover:border-green-300/70 transition-all duration-300" variants={itemVariants}>
+                        <h3 className="text-xl font-bold mb-4 pb-3 border-b border-green-200/50 flex items-center text-green-800">
+                            <div className="w-2 h-2 bg-green-500 rounded-full mr-3 animate-pulse" />
+                            Liens Rapides
+                        </h3>
                         <div className="grid grid-cols-2 gap-2 text-sm">
                             {[
                                 { href: "/products", label: "Nos Produits" },
@@ -160,9 +159,9 @@ export default function Footer() {
                                 <Link
                                     key={index}
                                     href={link.href}
-                                    className="text-gray-100 hover:text-white transition-colors flex items-center group"
+                                    className="text-green-700 hover:text-green-800 transition-colors flex items-center group"
                                 >
-                                    <ArrowRight className="h-3 w-3 mr-0 opacity-0 group-hover:mr-1 group-hover:opacity-100 transition-all duration-300 text-green-300" />
+                                    <ArrowRight className="h-3 w-3 mr-0 opacity-0 group-hover:mr-1 group-hover:opacity-100 transition-all duration-300 text-green-500" />
                                     {link.label}
                                 </Link>
                             ))}
@@ -170,8 +169,11 @@ export default function Footer() {
                     </motion.div>
 
                     {/* Social Media & Newsletter */}
-                    <motion.div className="bg-white/5 backdrop-blur-sm rounded-2xl p-4 shadow-lg" variants={itemVariants}>
-                        <h3 className="text-xl font-bold mb-3 pb-2 border-b border-green-600/30">Suivez-Nous</h3>
+                    <motion.div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-green-200/50 hover:border-green-300/70 transition-all duration-300" variants={itemVariants}>
+                        <h3 className="text-xl font-bold mb-4 pb-3 border-b border-green-200/50 flex items-center text-green-800">
+                            <div className="w-2 h-2 bg-green-500 rounded-full mr-3 animate-pulse" />
+                            Suivez-Nous
+                        </h3>
                         <div className="flex space-x-3 mb-4">
                             {[
                                 { icon: <FacebookIcon className="h-4 w-4" />, label: "Facebook", href: "#" },
@@ -181,7 +183,7 @@ export default function Footer() {
                                 <a
                                     key={index}
                                     href={social.href}
-                                    className="bg-white/10 hover:bg-green-500/30 h-8 w-8 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-md hover:shadow-green-500/20"
+                                    className="bg-green-100/50 hover:bg-green-200/70 text-green-600 hover:text-green-700 h-8 w-8 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-md hover:shadow-green-500/20"
                                     aria-label={social.label}
                                 >
                                     <span className="sr-only">{social.label}</span>
@@ -191,22 +193,22 @@ export default function Footer() {
                         </div>
 
                         <div>
-                            <h4 className="text-sm font-semibold mb-2 flex items-center">
-                                <Send className="h-4 w-4 mr-1 text-green-300" />
+                            <h4 className="text-sm font-semibold mb-2 flex items-center text-green-800">
+                                <Send className="h-4 w-4 mr-1 text-green-600" />
                                 Newsletter
                             </h4>
                             <form onSubmit={handleSubmit} className="flex space-x-2">
                                 <Input
                                     type="email"
                                     placeholder="Votre email"
-                                    className="bg-white/10 border-white/20 text-white placeholder:text-gray-300 focus:border-green-400 h-8 text-sm"
+                                    className="bg-white/50 border-green-200/50 text-green-800 placeholder:text-green-600/70 focus:border-green-400 h-8 text-sm"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
                                 />
                                 <Button
                                     type="submit"
-                                    className="bg-green-500 hover:bg-green-400 text-white font-medium transition-all h-8 px-3 text-xs hover:shadow-md hover:shadow-green-500/20 hover:translate-y-[-1px]"
+                                    size="sm"
                                     disabled={isSubmitting}
                                 >
                                     OK
@@ -218,14 +220,14 @@ export default function Footer() {
 
                 {/* Divider */}
                 <div className="text-center my-6">
-                    <p className="text-sm text-gray-300/80 italic max-w-2xl mx-auto">
+                    <p className="text-sm text-green-700/80 italic max-w-2xl mx-auto">
                         "Chez Packedin, nous nous engageons à fournir des solutions d'emballage éco-responsables qui respectent l'environnement tout en répondant aux besoins de votre entreprise."
                     </p>
-                    <div className="h-px bg-gradient-to-r from-transparent via-green-500/30 to-transparent mt-6"></div>
+                    <div className="h-px bg-gradient-to-r from-transparent via-green-400/50 to-transparent mt-6"></div>
                 </div>
 
                 {/* Copyright */}
-                <div className="bg-white/5 backdrop-blur-sm rounded-xl p-3 shadow-lg flex flex-col md:flex-row justify-between items-center text-xs">
+                <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 shadow-lg border border-green-200/50 flex flex-col md:flex-row justify-between items-center text-sm">
                     <div className="flex items-center mb-3 md:mb-0">
                         <div className="mr-2">
                             <Image
@@ -236,7 +238,7 @@ export default function Footer() {
                                 className="opacity-90"
                             />
                         </div>
-                        <p className="text-gray-300">
+                        <p className="text-green-700">
                             © {currentYear} Packedin. Tous droits réservés.
                         </p>
                     </div>
@@ -249,7 +251,7 @@ export default function Footer() {
                             <Link
                                 key={index}
                                 href={link.href}
-                                className="text-gray-300 hover:text-white transition-colors hover:underline decoration-green-400 underline-offset-2"
+                                className="text-green-700 hover:text-green-800 transition-colors hover:underline decoration-green-500 underline-offset-2"
                             >
                                 {link.label}
                             </Link>
