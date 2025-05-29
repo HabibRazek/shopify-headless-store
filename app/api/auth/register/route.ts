@@ -1,10 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import { hash } from 'bcrypt';
-import { createOrUpdateShopifyCustomer } from '@/lib/shopifyCustomer';
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if we're in build time or missing database
+    if (!process.env.DATABASE_URL || process.env.SKIP_ENV_VALIDATION === '1') {
+      return NextResponse.json(
+        { message: 'Registration not available during build' },
+        { status: 503 }
+      );
+    }
+
+    // Dynamic imports to avoid build-time issues
+    const { default: prisma } = await import('@/lib/prisma');
+    const { hash } = await import('bcrypt');
+    const { createOrUpdateShopifyCustomer } = await import('@/lib/shopifyCustomer');
+
     const { name, email, password } = await request.json();
 
     // Validate input

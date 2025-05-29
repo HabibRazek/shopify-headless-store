@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createShopifyOrder } from '@/lib/shopifyAdmin';
 import { getServerSession } from 'next-auth';
+import { createOrUpdateShopifyCustomer } from '@/lib/shopifyCustomer';
+
 // Simple auth options for server-side session checking
 const authOptions = {
   session: {
@@ -8,8 +10,6 @@ const authOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET || "fallback-secret-for-build",
 };
-import prisma from '@/lib/prisma';
-import { createOrUpdateShopifyCustomer } from '@/lib/shopifyCustomer';
 
 export async function POST(request: NextRequest) {
   try {
@@ -146,7 +146,9 @@ export async function POST(request: NextRequest) {
         console.log('Using Shopify customer ID:', shopifyCustomerId);
 
         // If user is logged in but doesn't have a Shopify customer ID, update their record
-        if (session?.user?.id) {
+        if (session?.user?.id && process.env.DATABASE_URL && process.env.SKIP_ENV_VALIDATION !== '1') {
+          const { default: prisma } = await import('@/lib/prisma');
+
           const user = await prisma.user.findUnique({
             where: { id: session.user.id }
           });
@@ -183,8 +185,11 @@ export async function POST(request: NextRequest) {
 
     // Save the order to the database if user is logged in
     let savedOrder = null;
-    if (session?.user?.id) {
+    if (session?.user?.id && process.env.DATABASE_URL && process.env.SKIP_ENV_VALIDATION !== '1') {
       try {
+        // Dynamic import to avoid build-time issues
+        const { default: prisma } = await import('@/lib/prisma');
+
         // Create the order in the database
         savedOrder = await prisma.order.create({
           data: {
@@ -214,7 +219,7 @@ export async function POST(request: NextRequest) {
         // Continue with the order process even if saving to database fails
       }
     } else {
-      console.log('User not logged in, order not saved to database');
+      console.log('User not logged in or database not available, order not saved to database');
     }
 
     // Return success with order information

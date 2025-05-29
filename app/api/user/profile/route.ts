@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import prisma from '@/lib/prisma';
 // Simple auth options for server-side session checking
 const authOptions = {
   session: {
@@ -11,6 +10,17 @@ const authOptions = {
 
 export async function GET(request: NextRequest) {
   try {
+    // Check if we're in build time or missing database
+    if (!process.env.DATABASE_URL || process.env.SKIP_ENV_VALIDATION === '1') {
+      return NextResponse.json(
+        { message: 'Profile not available during build' },
+        { status: 503 }
+      );
+    }
+
+    // Dynamic import to avoid build-time issues
+    const { default: prisma } = await import('@/lib/prisma');
+
     const session = await getServerSession(authOptions);
 
     if (!session || !session.user) {
@@ -62,6 +72,17 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
+    // Check if we're in build time or missing database
+    if (!process.env.DATABASE_URL || process.env.SKIP_ENV_VALIDATION === '1') {
+      return NextResponse.json(
+        { message: 'Profile update not available during build' },
+        { status: 503 }
+      );
+    }
+
+    // Dynamic import to avoid build-time issues
+    const { default: prisma } = await import('@/lib/prisma');
+
     const session = await getServerSession(authOptions);
 
     if (!session || !session.user) {
