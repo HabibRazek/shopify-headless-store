@@ -37,6 +37,11 @@ const nextConfig: NextConfig = {
     } : false,
   },
 
+  // Skip environment validation during build
+  env: {
+    SKIP_ENV_VALIDATION: process.env.SKIP_ENV_VALIDATION || '0',
+  },
+
 
 };
 

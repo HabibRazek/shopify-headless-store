@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "bun run next dev",
     "build": "bun run next build",
+    "build:vercel": "SKIP_ENV_VALIDATION=1 bun run next build",
     "build:analyze": "ANALYZE=true bun run next build",
     "build:production": "NODE_ENV=production bun run next build",
     "start": "bun run next start",

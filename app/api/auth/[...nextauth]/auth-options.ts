@@ -4,9 +4,19 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcrypt";
 import { NextAuthOptions } from "next-auth";
+import { buildSafeAuthOptions } from "./build-safe-auth";
 
-export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
+// Check if we're in a build environment or missing critical env vars
+const isBuildTime = !process.env.DATABASE_URL || process.env.SKIP_ENV_VALIDATION === '1';
+
+// Create the auth options based on environment
+const createAuthOptions = (): NextAuthOptions => {
+  if (isBuildTime) {
+    return buildSafeAuthOptions;
+  }
+
+  return {
+    adapter: PrismaAdapter(prisma),
   providers: [
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
       ? [
@@ -16,47 +26,49 @@ export const authOptions: NextAuthOptions = {
           }),
         ]
       : []),
-    CredentialsProvider({
-      name: "credentials",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error("Email and password required");
-        }
-
-        try {
-          const user = await prisma.user.findUnique({
-            where: {
-              email: credentials.email,
-            },
-          });
-
-          if (!user || !user.password) {
-            throw new Error("Email does not exist");
+    ...(process.env.DATABASE_URL ? [
+      CredentialsProvider({
+        name: "credentials",
+        credentials: {
+          email: { label: "Email", type: "email" },
+          password: { label: "Password", type: "password" },
+        },
+        async authorize(credentials) {
+          if (!credentials?.email || !credentials?.password) {
+            throw new Error("Email and password required");
           }
 
-          const isPasswordValid = await compare(credentials.password, user.password);
+          try {
+            const user = await prisma.user.findUnique({
+              where: {
+                email: credentials.email,
+              },
+            });
 
-          if (!isPasswordValid) {
-            throw new Error("Invalid password");
+            if (!user || !user.password) {
+              throw new Error("Email does not exist");
+            }
+
+            const isPasswordValid = await compare(credentials.password, user.password);
+
+            if (!isPasswordValid) {
+              throw new Error("Invalid password");
+            }
+
+            return {
+              id: user.id,
+              email: user.email,
+              name: user.name,
+              image: user.image,
+              role: user.role,
+            };
+          } catch (error) {
+            console.error("Auth error:", error);
+            throw new Error("Authentication failed");
           }
-
-          return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            image: user.image,
-            role: user.role,
-          };
-        } catch (error) {
-          console.error("Auth error:", error);
-          throw new Error("Authentication failed");
-        }
-      },
-    }),
+        },
+      }),
+    ] : []),
   ],
   pages: {
     signIn: "/auth/signin",
@@ -83,4 +95,7 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET || "fallback-secret-for-build",
+  };
 };
+
+export const authOptions = createAuthOptions();
