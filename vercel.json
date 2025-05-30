@@ -1,5 +1,11 @@
 {
-  "buildCommand": "bun run build:vercel",
-  "installCommand": "bun install",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "functions": {
+    "app/api/auth/[...nextauth]/route.ts": {
+      "maxDuration": 30
+    }
+  },
+  "env": {
+    "NEXTAUTH_URL": "https://shopify-headless-store-sigma.vercel.app"
+  }
 }
