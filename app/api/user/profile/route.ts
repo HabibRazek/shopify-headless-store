@@ -3,10 +3,10 @@ import { auth } from '@/auth';
 
 export async function GET(request: NextRequest) {
   try {
-    // Check if we're in build time or missing database
-    if (!process.env.DATABASE_URL || process.env.SKIP_ENV_VALIDATION === '1') {
+    // Check if we're missing database
+    if (!process.env.DATABASE_URL) {
       return NextResponse.json(
-        { message: 'Profile not available during build' },
+        { message: 'Database not configured' },
         { status: 503 }
       );
     }

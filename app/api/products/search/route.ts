@@ -15,17 +15,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    console.log(`Searching products with query: ${query}`);
-    
     const { status, body } = await shopifyFetch({
       query: QUERY_PRODUCTS_BY_TITLE,
-      variables: { 
+      variables: {
         query: query,
-        first: 20 
+        first: 20
       },
     });
-
-    console.log('Shopify API response status:', status);
 
     if (status === 200) {
       return NextResponse.json(body);

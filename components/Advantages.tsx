@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Recycle, Lock, TrendingUp, DollarSign, ThumbsUp, Package, Sparkles, Star, Zap } from 'lucide-react';
 
@@ -17,7 +17,7 @@ export default function Advantages() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: false, amount: 0.3 });
 
-  const advantageCards: AdvantageCard[] = [
+  const advantageCards: AdvantageCard[] = useMemo(() => [
     {
       id: 1,
       title: "Réutilisable et refermable",
@@ -54,12 +54,26 @@ export default function Advantages() {
       description: "Nos pochettes ZIPBAGS® sont expédiés et stockés à plat, ce qui nécessite beaucoup moins d'espace d'entrepôt. De plus, la légèreté des sacs debout réduit considérablement les coûts d'expédition par rapport aux bouteilles, bocaux et autres contenants rigides.",
       icon: <Package className="h-6 w-6" />,
     }
-  ];
+  ], []);
+
+  // Function to shuffle the cards
+  const shuffleCards = useCallback(() => {
+    // Create a copy of the current cards
+    const currentCards = [...advantageCards];
+
+    // Fisher-Yates shuffle algorithm
+    for (let i = currentCards.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [currentCards[i], currentCards[j]] = [currentCards[j], currentCards[i]];
+    }
+
+    setShuffledCards(currentCards);
+  }, [advantageCards]);
 
   // Initialize shuffled cards
   useEffect(() => {
     setShuffledCards([...advantageCards]);
-  }, []);
+  }, [advantageCards]);
 
   // Shuffle cards when section comes into view
   useEffect(() => {
@@ -74,21 +88,7 @@ export default function Advantages() {
       // Reset shuffle state when out of view
       setHasShuffled(false);
     }
-  }, [isInView, hasShuffled]);
-
-  // Function to shuffle the cards
-  const shuffleCards = () => {
-    // Create a copy of the current cards
-    const currentCards = [...advantageCards];
-
-    // Fisher-Yates shuffle algorithm
-    for (let i = currentCards.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [currentCards[i], currentCards[j]] = [currentCards[j], currentCards[i]];
-    }
-
-    setShuffledCards(currentCards);
-  };
+  }, [isInView, hasShuffled, shuffleCards]);
 
 
 
