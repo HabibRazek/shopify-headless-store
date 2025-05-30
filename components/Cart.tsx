@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
 import { formatPrice } from '@/lib/utils';
-import CheckoutDialog from '@/components/CheckoutDialog';
+import CheckoutPopup from '@/components/CheckoutPopup';
 
 export default function Cart() {
   const [isOpen, setIsOpen] = useState(false);
@@ -153,10 +153,10 @@ export default function Cart() {
         </div>
       )}
 
-      {/* Checkout Dialog */}
-      <CheckoutDialog
-        open={showCheckout}
-        onOpenChange={setShowCheckout}
+      {/* Checkout Popup */}
+      <CheckoutPopup
+        isOpen={showCheckout}
+        onClose={() => setShowCheckout(false)}
       />
     </div>
   );

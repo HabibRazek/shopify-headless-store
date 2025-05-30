@@ -5,8 +5,7 @@ import { ShopProvider } from "@/context/ShopContext";
 import { CartProvider } from "@/context/CartContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as SonnerToaster } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 import { Providers } from "./providers";
 
 const geistSans = localFont({
@@ -44,7 +43,6 @@ export default function RootLayout({
               </main>
               <Footer />
               <Toaster />
-              <SonnerToaster position="top-center" richColors closeButton />
             </CartProvider>
           </ShopProvider>
         </Providers>

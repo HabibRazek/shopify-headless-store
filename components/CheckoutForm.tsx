@@ -115,6 +115,10 @@ export default function CheckoutForm({ onClose }: { onClose: () => void }) {
         throw new Error(data.error || 'Error completing checkout');
       }
 
+      if (!data.success) {
+        throw new Error(data.error || 'Order creation failed');
+      }
+
       // Set the order number from the response
       setOrderNumber(data.order?.orderNumber || 'N/A');
 

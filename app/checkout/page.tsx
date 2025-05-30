@@ -8,8 +8,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { formatPrice } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Trash2, ArrowLeft, UserIcon } from 'lucide-react';
+import { Trash2, ArrowLeft, UserIcon, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
+import CheckoutPopup from '@/components/CheckoutPopup';
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -29,6 +30,7 @@ export default function CheckoutPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoadingUserData, setIsLoadingUserData] = useState(false);
   const [userDataLoaded, setUserDataLoaded] = useState(false);
+  const [showInnovativeCheckout, setShowInnovativeCheckout] = useState(false);
 
   // Delivery fee in TND
   const deliveryFee = 8;
@@ -188,12 +190,16 @@ export default function CheckoutPage() {
         body: JSON.stringify(orderData),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to create order');
-      }
-
       const result = await response.json();
       console.log('Order API response:', result);
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to create order');
+      }
+
+      if (!result.success) {
+        throw new Error(result.error || 'Order creation failed');
+      }
 
       // Store order details in localStorage for the success page
       localStorage.setItem('lastOrder', JSON.stringify(result));
@@ -454,13 +460,24 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                <div className="mt-8">
+                <div className="mt-8 space-y-3">
+                  {/* Innovative Checkout Button */}
+                  <Button
+                    type="button"
+                    onClick={() => setShowInnovativeCheckout(true)}
+                    className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-3 flex items-center justify-center gap-2"
+                  >
+                    <Sparkles className="h-4 w-4" />
+                    Essayer le nouveau checkout
+                  </Button>
+
+                  {/* Traditional Checkout Button */}
                   <Button
                     type="submit"
                     className="w-full bg-black hover:bg-gray-800 text-white py-3"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? 'Traitement en cours...' : 'Passer la commande'}
+                    {isSubmitting ? 'Traitement en cours...' : 'Passer la commande (traditionnel)'}
                   </Button>
                 </div>
               </div>
@@ -468,6 +485,12 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
+
+      {/* Innovative Checkout Popup */}
+      <CheckoutPopup
+        isOpen={showInnovativeCheckout}
+        onClose={() => setShowInnovativeCheckout(false)}
+      />
     </div>
   );
 }

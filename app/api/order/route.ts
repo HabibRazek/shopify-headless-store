@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
   try {
     // Parse the request body
     const body = await request.json();
-    const { customerInfo, cart } = body;
+    const { customerInfo, cart, userId } = body;
 
     // Log the received data for debugging
     console.log('Received order data:', {
@@ -15,7 +15,13 @@ export async function POST(request: NextRequest) {
       cartReceived: !!cart,
       cartIsArray: Array.isArray(cart),
       cartLength: cart ? (Array.isArray(cart) ? cart.length : 'not an array') : 'no cart',
-      bodyKeys: Object.keys(body)
+      bodyKeys: Object.keys(body),
+      customerInfo: customerInfo ? {
+        firstName: customerInfo.firstName,
+        lastName: customerInfo.lastName,
+        email: customerInfo.email,
+        hasAddress: !!customerInfo.address
+      } : null
     });
 
     // Validate required fields
@@ -28,13 +34,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate customer info fields
-    const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'address', 'city', 'state', 'postalCode', 'country'];
+    const requiredFields = ['firstName', 'lastName', 'email', 'phone', 'address', 'city'];
     const missingFields = requiredFields.filter(field => !customerInfo[field]);
 
     if (missingFields.length > 0) {
-      console.log('Validation failed: Missing customer fields:', missingFields);
+      console.log('Validation failed: Missing required fields:', missingFields);
       return NextResponse.json(
-        { error: `Missing required customer information: ${missingFields.join(', ')}` },
+        { error: `Missing required fields: ${missingFields.join(', ')}` },
         { status: 400 }
       );
     }
@@ -47,7 +53,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate each cart item has the minimum required fields
+    // Validate cart items
     try {
       // Log the cart items for debugging
       console.log('Cart items to validate:', cart.map(item => ({
@@ -85,7 +91,8 @@ export async function POST(request: NextRequest) {
       console.log('Valid cart items:', cart.map(item => ({
         title: item.title,
         price: item.price,
-        quantity: item.quantity
+        quantity: item.quantity,
+        variantId: item.variantId || (item as any).id
       })));
     } catch (error) {
       console.error('Error validating cart items:', error);
@@ -159,13 +166,32 @@ export async function POST(request: NextRequest) {
       // Continue with order creation even if customer creation fails
     }
 
-    // Create the order in Shopify (or simulate if no API token)
+    // Create the order in Shopify
+    console.log('Creating Shopify order...');
     const orderData = {
       customerInfo,
       cart,
       shopifyCustomerId // Pass the Shopify customer ID to link the order
     };
     const shopifyOrderResult = await createShopifyOrder(orderData);
+
+    console.log('Shopify order result:', {
+      success: shopifyOrderResult.success,
+      simulated: shopifyOrderResult.simulated,
+      orderName: shopifyOrderResult.order?.name,
+      errors: shopifyOrderResult.errors
+    });
+
+    if (!shopifyOrderResult.success) {
+      console.error('Failed to create Shopify order:', shopifyOrderResult.errors);
+      return NextResponse.json(
+        {
+          error: 'Failed to create order in Shopify: ' + (shopifyOrderResult.errors?.join(', ') || 'Unknown error'),
+          details: shopifyOrderResult.errors
+        },
+        { status: 500 }
+      );
+    }
 
     // Generate a random order number if not provided by Shopify
     const orderNumber = shopifyOrderResult.order?.name?.replace('#', '') ||

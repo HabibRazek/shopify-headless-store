@@ -18,7 +18,7 @@ export async function createOrUpdateShopifyCustomer(customerData: {
 }) {
   try {
     // Check if Shopify credentials are available
-    if (!process.env.SHOPIFY_STORE_DOMAIN || !process.env.SHOPIFY_ADMIN_ACCESS_TOKEN) {
+    if (!process.env.SHOPIFY_ADMIN_DOMAIN || !process.env.SHOPIFY_ADMIN_ACCESS_TOKEN) {
       console.warn('Shopify credentials not available, skipping customer creation');
       return null;
     }
@@ -50,7 +50,7 @@ export async function createOrUpdateShopifyCustomer(customerData: {
 export async function findCustomerByEmail(email: string) {
   try {
     // Check if Shopify credentials are available
-    if (!process.env.SHOPIFY_STORE_DOMAIN || !process.env.SHOPIFY_ADMIN_ACCESS_TOKEN) {
+    if (!process.env.SHOPIFY_ADMIN_DOMAIN || !process.env.SHOPIFY_ADMIN_ACCESS_TOKEN) {
       return null;
     }
 
@@ -119,7 +119,7 @@ export async function createShopifyCustomer(customerData: {
 }) {
   try {
     // Check if Shopify credentials are available
-    if (!process.env.SHOPIFY_STORE_DOMAIN || !process.env.SHOPIFY_ADMIN_ACCESS_TOKEN) {
+    if (!process.env.SHOPIFY_ADMIN_DOMAIN || !process.env.SHOPIFY_ADMIN_ACCESS_TOKEN) {
       return null;
     }
 
@@ -214,7 +214,7 @@ export async function updateShopifyCustomer(
 ) {
   try {
     // Check if Shopify credentials are available
-    if (!process.env.SHOPIFY_STORE_DOMAIN || !process.env.SHOPIFY_ADMIN_ACCESS_TOKEN) {
+    if (!process.env.SHOPIFY_ADMIN_DOMAIN || !process.env.SHOPIFY_ADMIN_ACCESS_TOKEN) {
       return null;
     }
 

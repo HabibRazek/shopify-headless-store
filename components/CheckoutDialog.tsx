@@ -180,8 +180,11 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
       const data = await response.json();
 
       if (!response.ok) {
-        console.error('Server returned error:', data);
         throw new Error(data.error || 'Error completing checkout');
+      }
+
+      if (!data.success) {
+        throw new Error(data.error || 'Order creation failed');
       }
 
       // Set the order number from the response
