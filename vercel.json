@@ -1,13 +1,5 @@
 {
   "buildCommand": "bun run build:vercel",
   "installCommand": "bun install",
-  "framework": "nextjs",
-  "env": {
-    "SKIP_ENV_VALIDATION": "1"
-  },
-  "build": {
-    "env": {
-      "SKIP_ENV_VALIDATION": "1"
-    }
-  }
+  "framework": "nextjs"
 }
