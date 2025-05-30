@@ -21,6 +21,9 @@ export function SignInForm() {
   const { toast } = useToast();
   const callbackUrl = searchParams.get('callbackUrl') || '/';
 
+  // Check if we're in production
+  const isProduction = process.env.NODE_ENV === 'production';
+
   const {
     register,
     handleSubmit,
@@ -90,77 +93,91 @@ export function SignInForm() {
         variant="outline"
         onClick={handleGoogleSignIn}
         disabled={isLoading}
-        className="w-full"
+        className="w-full h-12 text-base"
       >
-        <FcGoogle className="mr-2 h-4 w-4" />
-        Continue with Google
+        <FcGoogle className="mr-3 h-5 w-5" />
+        {isLoading ? 'Signing in...' : 'Continue with Google'}
       </Button>
 
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
-        </div>
-      </div>
-
-      {/* Credentials Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+      {/* Only show credentials form in development */}
+      {!isProduction && (
+        <>
           <div className="relative">
-            <MailIcon className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-            <Input
-              id="email"
-              type="email"
-              placeholder="john@example.com"
-              className="pl-10"
-              {...register('email')}
-              disabled={isLoading}
-            />
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                Or continue with
+              </span>
+            </div>
           </div>
-          {errors.email && (
-            <p className="text-sm text-red-600">{errors.email.message}</p>
-          )}
-        </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
-          <div className="relative">
-            <LockIcon className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-            <Input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Your password"
-              className="pl-10 pr-10"
-              {...register('password')}
-              disabled={isLoading}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-              disabled={isLoading}
-            >
-              {showPassword ? (
-                <EyeOffIcon className="h-4 w-4" />
-              ) : (
-                <EyeIcon className="h-4 w-4" />
+          {/* Credentials Form - Development Only */}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <div className="relative">
+                <MailIcon className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="john@example.com"
+                  className="pl-10"
+                  {...register('email')}
+                  disabled={isLoading}
+                />
+              </div>
+              {errors.email && (
+                <p className="text-sm text-red-600">{errors.email.message}</p>
               )}
-            </button>
-          </div>
-          {errors.password && (
-            <p className="text-sm text-red-600">{errors.password.message}</p>
-          )}
-        </div>
+            </div>
 
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? 'Signing in...' : 'Sign In'}
-        </Button>
-      </form>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
+                <LockIcon className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Your password"
+                  className="pl-10 pr-10"
+                  {...register('password')}
+                  disabled={isLoading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                  disabled={isLoading}
+                >
+                  {showPassword ? (
+                    <EyeOffIcon className="h-4 w-4" />
+                  ) : (
+                    <EyeIcon className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
+              {errors.password && (
+                <p className="text-sm text-red-600">{errors.password.message}</p>
+              )}
+            </div>
+
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? 'Signing in...' : 'Sign In'}
+            </Button>
+          </form>
+        </>
+      )}
+
+      {/* Production message */}
+      {isProduction && (
+        <div className="text-center">
+          <p className="text-sm text-gray-600">
+            Secure authentication powered by Google
+          </p>
+        </div>
+      )}
     </div>
   );
 }
