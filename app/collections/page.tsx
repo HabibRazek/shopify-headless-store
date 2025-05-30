@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -28,7 +28,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 
-// Collection Card Component
+// Enhanced Collection Card Component
 function CollectionCard({ collection, viewMode, variants }: any) {
   const productCount = collection.productCount || 0;
   const hasProducts = productCount > 0;
@@ -36,73 +36,95 @@ function CollectionCard({ collection, viewMode, variants }: any) {
   return (
     <motion.div variants={variants}>
       <Link href={`/collections/${collection.handle}`}>
-        <Card className={`group overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
+        <Card className={`group overflow-hidden transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 bg-white/80 backdrop-blur-sm border border-gray-200/50 hover:border-green-300/50 ${
           viewMode === 'list' ? 'flex' : ''
         }`}>
-          {/* Image */}
+          {/* Enhanced Image Section */}
           <div className={`relative overflow-hidden ${
-            viewMode === 'list' ? 'w-48 h-32' : 'h-64'
+            viewMode === 'list' ? 'w-48 h-32' : 'h-72'
           }`}>
             {collection.image?.url ? (
               <Image
                 src={collection.image.url}
                 alt={collection.title}
                 fill
-                className="object-cover transition-transform duration-500 group-hover:scale-110"
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
                 sizes={viewMode === 'list' ? '192px' : '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'}
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                <Package className="h-12 w-12 text-gray-400" />
+              <div className="w-full h-full bg-gradient-to-br from-green-100 via-emerald-50 to-green-100 flex items-center justify-center">
+                <Package className="h-16 w-16 text-green-400" />
               </div>
             )}
 
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+            {/* Subtle Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-            {/* Product Count Badge */}
-            <div className="absolute top-3 right-3">
-              <Badge variant={hasProducts ? "default" : "secondary"} className="bg-white/90 text-gray-900">
+            {/* Enhanced Product Count Badge */}
+            <div className="absolute top-4 right-4">
+              <Badge className={`${hasProducts ? 'bg-green-600 text-white' : 'bg-gray-500 text-white'} shadow-lg backdrop-blur-sm`}>
+                <ShoppingBag className="h-3 w-3 mr-1" />
                 {productCount} {productCount === 1 ? 'produit' : 'produits'}
               </Badge>
             </div>
 
-            {/* Trending Badge */}
+            {/* Enhanced Trending Badge */}
             {productCount > 10 && (
-              <div className="absolute top-3 left-3">
-                <Badge className="bg-green-500 text-white">
+              <div className="absolute top-4 left-4">
+                <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-lg">
                   <TrendingUp className="h-3 w-3 mr-1" />
                   Populaire
                 </Badge>
               </div>
             )}
+
+            {/* Quick View Button */}
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500">
+              <Button
+                size="sm"
+                className="bg-white/95 text-green-700 hover:bg-white border border-green-300 shadow-xl backdrop-blur-sm"
+              >
+                <Eye className="mr-2 h-4 w-4" />
+                Explorer
+              </Button>
+            </div>
           </div>
 
-          {/* Content */}
+          {/* Enhanced Content */}
           <CardContent className={`p-6 ${viewMode === 'list' ? 'flex-1' : ''}`}>
-            <div className="flex items-start justify-between mb-2">
-              <h3 className="text-xl font-bold text-gray-900 group-hover:text-green-600 transition-colors line-clamp-2">
+            <div className="flex items-start justify-between mb-3">
+              <h3 className="text-xl font-bold text-gray-900 group-hover:text-green-600 transition-colors duration-300 leading-tight">
                 {collection.title}
               </h3>
               <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-green-600 group-hover:translate-x-1 transition-all duration-300 flex-shrink-0 ml-2" />
             </div>
 
             {collection.description && (
-              <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+              <p className="text-gray-600 text-sm leading-relaxed mb-4" style={{
+                display: '-webkit-box',
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden'
+              }}>
                 {collection.description.replace(/<[^>]*>/g, '')}
               </p>
             )}
 
+            {/* Enhanced Features */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Eye className="h-4 w-4 text-gray-400" />
-                <span className="text-sm text-gray-500">Voir la collection</span>
+                <div className="flex items-center gap-1">
+                  <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                  <div className="h-2 w-2 rounded-full bg-green-400"></div>
+                  <div className="h-2 w-2 rounded-full bg-green-300"></div>
+                </div>
+                <span className="text-sm text-gray-600 font-medium">Collection Premium</span>
               </div>
 
               {hasProducts && (
-                <div className="flex items-center gap-1">
-                  <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                  <span className="text-sm font-medium text-gray-700">Disponible</span>
+                <div className="flex items-center gap-1 bg-green-50 px-2 py-1 rounded-full">
+                  <Star className="h-4 w-4 text-green-600 fill-current" />
+                  <span className="text-sm font-semibold text-green-700">Disponible</span>
                 </div>
               )}
             </div>
@@ -197,69 +219,93 @@ function ModernCollections() {
 
   return (
     <div className="space-y-8">
-      {/* Search and Filters */}
+      {/* Enhanced Search and Filters */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="mb-8"
+        className="mb-12"
       >
-        <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-          {/* Search */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              type="text"
-              placeholder="Rechercher une collection..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
+        {/* Section Header */}
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Explorer nos Collections</h2>
+          <p className="text-gray-600">Trouvez la collection parfaite pour vos besoins</p>
+        </div>
 
-          {/* Controls */}
-          <div className="flex items-center gap-2">
-            {/* Sort */}
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
-              className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-            >
-              {sortOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+        {/* Enhanced Search Bar */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-200/50 mb-6">
+          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+            {/* Search */}
+            <div className="relative flex-1 max-w-lg">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+              <Input
+                type="text"
+                placeholder="Rechercher une collection par nom ou type..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-12 pr-4 py-3 text-base border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              />
+            </div>
 
-            {/* View Mode */}
-            <div className="flex border border-gray-300 rounded-md overflow-hidden">
-              <Button
-                variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('grid')}
-                className="rounded-none"
+            {/* Controls */}
+            <div className="flex items-center gap-3">
+              {/* Sort */}
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
               >
-                <Grid3X3 className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === 'list' ? 'default' : 'ghost'}
-                size="sm"
-                onClick={() => setViewMode('list')}
-                className="rounded-none"
-              >
-                <List className="h-4 w-4" />
-              </Button>
+                {sortOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+
+              {/* View Mode */}
+              <div className="flex bg-gray-100 rounded-xl p-1">
+                <Button
+                  variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('grid')}
+                  className={`rounded-lg ${viewMode === 'grid' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'}`}
+                >
+                  <Grid3X3 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === 'list' ? 'default' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('list')}
+                  className={`rounded-lg ${viewMode === 'list' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'}`}
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Results count */}
-        {searchTerm && (
-          <div className="mt-4 text-sm text-gray-600">
-            {filteredCollections.length} collection(s) trouvée(s) pour "{searchTerm}"
+        {/* Enhanced Results count */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span className="text-sm font-semibold text-gray-700">
+              {filteredCollections.length} collection{filteredCollections.length !== 1 ? 's' : ''}
+              {searchTerm ? ` trouvée${filteredCollections.length !== 1 ? 's' : ''} pour "${searchTerm}"` : ' disponible' + (filteredCollections.length !== 1 ? 's' : '')}
+            </span>
           </div>
-        )}
+
+          {searchTerm && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSearchTerm('')}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              Effacer la recherche
+            </Button>
+          )}
+        </div>
       </motion.div>
 
       {/* Collections Grid/List */}
@@ -311,69 +357,111 @@ export default function CollectionsPage() {
   const { collections, total } = useCollections(true, 20, 10);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden bg-white">
-        <div className="absolute inset-0">
-          <div className="absolute top-[-10rem] right-[5rem] h-[30rem] w-[70rem] bg-gradient-to-b from-[#bdffad] to-transparent rounded-full blur-[9rem] opacity-70" />
-          <div className="absolute inset-0 bg-[url('/pattern-bg.png')] opacity-5" />
+    <div className="min-h-screen relative">
+      {/* Innovative Background */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-green-50/30" />
+        <div className="absolute inset-0 opacity-[0.02]">
+          <div className="h-full w-full" style={{
+            backgroundImage: `
+              linear-gradient(90deg, #10b981 1px, transparent 1px),
+              linear-gradient(180deg, #10b981 1px, transparent 1px)
+            `,
+            backgroundSize: '40px 40px'
+          }} />
         </div>
-        <div className="relative mx-auto max-w-7xl px-4 py-24 lg:py-32 sm:px-6 lg:px-8">
+        {/* Floating Elements */}
+        <div className="absolute top-20 right-20 w-32 h-32 bg-gradient-to-r from-green-400/10 to-blue-400/10 rounded-full blur-2xl animate-pulse" />
+        <div className="absolute bottom-20 left-20 w-40 h-40 bg-gradient-to-r from-purple-400/10 to-green-400/10 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '2s' }} />
+      </div>
+
+      {/* Innovative Hero Section */}
+      <div className="relative z-10 overflow-hidden">
+        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-3xl"
+            transition={{ duration: 0.8 }}
+            className="text-center"
           >
-            <div className="inline-block mb-4">
-              <div className="bg-white/80 backdrop-blur-sm px-4 py-1 rounded-full text-green-700 text-sm font-medium shadow-sm">
-                Nos collections
-              </div>
+            {/* Premium Badge */}
+            <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-xl px-6 py-3 rounded-full shadow-lg border border-green-200/50 mb-8">
+              <Star className="w-5 h-5 text-yellow-400 fill-current" />
+              <span className="text-sm font-bold text-green-800 tracking-wider uppercase">
+                Collections Premium • Innovation • Excellence
+              </span>
+              <Package className="w-5 h-5 text-green-600" />
             </div>
-            <h1 className="text-4xl font-bold tracking-tight text-gray-800 sm:text-5xl lg:text-6xl">
-              Collections <span className="block text-green-700">ZIPBAGS®</span>
+
+            {/* Main Title */}
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6">
+              <span className="block text-gray-900 mb-2">Nos</span>
+              <span className="block bg-gradient-to-r from-green-600 via-emerald-500 to-green-600 bg-clip-text text-transparent">
+                COLLECTIONS
+              </span>
             </h1>
-            <p className="mt-6 max-w-2xl text-xl text-gray-700">
-              Découvrez notre gamme complète de pochettes zippées stand-up (Doypack) conçues pour divers usages alimentaires et non alimentaires.
+
+            <div className="w-32 h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent rounded-full mx-auto mb-8" />
+
+            <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-12">
+              Découvrez notre gamme exclusive de pochettes ZIPBAGS® innovantes, conçues pour révolutionner
+              vos solutions d'emballage avec style et performance
             </p>
 
-            {/* Stats */}
-            <div className="mt-8 flex items-center gap-6 text-sm text-gray-600">
-              <div className="flex items-center gap-2">
-                <Package className="h-5 w-5 text-green-600" />
-                <span className="font-medium">{total || 0} collections</span>
+            {/* Enhanced Stats */}
+            <div className="flex flex-wrap justify-center items-center gap-8 mb-12">
+              <div className="bg-white/80 backdrop-blur-sm px-6 py-4 rounded-2xl shadow-lg border border-gray-200/50">
+                <div className="flex items-center gap-3">
+                  <Package className="h-6 w-6 text-green-600" />
+                  <div className="text-left">
+                    <div className="text-2xl font-bold text-gray-900">{total || 0}</div>
+                    <div className="text-sm text-gray-600">Collections</div>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <ShoppingBag className="h-5 w-5 text-green-600" />
-                <span className="font-medium">
-                  {collections.reduce((acc: number, col: any) => acc + (col.productCount || 0), 0)} produits
-                </span>
+
+              <div className="bg-white/80 backdrop-blur-sm px-6 py-4 rounded-2xl shadow-lg border border-gray-200/50">
+                <div className="flex items-center gap-3">
+                  <ShoppingBag className="h-6 w-6 text-blue-600" />
+                  <div className="text-left">
+                    <div className="text-2xl font-bold text-gray-900">
+                      {collections.reduce((acc: number, col: any) => acc + (col.productCount || 0), 0)}
+                    </div>
+                    <div className="text-sm text-gray-600">Produits</div>
+                  </div>
+                </div>
               </div>
+
+              <div className="bg-white/80 backdrop-blur-sm px-6 py-4 rounded-2xl shadow-lg border border-gray-200/50">
+                <div className="flex items-center gap-3">
+                  <TrendingUp className="h-6 w-6 text-purple-600" />
+                  <div className="text-left">
+                    <div className="text-2xl font-bold text-gray-900">100%</div>
+                    <div className="text-sm text-gray-600">Qualité</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+                <Eye className="mr-2 h-5 w-5" />
+                Explorer les Collections
+              </Button>
+              <Link href="/products">
+                <Button size="lg" variant="outline" className="border-green-300 text-green-700 hover:bg-green-50 px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+                  <ShoppingBag className="mr-2 h-5 w-5" />
+                  Voir tous les Produits
+                </Button>
+              </Link>
             </div>
           </motion.div>
         </div>
       </div>
 
-      {/* Navigation Section */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <nav className="flex justify-center space-x-1 p-2" aria-label="Tabs">
-            <div className="bg-green-50 text-green-700 shadow-sm rounded-lg py-3 px-6 font-medium text-sm transition-all duration-200 flex items-center space-x-2">
-              <Package className="h-5 w-5" />
-              <span>Nos Collections</span>
-            </div>
-            <Link
-              href="/products"
-              className="bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-700 rounded-lg py-3 px-6 font-medium text-sm transition-all duration-200 flex items-center space-x-2"
-            >
-              <ShoppingBag className="h-5 w-5" />
-              <span>Tous les Produits</span>
-            </Link>
-          </nav>
-        </div>
-      </div>
-
       {/* Collections Section */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
         <ModernCollections />
       </div>
     </div>

@@ -81,13 +81,24 @@ export default function ProductFilters({ products, onFilterChange }: ProductFilt
         console.log(`Extracted size from "${node.title}": ${Array.from(sizes).join(', ')}`);
       }
 
-      // Extract categories from collection handles or tags
+      // Extract categories from collection handles or tags - Complete collection list
       if (node.title.toLowerCase().includes('kraftview')) categories.add('KraftView');
       if (node.title.toLowerCase().includes('whiteview')) categories.add('WhiteView');
       if (node.title.toLowerCase().includes('kraftalu')) categories.add('KraftAlu');
       if (node.title.toLowerCase().includes('fullviewkraft')) categories.add('FullViewKraft');
       if (node.title.toLowerCase().includes('blackview')) categories.add('BlackView');
       if (node.title.toLowerCase().includes('fullalu')) categories.add('FullAlu');
+
+      // Additional collections
+      if (node.title.toLowerCase().includes('zipbags')) categories.add('ZIPBAGS®');
+      if (node.title.toLowerCase().includes('doypack')) categories.add('Doypack');
+      if (node.title.toLowerCase().includes('stand up')) categories.add('Stand Up');
+      if (node.title.toLowerCase().includes('transparent')) categories.add('Transparent');
+      if (node.title.toLowerCase().includes('metallise') || node.title.toLowerCase().includes('métallisé')) categories.add('Métallisé');
+      if (node.title.toLowerCase().includes('biodegradable') || node.title.toLowerCase().includes('biodégradable')) categories.add('Biodégradable');
+      if (node.title.toLowerCase().includes('recyclable')) categories.add('Recyclable');
+      if (node.title.toLowerCase().includes('premium')) categories.add('Premium');
+      if (node.title.toLowerCase().includes('eco') || node.title.toLowerCase().includes('écologique')) categories.add('Écologique');
 
       // Extract price range
       const price = parseFloat(node.priceRange?.minVariantPrice?.amount || '0');
@@ -170,12 +181,25 @@ export default function ProductFilters({ products, onFilterChange }: ProductFilt
       filteredProducts = filteredProducts.filter((product) => {
         const node = product.node || product;
         return selectedCategories.some(category => {
+          // Original collections
           if (category === 'KraftView') return node.title.toLowerCase().includes('kraftview');
           if (category === 'WhiteView') return node.title.toLowerCase().includes('whiteview');
           if (category === 'KraftAlu') return node.title.toLowerCase().includes('kraftalu');
           if (category === 'FullViewKraft') return node.title.toLowerCase().includes('fullviewkraft');
           if (category === 'BlackView') return node.title.toLowerCase().includes('blackview');
           if (category === 'FullAlu') return node.title.toLowerCase().includes('fullalu');
+
+          // Additional collections
+          if (category === 'ZIPBAGS®') return node.title.toLowerCase().includes('zipbags');
+          if (category === 'Doypack') return node.title.toLowerCase().includes('doypack');
+          if (category === 'Stand Up') return node.title.toLowerCase().includes('stand up');
+          if (category === 'Transparent') return node.title.toLowerCase().includes('transparent');
+          if (category === 'Métallisé') return node.title.toLowerCase().includes('metallise') || node.title.toLowerCase().includes('métallisé');
+          if (category === 'Biodégradable') return node.title.toLowerCase().includes('biodegradable') || node.title.toLowerCase().includes('biodégradable');
+          if (category === 'Recyclable') return node.title.toLowerCase().includes('recyclable');
+          if (category === 'Premium') return node.title.toLowerCase().includes('premium');
+          if (category === 'Écologique') return node.title.toLowerCase().includes('eco') || node.title.toLowerCase().includes('écologique');
+
           return false;
         });
       });

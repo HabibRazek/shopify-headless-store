@@ -31,16 +31,15 @@ export default function ProductGrid({ products, className = '' }: ProductGridPro
   };
 
   return (
-    <div className={`grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8 ${className}`}>
+    <div className={`grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 ${className}`}>
       {products.map((product, index) => (
         <motion.div
           key={product.node?.id || product.id || index}
           variants={itemVariants}
           initial="hidden"
           animate="visible"
-          transition={{ delay: Math.min(index * 0.1, 0.7) }} /* Cap the delay at 0.7s */
-          whileHover={{ y: -5, transition: { duration: 0.2 } }}
-          className="group"
+          transition={{ delay: Math.min(index * 0.05, 0.5) }}
+          className="group h-full"
         >
           <ProductCard product={product} />
         </motion.div>

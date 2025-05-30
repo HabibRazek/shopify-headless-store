@@ -77,11 +77,11 @@ function Products() {
     setSearchQuery(query);
   };
 
-  // Apply search filter
+  // Apply search and sorting to displayed products
   useEffect(() => {
-    if (!allProducts.length) return;
+    if (!displayedProducts.length) return;
 
-    let result = [...allProducts];
+    let result = [...displayedProducts];
 
     // Apply search filter
     if (searchQuery) {
@@ -102,13 +102,17 @@ function Products() {
         const nodeB = b.node;
 
         if (sortOption === 'price-asc') {
-          return parseFloat(nodeA.priceRange.minVariantPrice.amount) - parseFloat(nodeB.priceRange.minVariantPrice.amount);
+          const priceA = parseFloat(nodeA.priceRange.minVariantPrice.amount);
+          const priceB = parseFloat(nodeB.priceRange.minVariantPrice.amount);
+          return priceA - priceB;
         } else if (sortOption === 'price-desc') {
-          return parseFloat(nodeB.priceRange.minVariantPrice.amount) - parseFloat(nodeA.priceRange.minVariantPrice.amount);
+          const priceA = parseFloat(nodeA.priceRange.minVariantPrice.amount);
+          const priceB = parseFloat(nodeB.priceRange.minVariantPrice.amount);
+          return priceB - priceA;
         } else if (sortOption === 'name-asc') {
-          return nodeA.title.localeCompare(nodeB.title);
+          return nodeA.title.localeCompare(nodeB.title, 'fr', { sensitivity: 'base' });
         } else if (sortOption === 'name-desc') {
-          return nodeB.title.localeCompare(nodeA.title);
+          return nodeB.title.localeCompare(nodeA.title, 'fr', { sensitivity: 'base' });
         }
         return 0;
       });
@@ -117,22 +121,22 @@ function Products() {
     setFilteredProducts(result);
     // Reset to first page when filters change
     setCurrentPage(1);
-  }, [allProducts, searchQuery, sortOption]);
+  }, [displayedProducts, searchQuery, sortOption]);
 
   // Apply pagination to filtered products
   useEffect(() => {
-    if (!displayedProducts.length) return;
+    if (!filteredProducts.length) return;
 
     // Calculate pagination
     const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-    const currentProducts = displayedProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+    const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
 
     setPaginatedProducts(currentProducts);
 
     // Log for debugging
-    console.log(`Pagination: Showing products ${indexOfFirstProduct+1}-${Math.min(indexOfLastProduct, displayedProducts.length)} of ${displayedProducts.length}`);
-  }, [displayedProducts, currentPage, productsPerPage]);
+    console.log(`Pagination: Showing products ${indexOfFirstProduct+1}-${Math.min(indexOfLastProduct, filteredProducts.length)} of ${filteredProducts.length}`);
+  }, [filteredProducts, currentPage, productsPerPage]);
 
   // Handle page change
   const paginate = (pageNumber: number) => {
@@ -147,7 +151,7 @@ function Products() {
   };
 
   // Calculate total pages
-  const totalPages = Math.ceil(displayedProducts.length / productsPerPage);
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   if (isLoading) {
     return <div className="text-center py-10">Loading products...</div>;
@@ -158,29 +162,32 @@ function Products() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row gap-4 mb-4">
-        {/* Search Input */}
-        <div className="flex-grow">
-          <SearchInput
-            onSearch={handleSearch}
-            placeholder="Rechercher des produits..."
-          />
-        </div>
+    <div className="space-y-8">
+      {/* Innovative Search and Filter Bar */}
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-200/50">
+        <div className="flex flex-col lg:flex-row gap-4">
+          {/* Search Input */}
+          <div className="flex-grow">
+            <SearchInput
+              onSearch={handleSearch}
+              placeholder="Rechercher des produits..."
+            />
+          </div>
 
-        {/* Sort Options */}
-        <div className="flex-shrink-0 w-full md:w-48">
-          <Select value={sortOption} onValueChange={setSortOption}>
-            <SelectTrigger>
-              <SelectValue placeholder="Trier par" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="price-asc">Prix: croissant</SelectItem>
-              <SelectItem value="price-desc">Prix: décroissant</SelectItem>
-              <SelectItem value="name-asc">Nom: A-Z</SelectItem>
-              <SelectItem value="name-desc">Nom: Z-A</SelectItem>
-            </SelectContent>
-          </Select>
+          {/* Sort Options */}
+          <div className="flex-shrink-0 w-full lg:w-64">
+            <Select value={sortOption} onValueChange={setSortOption}>
+              <SelectTrigger className="bg-white/90 border-gray-300 shadow-sm">
+                <SelectValue placeholder="Trier par" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="price-asc">Prix: croissant ↗</SelectItem>
+                <SelectItem value="price-desc">Prix: décroissant ↘</SelectItem>
+                <SelectItem value="name-asc">Nom: A-Z</SelectItem>
+                <SelectItem value="name-desc">Nom: Z-A</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
 
@@ -200,18 +207,28 @@ function Products() {
 
         {/* Products */}
         <div id="product-grid-top" className="md:col-span-3">
-          {/* Results Count */}
-          <div className="text-sm text-gray-500 mb-4">
-            {displayedProducts.length} {displayedProducts.length === 1 ? 'produit trouvé' : 'produits trouvés'}
-            {displayedProducts.length > productsPerPage && (
-              <span className="ml-2">
-                (Page {currentPage} sur {Math.ceil(displayedProducts.length / productsPerPage)})
-              </span>
-            )}
+          {/* Innovative Results Header */}
+          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 mb-6 border border-gray-200/50">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                <span className="text-sm font-semibold text-gray-700">
+                  {filteredProducts.length} {filteredProducts.length === 1 ? 'produit trouvé' : 'produits trouvés'}
+                </span>
+              </div>
+
+              {filteredProducts.length > productsPerPage && (
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <span>Page {currentPage} sur {totalPages}</span>
+                  <div className="w-1 h-1 bg-gray-400 rounded-full" />
+                  <span>{productsPerPage} par page</span>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Product Grid */}
-          {displayedProducts.length > 0 ? (
+          {filteredProducts.length > 0 ? (
             <>
               <ProductGrid products={paginatedProducts} />
 
@@ -334,8 +351,25 @@ function Products() {
               )}
             </>
           ) : (
-            <div className="text-center py-10 bg-gray-50 rounded-lg">
-              <p className="text-gray-500">Aucun produit ne correspond à vos critères de recherche</p>
+            <div className="text-center py-20 bg-white/60 backdrop-blur-sm rounded-2xl border border-gray-200/50">
+              <div className="max-w-md mx-auto">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Aucun produit trouvé</h3>
+                <p className="text-gray-500 mb-4">Aucun produit ne correspond à vos critères de recherche</p>
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setSortOption('');
+                  }}
+                  className="text-green-600 hover:text-green-700 font-medium text-sm"
+                >
+                  Réinitialiser les filtres
+                </button>
+              </div>
             </div>
           )}
         </div>
@@ -346,18 +380,63 @@ function Products() {
 
 export default function ProductsPage() {
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-      <div className="pb-8 lg:pb-12">
-        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">
-          Tous les produits
-        </h1>
-        <p className="mt-2 text-sm text-gray-500">
-          Parcourez notre collection de produits
-        </p>
+    <div className="relative min-h-screen">
+      {/* Innovative Background */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-green-50/30" />
+        <div className="absolute inset-0 opacity-[0.02]">
+          <div className="h-full w-full" style={{
+            backgroundImage: `
+              linear-gradient(90deg, #10b981 1px, transparent 1px),
+              linear-gradient(180deg, #10b981 1px, transparent 1px)
+            `,
+            backgroundSize: '40px 40px'
+          }} />
+        </div>
       </div>
-      <Suspense fallback={<div className="text-center py-10">Loading products...</div>}>
-        <Products />
-      </Suspense>
+
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+        {/* Innovative Header */}
+        <div className="text-center mb-12">
+          {/* Stats Pills */}
+          <div className="flex justify-center items-center gap-4 mb-6">
+            <div className="bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-gray-200/50">
+              <span className="text-sm font-semibold text-gray-700">100+ Produits</span>
+            </div>
+            <div className="bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-gray-200/50">
+              <span className="text-sm font-semibold text-gray-700">Livraison Rapide</span>
+            </div>
+            <div className="bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-gray-200/50">
+              <span className="text-sm font-semibold text-gray-700">Qualité Premium</span>
+            </div>
+          </div>
+
+          {/* Main Title */}
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4">
+            <span className="block text-gray-900 mb-2">Notre</span>
+            <span className="block bg-gradient-to-r from-green-600 via-emerald-500 to-green-600 bg-clip-text text-transparent">
+              CATALOGUE
+            </span>
+          </h1>
+
+          <div className="w-24 h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent rounded-full mx-auto mb-4" />
+
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+            Découvrez notre gamme complète d'emballages innovants et durables
+          </p>
+        </div>
+
+        <Suspense fallback={
+          <div className="text-center py-20">
+            <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full shadow-lg">
+              <div className="w-5 h-5 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
+              <span className="text-gray-700 font-medium">Chargement des produits...</span>
+            </div>
+          </div>
+        }>
+          <Products />
+        </Suspense>
+      </div>
     </div>
   );
 }

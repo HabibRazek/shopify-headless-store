@@ -74,9 +74,9 @@ export default function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <div className="group relative flex flex-col h-full bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-green-100 hover:border-green-200">
+    <div className="group relative flex flex-col bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-green-300 h-full">
       {/* Product Image Container */}
-      <div className="relative overflow-hidden bg-white">
+      <div className="relative bg-gray-50 p-6">
         <Link href={`/products/${handle}`} className="block">
           <div className="relative aspect-square w-full">
             <Image
@@ -84,71 +84,95 @@ export default function ProductCard({ product }: ProductCardProps) {
               alt={imageAlt}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="h-full w-full object-contain object-center transition-transform duration-300 group-hover:scale-105 p-6"
+              className="object-contain transition-transform duration-300 group-hover:scale-105"
               priority={false}
             />
 
-            {/* Enhanced Quick View Button - More Visible Product */}
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black/20 backdrop-blur-[1px]">
+            {/* Quick View Overlay - Subtle */}
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black/5">
               <Button
                 size="sm"
-                variant="default"
-                className="shadow-lg bg-white/95 text-green-700 hover:bg-white border border-green-200"
+                variant="outline"
+                className="bg-white/95 text-green-700 hover:bg-white border-green-300 shadow-lg backdrop-blur-sm"
               >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
                 Aperçu rapide
               </Button>
             </div>
           </div>
         </Link>
 
-        {/* Clean Price Badge */}
-        <div className="absolute top-3 right-3 bg-green-50 px-3 py-1.5 rounded-lg border border-green-200">
-          <p className="text-sm font-semibold text-green-700">
-            {formatPrice(price, currency)}
-          </p>
-        </div>
-
-        {/* Clean Stock Status Badge */}
-        <div className="absolute top-3 left-3 flex items-center space-x-2 bg-white px-3 py-1.5 rounded-lg border border-green-200 shadow-sm">
+        {/* Stock Badge */}
+        <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-green-100 px-3 py-1.5 rounded-full">
           <div className="h-2 w-2 rounded-full bg-green-500"></div>
-          <span className="text-xs font-medium text-green-700">En stock</span>
+          <span className="text-xs font-semibold text-green-700">En stock</span>
         </div>
       </div>
 
-      {/* Product Information */}
-      <div className="flex-grow p-5">
-        <Link href={`/products/${handle}`} className="block group/link">
-          <h3 className="text-base font-semibold text-gray-900 line-clamp-2 min-h-[3rem] group-hover/link:text-green-700 transition-colors duration-200 leading-tight mb-3">
+      {/* Product Information - Clear Layout */}
+      <div className="flex flex-col p-6 flex-grow">
+        {/* Product Title - Full Display */}
+        <Link href={`/products/${handle}`} className="block group/link mb-4">
+          <h3 className="text-lg font-bold text-gray-900 group-hover/link:text-green-700 transition-colors duration-200 leading-tight min-h-[3rem]">
             {title}
           </h3>
         </Link>
 
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-2">
-            <div className="flex items-center space-x-1">
-              <div className="h-1.5 w-1.5 rounded-full bg-green-500"></div>
-              <div className="h-1.5 w-1.5 rounded-full bg-green-400"></div>
-              <div className="h-1.5 w-1.5 rounded-full bg-green-300"></div>
-            </div>
-            <span className="text-xs font-medium text-gray-600">Disponible</span>
+        {/* Price Display - Prominent */}
+        <div className="mb-4">
+          <div className="text-2xl font-bold text-green-600">
+            {formatPrice(price, currency)}
           </div>
-
-          <span className="text-xs text-green-700 bg-green-50 px-2 py-1 rounded-md border border-green-200">
-            Livraison rapide
-          </span>
+          <div className="text-sm text-gray-500">
+            Prix TTC
+          </div>
         </div>
 
-        {/* Clean Add to Cart Button */}
-        <Button
-          onClick={handleAddToCart}
-          disabled={isLoading}
-          className="w-full"
-          size="default"
-          type="button"
-        >
-          <ShoppingCart className="mr-2 h-4 w-4" />
-          {isLoading ? 'Ajout...' : 'Ajouter au panier'}
-        </Button>
+        {/* Product Features */}
+        <div className="flex flex-col gap-3 mb-6">
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-2 rounded-full bg-green-500"></div>
+            <span className="text-sm text-gray-700 font-medium">Disponible immédiatement</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <span className="text-sm text-gray-700 font-medium">Livraison rapide</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
+            </svg>
+            <span className="text-sm text-gray-700 font-medium">Qualité garantie</span>
+          </div>
+        </div>
+
+        {/* Add to Cart Button - Fixed at Bottom */}
+        <div className="mt-auto">
+          <Button
+            onClick={handleAddToCart}
+            disabled={isLoading}
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+            size="lg"
+            type="button"
+          >
+            <ShoppingCart className="mr-2 h-5 w-5" />
+            {isLoading ? (
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Ajout en cours...
+              </div>
+            ) : (
+              'Ajouter au panier'
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -50,7 +50,7 @@ export default function FeaturedProducts() {
           </div>
 
           {/* Products Grid Skeleton */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6">
             {[...Array(8)].map((_, i) => (
               <div key={i} className="bg-white rounded-xl overflow-hidden shadow-sm animate-pulse">
                 {/* Image area */}
@@ -169,7 +169,7 @@ export default function FeaturedProducts() {
           animate="visible"
           className="mt-6"
         >
-          <ProductGrid products={featuredProducts} className="lg:grid-cols-4" />
+          <ProductGrid products={featuredProducts} className="lg:grid-cols-4 xl:grid-cols-4 gap-6" />
         </motion.div>
 
         <motion.div

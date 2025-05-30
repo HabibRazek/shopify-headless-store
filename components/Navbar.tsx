@@ -36,7 +36,7 @@ export default function Navbar() {
     <header
       className={`fixed left-0 right-0 z-50 transition-all duration-500 ease-out
         ${scrolled
-          ? 'lg:top-4 lg:mx-6 lg:xl:mx-20 xl:mx-32 top-0 bg-white/95 backdrop-blur-xl shadow-2xl border-b border-gray-200/50 lg:border-none lg:bg-transparent lg:shadow-none'
+          ? 'lg:top-4 lg:mx-6 lg:xl:mx-20 xl:mx-32 top-0 bg-white/95  shadow-2xl border-b border-gray-200/50 lg:border-none lg:bg-transparent lg:shadow-none'
           : 'top-6 mx-6 md:mx-12 lg:mx-20 xl:mx-32'
         }
         ${mobileMenuOpen ? 'pb-4' : ''}
@@ -44,8 +44,8 @@ export default function Navbar() {
     >
       <div className={`transition-all duration-500 ease-out ${
         scrolled
-          ? 'lg:max-w-6xl lg:mx-auto lg:bg-white/90 lg:backdrop-blur-xl lg:shadow-xl lg:border lg:border-green-200/30 lg:rounded-full container mx-auto max-w-7xl'
-          : 'max-w-6xl mx-auto bg-white/90 backdrop-blur-xl shadow-xl border border-green-200/30 rounded-full'
+          ? 'lg:max-w-6xl lg:mx-auto lg:bg-white/90  lg:shadow-xl lg:border lg:border-green-200/30 lg:rounded-full container mx-auto max-w-7xl'
+          : 'max-w-6xl mx-auto bg-white/90  shadow-xl border border-green-200/30 rounded-full'
       }`}>
         <div className={`flex items-center justify-between transition-all duration-300 ${
           scrolled ? 'lg:h-20 lg:px-8 lg:md:px-12 h-16 px-6' : 'h-20 px-8 md:px-12'
@@ -174,7 +174,7 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden mt-4 mx-4 glass-effect rounded-2xl shadow-2xl p-6 animate-slide-up border border-gray-200/50">
+          <div className="lg:hidden mt-4 mx-4  rounded-2xl shadow-2xl p-6 animate-slide-up border border-gray-200/50">
             <nav className="flex flex-col space-y-4">
               <Link
                 href="/"
