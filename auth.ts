@@ -23,6 +23,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   // This allows linking OAuth accounts to existing email accounts
   // WARNING: Only enable this if you trust your OAuth providers
   trustHost: true,
+  // Debug mode for production
+  debug: process.env.NODE_ENV === "development",
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -51,13 +53,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       async authorize(credentials) {
         try {
-          // Check if we're in build mode
+          // Check if we're in build mode or missing database
           if (!process.env.DATABASE_URL) {
+            console.error("DATABASE_URL not found")
             return null
           }
 
           if (!credentials?.email || !credentials?.password) {
-            throw new Error("Email and password are required")
+            console.error("Missing email or password")
+            return null
           }
 
           // Dynamic imports to avoid build-time issues
@@ -67,6 +71,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           // Validate credentials with Zod
           const { email, password } = await signInSchema.parseAsync(credentials)
 
+          // Test database connection
+          try {
+            await prisma.$connect()
+          } catch (dbError) {
+            console.error("Database connection failed:", dbError)
+            return null
+          }
+
           // Find user in database
           const user = await prisma.user.findUnique({
             where: {
@@ -75,14 +87,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           })
 
           if (!user || !user.password) {
-            throw new Error("Invalid credentials")
+            console.error("User not found or no password")
+            return null
           }
 
           // Verify password
           const isPasswordValid = await compare(password, user.password)
 
           if (!isPasswordValid) {
-            throw new Error("Invalid credentials")
+            console.error("Invalid password")
+            return null
           }
 
           // Return user object (password will be excluded)
@@ -95,6 +109,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           }
         } catch (error) {
           if (error instanceof ZodError) {
+            console.error("Validation error:", error.errors)
             return null
           }
           console.error("Auth error:", error)
@@ -105,26 +120,42 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     async jwt({ token, user, account }) {
-      if (account && user) {
-        token.accessToken = account.access_token
-        token.id = user.id!
-        token.role = user.role || 'USER'
+      try {
+        if (account && user) {
+          token.accessToken = account.access_token
+          token.id = user.id!
+          token.role = user.role || 'USER'
+        }
+        return token
+      } catch (error) {
+        console.error("JWT callback error:", error)
+        return token
       }
-      return token
     },
     async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.id as string
-        session.user.role = (token.role as string) || 'USER'
-        if (token.accessToken) {
-          session.accessToken = token.accessToken as string
+      try {
+        if (token && session.user) {
+          session.user.id = token.id as string
+          session.user.role = (token.role as string) || 'USER'
+          if (token.accessToken) {
+            session.accessToken = token.accessToken as string
+          }
         }
+        return session
+      } catch (error) {
+        console.error("Session callback error:", error)
+        return session
       }
-      return session
     },
     async signIn({ user, account, profile }) {
-      // Allow all sign-ins - we'll handle account linking manually
-      return true;
+      try {
+        // Allow all sign-ins - we'll handle account linking manually
+        console.log(`Sign-in attempt: ${user.email} via ${account?.provider}`)
+        return true;
+      } catch (error) {
+        console.error("SignIn callback error:", error)
+        return false;
+      }
     },
   },
   events: {
