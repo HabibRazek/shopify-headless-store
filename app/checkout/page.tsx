@@ -8,14 +8,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { formatPrice } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Trash2, ArrowLeft, UserIcon, Sparkles } from 'lucide-react';
+import { ArrowLeft, UserIcon, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import CheckoutPopup from '@/components/CheckoutPopup';
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const { cartItems, removeFromCart, updateQuantity, clearCart, cartTotal } = useCart();
+  const { cartItems, clearCart, cartTotal } = useCart();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',

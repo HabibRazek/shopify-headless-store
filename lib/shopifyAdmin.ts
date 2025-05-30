@@ -162,12 +162,13 @@ export async function createShopifyOrder(orderData: {
 
     // Add delivery fee as a custom line item
     lineItems.push({
-      title: 'Frais de livraison',
+      variant_id: null as any, // Custom line item doesn't need variant_id
       quantity: 1,
       price: deliveryFee.toFixed(2),
+      title: 'Frais de livraison',
       requires_shipping: false,
       taxable: false
-    });
+    } as any);
 
     // Prepare draft order payload for REST API
     const draftOrderPayload = {
@@ -284,7 +285,7 @@ async function enrichCartWithVariants(cart: any[]): Promise<any[]> {
   const enrichedItems = [];
 
   for (const item of cart) {
-    let variantId = item.variantId || item.id;
+    const variantId = item.variantId || item.id;
 
     // If we have a product ID, get the first variant
     if (variantId && variantId.includes('gid://shopify/Product/')) {
