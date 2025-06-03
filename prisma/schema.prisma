@@ -59,6 +59,11 @@ model User {
   accounts      Account[]
   sessions      Session[]
   orders        Order[]
+  quotes        Quote[]
+  bulkQuotes    BulkQuote[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime? @updatedAt
 }
 
 model VerificationToken {
@@ -71,16 +76,26 @@ model VerificationToken {
 
 // Custom Models
 model Order {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  orderNumber String  @unique
-  shopifyOrderId String?
-  status    String
-  total     Float
-  items     OrderItem[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                String      @id @default(cuid())
+  userId            String
+  user              User        @relation(fields: [userId], references: [id])
+  orderNumber       String      @unique
+  shopifyOrderId    String?
+  status            String
+  total             Float
+  currency          String      @default("TND")
+  paymentMethod     String?
+  bankReceiptPath   String?
+  items             OrderItem[]
+
+  // Shipping information
+  shippingAddress   String?
+  shippingCity      String?
+  shippingPostalCode String?
+  shippingCountry   String?
+
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
 }
 
 model OrderItem {
@@ -92,4 +107,40 @@ model OrderItem {
   price     Float
   quantity  Int
   image     String?
+}
+
+model Quote {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId       String
+  quantity        Int
+  basePrice       Float
+  discount        Float    @default(0)
+  finalPrice      Float
+  paymentMethod   String
+  bankReceiptPath String?
+  status          String   @default("pending")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("quotes")
+}
+
+model BulkQuote {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items           String   @db.Text // JSON string of selected items
+  totalQuantity   Int
+  subtotal        Float
+  discount        Float    @default(0)
+  total           Float
+  paymentMethod   String
+  bankReceiptPath String?
+  status          String   @default("pending")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("bulk_quotes")
 }

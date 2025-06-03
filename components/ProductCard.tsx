@@ -5,9 +5,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { formatPrice } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Check } from 'lucide-react';
+import { ShoppingCart, Check, Calculator } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { toast } from 'sonner';
+import { QuoteRequestFlow } from '@/components/quote/QuoteRequestFlow';
 
 type ProductCardProps = {
   product: any; // Using any to handle both direct product and product.node
@@ -153,8 +154,8 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         </div>
 
-        {/* Add to Cart Button - Fixed at Bottom */}
-        <div className="mt-auto">
+        {/* Action Buttons - Fixed at Bottom */}
+        <div className="mt-auto space-y-3">
           <Button
             onClick={handleAddToCart}
             disabled={isLoading}
@@ -172,6 +173,27 @@ export default function ProductCard({ product }: ProductCardProps) {
               'Ajouter au panier'
             )}
           </Button>
+
+          {/* Quote Request Button */}
+          <QuoteRequestFlow
+            product={{
+              id: productData.id,
+              title: title,
+              price: parseFloat(price),
+              image: imageUrl,
+            }}
+            trigger={
+              <Button
+                variant="outline"
+                className="w-full border-green-600 text-green-600 hover:bg-green-50 font-semibold py-3 rounded-lg transition-all duration-200"
+                size="lg"
+                type="button"
+              >
+                <Calculator className="mr-2 h-4 w-4" />
+                Demander un devis
+              </Button>
+            }
+          />
         </div>
       </div>
     </div>

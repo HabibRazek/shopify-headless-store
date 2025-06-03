@@ -8,7 +8,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { formatPrice } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, UserIcon, Sparkles } from 'lucide-react';
+import { ArrowLeft, UserIcon, Sparkles, Upload, X, FileImage } from 'lucide-react';
 import { toast } from 'sonner';
 import CheckoutPopup from '@/components/CheckoutPopup';
 
@@ -26,6 +26,8 @@ export default function CheckoutPage() {
     postalCode: '',
     paymentMethod: 'cash',
   });
+  const [bankReceipt, setBankReceipt] = useState<File | null>(null);
+  const [bankReceiptPreview, setBankReceiptPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoadingUserData, setIsLoadingUserData] = useState(false);
@@ -122,6 +124,51 @@ export default function CheckoutPage() {
     }));
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error('Format non supporté', {
+          description: 'Veuillez sélectionner une image (JPG, PNG, WEBP)',
+        });
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Fichier trop volumineux', {
+          description: 'La taille maximale autorisée est de 5MB',
+        });
+        return;
+      }
+
+      setBankReceipt(file);
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setBankReceiptPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+
+      toast.success('Reçu ajouté', {
+        description: 'Votre justificatif de virement a été ajouté avec succès',
+      });
+    }
+  };
+
+  const removeBankReceipt = () => {
+    setBankReceipt(null);
+    setBankReceiptPreview(null);
+    // Reset file input
+    const fileInput = document.getElementById('bankReceiptCheckout') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  };
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -159,7 +206,7 @@ export default function CheckoutPage() {
         state: formData.postalCode ? formData.postalCode.substring(0, 2) : 'NJ', // Use first 2 digits of postal code as state
         postalCode: formData.postalCode,
         country: 'TN', // Default to Tunisia
-        paymentMethod: 'cashOnDelivery',
+        paymentMethod: formData.paymentMethod === 'bankTransfer' ? 'Virement bancaire' : 'Paiement à la livraison',
         notes: ''
       };
 
@@ -175,20 +222,35 @@ export default function CheckoutPage() {
       // Create order data for the API
       const orderData = {
         customerInfo,
+        paymentMethod: formData.paymentMethod,
         cart: cartItemsFormatted,
         userId: session?.user?.id || null
       };
 
       console.log('Submitting order to API:', orderData);
 
-      // Send order to the API
-      const response = await fetch('/api/order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(orderData),
-      });
+      let response;
+
+      // If bank transfer with file, use FormData
+      if (formData.paymentMethod === 'bankTransfer' && bankReceipt) {
+        const formDataToSend = new FormData();
+        formDataToSend.append('orderData', JSON.stringify(orderData));
+        formDataToSend.append('bankReceipt', bankReceipt);
+
+        response = await fetch('/api/order', {
+          method: 'POST',
+          body: formDataToSend,
+        });
+      } else {
+        // Regular JSON request
+        response = await fetch('/api/order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(orderData),
+        });
+      }
 
       const result = await response.json();
       console.log('Order API response:', result);
@@ -445,18 +507,131 @@ export default function CheckoutPage() {
 
                   {/* Payment Method */}
                   <div className="sm:col-span-2">
-                    <label htmlFor="paymentMethod" className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
                       Mode de Paiement
                     </label>
-                    <select
-                      id="paymentMethod"
-                      name="paymentMethod"
-                      value={formData.paymentMethod}
-                      onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-black focus:ring-black sm:text-sm"
-                    >
-                      <option value="cash">Paiement à la livraison</option>
-                    </select>
+                    <div className="space-y-4">
+                      <div className="flex items-center">
+                        <input
+                          id="cash"
+                          name="paymentMethod"
+                          type="radio"
+                          checked={formData.paymentMethod === 'cash'}
+                          onChange={handleInputChange}
+                          value="cash"
+                          className="h-4 w-4 border-gray-300 text-green-600 focus:ring-green-500"
+                        />
+                        <label htmlFor="cash" className="ml-3 block text-sm font-medium text-gray-700">
+                          Paiement à la livraison
+                        </label>
+                      </div>
+
+                      <div className="flex items-center">
+                        <input
+                          id="bankTransfer"
+                          name="paymentMethod"
+                          type="radio"
+                          checked={formData.paymentMethod === 'bankTransfer'}
+                          onChange={handleInputChange}
+                          value="bankTransfer"
+                          className="h-4 w-4 border-gray-300 text-green-600 focus:ring-green-500"
+                        />
+                        <label htmlFor="bankTransfer" className="ml-3 block text-sm font-medium text-gray-700">
+                          Virement bancaire
+                        </label>
+                      </div>
+
+                      {/* Bank Transfer Details */}
+                      {formData.paymentMethod === 'bankTransfer' && (
+                        <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                          <h4 className="font-medium text-green-800 mb-3">Informations bancaires</h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div>
+                              <p className="font-medium text-gray-700">Banque:</p>
+                              <p className="text-gray-600">Banque Internationale Arabe de Tunisie</p>
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-700">Bénéficiaire:</p>
+                              <p className="text-gray-600">ZIPBAGS SARL</p>
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-700">RIB:</p>
+                              <p className="text-gray-600 font-mono">08 006 0123456789 12</p>
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-700">Code SWIFT:</p>
+                              <p className="text-gray-600 font-mono">BIATTNTT</p>
+                            </div>
+                          </div>
+                          <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                            <p className="text-xs text-yellow-800">
+                              <strong>Important:</strong> Veuillez mentionner votre nom et numéro de commande dans le motif du virement.
+                              Votre commande sera traitée après réception du paiement.
+                            </p>
+                          </div>
+
+                          {/* File Upload Section */}
+                          <div className="mt-4 space-y-3">
+                            <h5 className="font-medium text-green-800 text-sm">Justificatif de virement</h5>
+
+                            {!bankReceiptPreview ? (
+                              <div className="border-2 border-dashed border-green-300 rounded-lg p-4 text-center">
+                                <input
+                                  type="file"
+                                  id="bankReceiptCheckout"
+                                  accept="image/*"
+                                  onChange={handleFileUpload}
+                                  className="hidden"
+                                />
+                                <label
+                                  htmlFor="bankReceiptCheckout"
+                                  className="cursor-pointer flex flex-col items-center gap-3"
+                                >
+                                  <Upload className="h-8 w-8 text-green-600" />
+                                  <div className="text-sm">
+                                    <p className="font-medium text-green-800">Cliquez pour ajouter votre reçu</p>
+                                    <p className="text-green-600 mt-1">JPG, PNG, WEBP (max 5MB)</p>
+                                  </div>
+                                </label>
+                              </div>
+                            ) : (
+                              <div className="relative border border-green-200 rounded-lg p-3 bg-white">
+                                <div className="flex items-center gap-4">
+                                  <div className="relative w-16 h-16 rounded-md overflow-hidden flex-shrink-0">
+                                    <Image
+                                      src={bankReceiptPreview}
+                                      alt="Justificatif de virement"
+                                      fill
+                                      className="object-cover"
+                                    />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="font-medium text-sm text-green-800">
+                                      {bankReceipt?.name}
+                                    </p>
+                                    <p className="text-sm text-green-600">
+                                      {bankReceipt && (bankReceipt.size / 1024 / 1024).toFixed(2)} MB
+                                    </p>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={removeBankReceipt}
+                                    className="p-2 text-red-500 hover:text-red-700 transition-colors"
+                                  >
+                                    <X className="h-5 w-5" />
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+
+                            <p className="text-xs text-green-700 flex items-center gap-1">
+                              <FileImage className="h-3 w-3" />
+                              Ajoutez une photo de votre reçu de virement (optionnel)
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 

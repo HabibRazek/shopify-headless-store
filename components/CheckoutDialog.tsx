@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { useCart } from '@/context/CartContext';
 import { formatPrice } from '@/lib/utils';
 import { toast } from 'sonner';
-import { Check } from 'lucide-react';
+import { Check, Upload, X, FileImage } from 'lucide-react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -25,7 +26,7 @@ type FormData = {
   state: string;
   postalCode: string;
   country: string;
-  paymentMethod: 'cashOnDelivery';
+  paymentMethod: 'cashOnDelivery' | 'bankTransfer';
   notes: string;
 };
 
@@ -84,6 +85,8 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
   const [isSuccess, setIsSuccess] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
   const [shopifyOrderCreated, setShopifyOrderCreated] = useState(false);
+  const [bankReceipt, setBankReceipt] = useState<File | null>(null);
+  const [bankReceiptPreview, setBankReceiptPreview] = useState<string | null>(null);
 
   // Delivery fee in TND
   const deliveryFee = 8;
@@ -102,6 +105,51 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
     // Clear error when field is edited
     if (errors[name as keyof FormData]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error('Format non supporté', {
+          description: 'Veuillez sélectionner une image (JPG, PNG, WEBP)',
+        });
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Fichier trop volumineux', {
+          description: 'La taille maximale autorisée est de 5MB',
+        });
+        return;
+      }
+
+      setBankReceipt(file);
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setBankReceiptPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+
+      toast.success('Reçu ajouté', {
+        description: 'Votre justificatif de virement a été ajouté avec succès',
+      });
+    }
+  };
+
+  const removeBankReceipt = () => {
+    setBankReceipt(null);
+    setBankReceiptPreview(null);
+    // Reset file input
+    const fileInput = document.getElementById('bankReceiptDialog') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
     }
   };
 
@@ -165,17 +213,34 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
 
       console.log('Validated cart:', validatedCart);
 
-      // Send the order to our API endpoint
-      const response = await fetch('/api/order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          customerInfo: formData,
-          cart: validatedCart
-        }),
-      });
+      // Prepare order data
+      const orderData = {
+        customerInfo: formData,
+        cart: validatedCart
+      };
+
+      let response;
+
+      // If bank transfer with file, use FormData
+      if (formData.paymentMethod === 'bankTransfer' && bankReceipt) {
+        const formDataToSend = new FormData();
+        formDataToSend.append('orderData', JSON.stringify(orderData));
+        formDataToSend.append('bankReceipt', bankReceipt);
+
+        response = await fetch('/api/order', {
+          method: 'POST',
+          body: formDataToSend,
+        });
+      } else {
+        // Regular JSON request
+        response = await fetch('/api/order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(orderData),
+        });
+      }
 
       const data = await response.json();
 
@@ -540,7 +605,7 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
 
           {/* Payment method */}
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Payment Method</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Mode de paiement</h3>
             <div className="mt-4 space-y-4">
               <div className="flex items-center">
                 <input
@@ -550,12 +615,118 @@ export default function CheckoutDialog({ open, onOpenChange }: CheckoutDialogPro
                   checked={formData.paymentMethod === 'cashOnDelivery'}
                   onChange={handleChange}
                   value="cashOnDelivery"
-                  className="h-4 w-4 border-gray-300 text-black focus:ring-black"
+                  className="h-4 w-4 border-gray-300 text-green-600 focus:ring-green-500"
                 />
                 <label htmlFor="cashOnDelivery" className="ml-3 block text-sm font-medium text-gray-700">
-                  Cash on Delivery
+                  Paiement à la livraison
                 </label>
               </div>
+
+              <div className="flex items-center">
+                <input
+                  id="bankTransfer"
+                  name="paymentMethod"
+                  type="radio"
+                  checked={formData.paymentMethod === 'bankTransfer'}
+                  onChange={handleChange}
+                  value="bankTransfer"
+                  className="h-4 w-4 border-gray-300 text-green-600 focus:ring-green-500"
+                />
+                <label htmlFor="bankTransfer" className="ml-3 block text-sm font-medium text-gray-700">
+                  Virement bancaire
+                </label>
+              </div>
+
+              {/* Bank Transfer Details */}
+              {formData.paymentMethod === 'bankTransfer' && (
+                <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <h4 className="font-medium text-green-800 mb-3">Informations bancaires</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p className="font-medium text-gray-700">Banque:</p>
+                      <p className="text-gray-600">Banque Internationale Arabe de Tunisie</p>
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-700">Bénéficiaire:</p>
+                      <p className="text-gray-600">ZIPBAGS SARL</p>
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-700">RIB:</p>
+                      <p className="text-gray-600 font-mono">08 006 0123456789 12</p>
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-700">Code SWIFT:</p>
+                      <p className="text-gray-600 font-mono">BIATTNTT</p>
+                    </div>
+                  </div>
+                  <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                    <p className="text-xs text-yellow-800">
+                      <strong>Important:</strong> Veuillez mentionner votre nom et numéro de commande dans le motif du virement.
+                      Votre commande sera traitée après réception du paiement.
+                    </p>
+                  </div>
+
+                  {/* File Upload Section */}
+                  <div className="mt-4 space-y-3">
+                    <h5 className="font-medium text-green-800 text-sm">Justificatif de virement</h5>
+
+                    {!bankReceiptPreview ? (
+                      <div className="border-2 border-dashed border-green-300 rounded-lg p-3 text-center">
+                        <input
+                          type="file"
+                          id="bankReceiptDialog"
+                          accept="image/*"
+                          onChange={handleFileUpload}
+                          className="hidden"
+                        />
+                        <label
+                          htmlFor="bankReceiptDialog"
+                          className="cursor-pointer flex flex-col items-center gap-2"
+                        >
+                          <Upload className="h-6 w-6 text-green-600" />
+                          <div className="text-xs">
+                            <p className="font-medium text-green-800">Cliquez pour ajouter</p>
+                            <p className="text-green-600">JPG, PNG, WEBP (max 5MB)</p>
+                          </div>
+                        </label>
+                      </div>
+                    ) : (
+                      <div className="relative border border-green-200 rounded-lg p-2 bg-white">
+                        <div className="flex items-center gap-3">
+                          <div className="relative w-12 h-12 rounded-md overflow-hidden flex-shrink-0">
+                            <Image
+                              src={bankReceiptPreview}
+                              alt="Justificatif de virement"
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-xs text-green-800">
+                              {bankReceipt?.name}
+                            </p>
+                            <p className="text-xs text-green-600">
+                              {bankReceipt && (bankReceipt.size / 1024 / 1024).toFixed(2)} MB
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={removeBankReceipt}
+                            className="p-1 text-red-500 hover:text-red-700 transition-colors"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    <p className="text-xs text-green-700">
+                      <FileImage className="h-3 w-3 inline mr-1" />
+                      Ajoutez une photo de votre reçu de virement (optionnel)
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

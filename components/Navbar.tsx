@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, User, X, LogIn, LogOut } from 'lucide-react';
+import { Menu, User, X, LogIn, LogOut, Calculator } from 'lucide-react';
 import { useShopContext } from '@/context/ShopContext';
 import { Button } from '@/components/ui/button';
 import Cart from '@/components/Cart';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,12 +17,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { GlobalQuoteDialog } from '@/components/quote/GlobalQuoteDialog';
 
 export default function Navbar() {
   const { } = useShopContext(); // We don't need any context values here
   const { data: session, status } = useSession();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [quoteDialogOpen, setQuoteDialogOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -104,7 +106,12 @@ export default function Navbar() {
 
           {/* Desktop Actions */}
           <div className="hidden lg:flex items-center space-x-3">
-            <Button size="default" className="text-sm font-semibold rounded-full px-6">
+            <Button
+              size="default"
+              className="text-sm font-semibold rounded-full px-6 bg-green-600 hover:bg-green-700"
+              onClick={() => setQuoteDialogOpen(true)}
+            >
+              <Calculator className="h-4 w-4 mr-2" />
               Demander un devis
             </Button>
             <div className="w-px h-6 bg-gray-300/60" />
@@ -137,11 +144,12 @@ export default function Navbar() {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href="/auth/signout">
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Log out</span>
-                    </Link>
+                  <DropdownMenuItem
+                    onClick={() => signOut({ callbackUrl: '/', redirect: true })}
+                    className="cursor-pointer"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -218,14 +226,16 @@ export default function Navbar() {
                     <User className="h-4 w-4 mr-2" />
                     <span className="text-sm font-medium">Mon Profil</span>
                   </Link>
-                  <Link
-                    href="/auth/signout"
-                    className="px-4 py-2.5 rounded-full text-gray-700 hover:bg-gray-100 hover:text-green-600 transition-colors duration-200 flex items-center"
-                    onClick={() => setMobileMenuOpen(false)}
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      signOut({ callbackUrl: '/', redirect: true });
+                    }}
+                    className="w-full px-4 py-2.5 rounded-full text-gray-700 hover:bg-gray-100 hover:text-green-600 transition-colors duration-200 flex items-center"
                   >
                     <LogOut className="h-4 w-4 mr-2" />
                     <span className="text-sm font-medium">Déconnexion</span>
-                  </Link>
+                  </button>
                 </>
               ) : (
                 <Link
@@ -240,9 +250,13 @@ export default function Navbar() {
 
               <div className="pt-2">
                 <Button
-                  className="w-full font-medium"
-                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full font-medium bg-green-600 hover:bg-green-700"
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setQuoteDialogOpen(true);
+                  }}
                 >
+                  <Calculator className="h-4 w-4 mr-2" />
                   Demander un devis
                 </Button>
               </div>
@@ -250,6 +264,12 @@ export default function Navbar() {
           </div>
         )}
       </div>
+
+      {/* Global Quote Dialog */}
+      <GlobalQuoteDialog
+        isOpen={quoteDialogOpen}
+        onClose={() => setQuoteDialogOpen(false)}
+      />
     </header>
   );
 }

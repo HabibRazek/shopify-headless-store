@@ -11,14 +11,15 @@ interface SignOutButtonProps {
   children?: React.ReactNode;
 }
 
-export function SignOutButton({ 
-  variant = 'ghost', 
-  size = 'default', 
+export function SignOutButton({
+  variant = 'ghost',
+  size = 'default',
   className,
-  children 
+  children
 }: SignOutButtonProps) {
-  const handleSignOut = () => {
-    signOut({ callbackUrl: '/' });
+  const handleSignOut = async () => {
+    // Direct logout without confirmation
+    await signOut({ callbackUrl: '/', redirect: true });
   };
 
   return (

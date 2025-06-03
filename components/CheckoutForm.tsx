@@ -14,8 +14,9 @@ type FormData = {
   state: string;
   postalCode: string;
   country: string;
-  paymentMethod: 'cashOnDelivery';
+  paymentMethod: 'cashOnDelivery' | 'bankTransfer';
   notes: string;
+  bankReceipt?: File;
 };
 
 type FormErrors = {
@@ -42,6 +43,7 @@ export default function CheckoutForm({ onClose }: { onClose: () => void }) {
   const [isSuccess, setIsSuccess] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
   const [shopifyOrderCreated, setShopifyOrderCreated] = useState(false);
+  const [bankReceipt, setBankReceipt] = useState<File | null>(null);
 
   // Delivery fee in TND
   const deliveryFee = 8;
@@ -97,16 +99,20 @@ export default function CheckoutForm({ onClose }: { onClose: () => void }) {
     setIsSubmitting(true);
 
     try {
-      // Send the order to our new API endpoint
+      // Create FormData for file upload support
+      const submitData = new FormData();
+      submitData.append('customerInfo', JSON.stringify(formData));
+      submitData.append('cart', JSON.stringify(cart));
+
+      // Add bank receipt if provided
+      if (bankReceipt) {
+        submitData.append('bankReceipt', bankReceipt);
+      }
+
+      // Send the order to our API endpoint
       const response = await fetch('/api/order', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          customerInfo: formData,
-          cart: cart
-        }),
+        body: submitData,
       });
 
       const data = await response.json();
@@ -437,7 +443,7 @@ export default function CheckoutForm({ onClose }: { onClose: () => void }) {
 
       {/* Payment method */}
       <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Payment Method</h3>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Mode de paiement</h3>
         <div className="mt-4 space-y-4">
           <div className="flex items-center">
             <input
@@ -447,12 +453,86 @@ export default function CheckoutForm({ onClose }: { onClose: () => void }) {
               checked={formData.paymentMethod === 'cashOnDelivery'}
               onChange={handleChange}
               value="cashOnDelivery"
-              className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              className="h-4 w-4 border-gray-300 text-green-600 focus:ring-green-500"
             />
             <label htmlFor="cashOnDelivery" className="ml-3 block text-sm font-medium text-gray-700">
-              Cash on Delivery
+              Paiement à la livraison
             </label>
           </div>
+
+          <div className="flex items-center">
+            <input
+              id="bankTransfer"
+              name="paymentMethod"
+              type="radio"
+              checked={formData.paymentMethod === 'bankTransfer'}
+              onChange={handleChange}
+              value="bankTransfer"
+              className="h-4 w-4 border-gray-300 text-green-600 focus:ring-green-500"
+            />
+            <label htmlFor="bankTransfer" className="ml-3 block text-sm font-medium text-gray-700">
+              Virement bancaire
+            </label>
+          </div>
+
+          {/* Bank Transfer Details */}
+          {formData.paymentMethod === 'bankTransfer' && (
+            <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <h4 className="font-medium text-green-800 mb-3">Informations bancaires</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="font-medium text-gray-700">Banque:</p>
+                  <p className="text-gray-600">Banque Internationale Arabe de Tunisie</p>
+                </div>
+                <div>
+                  <p className="font-medium text-gray-700">Bénéficiaire:</p>
+                  <p className="text-gray-600">ZIPBAGS SARL</p>
+                </div>
+                <div>
+                  <p className="font-medium text-gray-700">RIB:</p>
+                  <p className="text-gray-600 font-mono">08 006 0123456789 12</p>
+                </div>
+                <div>
+                  <p className="font-medium text-gray-700">Code SWIFT:</p>
+                  <p className="text-gray-600 font-mono">BIATTNTT</p>
+                </div>
+              </div>
+
+              {/* File Upload for Bank Receipt */}
+              <div className="mt-4">
+                <label htmlFor="bankReceipt" className="block text-sm font-medium text-gray-700 mb-2">
+                  Reçu de virement (optionnel)
+                </label>
+                <div className="border-2 border-dashed border-green-300 rounded-lg p-4 text-center">
+                  <input
+                    id="bankReceipt"
+                    type="file"
+                    accept="image/*,.pdf"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) setBankReceipt(file);
+                    }}
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => document.getElementById('bankReceipt')?.click()}
+                    className="inline-flex items-center px-4 py-2 border border-green-300 rounded-md shadow-sm text-sm font-medium text-green-700 bg-white hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                  >
+                    <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    Sélectionner un fichier
+                  </button>
+                  {bankReceipt && (
+                    <p className="text-sm text-green-600 mt-2">
+                      ✓ {bankReceipt.name}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
