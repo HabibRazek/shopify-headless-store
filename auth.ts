@@ -47,7 +47,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           }
 
           // Dynamic import to avoid build-time issues
-          const { default: prisma } = await import('@/lib/prisma');
+          const { getPrismaClient } = await import('@/lib/prisma');
+          const prisma = getPrismaClient();
 
           // Find user in database
           const user = await prisma.user.findUnique({
@@ -117,7 +118,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           }
 
           // Dynamic import to avoid build-time issues
-          const { default: prisma } = await import('@/lib/prisma');
+          const { getPrismaClient } = await import('@/lib/prisma');
+          const prisma = getPrismaClient();
 
           // Check if user already exists
           const existingUser = await prisma.user.findUnique({

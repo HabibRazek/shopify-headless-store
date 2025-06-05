@@ -6,28 +6,50 @@ import { PrismaClient } from '@prisma/client';
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient | undefined };
 
-// Only create PrismaClient if DATABASE_URL is available
-export const prisma = (() => {
+let prismaInstance: PrismaClient | null = null;
+
+function createPrismaClient(): PrismaClient {
   if (!process.env.DATABASE_URL) {
-    // Return a mock client for build time
-    return {} as PrismaClient;
+    throw new Error('DATABASE_URL is not defined');
   }
 
-  return (
-    globalForPrisma.prisma ||
-    new PrismaClient({
-      log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-      datasources: {
-        db: {
-          url: process.env.DATABASE_URL,
-        },
-      },
-    })
-  );
-})();
-
-if (process.env.NODE_ENV !== 'production' && process.env.DATABASE_URL) {
-  globalForPrisma.prisma = prisma;
+  return new PrismaClient({
+    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+  });
 }
 
+// Export a function that creates the client only when needed
+export function getPrismaClient(): PrismaClient {
+  if (!process.env.DATABASE_URL) {
+    throw new Error('Database not available');
+  }
+
+  if (process.env.NODE_ENV === 'production') {
+    if (!prismaInstance) {
+      prismaInstance = createPrismaClient();
+    }
+    return prismaInstance;
+  } else {
+    if (!globalForPrisma.prisma) {
+      globalForPrisma.prisma = createPrismaClient();
+    }
+    return globalForPrisma.prisma;
+  }
+}
+
+// For backward compatibility, export a default instance
+// But only create it if we're not in build mode
+const prisma = (() => {
+  try {
+    // Don't create during build time
+    if (process.env.NODE_ENV === 'production' && !process.env.VERCEL) {
+      return {} as PrismaClient;
+    }
+    return getPrismaClient();
+  } catch {
+    return {} as PrismaClient;
+  }
+})();
+
+export { prisma };
 export default prisma;

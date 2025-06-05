@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { hash } from 'bcrypt'
-import { prisma } from '@/lib/prisma'
 import { z } from 'zod'
 
 // API-specific schema (without confirmPassword)
@@ -24,12 +23,16 @@ const apiSignUpSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     // Check if database is available
-    if (!process.env.DATABASE_URL) {
+    if (!process.env.DATABASE_URL || process.env.SKIP_ENV_VALIDATION === '1') {
       return NextResponse.json(
         { error: 'Database not configured' },
         { status: 503 }
       );
     }
+
+    // Dynamic import to avoid build-time issues
+    const { getPrismaClient } = await import('@/lib/prisma');
+    const prisma = getPrismaClient();
 
     const body = await request.json();
 
