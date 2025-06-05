@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
-import { EyeIcon, EyeOffIcon, LockIcon, MailIcon, UserIcon, ArrowRight, Sparkles } from 'lucide-react';
+import { EyeIcon, EyeOffIcon, LockIcon, MailIcon, UserIcon, ArrowRight } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -92,8 +92,8 @@ export function SignUpForm() {
 
       // Redirect to signin page
       router.push('/auth/signin');
-    } catch (error: any) {
-      const errorMessage = error.message || 'Something went wrong. Please try again.';
+    } catch (error: unknown) {
+      const errorMessage = (error as Error).message || 'Something went wrong. Please try again.';
       setSignupError(errorMessage);
 
       toast({
@@ -111,6 +111,7 @@ export function SignUpForm() {
     try {
       await signIn('google', { callbackUrl: '/' });
     } catch (error) {
+      console.error('Google signup error:', error);
       toast({
         title: 'Error',
         description: 'Failed to sign in with Google',

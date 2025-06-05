@@ -1,6 +1,6 @@
 "use client"
 
-import { Phone, Mail, MapPin, Clock, ArrowRight, Send, Star, Award, Shield, Truck, Heart, Globe } from "lucide-react"
+import { Phone, Mail, MapPin, ArrowRight, Send } from "lucide-react"
 import { FacebookIcon, InstagramIcon, LinkedinIcon } from "@/components/SocialIcons"
 import Link from "next/link"
 import Image from "next/image"

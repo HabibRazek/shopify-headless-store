@@ -2,14 +2,14 @@
 
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+// import { useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { UserIcon, PackageIcon } from 'lucide-react';
 import { ProfileEditor } from '@/components/profile/ProfileEditor';
 import { OrdersHistory } from '@/components/profile/OrdersHistory';
 
 export default function ProfilePage() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const router = useRouter();
 
 

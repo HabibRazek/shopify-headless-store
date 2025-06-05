@@ -9,7 +9,7 @@ import { useSession } from 'next-auth/react';
 import { formatPrice } from '@/lib/utils';
 
 function SuccessContent() {
-  const router = useRouter();
+  // const router = useRouter();
   const searchParams = useSearchParams();
   const { data: session } = useSession();
   const [orderDetails, setOrderDetails] = useState<any>(null);

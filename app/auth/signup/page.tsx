@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { SignUpForm } from '@/components/auth/signup-form';
 import { ArrowLeft } from 'lucide-react';
 

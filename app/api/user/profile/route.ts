@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Check if we're missing database
     if (!process.env.DATABASE_URL) {
@@ -109,7 +109,7 @@ export async function PUT(request: NextRequest) {
     });
 
     // Remove password from response
-    const { password: _, ...userWithoutPassword } = updatedUser;
+    const { password, ...userWithoutPassword } = updatedUser;
 
     return NextResponse.json(
       { message: 'Profile updated successfully', user: userWithoutPassword },

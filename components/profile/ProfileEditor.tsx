@@ -9,8 +9,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import {
   User,
-  Mail,
-  Phone,
   MapPin,
   Edit3,
   Save,
@@ -34,7 +32,7 @@ const profileSchema = z.object({
   address: z.string().optional(),
   city: z.string().optional(),
   postalCode: z.string().optional(),
-  country: z.string().default('TN'),
+  country: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
@@ -47,7 +45,15 @@ export function ProfileEditor({ className }: ProfileEditorProps) {
   const { data: session, update } = useSession();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [profileData, setProfileData] = useState<any>(null);
+  const [profileData, setProfileData] = useState<{
+    name?: string;
+    phone?: string;
+    address?: string;
+    city?: string;
+    postalCode?: string;
+    country?: string;
+    createdAt?: string;
+  } | null>(null);
 
   const {
     register,
@@ -56,7 +62,7 @@ export function ProfileEditor({ className }: ProfileEditorProps) {
     watch,
     formState: { errors, isDirty },
     reset,
-  } = useForm<ProfileFormValues>({
+  } = useForm({
     resolver: zodResolver(profileSchema),
     defaultValues: {
       name: '',
@@ -97,7 +103,7 @@ export function ProfileEditor({ className }: ProfileEditorProps) {
     fetchProfile();
   }, [session, setValue]);
 
-  const onSubmit = async (data: ProfileFormValues) => {
+  const onSubmit = async (data: any) => {
     setIsLoading(true);
 
     try {
@@ -131,6 +137,7 @@ export function ProfileEditor({ className }: ProfileEditorProps) {
         duration: 3000,
       });
     } catch (error) {
+      console.error('Profile update error:', error);
       toast.error('Erreur', {
         description: 'Une erreur est survenue lors de la mise à jour',
         duration: 5000,

@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
-import { EyeIcon, EyeOffIcon, LockIcon, MailIcon, ArrowRight, Sparkles } from 'lucide-react';
+import { EyeIcon, EyeOffIcon, LockIcon, MailIcon, ArrowRight } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -20,7 +20,7 @@ export function SignInForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [authError, setAuthError] = useState<string>('');
-  const router = useRouter();
+  // const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
   const callbackUrl = searchParams.get('callbackUrl') || '/';
@@ -102,6 +102,7 @@ export function SignInForm() {
     try {
       await signIn('google', { callbackUrl });
     } catch (error) {
+      console.error('Google sign in error:', error);
       toast({
         title: 'Error',
         description: 'Failed to sign in with Google',
