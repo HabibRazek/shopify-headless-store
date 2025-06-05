@@ -32,7 +32,20 @@ export function formatPrice(price: string | number, currency: string = 'TND'): s
  * @param product - The Shopify product object
  * @returns The URL of the first image, or a placeholder if no image is found
  */
-export function getProductImage(product: any): string {
+interface ShopifyProductImage {
+  url: string;
+  altText?: string | null;
+}
+
+interface ShopifyProduct {
+  images?: {
+    edges: Array<{
+      node: ShopifyProductImage;
+    }>;
+  };
+}
+
+export function getProductImage(product: ShopifyProduct): string {
   // Check if the product has images
   if (product?.images?.edges && product.images.edges.length > 0) {
     const firstImage = product.images.edges[0]?.node;

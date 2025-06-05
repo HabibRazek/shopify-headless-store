@@ -15,9 +15,43 @@ export interface Collection {
     width?: number;
     height?: number;
   } | null;
-  products?: any[];
+  products?: Product[];
   productCount?: number;
   updatedAt?: string;
+}
+
+export interface ProductImage {
+  id?: string;
+  url: string;
+  altText?: string;
+  width?: number;
+  height?: number;
+}
+
+export interface ProductVariant {
+  id: string;
+  title: string;
+  price: {
+    amount: string;
+    currencyCode: string;
+  };
+  compareAtPrice?: {
+    amount: string;
+    currencyCode: string;
+  };
+  availableForSale: boolean;
+  quantityAvailable?: number;
+}
+
+export interface PriceRange {
+  minVariantPrice: {
+    amount: string;
+    currencyCode: string;
+  };
+  maxVariantPrice: {
+    amount: string;
+    currencyCode: string;
+  };
 }
 
 export interface Product {
@@ -25,10 +59,10 @@ export interface Product {
   title: string;
   handle: string;
   description?: string;
-  images?: any[];
-  variants?: any[];
-  priceRange?: any;
-  compareAtPriceRange?: any;
+  images?: ProductImage[];
+  variants?: ProductVariant[];
+  priceRange?: PriceRange;
+  compareAtPriceRange?: PriceRange;
   tags?: string[];
   availableForSale?: boolean;
   totalInventory?: number;
@@ -231,19 +265,23 @@ export function getProductSortOptions() {
 /**
  * Validates if a collection has required fields
  */
-export function isValidCollection(collection: any): collection is Collection {
-  return collection && 
-         typeof collection.id === 'string' && 
-         typeof collection.title === 'string' && 
-         typeof collection.handle === 'string';
+export function isValidCollection(collection: unknown): collection is Collection {
+  return collection !== null &&
+         typeof collection === 'object' &&
+         collection !== undefined &&
+         typeof (collection as any).id === 'string' &&
+         typeof (collection as any).title === 'string' &&
+         typeof (collection as any).handle === 'string';
 }
 
 /**
  * Validates if a product has required fields
  */
-export function isValidProduct(product: any): product is Product {
-  return product && 
-         typeof product.id === 'string' && 
-         typeof product.title === 'string' && 
-         typeof product.handle === 'string';
+export function isValidProduct(product: unknown): product is Product {
+  return product !== null &&
+         typeof product === 'object' &&
+         product !== undefined &&
+         typeof (product as any).id === 'string' &&
+         typeof (product as any).title === 'string' &&
+         typeof (product as any).handle === 'string';
 }

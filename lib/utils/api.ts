@@ -4,7 +4,7 @@
 
 import { NextResponse } from 'next/server';
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   data?: T;
   error?: string;
   message?: string;
@@ -56,7 +56,7 @@ export function createSuccessResponse<T>(
 export function createErrorResponse(
   error: string,
   status: number = 500,
-  details?: any
+  details?: unknown
 ): NextResponse<ApiResponse> {
   console.error('API Error:', { error, status, details });
   
@@ -65,7 +65,7 @@ export function createErrorResponse(
       error,
       timestamp: new Date().toISOString(),
       success: false,
-      ...(details && { details }),
+      ...(details && typeof details === 'object' ? details : { details }),
     },
     { status }
   );
@@ -75,7 +75,7 @@ export function createErrorResponse(
  * Parses query parameters from URL search params
  */
 export function parseQueryParams(searchParams: URLSearchParams) {
-  const params: Record<string, any> = {};
+  const params: Record<string, unknown> = {};
   
   for (const [key, value] of searchParams.entries()) {
     // Handle boolean values
@@ -102,9 +102,9 @@ export function parseQueryParams(searchParams: URLSearchParams) {
 /**
  * Validates pagination parameters
  */
-export function validatePaginationParams(params: any): PaginationParams {
-  const page = Math.max(1, parseInt(params.page) || 1);
-  const limit = Math.min(100, Math.max(1, parseInt(params.limit) || 20));
+export function validatePaginationParams(params: Record<string, unknown>): PaginationParams {
+  const page = Math.max(1, parseInt(String(params.page || '1')) || 1);
+  const limit = Math.min(100, Math.max(1, parseInt(String(params.limit || '20')) || 20));
   const offset = (page - 1) * limit;
   
   return { page, limit, offset };
@@ -113,7 +113,7 @@ export function validatePaginationParams(params: any): PaginationParams {
 /**
  * Validates sort parameters
  */
-export function validateSortParams(params: any): SortParams {
+export function validateSortParams(params: Record<string, unknown>): SortParams {
   const sortBy = typeof params.sortBy === 'string' ? params.sortBy : undefined;
   const sortOrder = params.sortOrder === 'desc' ? 'desc' : 'asc';
   const reverse = params.reverse === true || params.sortOrder === 'desc';
@@ -124,7 +124,7 @@ export function validateSortParams(params: any): SortParams {
 /**
  * Validates filter parameters
  */
-export function validateFilterParams(params: any): FilterParams {
+export function validateFilterParams(params: Record<string, unknown>): FilterParams {
   const search = typeof params.search === 'string' ? params.search.trim() : undefined;
   const tags = Array.isArray(params.tags) ? params.tags : 
                typeof params.tags === 'string' ? [params.tags] : undefined;
@@ -164,7 +164,7 @@ export async function handleApiOperation<T>(
  * Validates required fields in request body
  */
 export function validateRequiredFields(
-  body: any,
+  body: Record<string, unknown>,
   requiredFields: string[]
 ): { isValid: boolean; missingFields: string[] } {
   const missingFields: string[] = [];
@@ -184,7 +184,7 @@ export function validateRequiredFields(
 /**
  * Sanitizes input data to prevent XSS and other attacks
  */
-export function sanitizeInput(input: any): any {
+export function sanitizeInput(input: unknown): unknown {
   if (typeof input === 'string') {
     return input
       .trim()
@@ -198,7 +198,7 @@ export function sanitizeInput(input: any): any {
   }
   
   if (typeof input === 'object' && input !== null) {
-    const sanitized: any = {};
+    const sanitized: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(input)) {
       sanitized[key] = sanitizeInput(value);
     }
@@ -254,9 +254,9 @@ export const defaultRateLimiter = new RateLimiter();
  * Cache helper for API responses
  */
 export class ApiCache {
-  private cache: Map<string, { data: any; timestamp: number; ttl: number }> = new Map();
-  
-  set(key: string, data: any, ttlMs: number = 300000): void { // 5 minutes default
+  private cache: Map<string, { data: unknown; timestamp: number; ttl: number }> = new Map();
+
+  set(key: string, data: unknown, ttlMs: number = 300000): void { // 5 minutes default
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
@@ -264,7 +264,7 @@ export class ApiCache {
     });
   }
   
-  get(key: string): any | null {
+  get(key: string): unknown | null {
     const entry = this.cache.get(key);
     
     if (!entry) return null;

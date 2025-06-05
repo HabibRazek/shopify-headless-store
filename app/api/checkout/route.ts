@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { shopifyFetch } from '@/lib/shopify';
 import { createShopifyOrder } from '@/lib/shopifyAdmin';
 import {
-  CREATE_CHECKOUT,
-  ADD_TO_CHECKOUT
+  CREATE_CHECKOUT
 } from '@/lib/queries';
 
 export async function POST(request: NextRequest) {
@@ -23,7 +22,7 @@ export async function POST(request: NextRequest) {
               query: CREATE_CHECKOUT,
               variables: {
                 input: {
-                  lines: items.map((item: any) => ({
+                  lines: items.map((item: { variantId: string; quantity: number }) => ({
                     merchandiseId: item.variantId,
                     quantity: item.quantity
                   })),
@@ -33,7 +32,7 @@ export async function POST(request: NextRequest) {
 
             if (status === 200) {
               // Type assertion to handle the unknown type
-              const typedBody = body as Record<string, any>;
+              const typedBody = body as Record<string, unknown>;
               return NextResponse.json(typedBody);
             } else {
               console.error('Error recreating cart:', body);
@@ -56,7 +55,7 @@ export async function POST(request: NextRequest) {
             query: CREATE_CHECKOUT,
             variables: {
               input: {
-                lines: items.map((item: any) => ({
+                lines: items.map((item: { variantId: string; quantity: number }) => ({
                   merchandiseId: item.variantId,
                   quantity: item.quantity
                 })),
@@ -66,7 +65,7 @@ export async function POST(request: NextRequest) {
 
           if (status === 200) {
             // Type assertion to handle the unknown type
-            const typedBody = body as Record<string, any>;
+            const typedBody = body as Record<string, unknown>;
             return NextResponse.json(typedBody);
           } else {
             return NextResponse.json(

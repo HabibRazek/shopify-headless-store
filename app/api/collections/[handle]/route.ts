@@ -45,7 +45,7 @@ export async function GET(
 
     const productsLimit = Math.min(100, limit || 50);
     const sortKey = sortBy || 'BEST_SELLING';
-    const search = queryParams.search;
+    const search = typeof queryParams.search === 'string' ? queryParams.search : '';
 
     // Enhanced query for collection with sorting
     const query = `

@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     const { search } = validateFilterParams(params);
 
     const includeProducts = params.includeProducts === true;
-    const productsLimit = Math.min(100, Math.max(1, params.productsLimit || 50));
+    const productsLimit = Math.min(100, Math.max(1, typeof params.productsLimit === 'number' ? params.productsLimit : 50));
     const collectionsLimit = Math.min(50, limit || 20);
 
     // Choose query based on whether products should be included
