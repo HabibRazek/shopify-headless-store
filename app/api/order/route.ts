@@ -211,7 +211,7 @@ export async function POST(request: NextRequest) {
     const orderData = {
       customerInfo,
       cart,
-      shopifyCustomerId // Pass the Shopify customer ID to link the order
+      shopifyCustomerId: shopifyCustomerId || undefined // Pass the Shopify customer ID to link the order
     };
     const shopifyOrderResult = await createShopifyOrder(orderData);
 

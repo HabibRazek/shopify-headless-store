@@ -24,7 +24,7 @@ export async function createOrUpdateShopifyCustomer(customerData: {
     }
 
     // Dynamic import to avoid build-time issues
-    const { shopifyAdminFetch } = await import('./shopifyAdmin');
+    // const { shopifyAdminFetch } = await import('./shopifyAdmin');
 
     // First, check if the customer already exists
     const existingCustomer = await findCustomerByEmail(customerData.email);
@@ -86,7 +86,22 @@ export async function findCustomerByEmail(email: string) {
     });
 
     // Type assertion for the response body
-    const typedBody = body as { data?: { customers?: { edges?: Array<{ node: any }> } } };
+    interface CustomerNode {
+      id: string;
+      email: string;
+      firstName?: string;
+      lastName?: string;
+      phone?: string;
+      defaultAddress?: {
+        address1?: string;
+        city?: string;
+        province?: string;
+        zip?: string;
+        country?: string;
+      };
+    }
+
+    const typedBody = body as { data?: { customers?: { edges?: Array<{ node: CustomerNode }> } } };
 
     if (status === 200 && typedBody?.data?.customers?.edges && typedBody.data.customers.edges.length > 0) {
       return typedBody.data.customers.edges[0].node;
@@ -165,10 +180,17 @@ export async function createShopifyCustomer(customerData: {
     });
 
     // Type assertion for the response body
+    interface CreatedCustomer {
+      id: string;
+      email: string;
+      firstName?: string;
+      lastName?: string;
+    }
+
     const typedBody = body as {
       data?: {
         customerCreate?: {
-          customer: any;
+          customer: CreatedCustomer;
           userErrors?: Array<{ field: string; message: string }>
         }
       }
@@ -252,10 +274,17 @@ export async function updateShopifyCustomer(
     });
 
     // Type assertion for the response body
+    interface UpdatedCustomer {
+      id: string;
+      email: string;
+      firstName?: string;
+      lastName?: string;
+    }
+
     const typedBody = body as {
       data?: {
         customerUpdate?: {
-          customer: any;
+          customer: UpdatedCustomer;
           userErrors?: Array<{ field: string; message: string }>
         }
       }

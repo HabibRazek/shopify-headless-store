@@ -266,22 +266,26 @@ export function getProductSortOptions() {
  * Validates if a collection has required fields
  */
 export function isValidCollection(collection: unknown): collection is Collection {
-  return collection !== null &&
-         typeof collection === 'object' &&
-         collection !== undefined &&
-         typeof (collection as any).id === 'string' &&
-         typeof (collection as any).title === 'string' &&
-         typeof (collection as any).handle === 'string';
+  if (collection === null || typeof collection !== 'object' || collection === undefined) {
+    return false;
+  }
+
+  const obj = collection as Record<string, unknown>;
+  return typeof obj.id === 'string' &&
+         typeof obj.title === 'string' &&
+         typeof obj.handle === 'string';
 }
 
 /**
  * Validates if a product has required fields
  */
 export function isValidProduct(product: unknown): product is Product {
-  return product !== null &&
-         typeof product === 'object' &&
-         product !== undefined &&
-         typeof (product as any).id === 'string' &&
-         typeof (product as any).title === 'string' &&
-         typeof (product as any).handle === 'string';
+  if (product === null || typeof product !== 'object' || product === undefined) {
+    return false;
+  }
+
+  const obj = product as Record<string, unknown>;
+  return typeof obj.id === 'string' &&
+         typeof obj.title === 'string' &&
+         typeof obj.handle === 'string';
 }
