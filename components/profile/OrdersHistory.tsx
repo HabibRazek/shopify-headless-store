@@ -101,7 +101,7 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
 
         // Check if any orders have updated status
         const hasStatusUpdates = orders.some(oldOrder => {
-          const newOrder = newOrders.find(o => o.id === oldOrder.id);
+          const newOrder = newOrders.find((o: any) => o.id === oldOrder.id);
           return newOrder && newOrder.status !== oldOrder.status;
         });
 

@@ -52,7 +52,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           // Find user in database
           const user = await prisma.user.findUnique({
             where: {
-              email: credentials.email.toLowerCase(),
+              email: (credentials.email as string).toLowerCase(),
             },
           });
 
@@ -61,7 +61,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           }
 
           // Verify password
-          const isPasswordValid = await compare(credentials.password, user.password);
+          const isPasswordValid = await compare(credentials.password as string, user.password);
 
           if (!isPasswordValid) {
             return null;
@@ -84,7 +84,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   pages: {
     signIn: "/auth/signin",
-    signUp: "/auth/signup",
     error: "/auth/error",
   },
   session: {
@@ -96,8 +95,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async jwt({ token, account, user }) {
       if (account && user) {
-        token.id = user.id
-        token.role = user.role || 'user'
+        token.id = user.id as string
+        token.role = (user as any).role || 'user'
       }
       return token
     },

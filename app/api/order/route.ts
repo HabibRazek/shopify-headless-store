@@ -352,7 +352,7 @@ export async function POST(request: NextRequest) {
         });
       } catch (error) {
         console.error('❌ Error saving order to database:', error);
-        console.error('Error details:', error.message);
+        console.error('Error details:', error instanceof Error ? error.message : 'Unknown error');
         // Continue with the order process even if saving to database fails
       }
     } else {

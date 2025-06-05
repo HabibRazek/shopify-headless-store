@@ -33,7 +33,7 @@ export default function TestOrdersPage() {
         setMessage(`❌ Error: ${data.error} | Details: ${data.details || 'No details'}`);
       }
     } catch (error) {
-      setMessage(`❌ Error: ${error.message}`);
+      setMessage(`❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsLoading(false);
     }
@@ -59,7 +59,7 @@ export default function TestOrdersPage() {
         setMessage(`❌ Error creating user: ${data.error}`);
       }
     } catch (error) {
-      setMessage(`❌ Error: ${error.message}`);
+      setMessage(`❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsLoading(false);
     }
@@ -79,7 +79,7 @@ export default function TestOrdersPage() {
         setMessage(`❌ Error fetching orders: ${data.error}`);
       }
     } catch (error) {
-      setMessage(`❌ Error: ${error.message}`);
+      setMessage(`❌ Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsLoading(false);
     }

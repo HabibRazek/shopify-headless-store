@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error creating test order:', error);
     return NextResponse.json(
-      { error: 'Internal server error', details: error.message },
+      { error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
@@ -126,7 +126,7 @@ export async function GET() {
   } catch (error) {
     console.error('Error fetching orders:', error);
     return NextResponse.json(
-      { error: 'Internal server error', details: error.message },
+      { error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

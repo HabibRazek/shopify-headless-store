@@ -321,18 +321,18 @@ export async function GET(request: NextRequest) {
       });
 
       if (shopifyDomain && process.env.SHOPIFY_ADMIN_ACCESS_TOKEN) {
-        const ordersToSync = orders.filter(order =>
+        const ordersToSync = orders.filter((order: any) =>
           order.shopifyOrderId || order.orderNumber?.startsWith('D')
         );
 
         if (ordersToSync.length > 0) {
           console.log(`🔄 Syncing ${ordersToSync.length} orders with Shopify...`);
-          const syncPromises = ordersToSync.map(order => syncOrderWithShopify(order));
+          const syncPromises = ordersToSync.map((order: any) => syncOrderWithShopify(order));
           const syncedOrders = await Promise.all(syncPromises);
 
           // Update the orders array with synced data
-          orders = orders.map(order => {
-            const syncedOrder = syncedOrders.find(s => s.id === order.id);
+          orders = orders.map((order: any) => {
+            const syncedOrder = syncedOrders.find((s: any) => s.id === order.id);
             return syncedOrder || order;
           });
 
@@ -349,7 +349,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    console.log('Orders details:', orders.map(o => ({
+    console.log('Orders details:', orders.map((o: any) => ({
       id: o.id,
       orderNumber: o.orderNumber,
       total: o.total,

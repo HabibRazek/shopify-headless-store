@@ -126,7 +126,7 @@ export async function GET() {
     });
 
     // Parse items JSON for each quote
-    const quotesWithParsedItems = bulkQuotes.map(quote => ({
+    const quotesWithParsedItems = bulkQuotes.map((quote: any) => ({
       ...quote,
       items: JSON.parse(quote.items),
     }));
