@@ -161,12 +161,12 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
-          <div className="flex lg:hidden items-center space-x-3">
+          {/* Mobile Menu Button - Touch Optimized */}
+          <div className="flex lg:hidden items-center space-x-2 sm:space-x-3">
             <Cart />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="relative p-2.5 rounded-xl hover:bg-gray-100 transition-all duration-300 group"
+              className="relative p-3 rounded-xl hover:bg-gray-100 transition-all duration-300 group touch-target"
               aria-label="Menu"
             >
               <div className="relative w-5 h-5">
@@ -180,13 +180,13 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu - Touch Optimized */}
         {mobileMenuOpen && (
-          <div className="lg:hidden mt-4 mx-4  rounded-2xl shadow-2xl p-6 animate-slide-up border border-gray-200/50">
-            <nav className="flex flex-col space-y-4">
+          <div className="lg:hidden mt-3 sm:mt-4 mx-3 sm:mx-4 bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-4 sm:p-6 animate-slide-up border border-gray-200/50">
+            <nav className="flex flex-col space-y-2 sm:space-y-3">
               <Link
                 href="/"
-                className="relative px-5 py-3 rounded-xl text-gray-700 hover:text-primary transition-all duration-300 flex items-center group overflow-hidden"
+                className="relative px-4 sm:px-5 py-3 sm:py-4 rounded-xl text-gray-700 hover:text-primary transition-all duration-300 flex items-center group overflow-hidden touch-target"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <span className="relative z-10 text-base font-medium">Accueil</span>
@@ -194,7 +194,7 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/products"
-                className="relative px-5 py-3 rounded-xl text-gray-700 hover:text-primary transition-all duration-300 flex items-center group overflow-hidden"
+                className="relative px-4 sm:px-5 py-3 sm:py-4 rounded-xl text-gray-700 hover:text-primary transition-all duration-300 flex items-center group overflow-hidden touch-target"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <span className="relative z-10 text-base font-medium">Produits</span>
@@ -202,7 +202,7 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/collections"
-                className="relative px-5 py-3 rounded-xl text-gray-700 hover:text-primary transition-all duration-300 flex items-center group overflow-hidden"
+                className="relative px-4 sm:px-5 py-3 sm:py-4 rounded-xl text-gray-700 hover:text-primary transition-all duration-300 flex items-center group overflow-hidden touch-target"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <span className="relative z-10 text-base font-medium">Collections</span>
@@ -210,7 +210,7 @@ export default function Navbar() {
               </Link>
               <Link
                 href="/about"
-                className="relative px-5 py-3 rounded-xl text-gray-700 hover:text-primary transition-all duration-300 flex items-center group overflow-hidden"
+                className="relative px-4 sm:px-5 py-3 sm:py-4 rounded-xl text-gray-700 hover:text-primary transition-all duration-300 flex items-center group overflow-hidden touch-target"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <span className="relative z-10 text-base font-medium">À propos</span>

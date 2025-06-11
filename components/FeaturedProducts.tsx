@@ -124,62 +124,68 @@ export default function FeaturedProducts() {
   };
 
   return (
-    <section className="py-24 bg-gradient-to-br from-white via-green-50/30 to-white relative overflow-hidden">
-      {/* Soft Decorative Background Elements */}
-      <div className="absolute top-0 left-0 w-72 h-72 bg-green-100/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-green-200/20 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
+    <section className="py-12 sm:py-16 md:py-20 lg:py-24 bg-gradient-to-br from-white via-green-50/30 to-white relative overflow-hidden">
+      {/* Soft Decorative Background Elements - Mobile Responsive */}
+      <div className="absolute top-0 left-0 w-48 h-48 sm:w-72 sm:h-72 bg-green-100/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute bottom-0 right-0 w-64 h-64 sm:w-96 sm:h-96 bg-green-200/20 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="flex flex-col lg:flex-row justify-between items-center mb-16">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="flex flex-col lg:flex-row justify-between items-center mb-8 sm:mb-12 md:mb-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="mb-8 lg:mb-0 text-center lg:text-left"
+            className="mb-6 sm:mb-8 lg:mb-0 text-center lg:text-left"
           >
-            <div className="inline-flex items-center mb-4 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg border border-green-200/50">
-              <div className="w-2 h-2 bg-green-500 rounded-full mr-3 animate-pulse" />
-              <span className="text-sm font-semibold text-green-700 tracking-wide">SÉLECTION PREMIUM</span>
+            {/* Badge - Mobile Responsive */}
+            <div className="inline-flex items-center mb-3 sm:mb-4 bg-white/80 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-lg border border-green-200/50">
+              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full mr-2 sm:mr-3 animate-pulse" />
+              <span className="text-xs sm:text-sm font-semibold text-green-700 tracking-wide">SÉLECTION PREMIUM</span>
             </div>
-            <h2 className="text-4xl lg:text-5xl font-bold text-green-800 mb-4 leading-tight">
+            {/* Title - Mobile Responsive Typography */}
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-green-800 mb-3 sm:mb-4 leading-tight">
               Produits <span className="bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent">Populaires</span>
             </h2>
-            <p className="text-xl text-green-700/80 max-w-2xl leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-green-700/80 max-w-2xl leading-relaxed">
               Découvrez notre sélection exclusive de produits les plus appréciés par nos clients professionnels
             </p>
           </motion.div>
 
+          {/* Button - Mobile Responsive */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+            className="w-full lg:w-auto"
           >
             <Link href="/products">
-              <Button size="lg" className="group">
+              <Button size="lg" className="group w-full lg:w-auto text-sm sm:text-base">
                 <span>Voir tous les produits</span>
-                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
+                <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform duration-300" />
               </Button>
             </Link>
           </motion.div>
         </div>
 
+        {/* Product Grid - Mobile Responsive */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="mt-6"
+          className="mt-4 sm:mt-6"
         >
-          <ProductGrid products={featuredProducts} className="lg:grid-cols-4 xl:grid-cols-4 gap-6" />
+          <ProductGrid products={featuredProducts} className="lg:grid-cols-4 xl:grid-cols-4" />
         </motion.div>
 
+        {/* Bottom CTA - Mobile Responsive */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.8 }}
-          className="mt-16 text-center"
+          className="mt-8 sm:mt-12 md:mt-16 text-center"
         >
           <Link href="/products">
-            <Button size="lg" className="text-lg px-12">
+            <Button size="lg" className="text-base sm:text-lg px-8 sm:px-12 w-full sm:w-auto">
               Explorer notre catalogue complet
             </Button>
           </Link>

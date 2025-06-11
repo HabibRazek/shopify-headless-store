@@ -69,105 +69,105 @@ export default function Footer() {
                 <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent" />
             </div>
 
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-16 pb-8">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-8 sm:pt-12 md:pt-16 pb-6 sm:pb-8">
 
-                {/* Simple Header */}
+                {/* Simple Header - Mobile Optimized */}
                 <motion.div
-                    className="text-center mb-12"
+                    className="text-center mb-8 sm:mb-10 md:mb-12"
                     variants={containerVariants}
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.1 }}
                 >
                     <motion.div variants={itemVariants}>
-                        <div className="flex items-center justify-center mb-6">
+                        <div className="flex items-center justify-center mb-4 sm:mb-6">
                             <Image
                                 src="/cropped-packedIn-LOGO-FINAL-2021-BLACK-01.webp"
                                 alt="Packedin Logo"
-                                width={100}
-                                height={32}
-                                className="opacity-80"
+                                width={80}
+                                height={26}
+                                className="opacity-80 sm:w-[100px] sm:h-[32px]"
                             />
                         </div>
-                        <h2 className="text-2xl lg:text-3xl font-bold text-green-800 mb-4">
+                        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-green-800 mb-3 sm:mb-4 px-4">
                             Solutions d'Emballage Éco-Responsables
                         </h2>
-                        <p className="text-lg text-green-700 max-w-2xl mx-auto leading-relaxed">
+                        <p className="text-base sm:text-lg text-green-700 max-w-2xl mx-auto leading-relaxed px-4">
                             Des solutions durables pour votre entreprise
                         </p>
                     </motion.div>
                 </motion.div>
 
-                {/* Main Content Grid */}
+                {/* Main Content Grid - Mobile Responsive */}
                 <motion.div
-                    className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12"
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-8 sm:mb-10 md:mb-12"
                     variants={containerVariants}
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.1 }}
                 >
-                    {/* Contact Information */}
-                    <motion.div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-green-200/50 hover:border-green-300 transition-all duration-300 shadow-lg hover:shadow-xl" variants={itemVariants}>
-                        <div className="flex items-center mb-6">
-                            <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mr-4">
-                                <MapPin className="w-5 h-5 text-white" />
+                    {/* Contact Information - Mobile Optimized */}
+                    <motion.div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-green-200/50 hover:border-green-300 transition-all duration-300 shadow-lg hover:shadow-xl" variants={itemVariants}>
+                        <div className="flex items-center mb-4 sm:mb-6">
+                            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-500 rounded-full flex items-center justify-center mr-3 sm:mr-4">
+                                <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                             </div>
                             <div>
-                                <h3 className="text-lg font-bold text-green-800">Nous Contacter</h3>
-                                <p className="text-green-600 text-sm">Restons en contact</p>
+                                <h3 className="text-base sm:text-lg font-bold text-green-800">Nous Contacter</h3>
+                                <p className="text-green-600 text-xs sm:text-sm">Restons en contact</p>
                             </div>
                         </div>
 
-                        <div className="space-y-4">
-                            <div className="flex items-center">
-                                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                                    <MapPin className="w-4 h-4 text-green-600" />
+                        <div className="space-y-3 sm:space-y-4">
+                            <div className="flex items-start">
+                                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-green-100 rounded-full flex items-center justify-center mr-2 sm:mr-3 mt-0.5">
+                                    <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
                                 </div>
                                 <div>
-                                    <p className="text-green-800 font-medium">Jasmin 8000 Nabeul</p>
-                                    <p className="text-green-600 text-sm">Tunisie</p>
+                                    <p className="text-green-800 font-medium text-sm sm:text-base">Jasmin 8000 Nabeul</p>
+                                    <p className="text-green-600 text-xs sm:text-sm">Tunisie</p>
                                 </div>
                             </div>
 
-                            <div className="flex items-center">
-                                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                                    <Phone className="w-4 h-4 text-green-600" />
+                            <div className="flex items-start">
+                                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-green-100 rounded-full flex items-center justify-center mr-2 sm:mr-3 mt-0.5">
+                                    <Phone className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
                                 </div>
                                 <div>
-                                    <a href="tel:+21650095115" className="text-green-800 font-medium hover:text-green-600 transition-colors">
+                                    <a href="tel:+21650095115" className="text-green-800 font-medium hover:text-green-600 transition-colors text-sm sm:text-base">
                                         +216 50 095 115
                                     </a>
-                                    <p className="text-green-600 text-sm">Lun-Ven: 8h00 - 17h00</p>
+                                    <p className="text-green-600 text-xs sm:text-sm">Lun-Ven: 8h00 - 17h00</p>
                                 </div>
                             </div>
 
-                            <div className="flex items-center">
-                                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                                    <Mail className="w-4 h-4 text-green-600" />
+                            <div className="flex items-start">
+                                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-green-100 rounded-full flex items-center justify-center mr-2 sm:mr-3 mt-0.5">
+                                    <Mail className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
                                 </div>
                                 <div>
-                                    <a href="mailto:contact@packedin.com" className="text-green-800 font-medium hover:text-green-600 transition-colors">
+                                    <a href="mailto:contact@packedin.com" className="text-green-800 font-medium hover:text-green-600 transition-colors text-sm sm:text-base break-all">
                                         contact@packedin.com
                                     </a>
-                                    <p className="text-green-600 text-sm">Réponse sous 24h</p>
+                                    <p className="text-green-600 text-xs sm:text-sm">Réponse sous 24h</p>
                                 </div>
                             </div>
                         </div>
                     </motion.div>
 
-                    {/* Quick Links */}
-                    <motion.div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-green-200/50 hover:border-green-300 transition-all duration-300 shadow-lg hover:shadow-xl" variants={itemVariants}>
-                        <div className="flex items-center mb-6">
-                            <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mr-4">
-                                <ArrowRight className="w-5 h-5 text-white" />
+                    {/* Quick Links - Mobile Optimized */}
+                    <motion.div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-green-200/50 hover:border-green-300 transition-all duration-300 shadow-lg hover:shadow-xl" variants={itemVariants}>
+                        <div className="flex items-center mb-4 sm:mb-6">
+                            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-500 rounded-full flex items-center justify-center mr-3 sm:mr-4">
+                                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                             </div>
                             <div>
-                                <h3 className="text-lg font-bold text-green-800">Navigation</h3>
-                                <p className="text-green-600 text-sm">Explorez nos services</p>
+                                <h3 className="text-base sm:text-lg font-bold text-green-800">Navigation</h3>
+                                <p className="text-green-600 text-xs sm:text-sm">Explorez nos services</p>
                             </div>
                         </div>
 
-                        <div className="space-y-3">
+                        <div className="space-y-2 sm:space-y-3">
                             {[
                                 { href: "/products", label: "Nos Produits" },
                                 { href: "/collections", label: "Collections" },
@@ -177,33 +177,33 @@ export default function Footer() {
                                 <Link
                                     key={index}
                                     href={link.href}
-                                    className="flex items-center text-green-700 hover:text-green-500 transition-colors group"
+                                    className="flex items-center text-green-700 hover:text-green-500 transition-colors group py-1"
                                 >
-                                    <ArrowRight className="w-4 h-4 mr-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />
-                                    <span className="font-medium">{link.label}</span>
+                                    <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 mr-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />
+                                    <span className="font-medium text-sm sm:text-base">{link.label}</span>
                                 </Link>
                             ))}
                         </div>
                     </motion.div>
 
-                    {/* Newsletter & Social */}
-                    <motion.div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-green-200/50 hover:border-green-300 transition-all duration-300 shadow-lg hover:shadow-xl" variants={itemVariants}>
-                        <div className="flex items-center mb-6">
-                            <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mr-4">
-                                <Send className="w-5 h-5 text-white" />
+                    {/* Newsletter & Social - Mobile Optimized */}
+                    <motion.div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-green-200/50 hover:border-green-300 transition-all duration-300 shadow-lg hover:shadow-xl md:col-span-2 lg:col-span-1" variants={itemVariants}>
+                        <div className="flex items-center mb-4 sm:mb-6">
+                            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-500 rounded-full flex items-center justify-center mr-3 sm:mr-4">
+                                <Send className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                             </div>
                             <div>
-                                <h3 className="text-lg font-bold text-green-800">Newsletter</h3>
-                                <p className="text-green-600 text-sm">Restez informé</p>
+                                <h3 className="text-base sm:text-lg font-bold text-green-800">Newsletter</h3>
+                                <p className="text-green-600 text-xs sm:text-sm">Restez informé</p>
                             </div>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="mb-6">
-                            <div className="flex gap-2">
+                        <form onSubmit={handleSubmit} className="mb-4 sm:mb-6">
+                            <div className="flex flex-col sm:flex-row gap-2">
                                 <Input
                                     type="email"
                                     placeholder="Votre email"
-                                    className="bg-white/70 border-green-200 text-green-800 placeholder:text-green-600 focus:border-green-500 transition-all duration-300"
+                                    className="bg-white/70 border-green-200 text-green-800 placeholder:text-green-600 focus:border-green-500 transition-all duration-300 text-sm sm:text-base"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
@@ -211,7 +211,7 @@ export default function Footer() {
                                 <Button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="bg-green-500 hover:bg-green-600 text-white border-0 px-6"
+                                    className="bg-green-500 hover:bg-green-600 text-white border-0 px-4 sm:px-6 text-sm sm:text-base"
                                 >
                                     {isSubmitting ? "..." : "OK"}
                                 </Button>
@@ -219,17 +219,17 @@ export default function Footer() {
                         </form>
 
                         <div>
-                            <h4 className="text-green-800 font-semibold mb-4">Suivez-nous</h4>
-                            <div className="flex space-x-3">
+                            <h4 className="text-green-800 font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Suivez-nous</h4>
+                            <div className="flex space-x-2 sm:space-x-3">
                                 {[
-                                    { icon: <FacebookIcon className="h-4 w-4" />, label: "Facebook", href: "#" },
-                                    { icon: <InstagramIcon className="h-4 w-4" />, label: "Instagram", href: "#" },
-                                    { icon: <LinkedinIcon className="h-4 w-4" />, label: "LinkedIn", href: "#" }
+                                    { icon: <FacebookIcon className="h-3 w-3 sm:h-4 sm:w-4" />, label: "Facebook", href: "#" },
+                                    { icon: <InstagramIcon className="h-3 w-3 sm:h-4 sm:w-4" />, label: "Instagram", href: "#" },
+                                    { icon: <LinkedinIcon className="h-3 w-3 sm:h-4 sm:w-4" />, label: "LinkedIn", href: "#" }
                                 ].map((social, index) => (
                                     <a
                                         key={index}
                                         href={social.href}
-                                        className="w-10 h-10 bg-green-100 hover:bg-green-200 rounded-full flex items-center justify-center text-green-600 hover:text-green-700 transition-all duration-300 hover:scale-110"
+                                        className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 hover:bg-green-200 rounded-full flex items-center justify-center text-green-600 hover:text-green-700 transition-all duration-300 hover:scale-110"
                                         aria-label={social.label}
                                     >
                                         {social.icon}

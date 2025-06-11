@@ -38,7 +38,7 @@ export default function RootLayout({
           <ShopProvider>
             <CartProvider>
               <Navbar />
-              <main className="pt-24 lg:pt-32">
+              <main className="pt-20 sm:pt-24 lg:pt-32">
                 {children}
               </main>
               <Footer />

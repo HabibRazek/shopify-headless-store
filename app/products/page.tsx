@@ -162,10 +162,10 @@ function Products() {
   }
 
   return (
-    <div className="space-y-8">
-      {/* Innovative Search and Filter Bar */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-200/50">
-        <div className="flex flex-col lg:flex-row gap-4">
+    <div className="space-y-6 sm:space-y-8">
+      {/* Innovative Search and Filter Bar - Mobile Optimized */}
+      <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-lg border border-gray-200/50">
+        <div className="flex flex-col lg:flex-row gap-3 sm:gap-4">
           {/* Search Input */}
           <div className="flex-grow">
             <SearchInput
@@ -177,7 +177,7 @@ function Products() {
           {/* Sort Options */}
           <div className="flex-shrink-0 w-full lg:w-64">
             <Select value={sortOption} onValueChange={setSortOption}>
-              <SelectTrigger className="bg-white/90 border-gray-300 shadow-sm">
+              <SelectTrigger className="bg-white/90 border-gray-300 shadow-sm text-sm sm:text-base">
                 <SelectValue placeholder="Trier par" />
               </SelectTrigger>
               <SelectContent>
@@ -191,9 +191,9 @@ function Products() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        {/* Filters */}
-        <div className="md:col-span-1">
+      <div className="flex flex-col lg:grid lg:grid-cols-4 gap-4 sm:gap-6">
+        {/* Filters - Mobile Responsive */}
+        <div className="lg:col-span-1 order-2 lg:order-1">
           <ProductFilters
             products={allProducts} // Use allProducts instead of filteredProducts to ensure filters work on all products
             onFilterChange={(filtered) => {
@@ -205,20 +205,20 @@ function Products() {
           />
         </div>
 
-        {/* Products */}
-        <div id="product-grid-top" className="md:col-span-3">
-          {/* Innovative Results Header */}
-          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 mb-6 border border-gray-200/50">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
+        {/* Products - Optimized for 2-column Mobile Display */}
+        <div id="product-grid-top" className="lg:col-span-3 order-1 lg:order-2">
+          {/* Innovative Results Header - Mobile Optimized */}
+          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-3 sm:p-4 mb-4 sm:mb-6 border border-gray-200/50">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                <span className="text-sm font-semibold text-gray-700">
+                <span className="text-xs sm:text-sm font-semibold text-gray-700">
                   {filteredProducts.length} {filteredProducts.length === 1 ? 'produit trouvé' : 'produits trouvés'}
                 </span>
               </div>
 
               {filteredProducts.length > productsPerPage && (
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-gray-600">
                   <span>Page {currentPage} sur {totalPages}</span>
                   <div className="w-1 h-1 bg-gray-400 rounded-full" />
                   <span>{productsPerPage} par page</span>
@@ -395,33 +395,33 @@ export default function ProductsPage() {
         </div>
       </div>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-        {/* Innovative Header */}
-        <div className="text-center mb-12">
-          {/* Stats Pills */}
-          <div className="flex justify-center items-center gap-4 mb-6">
-            <div className="bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-gray-200/50">
-              <span className="text-sm font-semibold text-gray-700">100+ Produits</span>
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+        {/* Innovative Header - Mobile Optimized */}
+        <div className="text-center mb-8 sm:mb-10 md:mb-12">
+          {/* Stats Pills - Mobile Responsive */}
+          <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
+            <div className="bg-white/80 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-sm border border-gray-200/50">
+              <span className="text-xs sm:text-sm font-semibold text-gray-700">100+ Produits</span>
             </div>
-            <div className="bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-gray-200/50">
-              <span className="text-sm font-semibold text-gray-700">Livraison Rapide</span>
+            <div className="bg-white/80 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-sm border border-gray-200/50">
+              <span className="text-xs sm:text-sm font-semibold text-gray-700">Livraison Rapide</span>
             </div>
-            <div className="bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-gray-200/50">
-              <span className="text-sm font-semibold text-gray-700">Qualité Premium</span>
+            <div className="bg-white/80 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-sm border border-gray-200/50">
+              <span className="text-xs sm:text-sm font-semibold text-gray-700">Qualité Premium</span>
             </div>
           </div>
 
-          {/* Main Title */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black mb-4">
-            <span className="block text-gray-900 mb-2">Notre</span>
+          {/* Main Title - Mobile Responsive Typography */}
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-3 sm:mb-4">
+            <span className="block text-gray-900 mb-1 sm:mb-2">Notre</span>
             <span className="block bg-gradient-to-r from-green-600 via-emerald-500 to-green-600 bg-clip-text text-transparent">
               CATALOGUE
             </span>
           </h1>
 
-          <div className="w-24 h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent rounded-full mx-auto mb-4" />
+          <div className="w-16 sm:w-20 md:w-24 h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent rounded-full mx-auto mb-3 sm:mb-4" />
 
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed px-4 sm:px-0">
             Découvrez notre gamme complète d'emballages innovants et durables
           </p>
         </div>

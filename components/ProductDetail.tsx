@@ -46,31 +46,33 @@ export default function ProductDetail({ product, handle }: ProductDetailProps) {
 
   return (
     <div className="bg-white">
-      <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:max-w-7xl lg:px-8">
+      <div className="mx-auto max-w-2xl px-4 py-6 sm:py-8 sm:px-6 lg:max-w-7xl lg:px-8">
         <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
-          {/* Image gallery */}
+          {/* Image gallery - Mobile Optimized */}
           <div className="flex flex-col-reverse">
             <div className="aspect-h-1 aspect-w-1 w-full">
-              <div className="relative h-96 w-full overflow-hidden rounded-lg">
+              <div className="relative h-64 sm:h-80 md:h-96 w-full overflow-hidden rounded-lg">
                 <Image
                   src={getProductImage(product)}
                   alt={product.title}
                   fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 50vw"
                   className="object-cover object-center"
                 />
               </div>
             </div>
             {images.length > 1 && (
-              <div className="mt-6 grid grid-cols-5 gap-2">
+              <div className="mt-4 sm:mt-6 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
                 {images.map((image: any) => (
                   <div
                     key={image.node.id}
-                    className="relative h-24 cursor-pointer overflow-hidden rounded-lg"
+                    className="relative h-16 sm:h-20 md:h-24 cursor-pointer overflow-hidden rounded-lg"
                   >
                     <Image
                       src={image.node.url}
                       alt={image.node.altText || product.title}
                       fill
+                      sizes="(max-width: 768px) 33vw, (max-width: 1200px) 25vw, 20vw"
                       className="object-cover object-center"
                     />
                   </div>
@@ -79,27 +81,27 @@ export default function ProductDetail({ product, handle }: ProductDetailProps) {
             )}
           </div>
 
-          {/* Product info */}
-          <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+          {/* Product info - Mobile Optimized */}
+          <div className="mt-6 sm:mt-8 lg:mt-0 px-4 sm:px-0">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
               {product.title}
             </h1>
-            <div className="mt-3">
+            <div className="mt-2 sm:mt-3">
               <h2 className="sr-only">Product information</h2>
-              <p className="text-3xl tracking-tight text-gray-900">
+              <p className="text-2xl sm:text-3xl tracking-tight text-gray-900">
                 {formatPrice(price, currency)}
               </p>
             </div>
 
-            <div className="mt-6">
+            <div className="mt-4 sm:mt-6">
               <h3 className="sr-only">Description</h3>
               <div
-                className="space-y-6 text-base text-gray-700"
+                className="space-y-4 sm:space-y-6 text-sm sm:text-base text-gray-700"
                 dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
               />
             </div>
 
-            <div className="mt-6">
+            <div className="mt-4 sm:mt-6">
               {variants.length > 1 && (
                 <div>
                   <h3 className="text-sm text-gray-600">Variants</h3>
@@ -109,7 +111,7 @@ export default function ProductDetail({ product, handle }: ProductDetailProps) {
                         <button
                           key={variant.node.id}
                           type="button"
-                          className={`relative inline-flex items-center rounded-md px-3 py-2 text-sm font-medium ${
+                          className={`relative inline-flex items-center rounded-md px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium ${
                             selectedVariant === variant.node.id
                               ? 'bg-indigo-600 text-white'
                               : 'bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50'
@@ -124,22 +126,22 @@ export default function ProductDetail({ product, handle }: ProductDetailProps) {
                 </div>
               )}
 
-              <div className="mt-6">
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center">
+              <div className="mt-4 sm:mt-6">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+                  <div className="flex items-center justify-center sm:justify-start">
                     <button
                       type="button"
-                      className="rounded-l-md border border-gray-300 px-3 py-2 text-gray-900 hover:bg-gray-50"
+                      className="rounded-l-md border border-gray-300 px-3 py-2 text-gray-900 hover:bg-gray-50 text-sm sm:text-base"
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     >
                       -
                     </button>
-                    <div className="w-12 border-t border-b border-gray-300 px-3 py-2 text-center">
+                    <div className="w-12 sm:w-14 border-t border-b border-gray-300 px-3 py-2 text-center text-sm sm:text-base">
                       {quantity}
                     </div>
                     <button
                       type="button"
-                      className="rounded-r-md border border-gray-300 px-3 py-2 text-gray-900 hover:bg-gray-50"
+                      className="rounded-r-md border border-gray-300 px-3 py-2 text-gray-900 hover:bg-gray-50 text-sm sm:text-base"
                       onClick={() => setQuantity(quantity + 1)}
                     >
                       +
@@ -148,7 +150,7 @@ export default function ProductDetail({ product, handle }: ProductDetailProps) {
 
                   <button
                     type="button"
-                    className="flex-1 rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    className="flex-1 rounded-md border border-transparent bg-indigo-600 px-4 py-2.5 sm:py-2 text-sm sm:text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     onClick={handleAddToCart}
                   >
                     Add to Cart
