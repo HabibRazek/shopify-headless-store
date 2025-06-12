@@ -32,20 +32,52 @@ export async function middleware(request: NextRequest) {
   }
 
   try {
-    // Simplified token configuration that works for both environments
-    const token = await getToken({
+    // Try to get token with primary configuration
+    let token = await getToken({
       req: request,
       secret: process.env.NEXTAUTH_SECRET,
+      cookieName: process.env.NODE_ENV === 'production'
+        ? '__Secure-next-auth.session-token'
+        : 'next-auth.session-token',
+      secureCookie: process.env.NODE_ENV === 'production',
     });
 
-    // Debug logging for both environments
+    // If no token found and we're in production, try the fallback cookie name
+    if (!token && process.env.NODE_ENV === 'production') {
+      token = await getToken({
+        req: request,
+        secret: process.env.NEXTAUTH_SECRET,
+        cookieName: 'next-auth.session-token',
+        secureCookie: false,
+      });
+    }
+
+    // If still no token and we're in development, try the secure cookie name
+    if (!token && process.env.NODE_ENV === 'development') {
+      token = await getToken({
+        req: request,
+        secret: process.env.NEXTAUTH_SECRET,
+        cookieName: '__Secure-next-auth.session-token',
+        secureCookie: true,
+      });
+    }
+
+    // Enhanced debug logging for both environments
     console.log('Middleware Debug:', {
       pathname,
       hasToken: !!token,
       isProtectedRoute,
       isAuthRoute,
       tokenId: token?.id || 'none',
-      environment: process.env.NODE_ENV
+      environment: process.env.NODE_ENV,
+      cookies: {
+        regular: request.cookies.get('next-auth.session-token')?.value ? 'present' : 'missing',
+        secure: request.cookies.get('__Secure-next-auth.session-token')?.value ? 'present' : 'missing',
+      },
+      headers: {
+        host: request.headers.get('host'),
+        userAgent: request.headers.get('user-agent')?.substring(0, 50)
+      }
     });
 
     // If it's a protected route and there's no token, redirect to signin
