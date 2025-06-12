@@ -15,6 +15,7 @@ export default function AuthDebugPage() {
   const { data: session, status } = useSession();
   const [authStatus, setAuthStatus] = useState<AuthStatus | null>(null);
   const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const checkAuthStatus = async () => {
     setLoading(true);
@@ -36,6 +37,7 @@ export default function AuthDebugPage() {
   };
 
   useEffect(() => {
+    setMounted(true);
     checkAuthStatus();
   }, []);
 
@@ -100,14 +102,13 @@ export default function AuthDebugPage() {
           )}
         </div>
 
-        {/* Browser info */}
+        {/* Environment info */}
         <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-xl font-semibold mb-4">Browser Info</h2>
+          <h2 className="text-xl font-semibold mb-4">Environment Info</h2>
           <div className="space-y-2">
-            <p><strong>User Agent:</strong> {navigator.userAgent}</p>
-            <p><strong>Cookies Enabled:</strong> {navigator.cookieEnabled ? 'Yes' : 'No'}</p>
-            <p><strong>Current URL:</strong> {window.location.href}</p>
             <p><strong>Environment:</strong> {process.env.NODE_ENV}</p>
+            <p><strong>Mounted:</strong> {mounted ? 'Yes' : 'No'}</p>
+            <p><strong>Timestamp:</strong> {new Date().toISOString()}</p>
           </div>
         </div>
       </div>

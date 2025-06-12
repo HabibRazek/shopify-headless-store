@@ -2,13 +2,13 @@
 
 import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { UserIcon, PackageIcon, AlertCircle } from 'lucide-react';
 import { ProfileEditor } from '@/components/profile/ProfileEditor';
 import { OrdersHistory } from '@/components/profile/OrdersHistory';
 
-export default function ProfilePage() {
+function ProfileContent() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -108,5 +108,18 @@ export default function ProfilePage() {
         </Tabs>
       </div>
     </div>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center items-center min-h-[calc(100vh-4rem)]">
+        <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+        <p className="mt-4 text-gray-600">Loading profile...</p>
+      </div>
+    }>
+      <ProfileContent />
+    </Suspense>
   );
 }
