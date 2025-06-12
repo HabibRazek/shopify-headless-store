@@ -6,6 +6,18 @@
     }
   },
   "env": {
-    "NEXTAUTH_URL": "https://shopify-headless-store-sigma.vercel.app"
-  }
+    "NEXTAUTH_URL": "https://shopify-headless-store-sigma.vercel.app",
+    "NEXTAUTH_URL_INTERNAL": "https://shopify-headless-store-sigma.vercel.app"
+  },
+  "headers": [
+    {
+      "source": "/api/auth/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
+      ]
+    }
+  ]
 }
