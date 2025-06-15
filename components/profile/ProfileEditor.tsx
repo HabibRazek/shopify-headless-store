@@ -105,6 +105,7 @@ export function ProfileEditor({ className }: ProfileEditorProps) {
 
   const onSubmit = async (data: any) => {
     setIsLoading(true);
+    console.log('🔄 Starting profile update with data:', data);
 
     try {
       const response = await fetch('/api/user/profile', {
@@ -115,8 +116,47 @@ export function ProfileEditor({ className }: ProfileEditorProps) {
         body: JSON.stringify(data),
       });
 
+      console.log('📡 Response received:', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok
+      });
+
       if (!response.ok) {
-        throw new Error('Failed to update profile');
+        let errorData;
+        try {
+          errorData = await response.text();
+        } catch (e) {
+          errorData = 'Could not read error response';
+        }
+
+        const errorInfo = {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorData,
+          url: response.url
+        };
+
+        console.error('Profile update failed:', errorInfo);
+        console.error('Full response details:', {
+          headers: Object.fromEntries(response.headers.entries()),
+          ok: response.ok,
+          redirected: response.redirected,
+          type: response.type
+        });
+
+        // Handle specific error cases
+        if (response.status === 401) {
+          throw new Error('AUTHENTICATION_ERROR: Vous devez vous connecter pour modifier votre profil');
+        } else if (response.status === 403) {
+          throw new Error('Vous n\'avez pas les permissions pour effectuer cette action');
+        } else if (response.status === 400) {
+          throw new Error('Données invalides. Veuillez vérifier vos informations');
+        } else if (response.status >= 500) {
+          throw new Error('Erreur serveur. Veuillez réessayer plus tard');
+        } else {
+          throw new Error(`Erreur ${response.status}: ${response.statusText}`);
+        }
       }
 
       const updatedData = await response.json();
@@ -138,10 +178,39 @@ export function ProfileEditor({ className }: ProfileEditorProps) {
       });
     } catch (error) {
       console.error('Profile update error:', error);
-      toast.error('Erreur', {
-        description: 'Une erreur est survenue lors de la mise à jour',
-        duration: 5000,
-      });
+      console.error('Error type:', typeof error);
+      console.error('Error constructor:', error?.constructor?.name);
+
+      let errorMessage = 'Une erreur inconnue est survenue';
+
+      if (error instanceof Error) {
+        errorMessage = error.message;
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      } else {
+        console.error('Non-standard error object:', error);
+        errorMessage = 'Erreur de connexion. Vérifiez votre connexion internet.';
+      }
+
+      // If it's an authentication error, redirect to sign-in
+      if (errorMessage.includes('AUTHENTICATION_ERROR') || errorMessage.includes('connecter') || errorMessage.includes('401')) {
+        const cleanMessage = errorMessage.replace('AUTHENTICATION_ERROR: ', '');
+        toast.error('Session expirée', {
+          description: cleanMessage,
+          duration: 5000,
+        });
+        // Redirect to sign-in page after a short delay
+        setTimeout(() => {
+          window.location.href = '/auth/signin?callbackUrl=' + encodeURIComponent('/profile');
+        }, 2000);
+      } else {
+        toast.error('Erreur', {
+          description: errorMessage,
+          duration: 5000,
+        });
+      }
     } finally {
       setIsLoading(false);
     }

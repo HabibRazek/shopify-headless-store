@@ -124,7 +124,7 @@ export default function Footer() {
                                     <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
                                 </div>
                                 <div>
-                                    <p className="text-green-800 font-medium text-sm sm:text-base">Jasmin 8000 Nabeul</p>
+                                    <p className="text-green-800 font-medium text-sm sm:text-base">Nabeul</p>
                                     <p className="text-green-600 text-xs sm:text-sm">Tunisie</p>
                                 </div>
                             </div>
@@ -134,10 +134,15 @@ export default function Footer() {
                                     <Phone className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
                                 </div>
                                 <div>
-                                    <a href="tel:+21650095115" className="text-green-800 font-medium hover:text-green-600 transition-colors text-sm sm:text-base">
-                                        +216 50 095 115
-                                    </a>
-                                    <p className="text-green-600 text-xs sm:text-sm">Lun-Ven: 8h00 - 17h00</p>
+                                    <div className="space-y-1">
+                                        <a href="tel:+21650095115" className="text-green-800 font-medium hover:text-green-600 transition-colors text-sm sm:text-base block">
+                                            +216 50 095 115
+                                        </a>
+                                        <a href="tel:+21620387333" className="text-green-800 font-medium hover:text-green-600 transition-colors text-sm sm:text-base block">
+                                            +216 20 387 333
+                                        </a>
+                                    </div>
+                                    <p className="text-green-600 text-xs sm:text-sm mt-1">Lun-Ven: 8h00 - 17h00</p>
                                 </div>
                             </div>
 
@@ -146,8 +151,8 @@ export default function Footer() {
                                     <Mail className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
                                 </div>
                                 <div>
-                                    <a href="mailto:contact@packedin.com" className="text-green-800 font-medium hover:text-green-600 transition-colors text-sm sm:text-base break-all">
-                                        contact@packedin.com
+                                    <a href="mailto:contact@packedin.tn" className="text-green-800 font-medium hover:text-green-600 transition-colors text-sm sm:text-base break-all">
+                                        contact@packedin.tn
                                     </a>
                                     <p className="text-green-600 text-xs sm:text-sm">Réponse sous 24h</p>
                                 </div>
@@ -222,13 +227,22 @@ export default function Footer() {
                             <h4 className="text-green-800 font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Suivez-nous</h4>
                             <div className="flex space-x-2 sm:space-x-3">
                                 {[
-                                    { icon: <FacebookIcon className="h-3 w-3 sm:h-4 sm:w-4" />, label: "Facebook", href: "#" },
-                                    { icon: <InstagramIcon className="h-3 w-3 sm:h-4 sm:w-4" />, label: "Instagram", href: "#" },
-                                    { icon: <LinkedinIcon className="h-3 w-3 sm:h-4 sm:w-4" />, label: "LinkedIn", href: "#" }
+                                    {
+                                        icon: <FacebookIcon className="h-3 w-3 sm:h-4 sm:w-4" />,
+                                        label: "Facebook",
+                                        href: "https://www.facebook.com/search/top?q=packedin.tn"
+                                    },
+                                    {
+                                        icon: <InstagramIcon className="h-3 w-3 sm:h-4 sm:w-4" />,
+                                        label: "Instagram",
+                                        href: "https://www.instagram.com/packedin.tn/?fbclid=IwY2xjawK7765leHRuA2FlbQIxMABicmlkETFFcXlUZllPVGE5dXRmWXlvAR56MyK3IOPJiH8Izak9lCRwJjl3J9iSKntIABqh1VNQRcv-QwhAWnpodLQALA_aem_sNu9ZJ26oFcMnyYGb1rJsw#"
+                                    }
                                 ].map((social, index) => (
                                     <a
                                         key={index}
                                         href={social.href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
                                         className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 hover:bg-green-200 rounded-full flex items-center justify-center text-green-600 hover:text-green-700 transition-all duration-300 hover:scale-110"
                                         aria-label={social.label}
                                     >

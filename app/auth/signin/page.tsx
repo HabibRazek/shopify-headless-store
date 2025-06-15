@@ -8,7 +8,7 @@ import { ArrowLeft } from 'lucide-react';
 
 function SignInContent() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen b flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-6xl">
         {/* Back to Home Link */}
         <Link

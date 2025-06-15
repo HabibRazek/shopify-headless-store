@@ -16,7 +16,8 @@ export default function FeaturedProducts() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        const response = await fetch('/api/products');
+        // Fetch specific featured products instead of all products
+        const response = await fetch('/api/products/featured');
         const data = await response.json();
 
         if (data.products?.edges) {
@@ -24,7 +25,8 @@ export default function FeaturedProducts() {
         } else {
           setIsError(true);
         }
-      } catch (err) {
+      } catch (error) {
+        console.error('Error fetching featured products:', error);
         setIsError(true);
       } finally {
         setIsLoading(false);
@@ -36,7 +38,7 @@ export default function FeaturedProducts() {
 
   if (isLoading) {
     return (
-      <section className="py-16 bg-gradient-to-b from-white to-gray-50">
+      <section className="bg-gradient-to-b from-white to-gray-50">
         <div className="container mx-auto px-4">
           {/* Header Skeleton */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-12">
@@ -49,9 +51,9 @@ export default function FeaturedProducts() {
             </div>
           </div>
 
-          {/* Products Grid Skeleton */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, i) => (
+          {/* Products Grid Skeleton - 4 products */}
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[...Array(4)].map((_, i) => (
               <div key={i} className="bg-white rounded-xl overflow-hidden shadow-sm animate-pulse">
                 {/* Image area */}
                 <div className="aspect-square w-full bg-gray-200"></div>
@@ -109,8 +111,8 @@ export default function FeaturedProducts() {
     );
   }
 
-  // Show first 8 products on homepage
-  const featuredProducts = products.slice(0, 8);
+  // Use the fetched featured products (already exactly 4 specific products)
+  const featuredProducts = products;
 
   // Animation variants for staggered animations
   const containerVariants = {
@@ -125,7 +127,7 @@ export default function FeaturedProducts() {
 
   return (
     <section className="py-12 sm:py-16 md:py-20 lg:py-24 bg-gradient-to-br from-white via-green-50/30 to-white relative overflow-hidden">
-      {/* Soft Decorative Background Elements - Mobile Responsive */}
+      {/* Soft Decorative Background Elements */}
       <div className="absolute top-0 left-0 w-48 h-48 sm:w-72 sm:h-72 bg-green-100/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 right-0 w-64 h-64 sm:w-96 sm:h-96 bg-green-200/20 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
 
@@ -137,12 +139,12 @@ export default function FeaturedProducts() {
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="mb-6 sm:mb-8 lg:mb-0 text-center lg:text-left"
           >
-            {/* Badge - Mobile Responsive */}
+            {/* Badge */}
             <div className="inline-flex items-center mb-3 sm:mb-4 bg-white/80 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-lg border border-green-200/50">
               <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full mr-2 sm:mr-3 animate-pulse" />
               <span className="text-xs sm:text-sm font-semibold text-green-700 tracking-wide">SÉLECTION PREMIUM</span>
             </div>
-            {/* Title - Mobile Responsive Typography */}
+            {/* Title */}
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-green-800 mb-3 sm:mb-4 leading-tight">
               Produits <span className="bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent">Populaires</span>
             </h2>
@@ -151,7 +153,7 @@ export default function FeaturedProducts() {
             </p>
           </motion.div>
 
-          {/* Button - Mobile Responsive */}
+          {/* Button */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
@@ -167,17 +169,20 @@ export default function FeaturedProducts() {
           </motion.div>
         </div>
 
-        {/* Product Grid - Mobile Responsive */}
+        {/* Product Grid - Now strictly shows 4 products in a row on lg screens and up */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
           className="mt-4 sm:mt-6"
         >
-          <ProductGrid products={featuredProducts} className="lg:grid-cols-4 xl:grid-cols-4" />
+          <ProductGrid
+            products={featuredProducts}
+            className="grid-cols-2 md:grid-cols-2 lg:grid-cols-4"
+          />
         </motion.div>
 
-        {/* Bottom CTA - Mobile Responsive */}
+        {/* Bottom CTA */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}

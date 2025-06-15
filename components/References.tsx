@@ -1,7 +1,7 @@
 'use client';
 
 import Image from "next/image";
-import { Star, Quote, ExternalLink, Users, Award, TrendingUp } from "lucide-react";
+import { Star, ExternalLink, Users, Award, TrendingUp } from "lucide-react";
 
 export default function References() {
     // Updated brand logos based on the files in the public folder with proper website links
@@ -9,27 +9,51 @@ export default function References() {
         {
             id: 1,
             name: "Kartago",
-            logo: "/logo_kartago.png",
+            logo: "/nos-references/logo_kartago.png",
             website: "https://kartagodattes.com/"
         },
         {
             id: 2,
             name: "Le Panier",
-            logo: "/LOGO-LE-PANIER-3.png",
+            logo: "/nos-references/LOGO-LE-PANIER-3.png",
             website: "https://lepanier.net/product/mais-grille-au-fromage-laperitivo/"
         },
         {
             id: 3,
             name: "Masmoudi",
-            logo: "/logo-circle-small.webp",
+            logo: "/nos-references/logo-circle-small.webp",
             website: "https://masmoudi.com/"
         },
         {
             id: 4,
             name: "My Oya",
-            logo: "/cropped-Capture-removebg-preview-1.png",
+            logo: "/nos-references/cropped-Capture-removebg-preview-1.png",
             website: "https://my-oya.com/"
-        }
+        },
+        {
+            id: 5,
+            name: "Karina",
+            logo: "/nos-references/karina.webp",
+            website: "https://karina.tn/?_ga=2.200218669.249647480.1750010777-185105044.1750010777"
+        },
+        {
+            id: 6,
+            name: "La Maison Caroube",
+            logo: "/nos-references/LaMaisonCaroube.webp",
+            website: "https://www.facebook.com/maisonkharoub/photos?locale=fr_FR&_ga=2.192755881.249647480.1750010777-185105044.1750010777"
+        },
+        {
+            id: 7,
+            name: "Mon Sapo",
+            logo: "/nos-references/monsapo.webp",
+            website: "https://monsapo.tn/"
+        },
+        {
+            id: 8,
+            name: "Pur Nat",
+            logo: "/nos-references/purnat.webp",
+            website: "https://www.instagram.com/purnat_purnat/?hl=fr&_ga=2.191705257.249647480.1750010777-185105044.1750010777#"
+        },
     ];
 
     return (
@@ -102,8 +126,8 @@ export default function References() {
                     </p>
                 </div>
 
-                {/* Innovative Brand Cards */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+                {/* Brand Cards Grid */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                     {brands.map((brand) => (
                         <div
                             key={brand.id}
@@ -151,118 +175,7 @@ export default function References() {
                         </div>
                     ))}
                 </div>
-
-                {/* Innovative Testimonials */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-                    {/* Testimonial 1 */}
-                    <div className="group relative">
-                        <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl p-8 border border-gray-200/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
-                            {/* Quote Icon */}
-                            <div className="absolute top-6 right-6">
-                                <Quote className="w-8 h-8 text-green-500/30" />
-                            </div>
-
-                            {/* Rating Stars */}
-                            <div className="flex space-x-1 mb-6">
-                                {[...Array(5)].map((_, i) => (
-                                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
-                                ))}
-                            </div>
-
-                            {/* Testimonial Text */}
-                            <blockquote className="text-lg text-gray-700 mb-8 leading-relaxed font-light">
-                                "PackedIn nous fournit des solutions d'emballage innovantes depuis plus de 3 ans.
-                                Leur professionnalisme et la qualité de leurs produits sont exceptionnels."
-                            </blockquote>
-
-                            {/* Author */}
-                            <div className="flex items-center">
-                                <div className="w-14 h-14 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4 shadow-lg">
-                                    LP
-                                </div>
-                                <div>
-                                    <p className="font-semibold text-gray-900 text-lg">Directeur Marketing</p>
-                                    <a
-                                        href="https://lepanier.net/product/mais-grille-au-fromage-laperitivo/"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-green-600 hover:text-green-700 transition-colors font-medium flex items-center gap-1"
-                                    >
-                                        Le Panier
-                                        <ExternalLink className="w-4 h-4" />
-                                    </a>
-                                </div>
-                            </div>
-
-                            {/* Decorative Elements */}
-                            <div className="absolute top-0 left-0 w-20 h-20 bg-gradient-to-br from-green-100/50 to-transparent rounded-tl-3xl rounded-br-full" />
-                            <div className="absolute bottom-0 right-0 w-16 h-16 bg-gradient-to-tl from-blue-100/50 to-transparent rounded-br-3xl rounded-tl-full" />
-
-                            {/* Hover Glow */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-green-500/5 via-transparent to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
-                        </div>
-                    </div>
-
-                    {/* Testimonial 2 */}
-                    <div className="group relative">
-                        <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl p-8 border border-gray-200/50 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
-                            {/* Quote Icon */}
-                            <div className="absolute top-6 right-6">
-                                <Quote className="w-8 h-8 text-green-500/30" />
-                            </div>
-
-                            {/* Rating Stars */}
-                            <div className="flex space-x-1 mb-6">
-                                {[...Array(5)].map((_, i) => (
-                                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
-                                ))}
-                            </div>
-
-                            {/* Testimonial Text */}
-                            <blockquote className="text-lg text-gray-700 mb-8 leading-relaxed font-light">
-                                "La qualité des pochettes ZIPBAGS® est incomparable. Notre produit est parfaitement
-                                présenté et protégé, ce qui a considérablement amélioré notre image de marque."
-                            </blockquote>
-
-                            {/* Author */}
-                            <div className="flex items-center">
-                                <div className="w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4 shadow-lg">
-                                    KT
-                                </div>
-                                <div>
-                                    <p className="font-semibold text-gray-900 text-lg">Responsable Production</p>
-                                    <a
-                                        href="https://kartagodattes.com/"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-green-600 hover:text-green-700 transition-colors font-medium flex items-center gap-1"
-                                    >
-                                        Kartago
-                                        <ExternalLink className="w-4 h-4" />
-                                    </a>
-                                </div>
-                            </div>
-
-                            {/* Decorative Elements */}
-                            <div className="absolute top-0 left-0 w-20 h-20 bg-gradient-to-br from-purple-100/50 to-transparent rounded-tl-3xl rounded-br-full" />
-                            <div className="absolute bottom-0 right-0 w-16 h-16 bg-gradient-to-tl from-green-100/50 to-transparent rounded-br-3xl rounded-tl-full" />
-
-                            {/* Hover Glow */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-purple-500/5 via-transparent to-green-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
-                        </div>
-                    </div>
-                </div>
             </div>
-
-            <style jsx>{`
-                .scrollbar-hide::-webkit-scrollbar {
-                    display: none;
-                }
-                .scrollbar-hide {
-                    -ms-overflow-style: none;
-                    scrollbar-width: none;
-                }
-            `}</style>
         </section>
     );
 }

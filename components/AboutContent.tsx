@@ -227,7 +227,7 @@ export default function AboutContent() {
             </motion.div>
             <motion.div variants={itemVariants} className="relative h-96 rounded-xl overflow-hidden shadow-xl">
               <Image
-                src="/packedinPrintableDoypacks.png"
+                src="/packedinPrintableDoypacks3.png"
                 alt="PackedIn Zipbag Kraft Tunisie"
                 fill
                 className="object-cover"

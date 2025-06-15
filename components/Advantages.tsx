@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Recycle, Lock, TrendingUp, DollarSign, ThumbsUp, Package, Sparkles, Star, Zap } from 'lucide-react';
+import { Recycle, Lock, TrendingUp, DollarSign, ThumbsUp, Package, Sparkles } from 'lucide-react';
+import Link from 'next/link';
 
 interface AdvantageCard {
   id: number;
@@ -12,12 +13,10 @@ interface AdvantageCard {
 }
 
 export default function Advantages() {
-  const [shuffledCards, setShuffledCards] = useState<AdvantageCard[]>([]);
-  const [hasShuffled, setHasShuffled] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: false, amount: 0.3 });
 
-  const advantageCards: AdvantageCard[] = useMemo(() => [
+  const advantageCards: AdvantageCard[] = [
     {
       id: 1,
       title: "Réutilisable et refermable",
@@ -54,172 +53,99 @@ export default function Advantages() {
       description: "Nos pochettes ZIPBAGS® sont expédiés et stockés à plat, ce qui nécessite beaucoup moins d'espace d'entrepôt. De plus, la légèreté des sacs debout réduit considérablement les coûts d'expédition par rapport aux bouteilles, bocaux et autres contenants rigides.",
       icon: <Package className="h-6 w-6" />,
     }
-  ], []);
-
-  // Function to shuffle the cards
-  const shuffleCards = useCallback(() => {
-    // Create a copy of the current cards
-    const currentCards = [...advantageCards];
-
-    // Fisher-Yates shuffle algorithm
-    for (let i = currentCards.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [currentCards[i], currentCards[j]] = [currentCards[j], currentCards[i]];
-    }
-
-    setShuffledCards(currentCards);
-  }, [advantageCards]);
-
-  // Initialize shuffled cards
-  useEffect(() => {
-    setShuffledCards([...advantageCards]);
-  }, [advantageCards]);
-
-  // Shuffle cards when section comes into view
-  useEffect(() => {
-    if (isInView && !hasShuffled) {
-      const timer = setTimeout(() => {
-        shuffleCards();
-        setHasShuffled(true);
-      }, 300);
-
-      return () => clearTimeout(timer);
-    } else if (!isInView) {
-      // Reset shuffle state when out of view
-      setHasShuffled(false);
-    }
-  }, [isInView, hasShuffled, shuffleCards]);
-
-
+  ];
 
   return (
-    <section ref={sectionRef} className="relative py-16 overflow-hidden sm:mt-[-120px]">
-      {/* Innovative Background Design */}
-      <div className="absolute inset-0">
-        {/* Gradient Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-green-50/30" />
-
-        {/* Geometric Patterns */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-0 left-0 w-full h-full" style={{
-            backgroundImage: `radial-gradient(circle at 25% 25%, #10b981 2px, transparent 2px), radial-gradient(circle at 75% 75%, #059669 1px, transparent 1px)`,
-            backgroundSize: '60px 60px, 40px 40px'
-          }} />
-        </div>
-
-        {/* Floating Elements */}
-        <motion.div
-          animate={{
-            rotate: 360,
-            scale: [1, 1.1, 1]
-          }}
-          transition={{
-            rotate: { duration: 20, repeat: Infinity, ease: "linear" },
-            scale: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-          }}
-          className="absolute top-20 right-20 w-32 h-32 bg-gradient-to-r from-green-400/20 to-emerald-400/20 rounded-full blur-xl"
-        />
-        <motion.div
-          animate={{
-            rotate: -360,
-            scale: [1, 1.2, 1]
-          }}
-          transition={{
-            rotate: { duration: 25, repeat: Infinity, ease: "linear" },
-            scale: { duration: 6, repeat: Infinity, ease: "easeInOut" }
-          }}
-          className="absolute bottom-20 left-20 w-24 h-24 bg-gradient-to-r from-blue-400/20 to-green-400/20 rounded-full blur-xl"
-        />
-      </div>
-
+    <section ref={sectionRef} className="relative py-12 sm:py-16 ">
       <div className="container mx-auto px-4 relative z-10">
-        {/* Chic Header Design */}
-        <div className="text-center mb-16 relative">
-          <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-xl px-8 py-4 rounded-full shadow-lg border border-green-200/50 mb-6">
-            <Sparkles className="w-5 h-5 text-green-600" />
-            <span className="text-sm font-bold text-green-800 tracking-wider uppercase">
+        {/* Header */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-8 sm:mb-12"
+        >
+          <motion.div 
+            whileHover={{ scale: 1.03 }}
+            className="inline-flex items-center gap-2 bg-white px-4 py-2 sm:px-6 sm:py-3 rounded-full shadow-sm border border-green-100 mb-4 sm:mb-6"
+          >
+            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
+            <span className="text-xs sm:text-sm font-medium text-green-800 tracking-wider uppercase">
               Innovation • Excellence • Performance
             </span>
-            <Star className="w-5 h-5 text-green-600" />
-          </div>
+          </motion.div>
 
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 relative">
-            <span className="block text-gray-900 mb-2">Les Avantages</span>
-            <span className="block bg-gradient-to-r from-green-600 via-emerald-500 to-green-600 bg-clip-text text-transparent">
-              ZIPBAGS®
-            </span>
-
-            {/* Decorative Elements */}
-            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent rounded-full" />
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-gray-900">
+            Les Avantages <span className="text-green-600">ZIPBAGS®</span>
           </h2>
 
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed font-light">
+          <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
             Découvrez pourquoi nos solutions d'emballage révolutionnent l'industrie avec des avantages inégalés
           </p>
-        </div>
+        </motion.div>
 
-        {/* Innovative Cards Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-          {shuffledCards.map((card) => (
-            <div
+        {/* Card Grid - Strict 2 columns on mobile */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {advantageCards.map((card) => (
+            <motion.div
               key={card.id}
-              className="relative group hover:scale-[1.02] hover:-translate-y-2 transition-all duration-300"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={isInView ? { opacity: 1, scale: 1 } : {}}
+              transition={{ 
+                duration: 0.5, 
+                delay: card.id * 0.1,
+                type: "spring",
+                stiffness: 100
+              }}
+              whileHover={{ 
+                y: -4,
+                boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)"
+              }}
+              className="relative col-span-1"
             >
-                {/* Chic Card Design */}
-                <div className="relative bg-white/70 backdrop-blur-xl rounded-3xl border border-white/20 shadow-xl overflow-hidden h-full">
-                  {/* Gradient Border Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 via-emerald-500/20 to-green-500/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                  {/* Card Content */}
-                  <div className="relative z-10 p-8 h-full flex flex-col">
-                    {/* Icon Section */}
-                    <div className="relative mb-6">
-                      <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-emerald-400/20 rounded-2xl blur-xl scale-110" />
-                      <div className="relative bg-gradient-to-br from-green-500 to-emerald-600 p-4 rounded-2xl text-white shadow-lg group-hover:shadow-xl transition-shadow duration-300">
-                        <div className="relative z-10">
-                          {card.icon}
-                        </div>
-                        {/* Icon Glow Effect */}
-                        <div className="absolute inset-0 bg-white/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      </div>
-
-                      {/* Floating Accent */}
-                      <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full opacity-60" />
-                    </div>
-
-                    {/* Title */}
-                    <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-green-600 transition-colors duration-300">
-                      {card.title}
-                    </h3>
-
-                    {/* Description */}
-                    <p className="text-gray-600 leading-relaxed flex-grow font-light">
-                      {card.description}
-                    </p>
-
-                    {/* Bottom Accent */}
-                    <div className="mt-6 pt-4 border-t border-gray-200/50">
-                      <div className="flex items-center justify-between">
-                        <div className="flex space-x-1">
-                          <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full" />
-                          <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full" />
-                          <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full" />
-                        </div>
-                        <Zap className="w-5 h-5 text-green-500 opacity-60 group-hover:opacity-100 transition-opacity duration-300" />
-                      </div>
-                    </div>
+              <div className="h-full bg-white rounded-lg sm:rounded-xl shadow-sm hover:shadow-md overflow-hidden border border-gray-100 transition-all duration-300 group">
+                {/* Card Content */}
+                <div className="p-4 sm:p-6 h-full flex flex-col">
+                  {/* Icon */}
+                  <div className="mb-3 sm:mb-4 w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-green-50 flex items-center justify-center text-green-600 group-hover:bg-green-100 transition-colors duration-300">
+                    {card.icon}
                   </div>
 
-                  {/* Decorative Elements */}
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-green-100/30 to-transparent rounded-full -mr-16 -mt-16" />
-                  <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-emerald-100/30 to-transparent rounded-full -ml-12 -mb-12" />
+                  {/* Title */}
+                  <h3 className="text-sm sm:text-base md:text-lg font-semibold text-gray-900 mb-2 sm:mb-3">
+                    {card.title}
+                  </h3>
 
-                  {/* Hover Glow Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-green-500/5 via-transparent to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
+                  {/* Description */}
+                  <p className="text-xs sm:text-sm text-gray-600 flex-grow">
+                    {card.description}
+                  </p>
                 </div>
+
+                {/* Active indicator */}
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-green-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
-            ))}
+            </motion.div>
+          ))}
         </div>
+
+        {/* CTA */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ delay: 0.8 }}
+          className="mt-8 sm:mt-12 text-center"
+        >
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            className="px-6 py-2 sm:px-8 sm:py-3 bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
+          >
+            <Link href="/products">
+              Découvrir toute la gamme
+            </Link>
+          </motion.button>
+        </motion.div>
       </div>
     </section>
   );

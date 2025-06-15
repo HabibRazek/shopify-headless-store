@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, User, X, LogIn, LogOut, Calculator } from 'lucide-react';
+import { Menu, User, X, LogIn, LogOut } from 'lucide-react';
 import { useShopContext } from '@/context/ShopContext';
 import { Button } from '@/components/ui/button';
 import Cart from '@/components/Cart';
@@ -36,18 +36,18 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed left-0 right-0 z-50 transition-all duration-500 ease-out
+      className={`fixed left-0 right-0 z-40 transition-all duration-500 ease-out
         ${scrolled
-          ? 'lg:top-4 lg:mx-6 lg:xl:mx-20 xl:mx-32 top-0 bg-white/95  shadow-2xl border-b border-gray-200/50 lg:border-none lg:bg-transparent lg:shadow-none'
-          : 'top-6 mx-6 md:mx-12 lg:mx-20 xl:mx-32'
+          ? 'lg:top-12 lg:mx-6 lg:xl:mx-20 xl:mx-32 top-4 sm:top-12 bg-white/95  shadow-2xl border-b border-gray-200/50 lg:border-none lg:bg-transparent lg:shadow-none'
+          : 'top-6 sm:top-16 md:top-14 mx-6 md:mx-12 lg:mx-20 xl:mx-32'
         }
         ${mobileMenuOpen ? 'pb-4' : ''}
       `}
     >
       <div className={`transition-all duration-500 ease-out ${
         scrolled
-          ? 'lg:max-w-6xl lg:mx-auto lg:bg-white/90  lg:shadow-xl lg:border lg:border-green-200/30 lg:rounded-full container mx-auto max-w-7xl'
-          : 'max-w-6xl mx-auto bg-white/90  shadow-xl border border-green-200/30 rounded-full'
+          ? 'lg:max-w-6xl lg:mx-auto lg:bg-white/90  lg:shadow-xl lg:border lg:border-green-200/30 rounded-none sm:rounded-full container mx-auto max-w-7xl'
+          : 'max-w-6xl mx-auto bg-white/90  shadow-xl border border-green-200/30 sm:rounded-full'
       }`}>
         <div className={`flex items-center justify-between transition-all duration-300 ${
           scrolled ? 'lg:h-20 lg:px-8 lg:md:px-12 h-16 px-6' : 'h-20 px-8 md:px-12'
@@ -106,14 +106,6 @@ export default function Navbar() {
 
           {/* Desktop Actions */}
           <div className="hidden lg:flex items-center space-x-3">
-            <Button
-              size="default"
-              className="text-sm font-semibold rounded-full px-6 bg-green-600 hover:bg-green-700"
-              onClick={() => setQuoteDialogOpen(true)}
-            >
-              <Calculator className="h-4 w-4 mr-2" />
-              Demander un devis
-            </Button>
             <div className="w-px h-6 bg-gray-300/60" />
             <Cart />
 
@@ -247,19 +239,6 @@ export default function Navbar() {
                   <span className="text-sm font-medium">Connexion</span>
                 </Link>
               )}
-
-              <div className="pt-2">
-                <Button
-                  className="w-full font-medium bg-green-600 hover:bg-green-700"
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    setQuoteDialogOpen(true);
-                  }}
-                >
-                  <Calculator className="h-4 w-4 mr-2" />
-                  Demander un devis
-                </Button>
-              </div>
             </nav>
           </div>
         )}

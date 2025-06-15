@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { ShopProvider } from "@/context/ShopContext";
 import { CartProvider } from "@/context/CartContext";
+import TopBar from "@/components/TopBar";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/sonner";
@@ -37,8 +38,11 @@ export default function RootLayout({
         <Providers>
           <ShopProvider>
             <CartProvider>
+              <div className="sm:block hidden">
+                <TopBar />
+              </div>
               <Navbar />
-              <main className="pt-20 sm:pt-24 lg:pt-32">
+              <main className="pt-20 sm:pt-28 md:pt-32 lg:pt-36">
                 {children}
               </main>
               <Footer />

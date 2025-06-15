@@ -5,10 +5,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { formatPrice } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Check, Calculator } from 'lucide-react';
+import { ShoppingCart, Check } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { toast } from 'sonner';
-import { QuoteRequestFlow } from '@/components/quote/QuoteRequestFlow';
 
 type ProductCardProps = {
   product: any; // Using any to handle both direct product and product.node
@@ -174,27 +173,6 @@ export default function ProductCard({ product }: ProductCardProps) {
               <span>Ajouter</span>
             )}
           </Button>
-
-          {/* Quote Request Button - Compact */}
-          <QuoteRequestFlow
-            product={{
-              id: productData.id,
-              title: title,
-              price: parseFloat(price),
-              image: imageUrl,
-            }}
-            trigger={
-              <Button
-                variant="outline"
-                className="w-full border-green-600 text-green-600 hover:bg-green-50 font-semibold py-2 sm:py-2.5 rounded-lg transition-all duration-200 text-xs sm:text-sm"
-                size="sm"
-                type="button"
-              >
-                <Calculator className="mr-1 sm:mr-1.5 h-3 w-3 sm:h-4 sm:w-4" />
-                <span>Devis</span>
-              </Button>
-            }
-          />
         </div>
       </div>
     </div>
