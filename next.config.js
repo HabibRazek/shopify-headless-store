@@ -1,6 +1,5 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   // Image optimization settings
   images: {
     remotePatterns: [
@@ -41,8 +40,6 @@ const nextConfig: NextConfig = {
   env: {
     SKIP_ENV_VALIDATION: process.env.SKIP_ENV_VALIDATION || '0',
   },
-
-
 };
 
-export default nextConfig;
+module.exports = nextConfig;
