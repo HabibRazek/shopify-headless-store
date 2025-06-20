@@ -55,6 +55,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const { getPrismaClient } = await import('@/lib/prisma');
           const prisma = getPrismaClient();
 
+          // Test database connection
+          await prisma.$connect();
+
           // Find user in database
           const user = await prisma.user.findUnique({
             where: {
@@ -82,7 +85,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             role: user.role,
           };
         } catch (error) {
+          // Log error for debugging in production
+          console.error('Credentials auth error:', error);
           return null;
+        } finally {
+          // Always disconnect from database
+          try {
+            const { getPrismaClient } = await import('@/lib/prisma');
+            const prisma = getPrismaClient();
+            await prisma.$disconnect();
+          } catch (e) {
+            // Ignore disconnect errors
+          }
         }
       },
     }),
@@ -169,6 +183,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const { getPrismaClient } = await import('@/lib/prisma');
           const prisma = getPrismaClient();
 
+          // Test database connection
+          await prisma.$connect();
+
           // Check if user already exists by email
           let dbUser = await prisma.user.findUnique({
             where: { email: user.email! },
@@ -203,12 +220,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           user.image = dbUser.image;
 
         } catch (error) {
-          // Log error in development for debugging
-          if (process.env.NODE_ENV === 'development') {
-            console.error('Google OAuth database error:', error);
-          }
+          // Log error for debugging in production
+          console.error('Google OAuth database error:', error);
           // Allow sign-in even if database operation fails
           return true
+        } finally {
+          // Always disconnect from database
+          try {
+            const { getPrismaClient } = await import('@/lib/prisma');
+            const prisma = getPrismaClient();
+            await prisma.$disconnect();
+          } catch (e) {
+            // Ignore disconnect errors
+          }
         }
       }
       return true
