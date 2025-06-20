@@ -225,9 +225,9 @@ export default function AboutContent() {
                 Notre objectif depuis le début était de fournir des solutions d'emballages innovantes mais simples magnifiquement construits pour une protection ultime du produit. De plus, nous étions déterminés à produire des emballages qui aidaient les marques à raconter leur histoire. Depuis ce temps, les petites entreprises, les artisans et les artisans du monde entier ont trouvé leur chemin vers notre site, pour lequel nous sommes très reconnaissants.
               </p>
             </motion.div>
-            <motion.div variants={itemVariants} className="relative h-96 rounded-xl overflow-hidden shadow-xl">
+            <motion.div variants={itemVariants} className="relative w-[600px] h-[600px] rounded-xl overflow-hidden shadow-xl">
               <Image
-                src="/packedinPrintableDoypacks3.png"
+                src="/images/collections/sac-kraft-collection.jpeg"
                 alt="PackedIn Zipbag Kraft Tunisie"
                 fill
                 className="object-cover"
@@ -243,9 +243,9 @@ export default function AboutContent() {
             animate="visible"
             className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
           >
-            <motion.div variants={itemVariants} className="order-2 lg:order-1 relative h-96 rounded-xl overflow-hidden shadow-xl">
+            <motion.div variants={itemVariants} className="order-2 lg:order-1 relative w-[600px] h-[600px] rounded-xl overflow-hidden shadow-xl">
               <Image
-                src="/packedinPrintableDoypacks3.png"
+                src="/images/collections/aluview-collection-doypacks.jpeg"
                 alt="Doypack Tunisie Écologique E-commerce"
                 fill
                 className="object-cover"
