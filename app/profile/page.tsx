@@ -23,21 +23,11 @@ function ProfileContent() {
     }
   }, [searchParams]);
 
-  useEffect(() => {
-    // Debug logging for both environments
-    console.log('Profile Page Debug:', {
-      status,
-      hasSession: !!session,
-      userId: session?.user?.id || 'none',
-      timestamp: new Date().toISOString(),
-      environment: process.env.NODE_ENV
-    });
-  }, [status, session]);
+
 
   useEffect(() => {
     // Handle unauthenticated state
     if (status === 'unauthenticated' && !redirecting) {
-      console.log('🔒 User not authenticated, redirecting to sign in...');
       setRedirecting(true);
 
       // Use router.replace instead of router.push to avoid back button issues
@@ -71,9 +61,6 @@ function ProfileContent() {
   }
 
   // If we have a session, show the profile
-  if (status === 'authenticated' && session) {
-    console.log('✅ User authenticated, showing profile for:', session.user?.email);
-  }
 
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8 bg-gray-50 min-h-screen">

@@ -2,8 +2,6 @@ import { NextRequest } from 'next/server';
 import { shopifyFetch } from '@/lib/shopify';
 import { QUERY_ALL_COLLECTIONS, QUERY_ALL_COLLECTIONS_WITH_PRODUCTS } from '@/lib/queries';
 import {
-  createSuccessResponse,
-  createErrorResponse,
   parseQueryParams,
   validatePaginationParams,
   validateSortParams,

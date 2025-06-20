@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { LogOutIcon } from 'lucide-react';
 

@@ -98,7 +98,7 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
     isLoading,
     hasOrdersData: !!ordersData,
     ordersCount: orders.length,
-    orders: orders.map((o: any) => ({ id: o.id, orderNumber: o.orderNumber, status: o.status }))
+    orders: orders.map((o: Order) => ({ id: o.id, orderNumber: o.orderNumber, status: o.status }))
   });
 
   const handleRefresh = useCallback(async () => {
@@ -228,7 +228,7 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
     }
   };
 
-  const filteredOrders = orders.filter((order: any) => {
+  const filteredOrders = orders.filter((order: Order) => {
     if (filter === 'all') return true;
     if (filter === 'pending') return ['pending', 'pending_payment', 'processing', 'confirmed'].includes(order.status.toLowerCase());
     if (filter === 'completed') return ['delivered', 'completed', 'fulfilled'].includes(order.status.toLowerCase());
@@ -332,9 +332,9 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
           <div className="flex gap-2 mt-4">
             {[
               { key: 'all', label: 'Toutes', count: orders.length },
-              { key: 'pending', label: 'En cours', count: orders.filter((o: any) => ['pending', 'pending_payment', 'processing', 'confirmed'].includes(o.status.toLowerCase())).length },
-              { key: 'completed', label: 'Terminées', count: orders.filter((o: any) => ['delivered', 'completed', 'fulfilled'].includes(o.status.toLowerCase())).length },
-              { key: 'cancelled', label: 'Annulées', count: orders.filter((o: any) => ['cancelled', 'refunded'].includes(o.status.toLowerCase())).length },
+              { key: 'pending', label: 'En cours', count: orders.filter((o: Order) => ['pending', 'pending_payment', 'processing', 'confirmed'].includes(o.status.toLowerCase())).length },
+              { key: 'completed', label: 'Terminées', count: orders.filter((o: Order) => ['delivered', 'completed', 'fulfilled'].includes(o.status.toLowerCase())).length },
+              { key: 'cancelled', label: 'Annulées', count: orders.filter((o: Order) => ['cancelled', 'refunded'].includes(o.status.toLowerCase())).length },
             ].map((tab) => (
               <button
                 key={tab.key}
@@ -360,7 +360,7 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
               exit={{ opacity: 0, y: -20 }}
               className="space-y-4"
             >
-              {filteredOrders.map((order: any, index: number) => (
+              {filteredOrders.map((order: Order, index: number) => (
                 <motion.div
                   key={order.id}
                   initial={{ opacity: 0, y: 20 }}

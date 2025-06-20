@@ -132,8 +132,6 @@ export async function GET(
     // Try different handle variants until we find the collection
     const handleVariants = [originalHandle, cleanHandle, normalizedHandle];
     let collection = null;
-    let usedHandle = '';
-
     for (const handleVariant of handleVariants) {
       const { status, body } = await shopifyFetch({
         query,
@@ -142,7 +140,6 @@ export async function GET(
 
       if (status === 200 && (body as any)?.collection) {
         collection = (body as any).collection;
-        usedHandle = handleVariant;
         break;
       }
     }
