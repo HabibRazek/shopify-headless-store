@@ -5,22 +5,25 @@ import { compare } from "bcrypt"
 
 // Validate required environment variables
 if (!process.env.NEXTAUTH_SECRET) {
-  throw new Error('NEXTAUTH_SECRET is required')
+  console.error('❌ NEXTAUTH_SECRET is required for authentication')
 }
-if (!process.env.GOOGLE_CLIENT_ID) {
-  throw new Error('GOOGLE_CLIENT_ID is required')
+
+// Google OAuth is optional - only validate if we're trying to use it
+const hasGoogleConfig = process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET;
+if (process.env.GOOGLE_CLIENT_ID && !process.env.GOOGLE_CLIENT_SECRET) {
+  console.error('❌ GOOGLE_CLIENT_SECRET is required when GOOGLE_CLIENT_ID is set')
 }
-if (!process.env.GOOGLE_CLIENT_SECRET) {
-  throw new Error('GOOGLE_CLIENT_SECRET is required')
+if (process.env.GOOGLE_CLIENT_SECRET && !process.env.GOOGLE_CLIENT_ID) {
+  console.error('❌ GOOGLE_CLIENT_ID is required when GOOGLE_CLIENT_SECRET is set')
 }
 
 // PROFESSIONAL AUTH CONFIG WITH CREDENTIALS
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
-    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET ? [
+    ...(hasGoogleConfig ? [
       Google({
-        clientId: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        clientId: process.env.GOOGLE_CLIENT_ID!,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
         authorization: {
           params: {
             prompt: "consent",
@@ -28,6 +31,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             response_type: "code",
           },
         },
+        allowDangerousEmailAccountLinking: true,
       })
     ] : []),
     Credentials({
@@ -199,6 +203,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           user.image = dbUser.image;
 
         } catch (error) {
+          // Log error in development for debugging
+          if (process.env.NODE_ENV === 'development') {
+            console.error('Google OAuth database error:', error);
+          }
           // Allow sign-in even if database operation fails
           return true
         }

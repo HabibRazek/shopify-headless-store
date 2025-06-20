@@ -26,12 +26,22 @@ function ErrorContent() {
           setError('The verification link may have been used or is invalid.');
           break;
         case 'OAuthSignin':
+          setError('Erreur de connexion Google. Vérifiez la configuration OAuth.');
+          break;
         case 'OAuthCallback':
+          setError('Erreur de callback Google. URL de redirection incorrecte.');
+          break;
         case 'OAuthCreateAccount':
+          setError('Impossible de créer le compte avec Google.');
+          break;
         case 'EmailCreateAccount':
+          setError('Impossible de créer le compte avec cet email.');
+          break;
         case 'Callback':
+          setError('Erreur de callback d\'authentification.');
+          break;
         case 'OAuthAccountNotLinked':
-          setError('There was a problem with the authentication service.');
+          setError('Ce compte Google n\'est pas lié à votre compte.');
           break;
         case 'EmailSignin':
           setError('The email could not be sent or the link has expired.');
