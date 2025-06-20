@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { shopifyFetch } from '@/lib/shopify';
 import { QUERY_PRODUCTS_BY_TITLE } from '@/lib/queries';
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     // Get the query parameter from the URL

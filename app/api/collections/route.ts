@@ -8,6 +8,9 @@ import {
   validateFilterParams,
   handleApiOperation
 } from '@/lib/utils/api';
+
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
 import {
   sortCollections,
   filterCollections,

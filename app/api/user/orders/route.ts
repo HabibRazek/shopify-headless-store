@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+
 // Function to sync order status with Shopify
 async function syncOrderWithShopify(order: any) {
   if (!order.shopifyOrderId && !order.orderNumber?.startsWith('D')) {
