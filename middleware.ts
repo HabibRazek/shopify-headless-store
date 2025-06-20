@@ -62,23 +62,7 @@ export async function middleware(request: NextRequest) {
       });
     }
 
-    // Enhanced debug logging for both environments
-    console.log('Middleware Debug:', {
-      pathname,
-      hasToken: !!token,
-      isProtectedRoute,
-      isAuthRoute,
-      tokenId: token?.id || 'none',
-      environment: process.env.NODE_ENV,
-      cookies: {
-        regular: request.cookies.get('next-auth.session-token')?.value ? 'present' : 'missing',
-        secure: request.cookies.get('__Secure-next-auth.session-token')?.value ? 'present' : 'missing',
-      },
-      headers: {
-        host: request.headers.get('host'),
-        userAgent: request.headers.get('user-agent')?.substring(0, 50)
-      }
-    });
+    // Authentication logic without debug logging
 
     // If it's a protected route and there's no token, redirect to signin
     if (isProtectedRoute && !token) {

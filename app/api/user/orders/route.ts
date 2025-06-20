@@ -121,11 +121,13 @@ async function syncOrderWithShopify(order: any) {
           return { ...order, status: 'confirmed', shopifyOrderId: `gid://shopify/Order/${draftOrder.order_id}` };
         }
       } else if (response.status === 404) {
-        // Draft order not found - it was likely completed or deleted
-        console.log(`📋 Draft order ${draftOrderId} not found (404) - likely completed or deleted`);
+        // Draft order not found - it might have been completed, deleted, or never existed
+        console.log(`📋 Draft order ${draftOrderId} not found (404) - checking if it was converted to an order`);
 
-        // Try to find the completed order by searching recent orders
-        try {
+        // Only search for completed orders if the current status suggests it might have been processed
+        if (['pending', 'processing', 'confirmed'].includes(order.status.toLowerCase())) {
+          // Try to find the completed order by searching recent orders
+          try {
           const ordersResponse = await fetch(`https://${shopifyDomain}/admin/api/2024-07/orders.json?limit=50&status=any`, {
             headers: {
               'X-Shopify-Access-Token': process.env.SHOPIFY_ADMIN_ACCESS_TOKEN!,
@@ -174,18 +176,17 @@ async function syncOrderWithShopify(order: any) {
               console.log(`✅ Updated draft order ${order.orderNumber} to ${newStatus} with Shopify order ${possibleOrder.id}`);
               return { ...order, status: newStatus, shopifyOrderId: `gid://shopify/Order/${possibleOrder.id}` };
             } else {
-              // No matching order found, mark as completed (assume it was processed)
-              console.log(`📋 No matching order found for draft ${draftOrderId}, marking as completed`);
-              const { default: prisma } = await import('@/lib/prisma');
-              await prisma.order.update({
-                where: { id: order.id },
-                data: { status: 'completed' },
-              });
-              return { ...order, status: 'completed' };
+              // No matching order found, keep current status (don't assume completion)
+              console.log(`📋 No matching order found for draft ${draftOrderId}, keeping current status: ${order.status}`);
+              // Don't automatically change status without clear evidence
+              return order;
             }
           }
-        } catch (searchError) {
-          console.error(`❌ Error searching for completed order for draft ${draftOrderId}:`, searchError);
+          } catch (searchError) {
+            console.error(`❌ Error searching for completed order for draft ${draftOrderId}:`, searchError);
+          }
+        } else {
+          console.log(`📋 Draft order ${draftOrderId} not found, but current status is ${order.status} - keeping as is`);
         }
       } else {
         console.log(`❌ Failed to fetch draft order ${draftOrderId}:`, response.status);
@@ -292,7 +293,7 @@ export async function GET(request: NextRequest) {
     const url = new URL(request.url);
     const shouldRefresh = url.searchParams.get('refresh') === 'true';
 
-    console.log('🔍 Fetching orders for user:', userId, shouldRefresh ? '(with refresh)' : '');
+    console.log('🔍 Fetching orders for user:', userId, shouldRefresh ? '(with Shopify sync)' : '(cached)');
 
     // Get all orders for the user
     let orders = await prisma.order.findMany({
@@ -321,48 +322,45 @@ export async function GET(request: NextRequest) {
       });
 
       if (shopifyDomain && process.env.SHOPIFY_ADMIN_ACCESS_TOKEN) {
-        const ordersToSync = orders.filter((order: any) =>
-          order.shopifyOrderId || order.orderNumber?.startsWith('D')
-        );
+        // Only sync orders that actually need syncing (have Shopify IDs and are not already in final states)
+        const ordersToSync = orders.filter((order: any) => {
+          const hasShopifyId = order.shopifyOrderId || order.orderNumber?.startsWith('D');
+          const needsSync = !['completed', 'cancelled', 'refunded', 'fulfilled'].includes(order.status.toLowerCase());
+          console.log(`🔍 Order ${order.orderNumber}: hasShopifyId=${hasShopifyId}, needsSync=${needsSync}, status=${order.status}`);
+          return hasShopifyId && needsSync;
+        });
 
         if (ordersToSync.length > 0) {
-          console.log(`🔄 Syncing ${ordersToSync.length} orders with Shopify...`);
-          const syncPromises = ordersToSync.map((order: any) => syncOrderWithShopify(order));
-          const syncedOrders = await Promise.all(syncPromises);
+          console.log(`🔄 Syncing ${ordersToSync.length} orders with Shopify (${orders.length - ordersToSync.length} skipped as completed)...`);
 
-          // Update the orders array with synced data
-          orders = orders.map((order: any) => {
-            const syncedOrder = syncedOrders.find((s: any) => s.id === order.id);
-            return syncedOrder || order;
-          });
+          try {
+            const syncPromises = ordersToSync.map((order: any) => syncOrderWithShopify(order));
+            const syncedOrders = await Promise.all(syncPromises);
 
-          console.log('✅ Shopify sync completed');
+            // Update the orders array with synced data
+            orders = orders.map((order: any) => {
+              const syncedOrder = syncedOrders.find((s: any) => s.id === order.id);
+              return syncedOrder || order;
+            });
+
+            console.log('✅ Shopify sync completed');
+          } catch (syncError) {
+            console.error('❌ Shopify sync failed:', syncError);
+            // Continue with cached data if sync fails
+          }
         } else {
-          console.log('📦 No orders to sync with Shopify');
+          console.log('📦 No orders need syncing with Shopify (all completed or no Shopify IDs)');
         }
-      } else {
-        console.log('⚠️ Shopify sync skipped - environment not configured');
-        console.log('Missing:', {
-          shopifyDomain: !shopifyDomain,
-          SHOPIFY_ADMIN_ACCESS_TOKEN: !process.env.SHOPIFY_ADMIN_ACCESS_TOKEN
-        });
       }
     }
 
-    console.log('Orders details:', orders.map((o: any) => ({
-      id: o.id,
-      orderNumber: o.orderNumber,
-      total: o.total,
-      status: o.status,
-      createdAt: o.createdAt
-    })));
+
 
     return NextResponse.json({
       success: true,
       orders,
     });
   } catch (error) {
-    console.error('Error fetching orders:', error);
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }

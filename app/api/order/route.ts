@@ -343,25 +343,10 @@ export async function POST(request: NextRequest) {
           }
         });
 
-        console.log('✅ Order saved to database successfully:', savedOrder.id);
-        console.log('Order details:', {
-          orderNumber: savedOrder.orderNumber,
-          userId: savedOrder.userId,
-          total: savedOrder.total,
-          itemsCount: savedOrder.items?.length || 0
-        });
+
       } catch (error) {
-        console.error('❌ Error saving order to database:', error);
-        console.error('Error details:', error instanceof Error ? error.message : 'Unknown error');
         // Continue with the order process even if saving to database fails
       }
-    } else {
-      console.log('❌ User not logged in, order not saved to database');
-      console.log('Session info:', {
-        hasSession: !!session,
-        hasUser: !!session?.user,
-        userId: session?.user?.id
-      });
     }
 
     // Return success with order information

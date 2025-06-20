@@ -16,7 +16,6 @@ export async function shopifyAdminFetch({
   const apiVersion = process.env.SHOPIFY_ADMIN_API_VERSION || '2024-07';
 
   if (!adminAccessToken || !shopDomain) {
-    console.error('Missing Shopify Admin API credentials');
     return {
       status: 500,
       body: { error: 'Missing Shopify Admin API credentials' }

@@ -46,14 +46,14 @@ export default function CartSidebar() {
           onClick={toggleCart}
         />
 
-        <div className="fixed inset-y-0 right-0 pl-10 max-w-full flex">
+        <div className="fixed inset-y-0 right-0 pl-4 sm:pl-10 max-w-full flex">
           <div
-            className={`transform transition ease-in-out duration-500 sm:duration-700 w-screen max-w-md ${
+            className={`transform transition ease-in-out duration-500 sm:duration-700 w-screen max-w-sm sm:max-w-md ${
               isCartOpen ? 'translate-x-0' : 'translate-x-full'
             }`}
           >
             <div className="h-full flex flex-col bg-white shadow-xl overflow-y-scroll">
-              <div className="flex-1 py-6 overflow-y-auto px-4 sm:px-6">
+              <div className="flex-1 py-4 sm:py-6 overflow-y-auto px-3 sm:px-4 md:px-6">
                 <div className="flex items-start justify-between">
                   <h2 className="text-lg font-medium text-gray-900">Shopping cart</h2>
                   <div className="ml-3 h-7 flex items-center">
@@ -88,41 +88,41 @@ export default function CartSidebar() {
                     ) : (
                       <ul role="list" className="-my-6 divide-y divide-gray-200">
                         {cart.map((item) => (
-                          <li key={item.cartItemId || `${item.variantId}_${item.title}`} className="py-6 flex">
+                          <li key={item.cartItemId || `${item.variantId}_${item.title}`} className="py-4 sm:py-6 flex">
                             {item.image && (
-                              <div className="flex-shrink-0 w-24 h-24 border border-gray-200 rounded-md overflow-hidden">
+                              <div className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 border border-gray-200 rounded-md overflow-hidden">
                                 <div className="relative h-full w-full">
                                   <Image
                                     src={item.image}
                                     alt={item.title}
                                     fill
-                                    sizes="100px"
+                                    sizes="(max-width: 640px) 64px, (max-width: 768px) 80px, 96px"
                                     className="object-cover object-center"
                                   />
                                 </div>
                               </div>
                             )}
 
-                            <div className="ml-4 flex-1 flex flex-col">
+                            <div className="ml-2 sm:ml-4 flex-1 flex flex-col min-w-0">
                               <div>
-                                <div className="flex justify-between text-base font-medium text-gray-900">
-                                  <h3>{item.title}</h3>
-                                  <p className="ml-4">{formatPrice(item.price, 'TND')}</p>
+                                <div className="flex justify-between items-start text-sm sm:text-base font-medium text-gray-900">
+                                  <h3 className="truncate pr-2 flex-1">{item.title}</h3>
+                                  <p className="ml-2 flex-shrink-0 text-sm sm:text-base">{formatPrice(item.price, 'TND')}</p>
                                 </div>
                               </div>
-                              <div className="flex-1 flex items-end justify-between text-sm">
+                              <div className="flex-1 flex items-end justify-between text-xs sm:text-sm mt-2">
                                 <div className="flex items-center">
                                   <button
                                     type="button"
-                                    className="px-2 py-1 border rounded-md"
+                                    className="px-1.5 sm:px-2 py-1 border rounded-md text-xs sm:text-sm hover:bg-gray-50"
                                     onClick={() => updateQuantity(item.cartItemId || `${item.variantId}_${encodeURIComponent(item.title)}`, item.quantity - 1)}
                                   >
                                     -
                                   </button>
-                                  <span className="mx-2">{item.quantity}</span>
+                                  <span className="mx-1.5 sm:mx-2 min-w-[20px] text-center">{item.quantity}</span>
                                   <button
                                     type="button"
-                                    className="px-2 py-1 border rounded-md"
+                                    className="px-1.5 sm:px-2 py-1 border rounded-md text-xs sm:text-sm hover:bg-gray-50"
                                     onClick={() => updateQuantity(item.cartItemId || `${item.variantId}_${encodeURIComponent(item.title)}`, item.quantity + 1)}
                                   >
                                     +
@@ -132,7 +132,7 @@ export default function CartSidebar() {
                                 <div className="flex">
                                   <button
                                     type="button"
-                                    className="font-medium text-indigo-600 hover:text-indigo-500"
+                                    className="font-medium text-indigo-600 hover:text-indigo-500 text-xs sm:text-sm"
                                     onClick={() => removeFromCart(item.cartItemId || `${item.variantId}_${encodeURIComponent(item.title)}`)}
                                   >
                                     Remove
@@ -149,7 +149,7 @@ export default function CartSidebar() {
               </div>
 
               {cart.length > 0 && (
-                <div className="border-t border-gray-200 py-6 px-4 sm:px-6">
+                <div className="border-t border-gray-200 py-4 sm:py-6 px-3 sm:px-4 md:px-6">
                   <div className="flex justify-between text-sm text-gray-600">
                     <p>Subtotal</p>
                     <p>{formatPrice(subtotal.toString(), 'TND')}</p>

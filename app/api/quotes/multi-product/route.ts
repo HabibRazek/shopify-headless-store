@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
+import { sendQuoteEmail } from '@/lib/email';
 
 interface QuoteProduct {
   id: string;
@@ -97,27 +98,27 @@ export async function POST(request: NextRequest) {
     // For now, we'll simulate a successful quote creation
     const quoteId = `QUOTE-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
 
-    // Log the quote for debugging (in production, save to database)
-    console.log('Multi-product quote created:', {
-      quoteId,
-      userId: session.user.id,
-      userEmail: session.user.email,
-      products: quoteData.products,
-      totals: {
-        quantity: calculatedQuantity,
-        subtotal: calculatedSubtotal,
-        discount: expectedDiscount,
-        discountAmount: expectedDiscountAmount,
-        total: expectedTotal,
-      },
-      timestamp: new Date().toISOString(),
-    });
-
-    // In a real implementation, you might:
-    // - Save to Prisma database
-    // - Send email to customer and admin
-    // - Generate PDF quote
-    // - Integrate with CRM system
+    // Send email notification
+    try {
+      await sendQuoteEmail({
+        quoteId,
+        products: quoteData.products,
+        customer: {
+          name: session.user.name || 'Non spécifié',
+          email: session.user.email || 'Non spécifié',
+          phone: 'Non spécifié'
+        },
+        totals: {
+          totalQuantity: calculatedQuantity,
+          subtotal: calculatedSubtotal,
+          discount: expectedDiscount,
+          discountAmount: expectedDiscountAmount,
+          total: expectedTotal,
+        }
+      });
+    } catch {
+      // Don't fail the quote creation if email fails
+    }
 
     return NextResponse.json({
       success: true,
@@ -138,8 +139,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-  } catch (error) {
-    console.error('Error creating multi-product quote:', error);
+  } catch {
     return NextResponse.json(
       { error: 'Erreur interne du serveur' },
       { status: 500 }
@@ -183,7 +183,6 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Error retrieving quote:', error);
     return NextResponse.json(
       { error: 'Erreur interne du serveur' },
       { status: 500 }

@@ -29,24 +29,6 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Debug information
-    const debugInfo = {
-      timestamp: new Date().toISOString(),
-      environment: process.env.NODE_ENV,
-      hasSession: !!session,
-      hasToken: !!token,
-      sessionUserId: session?.user?.id || null,
-      tokenUserId: token?.id || null,
-      userAgent: request.headers.get('user-agent')?.substring(0, 50),
-      cookies: {
-        sessionToken: request.cookies.get('next-auth.session-token')?.value ? 'present' : 'missing',
-        secureSessionToken: request.cookies.get('__Secure-next-auth.session-token')?.value ? 'present' : 'missing',
-        cookieNames: request.cookies.getAll().map(cookie => cookie.name)
-      },
-      url: request.url,
-      host: request.headers.get('host')
-    };
-
     return NextResponse.json({
       authenticated: !!session && !!token,
       session: session ? {
@@ -55,18 +37,12 @@ export async function GET(request: NextRequest) {
           email: session.user?.email,
           name: session.user?.name
         }
-      } : null,
-      debug: debugInfo
+      } : null
     });
-  } catch (error) {
-    console.error('Auth status check error:', error);
+  } catch {
     return NextResponse.json({
       authenticated: false,
-      error: 'Failed to check authentication status',
-      debug: {
-        timestamp: new Date().toISOString(),
-        error: error instanceof Error ? error.message : 'Unknown error'
-      }
+      error: 'Failed to check authentication status'
     }, { status: 500 });
   }
 }

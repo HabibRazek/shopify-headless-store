@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { writeFile } from 'fs/promises';
 import { join } from 'path';
+import { sendSingleProductQuoteEmail } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -75,16 +76,33 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Send notification email (you can implement this later)
-    // await sendQuoteNotificationEmail(user, quote);
+    // Send notification email
+    try {
+      await sendSingleProductQuoteEmail({
+        productId,
+        productTitle: `Produit ${productId}`, // You might want to fetch actual product title
+        quantity,
+        basePrice,
+        discount,
+        finalPrice,
+        paymentMethod,
+        customer: {
+          name: session.user.name || 'Non spécifié',
+          email: session.user.email || 'Non spécifié',
+          phone: 'Non spécifié'
+        },
+        quoteId: quote.id.toString()
+      });
+    } catch {
+      // Don't fail the quote creation if email fails
+    }
 
     return NextResponse.json({
       success: true,
       message: 'Demande de devis soumise avec succès',
       quoteId: quote.id,
     });
-  } catch (error) {
-    console.error('Error creating quote request:', error);
+  } catch {
     return NextResponse.json(
       { error: 'Erreur interne du serveur' },
       { status: 500 }

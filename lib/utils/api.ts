@@ -58,8 +58,6 @@ export function createErrorResponse(
   status: number = 500,
   details?: unknown
 ): NextResponse<ApiResponse> {
-  console.error('API Error:', { error, status, details });
-  
   return NextResponse.json(
     {
       error,

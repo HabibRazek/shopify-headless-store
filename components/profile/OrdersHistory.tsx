@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
+import useSWR from 'swr';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatPrice } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -68,95 +69,83 @@ interface OrdersHistoryProps {
   className?: string;
 }
 
+// Fetcher function for SWR
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 export function OrdersHistory({ className }: OrdersHistoryProps) {
   const { data: session } = useSession();
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isAutoSyncing, setIsAutoSyncing] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [filter, setFilter] = useState<'all' | 'pending' | 'completed' | 'cancelled'>('all');
   const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
 
-  const fetchOrders = async (forceRefresh = false, showRefreshToast = false, isAutoSync = false) => {
-    if (!session?.user) return;
+  // Use SWR for data fetching with automatic deduplication
+  const { data: ordersData, error, isLoading, mutate } = useSWR(
+    session?.user ? '/api/user/orders' : null,
+    fetcher,
+    {
+      refreshInterval: 0, // Disable automatic refresh
+      revalidateOnFocus: false, // Disable revalidation on focus
+      revalidateOnReconnect: false, // Disable revalidation on reconnect
+      dedupingInterval: 5000, // Dedupe requests within 5 seconds
+    }
+  );
+
+  const orders = ordersData?.orders || [];
+
+  // Debug logging
+  console.log('🔍 OrdersHistory Debug:', {
+    isLoading,
+    hasOrdersData: !!ordersData,
+    ordersCount: orders.length,
+    orders: orders.map((o: any) => ({ id: o.id, orderNumber: o.orderNumber, status: o.status }))
+  });
+
+  const handleRefresh = useCallback(async () => {
+    // Prevent multiple simultaneous refreshes
+    if (isRefreshing) {
+      toast.info('Actualisation en cours...', {
+        description: 'Veuillez patienter',
+      });
+      return;
+    }
 
     try {
-      if (showRefreshToast) {
-        setIsRefreshing(true);
-        toast.info('Actualisation des commandes...', {
-          description: 'Synchronisation avec Shopify en cours',
-        });
-      } else if (isAutoSync) {
-        setIsAutoSyncing(true);
-      }
+      setIsRefreshing(true);
+      toast.info('Actualisation des commandes...', {
+        description: 'Synchronisation avec Shopify en cours',
+      });
 
-      // Use refresh parameter only when explicitly requested
-      const refreshParam = forceRefresh ? '?refresh=true' : '';
-      const response = await fetch(`/api/user/orders${refreshParam}`);
+      // Force refresh with Shopify sync
+      const response = await fetch('/api/user/orders?refresh=true');
 
       if (response.ok) {
         const data = await response.json();
         const newOrders = data.orders || [];
 
-        // Check if any orders have updated status
-        const hasStatusUpdates = orders.some(oldOrder => {
-          const newOrder = newOrders.find((o: any) => o.id === oldOrder.id);
-          return newOrder && newOrder.status !== oldOrder.status;
-        });
 
-        setOrders(newOrders);
+
+        // Update SWR cache
+        mutate({ orders: newOrders }, false);
         setLastSyncTime(new Date());
 
-        if (showRefreshToast) {
-          toast.success('Commandes actualisées', {
-            description: `${newOrders.length} commande(s) trouvée(s)`,
-          });
-        } else if (isAutoSync && hasStatusUpdates) {
-          toast.success('Statut mis à jour', {
-            description: 'Le statut de vos commandes a été actualisé',
-          });
-        }
+        toast.success('Commandes actualisées', {
+          description: `${newOrders.length} commande(s) trouvée(s)`,
+        });
       } else {
-        throw new Error('Failed to fetch orders');
+        throw new Error('Failed to refresh orders');
       }
     } catch (error) {
-      console.error('Error fetching orders:', error);
-      if (showRefreshToast) {
-        toast.error('Erreur de chargement', {
-          description: 'Impossible de charger vos commandes',
-        });
-      }
+      console.error('Error refreshing orders:', error);
+      toast.error('Erreur de chargement', {
+        description: 'Impossible de charger vos commandes',
+      });
     } finally {
-      setIsLoading(false);
       setIsRefreshing(false);
-      setIsAutoSyncing(false);
     }
-  };
+  }, [isRefreshing, mutate]);
 
-  useEffect(() => {
-    // Initial load without refresh for faster loading
-    fetchOrders(false, false);
-
-    // Set up automatic refresh every 30 seconds for pending orders
-    const interval = setInterval(() => {
-      const hasPendingOrders = orders.some(order =>
-        ['pending', 'pending_payment', 'processing', 'confirmed'].includes(order.status.toLowerCase())
-      );
-
-      if (hasPendingOrders && !isRefreshing && !isAutoSyncing) {
-        console.log('🔄 Auto-refreshing orders with pending status...');
-        fetchOrders(true, false, true); // Sync with Shopify, no toast, is auto-sync
-      }
-    }, 30000); // 30 seconds
-
-    return () => clearInterval(interval);
-  }, [session, orders, isRefreshing]);
-
-  const handleRefresh = () => {
-    // Force refresh with Shopify sync
-    fetchOrders(true, true);
-  };
+  // No useEffect needed - SWR handles data fetching automatically
 
   const getStatusIcon = (status: string) => {
     switch (status.toLowerCase()) {
@@ -239,7 +228,7 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
     }
   };
 
-  const filteredOrders = orders.filter(order => {
+  const filteredOrders = orders.filter((order: any) => {
     if (filter === 'all') return true;
     if (filter === 'pending') return ['pending', 'pending_payment', 'processing', 'confirmed'].includes(order.status.toLowerCase());
     if (filter === 'completed') return ['delivered', 'completed', 'fulfilled'].includes(order.status.toLowerCase());
@@ -247,7 +236,7 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
     return true;
   });
 
-  if (isLoading) {
+  if (isLoading && !ordersData) {
     return (
       <div className={className}>
         <Card className="border-0 shadow-lg">
@@ -314,13 +303,7 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
                 <h2 className="text-xl font-bold text-gray-900">Mes Commandes</h2>
                 <div className="flex items-center gap-3">
                   <p className="text-sm text-gray-600 font-normal">{filteredOrders.length} commande(s) trouvée(s)</p>
-                  {isAutoSyncing && (
-                    <div className="flex items-center gap-1 text-xs text-blue-600">
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                      <span>Synchronisation...</span>
-                    </div>
-                  )}
-                  {lastSyncTime && !isAutoSyncing && !isRefreshing && (
+                  {lastSyncTime && !isRefreshing && (
                     <div className="text-xs text-gray-500">
                       Dernière sync: {lastSyncTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                     </div>
@@ -334,13 +317,14 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
               variant="outline"
               size="sm"
               className="flex items-center gap-2 border-green-200 hover:bg-green-50"
+              title="Synchroniser avec Shopify pour vérifier les statuts des commandes"
             >
               {isRefreshing ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <RefreshCw className="h-4 w-4" />
               )}
-              Actualiser
+              {isRefreshing ? 'Synchronisation...' : 'Actualiser'}
             </Button>
           </div>
 
@@ -348,9 +332,9 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
           <div className="flex gap-2 mt-4">
             {[
               { key: 'all', label: 'Toutes', count: orders.length },
-              { key: 'pending', label: 'En cours', count: orders.filter(o => ['pending', 'pending_payment', 'processing', 'confirmed'].includes(o.status.toLowerCase())).length },
-              { key: 'completed', label: 'Terminées', count: orders.filter(o => ['delivered', 'completed', 'fulfilled'].includes(o.status.toLowerCase())).length },
-              { key: 'cancelled', label: 'Annulées', count: orders.filter(o => ['cancelled', 'refunded'].includes(o.status.toLowerCase())).length },
+              { key: 'pending', label: 'En cours', count: orders.filter((o: any) => ['pending', 'pending_payment', 'processing', 'confirmed'].includes(o.status.toLowerCase())).length },
+              { key: 'completed', label: 'Terminées', count: orders.filter((o: any) => ['delivered', 'completed', 'fulfilled'].includes(o.status.toLowerCase())).length },
+              { key: 'cancelled', label: 'Annulées', count: orders.filter((o: any) => ['cancelled', 'refunded'].includes(o.status.toLowerCase())).length },
             ].map((tab) => (
               <button
                 key={tab.key}
@@ -376,7 +360,7 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
               exit={{ opacity: 0, y: -20 }}
               className="space-y-4"
             >
-              {filteredOrders.map((order, index) => (
+              {filteredOrders.map((order: any, index: number) => (
                 <motion.div
                   key={order.id}
                   initial={{ opacity: 0, y: 20 }}

@@ -1,15 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { signIn } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import {  useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signInSchema, type SignInFormValues } from '@/lib/validations/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { EyeIcon, EyeOffIcon, LockIcon, MailIcon, ArrowRight } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
 import Link from 'next/link';
@@ -19,17 +19,15 @@ export function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [authError, setAuthError] = useState<string>('');
   // const router = useRouter();
   const searchParams = useSearchParams();
-  const { toast } = useToast();
+
   const callbackUrl = searchParams.get('callbackUrl') || '/';
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
   } = useForm<SignInFormValues>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -38,17 +36,10 @@ export function SignInForm() {
     },
   });
 
-  // Clear auth error when user starts typing
-  const watchedFields = watch();
-  useEffect(() => {
-    if (authError && (watchedFields.email || watchedFields.password)) {
-      setAuthError('');
-    }
-  }, [watchedFields.email, watchedFields.password, authError]);
+  // No need to clear errors since we're using toast notifications
 
   const onSubmit = async (data: SignInFormValues) => {
     setIsLoading(true);
-    setAuthError(''); // Clear previous errors
 
     try {
       const result = await signIn('credentials', {
@@ -57,40 +48,53 @@ export function SignInForm() {
         redirect: false,
       });
 
-      if (result?.error) {
-        // Authentication failed
-        setAuthError('Invalid email or password. Please check your credentials and try again.');
-        toast({
-          title: 'Authentication Failed',
-          description: 'Invalid email or password. Please check your credentials and try again.',
-          variant: 'destructive',
+      console.log('SignIn result:', result); // Debug log
+      console.log('Result error:', result?.error);
+      console.log('Result ok:', result?.ok);
+      console.log('Result url:', result?.url);
+
+      // Check for authentication errors
+      if (result?.error === 'CredentialsSignin' ||
+          result?.error ||
+          (result?.ok && result?.url === null)) {
+        // Show error toast when email or password is incorrect
+        console.log('Login failed - wrong credentials');
+        toast.error('Login Failed', {
+          description: 'Incorrect username or password.',
+          duration: 4000,
         });
-      } else if (result?.ok) {
-        // Success - user is authenticated
-        setAuthError('');
-        toast({
-          title: 'Welcome back!',
-          description: 'You have been signed in successfully.',
+      } else if (result?.ok && result?.url) {
+        // Show success toast when login is successful
+        console.log('Login successful - redirecting');
+        toast.success('Login Successful', {
+          description: 'Welcome back! Redirecting...',
+          duration: 2000,
         });
 
-        // Redirect to callback URL or home
-        window.location.href = callbackUrl;
+        // Redirect after showing success message
+        setTimeout(() => {
+          window.location.href = callbackUrl;
+        }, 2000);
+      } else if (result?.ok && !result?.error) {
+        // Sometimes NextAuth returns ok:true but no URL for failed logins
+        console.log('Login failed - no redirect URL provided');
+        toast.error('Login Failed', {
+          description: 'Incorrect username or password.',
+          duration: 4000,
+        });
       } else {
         // Unknown error
-        setAuthError('Something went wrong. Please try again.');
-        toast({
-          title: 'Error',
-          description: 'Something went wrong. Please try again.',
-          variant: 'destructive',
+        console.log('Unknown login error, result:', result);
+        toast.error('Connection Error', {
+          description: 'Please try again.',
+          duration: 4000,
         });
       }
     } catch (error) {
       console.error('Sign in error:', error);
-      setAuthError('Something went wrong. Please try again.');
-      toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
+      toast.error('Connection Error', {
+        description: 'Please check your internet connection.',
+        duration: 4000,
       });
     } finally {
       setIsLoading(false);
@@ -103,10 +107,8 @@ export function SignInForm() {
       await signIn('google', { callbackUrl });
     } catch (error) {
       console.error('Google sign in error:', error);
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Failed to sign in with Google',
-        variant: 'destructive',
       });
       setIsGoogleLoading(false);
     }
@@ -134,6 +136,8 @@ export function SignInForm() {
           Welcome back! Please enter your details.
         </motion.p>
       </div>
+
+
 
       {/* Google Sign In */}
       <motion.div
@@ -182,18 +186,25 @@ export function SignInForm() {
               Email
             </Label>
             <div className="relative">
-              <MailIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <MailIcon className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${
+                errors.email ? 'text-red-400' : 'text-gray-400'
+              }`} />
               <Input
                 id="email"
                 type="email"
-                placeholder="Enter your email"
-                className="pl-9 h-10 border border-gray-200 focus:border-green-500 focus:ring-green-500 transition-colors"
+                placeholder="Entrez votre email"
+                className={`pl-9 h-10 border transition-colors ${
+                  errors.email
+                    ? 'border-red-300 focus:border-red-500 focus:ring-red-500 bg-red-50'
+                    : 'border-gray-200 focus:border-green-500 focus:ring-green-500'
+                }`}
                 {...register('email')}
                 disabled={isLoading || isGoogleLoading}
               />
             </div>
             {errors.email && (
-              <p className="text-xs text-red-600">
+              <p className="text-sm text-red-600 flex items-center gap-1 font-medium">
+                <span className="w-2 h-2 bg-red-600 rounded-full"></span>
                 {errors.email.message}
               </p>
             )}
@@ -204,19 +215,29 @@ export function SignInForm() {
               Password
             </Label>
             <div className="relative">
-              <LockIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <LockIcon className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${
+                errors.password ? 'text-red-400' : 'text-gray-400'
+              }`} />
               <Input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
-                placeholder="Enter your password"
-                className="pl-9 pr-10 h-10 border border-gray-200 focus:border-green-500 focus:ring-green-500 transition-colors"
+                placeholder="Entrez votre mot de passe"
+                className={`pl-9 pr-10 h-10 border transition-colors ${
+                  errors.password
+                    ? 'border-red-300 focus:border-red-500 focus:ring-red-500 bg-red-50'
+                    : 'border-gray-200 focus:border-green-500 focus:ring-green-500'
+                }`}
                 {...register('password')}
                 disabled={isLoading || isGoogleLoading}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                className={`absolute right-3 top-1/2 transform -translate-y-1/2 transition-colors ${
+                  errors.password
+                    ? 'text-red-400 hover:text-red-600'
+                    : 'text-gray-400 hover:text-gray-600'
+                }`}
                 disabled={isLoading || isGoogleLoading}
               >
                 {showPassword ? (
@@ -227,29 +248,17 @@ export function SignInForm() {
               </button>
             </div>
             {errors.password && (
-              <p className="text-xs text-red-600">
+              <p className="text-sm text-red-600 flex items-center gap-1 font-medium">
+                <span className="w-2 h-2 bg-red-600 rounded-full"></span>
                 {errors.password.message}
               </p>
             )}
           </div>
         </div>
 
-        {/* Authentication Error Message */}
-        {authError && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2"
-          >
-            <div className="w-4 h-4 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-              <span className="text-xs text-white font-bold">!</span>
-            </div>
-            <p className="text-sm text-red-700 leading-relaxed">
-              {authError}
-            </p>
-          </motion.div>
-        )}
+
+
+
 
         <Button
           type="submit"

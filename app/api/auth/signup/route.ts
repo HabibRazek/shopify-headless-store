@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Dynamic import to avoid build-time issues
+    // Use the existing Prisma wrapper
     const { getPrismaClient } = await import('@/lib/prisma');
     const prisma = getPrismaClient();
 
@@ -81,6 +81,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
+
     // Handle Zod validation errors
     if (error && typeof error === 'object' && 'issues' in error) {
       return NextResponse.json(

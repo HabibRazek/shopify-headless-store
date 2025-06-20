@@ -9,7 +9,7 @@ import { signUpSchema, type SignUpFormValues } from '@/lib/validations/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 import { EyeIcon, EyeOffIcon, LockIcon, MailIcon, UserIcon, ArrowRight } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
 import Link from 'next/link';
@@ -21,8 +21,10 @@ export function SignUpForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [signupError, setSignupError] = useState<string>('');
+  const [fieldErrors, setFieldErrors] = useState<{email?: string; password?: string; name?: string}>({});
+  const [successMessage, setSuccessMessage] = useState<string>('');
   const router = useRouter();
-  const { toast } = useToast();
+
 
   const {
     register,
@@ -44,14 +46,18 @@ export function SignUpForm() {
 
   // Clear signup error when user starts typing
   useEffect(() => {
-    if (signupError && (watchedFields.name || watchedFields.email || watchedFields.password || watchedFields.confirmPassword)) {
+    if ((signupError || Object.keys(fieldErrors).length > 0 || successMessage) && (watchedFields.name || watchedFields.email || watchedFields.password || watchedFields.confirmPassword)) {
       setSignupError('');
+      setFieldErrors({});
+      setSuccessMessage('');
     }
-  }, [watchedFields.name, watchedFields.email, watchedFields.password, watchedFields.confirmPassword, signupError]);
+  }, [watchedFields.name, watchedFields.email, watchedFields.password, watchedFields.confirmPassword, signupError, fieldErrors, successMessage]);
 
   const onSubmit = async (data: SignUpFormValues) => {
     setIsLoading(true);
     setSignupError(''); // Clear previous errors
+    setFieldErrors({}); // Clear field-specific errors
+    setSuccessMessage(''); // Clear success message
 
     try {
       const response = await fetch('/api/auth/signup', {
@@ -69,37 +75,41 @@ export function SignUpForm() {
       const responseData = await response.json();
 
       if (!response.ok) {
-        // Set specific error message below inputs
-        const errorMessage = responseData.error || 'Failed to create account';
-        setSignupError(errorMessage);
+        // Set field-specific error messages with French translation
+        const errorMessage = responseData.error || 'Échec de la création du compte';
 
-        // Also show toast for additional feedback
-        toast({
-          title: 'Account Creation Failed',
-          description: errorMessage,
-          variant: 'destructive',
-        });
+        // Translate common error messages to French and set field-specific errors
+        if (errorMessage.includes('already exists')) {
+          setFieldErrors({
+            email: 'Un compte avec cet email existe déjà',
+            password: 'Veuillez utiliser un autre email'
+          });
+        } else if (errorMessage.includes('Invalid input')) {
+          setFieldErrors({
+            email: 'Format d\'email invalide',
+            password: 'Le mot de passe ne respecte pas les critères'
+          });
+        } else {
+          setFieldErrors({
+            email: 'Erreur lors de la création du compte',
+            password: 'Veuillez vérifier vos informations'
+          });
+        }
         return;
       }
 
-      // Clear any errors on success
-      setSignupError('');
+      // Success - show success message and redirect
+      setFieldErrors({});
+      setSuccessMessage('Compte créé avec succès ! Redirection vers la connexion...');
 
-      toast({
-        title: 'Account created successfully!',
-        description: 'Please sign in with your new credentials.',
-      });
-
-      // Redirect to signin page
-      router.push('/auth/signin');
+      // Small delay to show success message before redirect
+      setTimeout(() => {
+        router.push('/auth/signin');
+      }, 2000);
     } catch (error: unknown) {
-      const errorMessage = (error as Error).message || 'Something went wrong. Please try again.';
-      setSignupError(errorMessage);
-
-      toast({
-        title: 'Error',
-        description: errorMessage,
-        variant: 'destructive',
+      setFieldErrors({
+        email: 'Problème de connexion au serveur',
+        password: 'Veuillez vérifier votre connexion internet'
       });
     } finally {
       setIsLoading(false);
@@ -112,10 +122,8 @@ export function SignUpForm() {
       await signIn('google', { callbackUrl: '/' });
     } catch (error) {
       console.error('Google signup error:', error);
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description: 'Failed to sign in with Google',
-        variant: 'destructive',
       });
       setIsGoogleLoading(false);
     }
@@ -237,19 +245,26 @@ export function SignUpForm() {
               Email
             </Label>
             <div className="relative">
-              <MailIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <MailIcon className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${
+                errors.email || fieldErrors.email ? 'text-red-400' : 'text-gray-400'
+              }`} />
               <Input
                 id="email"
                 type="email"
                 placeholder="Enter your email"
-                className="pl-9 h-10 border border-gray-200 focus:border-green-500 focus:ring-green-500 transition-colors"
+                className={`pl-9 h-10 border transition-colors ${
+                  errors.email || fieldErrors.email
+                    ? 'border-red-300 focus:border-red-500 focus:ring-red-500 bg-red-50'
+                    : 'border-gray-200 focus:border-green-500 focus:ring-green-500'
+                }`}
                 {...register('email')}
                 disabled={isLoading || isGoogleLoading}
               />
             </div>
-            {errors.email && (
-              <p className="text-xs text-red-600">
-                {errors.email.message}
+            {(errors.email || fieldErrors.email) && (
+              <p className="text-sm text-red-600 flex items-center gap-1 font-medium">
+                <span className="w-2 h-2 bg-red-600 rounded-full"></span>
+                {errors.email?.message || fieldErrors.email}
               </p>
             )}
           </div>
@@ -260,19 +275,29 @@ export function SignUpForm() {
               Password
             </Label>
             <div className="relative">
-              <LockIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <LockIcon className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${
+                errors.password || fieldErrors.password ? 'text-red-400' : 'text-gray-400'
+              }`} />
               <Input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Create a strong password"
-                className="pl-9 pr-10 h-10 border border-gray-200 focus:border-green-500 focus:ring-green-500 transition-colors"
+                className={`pl-9 pr-10 h-10 border transition-colors ${
+                  errors.password || fieldErrors.password
+                    ? 'border-red-300 focus:border-red-500 focus:ring-red-500 bg-red-50'
+                    : 'border-gray-200 focus:border-green-500 focus:ring-green-500'
+                }`}
                 {...register('password')}
                 disabled={isLoading || isGoogleLoading}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                className={`absolute right-3 top-1/2 transform -translate-y-1/2 transition-colors ${
+                  errors.password || fieldErrors.password
+                    ? 'text-red-400 hover:text-red-600'
+                    : 'text-gray-400 hover:text-gray-600'
+                }`}
                 disabled={isLoading || isGoogleLoading}
               >
                 {showPassword ? (
@@ -298,9 +323,10 @@ export function SignUpForm() {
               </div>
             )}
 
-            {errors.password && (
-              <p className="text-xs text-red-600">
-                {errors.password.message}
+            {(errors.password || fieldErrors.password) && (
+              <p className="text-sm text-red-600 flex items-center gap-1 font-medium">
+                <span className="w-2 h-2 bg-red-600 rounded-full"></span>
+                {errors.password?.message || fieldErrors.password}
               </p>
             )}
           </div>
@@ -341,20 +367,25 @@ export function SignUpForm() {
           </div>
         </div>
 
-        {/* Signup Error Message */}
-        {signupError && (
+        {/* Success Message */}
+        {successMessage && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2"
+            className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-start gap-3"
           >
-            <div className="w-4 h-4 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-              <span className="text-xs text-white font-bold">!</span>
+            <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span className="text-xs text-white font-bold">✓</span>
             </div>
-            <p className="text-sm text-red-700 leading-relaxed">
-              {signupError}
-            </p>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-green-800 mb-1">
+                Compte créé avec succès
+              </p>
+              <p className="text-sm text-green-700 leading-relaxed">
+                {successMessage}
+              </p>
+            </div>
           </motion.div>
         )}
 

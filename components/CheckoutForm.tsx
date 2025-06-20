@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useShopContext } from '@/context/ShopContext';
 import { formatPrice } from '@/lib/utils';
+import { toast } from 'sonner';
 
 type FormData = {
   firstName: string;
@@ -142,11 +143,26 @@ export default function CheckoutForm({ onClose }: { onClose: () => void }) {
       orders.push(data.order);
       localStorage.setItem('orders', JSON.stringify(orders));
 
+      // Show success toast
+      toast.success('Order placed successfully', {
+        description: `Your order #${data.order?.orderNumber || 'N/A'} has been placed.`,
+        duration: 5000,
+      });
+
       console.log('Order created successfully:', data);
 
     } catch (error) {
       console.error('Error submitting order:', error);
-      alert('There was an error processing your order. Please try again.');
+
+      // Get the error message
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'There was an error processing your order. Please try again.';
+
+      toast.error('Error', {
+        description: errorMessage,
+        duration: 5000,
+      });
     } finally {
       setIsSubmitting(false);
     }

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 
 export async function POST() {
@@ -80,8 +80,6 @@ export async function POST() {
       });
 
     } catch (createError) {
-      console.error('❌ Error in user creation/update:', createError);
-
       // If there's still a constraint error, try to find the user by ID and return it
       try {
         const userById = await prisma.user.findUnique({
@@ -89,15 +87,14 @@ export async function POST() {
         });
 
         if (userById) {
-          console.log('✅ Found existing user by ID:', userById.id);
           return NextResponse.json({
             success: true,
             message: 'User already exists',
             user: userById
           });
         }
-      } catch (findError) {
-        console.error('❌ Error finding user:', findError);
+      } catch {
+        // Continue with error handling
       }
 
       throw createError; // Re-throw the original error

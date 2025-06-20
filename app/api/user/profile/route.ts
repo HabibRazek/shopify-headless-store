@@ -192,6 +192,31 @@ export async function PUT(request: NextRequest) {
 
     console.log('🔄 Attempting to update user:', session.user.id);
 
+    // First, check if the user exists
+    const existingUser = await prisma.user.findUnique({
+      where: { id: session.user.id },
+    });
+
+    if (!existingUser) {
+      console.error('❌ User not found in database:', session.user.id);
+
+      // Try to find user by email as fallback
+      const userByEmail = await prisma.user.findUnique({
+        where: { email: session.user.email! },
+      });
+
+      if (userByEmail) {
+        console.log('🔄 Found user by email, updating session...');
+        // Update with the correct user ID
+        session.user.id = userByEmail.id;
+      } else {
+        return NextResponse.json(
+          { message: 'User not found in database. Please sign out and sign in again.' },
+          { status: 404 }
+        );
+      }
+    }
+
     let updatedUser;
     try {
       updatedUser = await prisma.user.update({

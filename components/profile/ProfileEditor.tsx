@@ -45,6 +45,7 @@ export function ProfileEditor({ className }: ProfileEditorProps) {
   const { data: session, update } = useSession();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [orderCount, setOrderCount] = useState(0);
   const [profileData, setProfileData] = useState<{
     name?: string;
     phone?: string;
@@ -76,7 +77,7 @@ export function ProfileEditor({ className }: ProfileEditorProps) {
 
   const watchedValues = watch();
 
-  // Load user profile data
+  // Load user profile data and order count
   useEffect(() => {
     const fetchProfile = async () => {
       if (!session?.user) return;
@@ -86,7 +87,7 @@ export function ProfileEditor({ className }: ProfileEditorProps) {
         if (response.ok) {
           const data = await response.json();
           setProfileData(data.user);
-          
+
           // Set form values
           setValue('name', data.user.name || '');
           setValue('phone', data.user.phone || '');
@@ -100,7 +101,22 @@ export function ProfileEditor({ className }: ProfileEditorProps) {
       }
     };
 
+    const fetchOrderCount = async () => {
+      if (!session?.user) return;
+
+      try {
+        const response = await fetch('/api/user/orders');
+        if (response.ok) {
+          const data = await response.json();
+          setOrderCount(data.orders?.length || 0);
+        }
+      } catch (error) {
+        console.error('Error fetching order count:', error);
+      }
+    };
+
     fetchProfile();
+    fetchOrderCount();
   }, [session, setValue]);
 
   const onSubmit = async (data: any) => {
@@ -288,9 +304,10 @@ export function ProfileEditor({ className }: ProfileEditorProps) {
                     Annuler
                   </Button>
                   <Button
+                    type="submit"
+                    form="profile-form"
                     variant="secondary"
                     size="sm"
-                    onClick={handleSubmit(onSubmit)}
                     disabled={!isDirty || isLoading}
                     className="bg-white hover:bg-white/90 text-green-600 border-white"
                   >
@@ -349,7 +366,7 @@ export function ProfileEditor({ className }: ProfileEditorProps) {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form id="profile-form" onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Personal Information */}
             <div className="space-y-4">
               <h4 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
@@ -528,7 +545,7 @@ export function ProfileEditor({ className }: ProfileEditorProps) {
                 <h4 className="text-lg font-semibold text-gray-900">Statistiques</h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
-                    <div className="text-2xl font-bold text-blue-600">0</div>
+                    <div className="text-2xl font-bold text-blue-600">{orderCount}</div>
                     <div className="text-sm text-blue-700">Commandes</div>
                   </div>
                   <div className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">

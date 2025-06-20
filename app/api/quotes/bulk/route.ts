@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { writeFile } from 'fs/promises';
 import { join } from 'path';
+import { sendQuoteEmail } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -74,8 +75,28 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Send notification email (you can implement this later)
-    // await sendBulkQuoteNotificationEmail(user, quote, items);
+    // Send notification email
+    try {
+      const items = JSON.parse(itemsJson);
+      await sendQuoteEmail({
+        quoteId: bulkQuote.id.toString(),
+        products: items,
+        customer: {
+          name: session.user.name || 'Non spécifié',
+          email: session.user.email || 'Non spécifié',
+          phone: 'Non spécifié'
+        },
+        totals: {
+          totalQuantity,
+          subtotal,
+          discount,
+          discountAmount: subtotal * (discount / 100),
+          total,
+        }
+      });
+    } catch {
+      // Don't fail the quote creation if email fails
+    }
 
     return NextResponse.json({
       success: true,
@@ -83,7 +104,6 @@ export async function POST(request: NextRequest) {
       quoteId: bulkQuote.id,
     });
   } catch (error) {
-    console.error('Error creating bulk quote request:', error);
     return NextResponse.json(
       { error: 'Erreur interne du serveur' },
       { status: 500 }
@@ -135,8 +155,7 @@ export async function GET() {
       success: true,
       quotes: quotesWithParsedItems,
     });
-  } catch (error) {
-    console.error('Error fetching bulk quotes:', error);
+  } catch {
     return NextResponse.json(
       { error: 'Erreur interne du serveur' },
       { status: 500 }
