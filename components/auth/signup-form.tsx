@@ -77,36 +77,76 @@ export function SignUpForm() {
       if (!response.ok) {
         // Set field-specific error messages with French translation
         const errorMessage = responseData.error || 'Échec de la création du compte';
+        const errorField = responseData.field;
 
-        // Translate common error messages to French and set field-specific errors
-        if (errorMessage.includes('already exists')) {
+        // Handle field-specific errors
+        if (errorField === 'email') {
           setFieldErrors({
-            email: 'Un compte avec cet email existe déjà',
-            password: 'Veuillez utiliser un autre email'
+            email: errorMessage.includes('already exists')
+              ? 'Un compte avec cet email existe déjà'
+              : errorMessage.includes('valid email')
+              ? 'Format d\'email invalide'
+              : errorMessage,
+            password: ''
           });
-        } else if (errorMessage.includes('Invalid input')) {
+        } else if (errorField === 'password') {
           setFieldErrors({
-            email: 'Format d\'email invalide',
-            password: 'Le mot de passe ne respecte pas les critères'
+            email: '',
+            password: errorMessage.includes('8 characters')
+              ? 'Le mot de passe doit contenir au moins 8 caractères'
+              : errorMessage
+          });
+        } else if (errorField === 'name') {
+          setFieldErrors({
+            email: '',
+            password: errorMessage.includes('2 characters')
+              ? 'Le nom doit contenir au moins 2 caractères'
+              : errorMessage
           });
         } else {
-          setFieldErrors({
-            email: 'Erreur lors de la création du compte',
-            password: 'Veuillez vérifier vos informations'
-          });
+          // General error handling
+          if (errorMessage.includes('already exists')) {
+            setFieldErrors({
+              email: 'Un compte avec cet email existe déjà',
+              password: 'Veuillez utiliser un autre email'
+            });
+          } else if (errorMessage.includes('Invalid input')) {
+            setFieldErrors({
+              email: 'Format d\'email invalide',
+              password: 'Le mot de passe ne respecte pas les critères'
+            });
+          } else {
+            setFieldErrors({
+              email: 'Erreur lors de la création du compte',
+              password: 'Veuillez vérifier vos informations'
+            });
+          }
         }
         return;
       }
 
-      // Success - show success message and redirect
+      // Success - show beautiful Sonner toast and redirect
       setFieldErrors({});
-      setSuccessMessage('Compte créé avec succès ! Redirection vers la connexion...');
+      setSuccessMessage('');
 
-      // Small delay to show success message before redirect
+      // Show beautiful success toast
+      toast.success('Compte créé avec succès ! 🎉', {
+        description: 'Votre compte a été créé. Redirection vers la connexion...',
+        duration: 3000,
+        action: {
+          label: 'Se connecter',
+          onClick: () => router.push('/auth/signin')
+        }
+      });
+
+      // Redirect after showing toast
       setTimeout(() => {
         router.push('/auth/signin');
       }, 2000);
     } catch (error: unknown) {
+      toast.error('Erreur de connexion', {
+        description: 'Problème de connexion au serveur. Veuillez réessayer.',
+      });
       setFieldErrors({
         email: 'Problème de connexion au serveur',
         password: 'Veuillez vérifier votre connexion internet'
@@ -121,7 +161,6 @@ export function SignUpForm() {
     try {
       await signIn('google', { callbackUrl: '/' });
     } catch (error) {
-      console.error('Google signup error:', error);
       toast.error('Error', {
         description: 'Failed to sign in with Google',
       });
@@ -367,27 +406,7 @@ export function SignUpForm() {
           </div>
         </div>
 
-        {/* Success Message */}
-        {successMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-start gap-3"
-          >
-            <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-              <span className="text-xs text-white font-bold">✓</span>
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-green-800 mb-1">
-                Compte créé avec succès
-              </p>
-              <p className="text-sm text-green-700 leading-relaxed">
-                {successMessage}
-              </p>
-            </div>
-          </motion.div>
-        )}
+
 
         <Button
           type="submit"

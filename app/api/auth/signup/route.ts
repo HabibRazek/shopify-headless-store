@@ -81,17 +81,29 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-
     // Handle Zod validation errors
     if (error && typeof error === 'object' && 'issues' in error) {
+      const zodError = error as { issues: Array<{ path: string[]; message: string }> };
+      const firstError = zodError.issues[0];
+
       return NextResponse.json(
-        { error: 'Invalid input data' },
+        {
+          error: firstError?.message || 'Invalid input data',
+          field: firstError?.path[0] || 'unknown'
+        },
         { status: 400 }
       );
     }
 
     // Handle Prisma errors
     if (error && typeof error === 'object' && 'code' in error) {
+      const prismaError = error as { code: string; message: string };
+      if (prismaError.code === 'P2002') {
+        return NextResponse.json(
+          { error: 'User with this email already exists' },
+          { status: 400 }
+        );
+      }
       return NextResponse.json(
         { error: 'Database error occurred' },
         { status: 500 }

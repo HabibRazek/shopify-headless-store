@@ -44,7 +44,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         try {
           // Check if database is available
           if (!process.env.DATABASE_URL || process.env.SKIP_ENV_VALIDATION === '1') {
-            console.log('Database not available for authentication');
             return null;
           }
 
@@ -96,7 +95,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
   useSecureCookies: process.env.NODE_ENV === 'production',
 
-  // Explicitly set the base URL
+  // Explicitly set the base URL for production
   basePath: '/api/auth',
   cookies: {
     sessionToken: {
@@ -157,12 +156,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async signIn({ user, account, profile }) {
       if (account?.provider === "google") {
         try {
-          console.log('🔄 Google sign-in attempt for:', user.email);
-          console.log('🔍 Original user ID from Google:', user.id);
-
           // Check if database is available
           if (!process.env.DATABASE_URL || process.env.SKIP_ENV_VALIDATION === '1') {
-            console.log('Database not available for Google sign-in, allowing sign-in anyway');
             return true;
           }
 
@@ -177,9 +172,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           if (!dbUser) {
             // Create new user for Google OAuth
-            console.log('🆕 Creating new user for Google OAuth');
-            console.log('📸 Google image URL for new user:', user.image);
-
             dbUser = await prisma.user.create({
               data: {
                 email: user.email!,
@@ -188,13 +180,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 role: 'user',
               },
             });
-            console.log('✅ New user created with database ID:', dbUser.id);
-            console.log('📸 Stored image URL:', dbUser.image);
           } else {
-            console.log('👤 Existing user found with database ID:', dbUser.id);
-            console.log('📸 Current Google image URL:', user.image);
-            console.log('📸 Existing database image URL:', dbUser.image);
-
             // Update existing user with Google profile image and name
             // Always use the fresh Google image if available
             dbUser = await prisma.user.update({
@@ -204,15 +190,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 name: user.name || dbUser.name,
               },
             });
-            console.log('✅ User updated with Google profile data');
-            console.log('📸 Updated database image URL:', dbUser.image);
           }
 
-          // CRITICAL: Replace the user object with database user data
+          // Replace the user object with database user data
           user.id = dbUser.id;
           user.name = dbUser.name;
           user.email = dbUser.email;
-          user.image = dbUser.image; // Use the updated image from database (which includes Google image)
+          user.image = dbUser.image;
 
         } catch (error) {
           // Allow sign-in even if database operation fails
