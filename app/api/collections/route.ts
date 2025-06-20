@@ -11,6 +11,44 @@ import {
 
 // Force dynamic rendering for this route
 export const dynamic = 'force-dynamic';
+
+// TypeScript interfaces for Shopify API responses
+interface ShopifyImage {
+  url: string;
+  altText?: string;
+}
+
+interface ShopifyProduct {
+  id: string;
+  title: string;
+  handle: string;
+  images: {
+    edges: Array<{
+      node: ShopifyImage;
+    }>;
+  };
+}
+
+interface ShopifyCollection {
+  id: string;
+  title: string;
+  handle: string;
+  description?: string;
+  image?: ShopifyImage;
+  products?: {
+    edges: Array<{
+      node: ShopifyProduct;
+    }>;
+  };
+}
+
+interface ShopifyCollectionsResponse {
+  collections: {
+    edges: Array<{
+      node: ShopifyCollection;
+    }>;
+  };
+}
 import {
   sortCollections,
   filterCollections,
@@ -45,7 +83,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform and validate collections
-    let collections = (body as any).collections?.edges?.map((edge: any) => {
+    const shopifyResponse = body as ShopifyCollectionsResponse;
+    let collections = shopifyResponse.collections?.edges?.map((edge) => {
       const collection = edge.node;
 
       if (!isValidCollection(collection)) {
@@ -53,33 +92,33 @@ export async function GET(request: NextRequest) {
       }
 
       // Calculate product count
-      const productCount = (collection as any).products?.edges?.length || 0;
+      const productCount = collection.products?.edges?.length || 0;
 
       // Get primary image with fallback
       const primaryImage = getPrimaryImage(collection) ||
-        (collection as any).products?.edges?.[0]?.node?.images?.edges?.[0]?.node?.url;
+        collection.products?.edges?.[0]?.node?.images?.edges?.[0]?.node?.url;
 
       return {
         ...collection,
         productCount,
         image: collection.image || (primaryImage ? { url: primaryImage } : null),
         products: includeProducts
-          ? (collection as any).products?.edges?.map((productEdge: any) => productEdge.node) || []
+          ? collection.products?.edges?.map((productEdge) => productEdge.node) || []
           : undefined
       };
-    }).filter(Boolean) || [];
+    }).filter((collection): collection is NonNullable<typeof collection> => collection !== null) || [];
 
     // Apply search filter if provided
     if (search) {
-      collections = filterCollections(collections, search);
+      collections = filterCollections(collections as any, search) as any;
     }
 
     // Apply sorting
     if (sortBy) {
-      collections = sortCollections(collections, sortBy);
+      collections = sortCollections(collections as any, sortBy) as any;
     } else {
       // Default sort: by product count (most products first), then by title
-      collections = sortCollections(collections, 'products');
+      collections = sortCollections(collections as any, 'products') as any;
     }
 
     return {

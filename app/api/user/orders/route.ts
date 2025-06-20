@@ -4,8 +4,29 @@ import { auth } from '@/auth';
 // Force dynamic rendering for this route
 export const dynamic = 'force-dynamic';
 
+// TypeScript interfaces
+interface Order {
+  id: string;
+  orderNumber: string;
+  status: string;
+  shopifyOrderId?: string;
+  userId: string;
+  total: number;
+  createdAt: Date;
+  updatedAt: Date;
+  items: OrderItem[];
+}
+
+interface OrderItem {
+  id: string;
+  title: string;
+  quantity: number;
+  price: number;
+  imageUrl?: string;
+}
+
 // Function to sync order status with Shopify
-async function syncOrderWithShopify(order: any) {
+async function syncOrderWithShopify(order: Order) {
   if (!order.shopifyOrderId && !order.orderNumber?.startsWith('D')) {
     return order;
   }
@@ -13,7 +34,6 @@ async function syncOrderWithShopify(order: any) {
   // Check if Shopify environment is configured
   const shopifyDomain = process.env.SHOPIFY_ADMIN_DOMAIN || process.env.SHOPIFY_STORE_DOMAIN;
   if (!shopifyDomain || !process.env.SHOPIFY_ADMIN_ACCESS_TOKEN) {
-    console.log(`⚠️ Shopify environment not configured, skipping sync for order ${order.orderNumber}`);
     return order;
   }
 
@@ -296,7 +316,7 @@ export async function GET(request: NextRequest) {
     const url = new URL(request.url);
     const shouldRefresh = url.searchParams.get('refresh') === 'true';
 
-    console.log('🔍 Fetching orders for user:', userId, shouldRefresh ? '(with Shopify sync)' : '(cached)');
+
 
     // Get all orders for the user
     let orders = await prisma.order.findMany({
@@ -311,7 +331,7 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    console.log('📦 Found orders:', orders.length);
+
 
     // Sync with Shopify if refresh is explicitly requested
     if (shouldRefresh) {
@@ -326,10 +346,9 @@ export async function GET(request: NextRequest) {
 
       if (shopifyDomain && process.env.SHOPIFY_ADMIN_ACCESS_TOKEN) {
         // Only sync orders that actually need syncing (have Shopify IDs and are not already in final states)
-        const ordersToSync = orders.filter((order: any) => {
+        const ordersToSync = orders.filter((order) => {
           const hasShopifyId = order.shopifyOrderId || order.orderNumber?.startsWith('D');
           const needsSync = !['completed', 'cancelled', 'refunded', 'fulfilled'].includes(order.status.toLowerCase());
-          console.log(`🔍 Order ${order.orderNumber}: hasShopifyId=${hasShopifyId}, needsSync=${needsSync}, status=${order.status}`);
           return hasShopifyId && needsSync;
         });
 

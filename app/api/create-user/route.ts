@@ -15,15 +15,12 @@ export async function POST() {
     // Dynamic import to avoid build-time issues
     const { default: prisma } = await import('@/lib/prisma');
 
-    console.log('🔍 Checking if user exists:', session.user.id);
-
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
       where: { id: session.user.id }
     });
 
     if (existingUser) {
-      console.log('✅ User already exists in database');
       return NextResponse.json({
         success: true,
         message: 'User already exists',

@@ -9,20 +9,47 @@ import { ShoppingCart, Check } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { toast } from 'sonner';
 
+interface ProductImage {
+  url: string;
+  altText?: string;
+}
+
+interface ProductPrice {
+  amount: string;
+  currencyCode: string;
+}
+
+interface Product {
+  id: string;
+  title: string;
+  handle: string;
+  priceRange: {
+    minVariantPrice: ProductPrice;
+  };
+  images?: {
+    edges?: Array<{
+      node: ProductImage;
+    }>;
+  } | ProductImage[];
+  primaryImage?: string;
+}
+
 type ProductCardProps = {
-  product: any; // Using any to handle both direct product and product.node
+  product: Product | { node: Product };
 };
 
 export default function ProductCard({ product }: ProductCardProps) {
   // Handle both direct product and product.node structure
-  const productData = product.node || product;
+  const productData = 'node' in product ? product.node : product;
 
   const { title, handle } = productData;
   const price = productData.priceRange.minVariantPrice.amount;
   const currency = productData.priceRange.minVariantPrice.currencyCode;
 
   // Handle both old GraphQL format (edges/node) and new simplified format
-  const imageNode = productData.images?.edges?.[0]?.node || productData.images?.[0];
+  const imageNode = productData.images && 'edges' in productData.images
+    ? productData.images.edges?.[0]?.node
+    : Array.isArray(productData.images) ? productData.images[0] : null;
   const imageUrl = imageNode?.url || productData.primaryImage || '/placeholder.png';
   const imageAlt = imageNode?.altText || title;
 

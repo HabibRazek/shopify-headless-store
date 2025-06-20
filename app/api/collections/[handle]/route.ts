@@ -17,6 +17,88 @@ import {
   getPrimaryImage
 } from '@/lib/utils/collection';
 
+// TypeScript interfaces for Shopify API responses
+interface ShopifyCollectionResponse {
+  collection: {
+    id: string;
+    title: string;
+    handle: string;
+    description?: string;
+    descriptionHtml?: string;
+    image?: {
+      url: string;
+      altText?: string;
+      width?: number;
+      height?: number;
+    };
+    products: {
+      edges: Array<{
+        node: ShopifyProduct;
+      }>;
+    };
+    updatedAt: string;
+  };
+}
+
+interface ShopifyProduct {
+  id: string;
+  title: string;
+  handle: string;
+  description?: string;
+  priceRange: {
+    minVariantPrice: {
+      amount: string;
+      currencyCode: string;
+    };
+    maxVariantPrice: {
+      amount: string;
+      currencyCode: string;
+    };
+  };
+  compareAtPriceRange?: {
+    minVariantPrice: {
+      amount: string;
+      currencyCode: string;
+    };
+  };
+  images: {
+    edges: Array<{
+      node: {
+        url: string;
+        altText?: string;
+        width?: number;
+        height?: number;
+      };
+    }>;
+  };
+  variants: {
+    edges: Array<{
+      node: {
+        id: string;
+        title: string;
+        price: {
+          amount: string;
+          currencyCode: string;
+        };
+        compareAtPrice?: {
+          amount: string;
+          currencyCode: string;
+        };
+        availableForSale: boolean;
+        selectedOptions: Array<{
+          name: string;
+          value: string;
+        }>;
+      };
+    }>;
+  };
+  tags: string[];
+  availableForSale: boolean;
+  totalInventory?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ handle: string }> }
@@ -138,8 +220,8 @@ export async function GET(
         variables: { handle: handleVariant, first: productsLimit, sortKey, reverse: reverse || false },
       });
 
-      if (status === 200 && (body as any)?.collection) {
-        collection = (body as any).collection;
+      if (status === 200 && (body as ShopifyCollectionResponse)?.collection) {
+        collection = (body as ShopifyCollectionResponse).collection;
         break;
       }
     }
@@ -149,7 +231,7 @@ export async function GET(
     }
 
     // Transform and validate products
-    let products = (collection as any).products?.edges?.map((edge: any) => {
+    let products = collection.products?.edges?.map((edge) => {
       const product = edge.node;
 
       if (!isValidProduct(product)) {
@@ -158,8 +240,8 @@ export async function GET(
 
       return {
         ...product,
-        images: (product as any).images?.edges?.map((imgEdge: any) => imgEdge.node) || [],
-        variants: (product as any).variants?.edges?.map((varEdge: any) => varEdge.node) || [],
+        images: product.images?.edges?.map((imgEdge) => imgEdge.node) || [],
+        variants: product.variants?.edges?.map((varEdge) => varEdge.node) || [],
         onSale: isProductOnSale(product),
         primaryImage: getPrimaryImage(product),
         formattedPrice: formatPrice(
@@ -173,16 +255,16 @@ export async function GET(
             )
           : null
       };
-    }).filter(Boolean) || [];
+    }).filter((product): product is NonNullable<typeof product> => product !== null) || [];
 
     // Apply search filter if provided
     if (search) {
-      products = filterProducts(products, search);
+      products = filterProducts(products as any, search) as any;
     }
 
     // Apply additional sorting if needed (client-side refinement)
     if (sortBy && sortBy !== sortKey) {
-      products = sortProducts(products, sortBy, reverse);
+      products = sortProducts(products as any, sortBy, reverse) as any;
     }
 
     const transformedCollection = {

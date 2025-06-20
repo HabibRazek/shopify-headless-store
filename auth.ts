@@ -5,20 +5,14 @@ import { compare } from "bcrypt"
 
 // Validate required environment variables
 if (!process.env.NEXTAUTH_SECRET) {
-  console.error('❌ NEXTAUTH_SECRET is required')
+  throw new Error('NEXTAUTH_SECRET is required')
 }
 if (!process.env.GOOGLE_CLIENT_ID) {
-  console.error('❌ GOOGLE_CLIENT_ID is required')
+  throw new Error('GOOGLE_CLIENT_ID is required')
 }
 if (!process.env.GOOGLE_CLIENT_SECRET) {
-  console.error('❌ GOOGLE_CLIENT_SECRET is required')
+  throw new Error('GOOGLE_CLIENT_SECRET is required')
 }
-
-// Debug OAuth configuration
-console.log('🔧 OAuth Configuration:')
-console.log('  NEXTAUTH_URL:', process.env.NEXTAUTH_URL)
-console.log('  Expected redirect URI:', `${process.env.NEXTAUTH_URL}/api/auth/callback/google`)
-console.log('  Google Client ID:', process.env.GOOGLE_CLIENT_ID?.substring(0, 20) + '...')
 
 // PROFESSIONAL AUTH CONFIG WITH CREDENTIALS
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -85,7 +79,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             role: user.role,
           };
         } catch (error) {
-          console.error("Auth error:", error);
           return null;
         }
       },
@@ -143,9 +136,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async jwt({ token, account, user }) {
       if (account && user) {
-        console.log('🔄 JWT callback - Setting token with database user ID:', user.id);
         token.id = user.id as string
-        token.role = (user as any).role || 'user'
+        token.role = (user as { role?: string }).role || 'user'
         token.image = user.image
         token.email = user.email
         token.name = user.name
@@ -159,17 +151,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.image = token.image as string
         session.user.name = token.name as string
       }
-
-      // Debug logging for production issues
-      console.log('NextAuth Session Callback:', {
-        hasToken: !!token,
-        hasSession: !!session,
-        userId: token?.id || 'none',
-        userEmail: session?.user?.email || 'none',
-        hasImage: !!token?.image,
-        environment: process.env.NODE_ENV,
-        timestamp: new Date().toISOString()
-      });
 
       return session
     },
@@ -233,17 +214,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           user.email = dbUser.email;
           user.image = dbUser.image; // Use the updated image from database (which includes Google image)
 
-          console.log('🔄 User object updated with database ID:', user.id);
-          console.log('📸 User image URL:', user.image);
-
         } catch (error) {
-          console.error("❌ Error in Google sign-in:", error)
-          console.error("❌ Error details:", {
-            message: error instanceof Error ? error.message : 'Unknown error',
-            stack: error instanceof Error ? error.stack : 'No stack trace',
-            userEmail: user.email,
-            userId: user.id
-          })
           // Allow sign-in even if database operation fails
           return true
         }

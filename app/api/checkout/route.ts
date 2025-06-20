@@ -94,7 +94,6 @@ export async function POST(request: NextRequest) {
           const shopifyOrderResult = await createShopifyOrder(orderData);
 
           if (!shopifyOrderResult.success) {
-            console.error('Error creating Shopify order:', shopifyOrderResult.errors);
             return NextResponse.json(
               { error: 'Failed to create order in Shopify' },
               { status: 500 }

@@ -66,7 +66,6 @@ export async function middleware(request: NextRequest) {
 
     // If it's a protected route and there's no token, redirect to signin
     if (isProtectedRoute && !token) {
-      console.log('🔒 Redirecting to signin - no valid token for protected route:', pathname);
       const url = new URL('/auth/signin', request.url);
       url.searchParams.set('callbackUrl', encodeURI(pathname));
       return NextResponse.redirect(url);
@@ -85,12 +84,9 @@ export async function middleware(request: NextRequest) {
 
     return NextResponse.next();
   } catch (error) {
-    console.error('❌ Middleware error:', error);
-
     // If there's an error with token validation and it's a protected route,
     // redirect to signin as a fallback
     if (isProtectedRoute) {
-      console.log('🔒 Fallback redirect to signin due to error');
       const url = new URL('/auth/signin', request.url);
       url.searchParams.set('callbackUrl', encodeURI(pathname));
       url.searchParams.set('error', 'middleware_error');

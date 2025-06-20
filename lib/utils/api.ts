@@ -143,8 +143,6 @@ export async function handleApiOperation<T>(
     const result = await operation();
     return createSuccessResponse(result);
   } catch (error) {
-    console.error('API Operation Error:', error);
-    
     // Handle specific error types
     if (error instanceof Error) {
       return createErrorResponse(
@@ -153,7 +151,7 @@ export async function handleApiOperation<T>(
         { originalError: error.name }
       );
     }
-    
+
     return createErrorResponse(errorMessage, 500);
   }
 }

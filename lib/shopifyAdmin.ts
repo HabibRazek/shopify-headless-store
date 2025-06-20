@@ -4,13 +4,26 @@
  */
 
 // Real Shopify Admin API fetch
+interface ShopifyAdminResponse {
+  data?: unknown;
+  error?: string;
+  errors?: Array<{
+    message: string;
+    locations?: Array<{
+      line: number;
+      column: number;
+    }>;
+    path?: string[];
+  }>;
+}
+
 export async function shopifyAdminFetch({
   query,
   variables
 }: {
   query: string;
-  variables?: Record<string, any>;
-}): Promise<{ status: number; body: any }> {
+  variables?: Record<string, unknown>;
+}): Promise<{ status: number; body: ShopifyAdminResponse }> {
   const adminAccessToken = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
   const shopDomain = process.env.SHOPIFY_ADMIN_DOMAIN;
   const apiVersion = process.env.SHOPIFY_ADMIN_API_VERSION || '2024-07';
@@ -108,14 +121,57 @@ const CREATE_DRAFT_ORDER_MUTATION = `
   }
 `;
 
+interface CustomerInfo {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  country?: string;
+  notes?: string;
+}
+
+interface CartItem {
+  id: string;
+  title: string;
+  quantity: number;
+  price: number;
+  variantId?: string;
+}
+
+interface ShopifyOrder {
+  id: string;
+  name: string;
+  status?: string;
+  processedAt: string;
+  totalPrice: string;
+  totalPriceSet?: {
+    shopMoney: {
+      amount: string;
+      currencyCode: string;
+    };
+  };
+  customer?: {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+  };
+  shippingAddress?: unknown;
+  lineItems?: unknown[];
+}
+
 // Simple and direct Shopify order creation using REST API
 export async function createShopifyOrder(orderData: {
-  customerInfo: any;
-  cart: any[];
+  customerInfo: CustomerInfo;
+  cart: CartItem[];
   shopifyCustomerId?: string;
 }): Promise<{
   success: boolean;
-  order?: any;
+  order?: ShopifyOrder;
   errors?: string[];
   simulated?: boolean;
 }> {
@@ -124,7 +180,6 @@ export async function createShopifyOrder(orderData: {
   const apiVersion = process.env.SHOPIFY_ADMIN_API_VERSION || '2024-07';
 
   if (!adminAccessToken || !shopDomain) {
-    console.error('Missing Shopify Admin API credentials');
     return {
       success: false,
       errors: ['Missing Shopify Admin API credentials'],
@@ -250,6 +305,7 @@ export async function createShopifyOrder(orderData: {
           name: responseData.draft_order.name,
           status: responseData.draft_order.status,
           processedAt: new Date().toISOString(),
+          totalPrice: responseData.draft_order.total_price,
           totalPriceSet: {
             shopMoney: {
               amount: responseData.draft_order.total_price,

@@ -76,10 +76,7 @@ export default function ProductFilters({ products, onFilterChange }: ProductFilt
         });
       }
 
-      // Log the extracted sizes for debugging
-      if (matches.length > 0) {
-        console.log(`Extracted size from "${node.title}": ${Array.from(sizes).join(', ')}`);
-      }
+
 
       // Extract categories from collection handles or tags - Complete collection list
       if (node.title.toLowerCase().includes('kraftview')) categories.add('KraftView');

@@ -48,24 +48,17 @@ export function SignInForm() {
         redirect: false,
       });
 
-      console.log('SignIn result:', result); // Debug log
-      console.log('Result error:', result?.error);
-      console.log('Result ok:', result?.ok);
-      console.log('Result url:', result?.url);
-
       // Check for authentication errors
       if (result?.error === 'CredentialsSignin' ||
           result?.error ||
           (result?.ok && result?.url === null)) {
         // Show error toast when email or password is incorrect
-        console.log('Login failed - wrong credentials');
         toast.error('Login Failed', {
           description: 'Incorrect username or password.',
           duration: 4000,
         });
       } else if (result?.ok && result?.url) {
         // Show success toast when login is successful
-        console.log('Login successful - redirecting');
         toast.success('Login Successful', {
           description: 'Welcome back! Redirecting...',
           duration: 2000,
@@ -77,21 +70,18 @@ export function SignInForm() {
         }, 2000);
       } else if (result?.ok && !result?.error) {
         // Sometimes NextAuth returns ok:true but no URL for failed logins
-        console.log('Login failed - no redirect URL provided');
         toast.error('Login Failed', {
           description: 'Incorrect username or password.',
           duration: 4000,
         });
       } else {
         // Unknown error
-        console.log('Unknown login error, result:', result);
         toast.error('Connection Error', {
           description: 'Please try again.',
           duration: 4000,
         });
       }
     } catch (error) {
-      console.error('Sign in error:', error);
       toast.error('Connection Error', {
         description: 'Please check your internet connection.',
         duration: 4000,

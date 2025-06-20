@@ -238,7 +238,7 @@ export async function POST(request: NextRequest) {
                         Math.floor(100000 + Math.random() * 900000).toString();
 
     // Get the total price from the Shopify order or calculate it
-    const totalPrice = shopifyOrderResult.order?.totalPriceSet?.shopMoney?.amount ||
+    const totalPrice = shopifyOrderResult.order?.totalPrice ||
                       (subtotal + deliveryFee).toString();
 
     // Save the order to the database if user is logged in

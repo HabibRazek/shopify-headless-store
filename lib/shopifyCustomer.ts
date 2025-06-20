@@ -19,7 +19,6 @@ export async function createOrUpdateShopifyCustomer(customerData: {
   try {
     // Check if Shopify credentials are available
     if (!process.env.SHOPIFY_ADMIN_DOMAIN || !process.env.SHOPIFY_ADMIN_ACCESS_TOKEN) {
-      console.warn('Shopify credentials not available, skipping customer creation');
       return null;
     }
 
