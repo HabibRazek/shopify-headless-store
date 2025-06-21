@@ -138,36 +138,64 @@ const COLLECTION_CATEGORIES = [
 
 export default function Categories() {
   return (
-    <section className="py-20 bg-gradient-to-br from-gray-50 via-white to-green-50/30">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="text-center mb-16">
+    <section className="py-24 bg-white relative overflow-hidden">
+      {/* Elegant Background Pattern */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-gray-50/50" />
+        <div className="absolute top-0 left-0 w-full h-full opacity-[0.03]">
+          <div className="h-full w-full" style={{
+            backgroundImage: `
+              radial-gradient(circle at 25% 25%, #000 1px, transparent 1px),
+              radial-gradient(circle at 75% 75%, #000 1px, transparent 1px)
+            `,
+            backgroundSize: '60px 60px'
+          }} />
+        </div>
+        {/* Subtle floating elements */}
+        <div className="absolute top-20 right-20 w-32 h-32 bg-gradient-to-r from-gray-100/30 to-slate-100/30 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 left-20 w-40 h-40 bg-gradient-to-r from-slate-100/30 to-gray-100/30 rounded-full blur-3xl" />
+      </div>
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* Sophisticated Section Header */}
+        <div className="text-center mb-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <div className="inline-flex items-center gap-2 bg-green-100 px-4 py-2 rounded-full mb-6">
-              <Sparkles className="h-4 w-4 text-green-600" />
-              <span className="text-sm font-semibold text-green-700 tracking-wide">
+            {/* Premium Badge */}
+            <div className="inline-flex items-center gap-2 bg-black text-white px-6 py-3 rounded-full mb-8 shadow-lg">
+              <Sparkles className="h-4 w-4" />
+              <span className="text-sm font-bold tracking-wider uppercase">
                 NOS COLLECTIONS
               </span>
             </div>
-            
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Découvrez Nos Collections
+
+            {/* Elegant Title */}
+            <h2 className="text-5xl md:text-6xl lg:text-7xl font-black text-black mb-8 tracking-tight">
+              Découvrez Nos
+              <span className="block bg-gradient-to-r from-gray-900 via-black to-gray-800 bg-clip-text text-transparent">
+                Collections
+              </span>
             </h2>
-            
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+
+            {/* Refined Description */}
+            <p className="text-xl md:text-2xl text-black/80 max-w-4xl mx-auto leading-relaxed font-medium">
               Découvrez nos 10 collections d'emballages innovants, chacune conçue pour répondre
               à des besoins spécifiques tout en maintenant la plus haute qualité.
             </p>
+
+            {/* Decorative Line */}
+            <div className="mt-8 flex justify-center">
+              <div className="w-24 h-1 bg-gradient-to-r from-transparent via-black to-transparent rounded-full" />
+            </div>
           </motion.div>
         </div>
 
-        {/* Categories Grid - 5 columns on large screens, 2 rows for 10 collections */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+        {/* Luxury Categories Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-8">
           {COLLECTION_CATEGORIES.map((category, index) => (
             <motion.div
               key={category.id}
@@ -177,72 +205,72 @@ export default function Categories() {
               transition={{ duration: 0.6, delay: index * 0.1 }}
             >
               <Link href={category.hasProducts ? `/collections/${category.handle}` : category.handle}>
-                <Card className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 bg-white rounded-3xl">
+                <Card className="group overflow-hidden border border-gray-200/50 shadow-xl hover:shadow-2xl transition-all duration-700 transform hover:-translate-y-3 bg-white rounded-2xl hover:border-black/20">
                   <div className="relative overflow-hidden">
-                    {/* Category Image - Completely Rounded */}
-                    <div className="aspect-square relative overflow-hidden rounded-3xl m-4">
+                    {/* Premium Category Image */}
+                    <div className="aspect-square relative overflow-hidden rounded-2xl m-5">
                       <Image
                         src={category.image}
                         alt={category.title}
                         fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-105 rounded-3xl"
+                        className="object-cover transition-all duration-700 group-hover:scale-110 rounded-2xl grayscale group-hover:grayscale-0"
                         sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
                       />
 
-                      {/* Subtle Gradient Overlay */}
-                      <div className={`absolute inset-0 bg-gradient-to-t ${category.color} opacity-10 group-hover:opacity-20 transition-opacity duration-500 rounded-3xl`} />
+                      {/* Sophisticated Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-2xl" />
 
-                      {/* Badge */}
+                      {/* Premium Badge */}
                       <div className="absolute top-3 left-3">
-                        <span className={`inline-flex items-center gap-1 backdrop-blur-sm px-2 py-1 rounded-full text-xs font-semibold shadow-sm ${
+                        <span className={`inline-flex items-center gap-1 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-bold shadow-lg border ${
                           category.hasProducts
-                            ? 'bg-white/95 text-gray-700'
-                            : 'bg-orange-100/95 text-orange-700'
+                            ? 'bg-black/90 text-white border-white/20'
+                            : 'bg-orange-500/90 text-white border-orange-300/20'
                         }`}>
                           <Package className="h-3 w-3" />
                           {category.badge}
                         </span>
                       </div>
 
-                      {/* Hover Arrow */}
-                      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
-                        <div className="bg-white/95 backdrop-blur-sm p-2 rounded-full shadow-sm">
-                          <ArrowRight className="h-4 w-4 text-gray-700" />
+                      {/* Elegant Hover Arrow */}
+                      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-x-3 group-hover:translate-x-0">
+                        <div className="bg-white/95 backdrop-blur-md p-2.5 rounded-full shadow-lg border border-gray-200/50">
+                          <ArrowRight className="h-4 w-4 text-black" />
                         </div>
                       </div>
                     </div>
                   </div>
-                  
-                  <CardContent className="p-4 pt-0">
-                    <div className="space-y-2 text-center">
-                      {/* Title */}
-                      <h3 className="text-lg font-bold text-gray-900 group-hover:text-green-600 transition-colors duration-300 leading-tight">
+
+                  <CardContent className="p-6 pt-2">
+                    <div className="space-y-3 text-center">
+                      {/* Elegant Title */}
+                      <h3 className="text-lg md:text-xl font-black text-black group-hover:text-gray-800 transition-colors duration-500 leading-tight tracking-tight">
                         {category.title}
                       </h3>
 
-                      {/* Subtitle */}
-                      <p className={`text-xs font-medium ${category.accent} opacity-80 line-clamp-2`}>
+                      {/* Sophisticated Subtitle */}
+                      <p className="text-sm font-semibold text-black/70 line-clamp-2 leading-snug">
                         {category.subtitle}
                       </p>
 
-                      {/* Description - Hidden on smaller screens, shown on hover */}
-                      <p className="text-gray-600 text-xs leading-relaxed line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      {/* Refined Description */}
+                      <p className="text-black/60 text-sm leading-relaxed line-clamp-2 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-2 group-hover:translate-y-0">
                         {category.description}
                       </p>
 
-                      {/* CTA */}
-                      <div className="pt-1">
+                      {/* Premium CTA */}
+                      <div className="pt-2">
                         <Button
                           variant="ghost"
                           size="sm"
-                          className={`p-0 h-auto font-semibold group/btn text-xs ${
+                          className={`p-0 h-auto font-bold group/btn text-sm transition-all duration-300 ${
                             category.hasProducts
-                              ? 'text-green-600 hover:text-green-700'
+                              ? 'text-black hover:text-gray-700'
                               : 'text-orange-600 hover:text-orange-700'
                           }`}
                         >
                           {category.hasProducts ? 'Voir la collection' : 'Demander un devis'}
-                          <ArrowRight className="ml-1 h-3 w-3 transition-transform duration-300 group-hover/btn:translate-x-1" />
+                          <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
                         </Button>
                       </div>
                     </div>
