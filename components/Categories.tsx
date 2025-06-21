@@ -138,7 +138,7 @@ const COLLECTION_CATEGORIES = [
 
 export default function Categories() {
   return (
-    <section className="py-24 bg-gradient-to-br from-white via-green-50/30 to-emerald-50/20 relative overflow-hidden">
+    <section className="bg-gradient-to-br from-white via-green-50/30 to-emerald-50/20 relative overflow-hidden">
       {/* Innovative Background Design */}
       <div className="absolute inset-0">
         {/* Green Gradient Mesh */}
