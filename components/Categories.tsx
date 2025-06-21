@@ -282,7 +282,7 @@ export default function Categories() {
                       </p>
 
                       {/* Clean Description */}
-                      <p className="text-black/60 text-sm leading-relaxed line-clamp-2 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-2 group-hover:translate-y-0">
+                      <p className="text-black/60 text-sm leading-relaxed line-clamp-2 group-hover:opacity-100 transition-all duration-500 transform translate-y-2 group-hover:translate-y-0">
                         {category.description}
                       </p>
 
