@@ -10,13 +10,6 @@ const isProduction = process.env.NODE_ENV === 'production';
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
 
-// Validate Google OAuth configuration
-if (!googleClientId || !googleClientSecret) {
-  console.error('❌ CRITICAL: Google OAuth credentials missing!');
-  console.error('GOOGLE_CLIENT_ID:', !!googleClientId);
-  console.error('GOOGLE_CLIENT_SECRET:', !!googleClientSecret);
-}
-
 // NextAuth configuration
 const nextAuthSecret = process.env.NEXTAUTH_SECRET;
 const nextAuthUrl = process.env.NEXTAUTH_URL;
@@ -24,26 +17,8 @@ const nextAuthUrl = process.env.NEXTAUTH_URL;
 // Database configuration
 const databaseUrl = process.env.DATABASE_URL;
 
-// Validate NextAuth configuration
-if (isProduction && (!nextAuthSecret || !nextAuthUrl)) {
-  console.error('❌ CRITICAL: NextAuth configuration missing in production!');
-  console.error('NEXTAUTH_SECRET:', !!nextAuthSecret);
-  console.error('NEXTAUTH_URL:', !!nextAuthUrl);
-}
-
 // Check if Google OAuth is properly configured
 const hasGoogleConfig = !!(googleClientId && googleClientSecret);
-
-console.log('🔧 Auth Configuration:', {
-  environment: process.env.NODE_ENV,
-  hasGoogleClientId: !!googleClientId,
-  hasGoogleClientSecret: !!googleClientSecret,
-  hasGoogleConfig,
-  hasNextAuthSecret: !!nextAuthSecret,
-  hasNextAuthUrl: !!nextAuthUrl,
-  hasDatabaseUrl: !!databaseUrl,
-  nextAuthUrl: nextAuthUrl
-});
 
 // Build providers array dynamically
 const providers = [];
@@ -64,7 +39,6 @@ providers.push(
       try {
         // Check if database is available
         if (!databaseUrl) {
-          console.log('⚠️ No database URL, skipping credentials auth');
           return null;
         }
 
@@ -102,7 +76,6 @@ providers.push(
           role: user.role,
         };
       } catch (error) {
-        console.error('❌ Credentials auth error:', error);
         return null;
       } finally {
         // Always disconnect from database
@@ -120,7 +93,6 @@ providers.push(
 
 // Add Google provider if configured
 if (hasGoogleConfig) {
-  console.log('✅ Adding Google OAuth provider');
   providers.push(
     GoogleProvider({
       clientId: googleClientId,
@@ -135,8 +107,6 @@ if (hasGoogleConfig) {
       allowDangerousEmailAccountLinking: true,
     })
   );
-} else {
-  console.log('⚠️ Google OAuth not configured - missing client ID or secret');
 }
 
 // BULLETPROOF AUTH CONFIGURATION
@@ -217,16 +187,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session
     },
     async signIn({ user, account, profile }) {
-      console.log('🔐 SignIn callback triggered:', {
-        provider: account?.provider,
-        userEmail: user?.email,
-        hasProfile: !!profile
-      });
-
       if (account?.provider === "google") {
         try {
-          // Always allow Google sign-in, database operations are optional
-          console.log('✅ Google OAuth sign-in successful for:', user.email);
 
           // Try database operations but don't fail if they don't work
           if (databaseUrl) {
@@ -257,7 +219,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     role: 'user',
                   },
                 });
-                console.log('👤 Created new user in database:', user.email);
               } else {
                 // Update existing user with Google profile image and name
                 dbUser = await prisma.user.update({
@@ -267,7 +228,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     name: user.name || dbUser.name,
                   },
                 });
-                console.log('🔄 Updated existing user in database:', user.email);
               }
 
               // Replace the user object with database user data
@@ -278,16 +238,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
               await prisma.$disconnect();
             } catch (dbError) {
-              console.warn('⚠️ Database operation failed, but allowing sign-in:', dbError);
               // Continue with sign-in even if database fails
             }
-          } else {
-            console.log('⚠️ No database URL configured, skipping database operations');
           }
 
           return true;
         } catch (error) {
-          console.error('❌ Google OAuth error:', error);
           // Still allow sign-in even if there are errors
           return true;
         }

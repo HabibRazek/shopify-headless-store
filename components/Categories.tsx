@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Package, Sparkles } from 'lucide-react';
+import { ArrowRight, Package, Sparkles, TrendingUp, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -138,26 +138,42 @@ const COLLECTION_CATEGORIES = [
 
 export default function Categories() {
   return (
-    <section className="py-24 bg-white relative overflow-hidden">
-      {/* Elegant Background Pattern */}
+    <section className="py-24 bg-gradient-to-br from-white via-green-50/30 to-emerald-50/20 relative overflow-hidden">
+      {/* Innovative Background Design */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-gray-50/50" />
-        <div className="absolute top-0 left-0 w-full h-full opacity-[0.03]">
+        {/* Green Gradient Mesh */}
+        <div className="absolute inset-0 bg-gradient-to-br from-green-50/40 via-white to-emerald-50/30" />
+
+        {/* Geometric Pattern */}
+        <div className="absolute top-0 left-0 w-full h-full opacity-[0.04]">
           <div className="h-full w-full" style={{
             backgroundImage: `
-              radial-gradient(circle at 25% 25%, #000 1px, transparent 1px),
-              radial-gradient(circle at 75% 75%, #000 1px, transparent 1px)
+              linear-gradient(90deg, #10b981 1px, transparent 1px),
+              linear-gradient(180deg, #10b981 1px, transparent 1px)
             `,
-            backgroundSize: '60px 60px'
+            backgroundSize: '40px 40px'
           }} />
         </div>
-        {/* Subtle floating elements */}
-        <div className="absolute top-20 right-20 w-32 h-32 bg-gradient-to-r from-gray-100/30 to-slate-100/30 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 left-20 w-40 h-40 bg-gradient-to-r from-slate-100/30 to-gray-100/30 rounded-full blur-3xl" />
+
+        {/* Floating Green Elements */}
+        <div className="absolute top-20 right-20 w-40 h-40 bg-gradient-to-r from-green-400/10 to-emerald-400/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 left-20 w-32 h-32 bg-gradient-to-r from-emerald-400/10 to-green-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+
+        {/* Green Chart Pattern */}
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 opacity-[0.02]">
+          <svg viewBox="0 0 200 200" className="w-full h-full">
+            <defs>
+              <pattern id="greenChart" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                <rect width="20" height="20" fill="none" stroke="#10b981" strokeWidth="0.5"/>
+              </pattern>
+            </defs>
+            <rect width="200" height="200" fill="url(#greenChart)" />
+          </svg>
+        </div>
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Sophisticated Section Header */}
+        {/* Innovative Header Section */}
         <div className="text-center mb-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -165,18 +181,30 @@ export default function Categories() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
+            {/* Stats Row */}
+            <div className="flex justify-center items-center gap-6 mb-8">
+              <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-green-200/50">
+                <TrendingUp className="w-4 h-4 text-green-600" />
+                <span className="text-sm font-bold text-black">10+ Collections</span>
+              </div>
+              <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-green-200/50">
+                <Award className="w-4 h-4 text-green-600" />
+                <span className="text-sm font-bold text-black">Qualité Premium</span>
+              </div>
+            </div>
+
             {/* Premium Badge */}
-            <div className="inline-flex items-center gap-2 bg-black text-white px-6 py-3 rounded-full mb-8 shadow-lg">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-full mb-8 shadow-lg">
               <Sparkles className="h-4 w-4" />
               <span className="text-sm font-bold tracking-wider uppercase">
                 NOS COLLECTIONS
               </span>
             </div>
 
-            {/* Elegant Title */}
+            {/* Elegant Title with Green Accent */}
             <h2 className="text-5xl md:text-6xl lg:text-7xl font-black text-black mb-8 tracking-tight">
               Découvrez Nos
-              <span className="block bg-gradient-to-r from-gray-900 via-black to-gray-800 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-green-600 via-emerald-500 to-green-600 bg-clip-text text-transparent">
                 Collections
               </span>
             </h2>
@@ -187,14 +215,14 @@ export default function Categories() {
               à des besoins spécifiques tout en maintenant la plus haute qualité.
             </p>
 
-            {/* Decorative Line */}
+            {/* Green Decorative Line */}
             <div className="mt-8 flex justify-center">
-              <div className="w-24 h-1 bg-gradient-to-r from-transparent via-black to-transparent rounded-full" />
+              <div className="w-32 h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent rounded-full" />
             </div>
           </motion.div>
         </div>
 
-        {/* Luxury Categories Grid */}
+        {/* Innovative Categories Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-8">
           {COLLECTION_CATEGORIES.map((category, index) => (
             <motion.div
@@ -205,67 +233,67 @@ export default function Categories() {
               transition={{ duration: 0.6, delay: index * 0.1 }}
             >
               <Link href={category.hasProducts ? `/collections/${category.handle}` : category.handle}>
-                <Card className="group overflow-hidden border border-gray-200/50 shadow-xl hover:shadow-2xl transition-all duration-700 transform hover:-translate-y-3 bg-white rounded-2xl hover:border-black/20">
+                <Card className="group overflow-hidden border border-green-200/30 shadow-lg hover:shadow-2xl transition-all duration-700 transform hover:-translate-y-3 bg-white/95 backdrop-blur-sm rounded-3xl hover:border-green-400/50 hover:bg-white">
                   <div className="relative overflow-hidden">
-                    {/* Premium Category Image */}
-                    <div className="aspect-square relative overflow-hidden rounded-2xl m-5">
+                    {/* Clean Category Image */}
+                    <div className="aspect-square relative overflow-hidden rounded-3xl m-4">
                       <Image
                         src={category.image}
                         alt={category.title}
                         fill
-                        className="object-cover transition-all duration-700 group-hover:scale-110 rounded-2xl grayscale group-hover:grayscale-0"
+                        className="object-cover transition-all duration-700 group-hover:scale-105 rounded-3xl"
                         sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
                       />
 
-                      {/* Sophisticated Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-2xl" />
+                      {/* Green Overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-green-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-3xl" />
 
-                      {/* Premium Badge */}
+                      {/* Clean Badge */}
                       <div className="absolute top-3 left-3">
-                        <span className={`inline-flex items-center gap-1 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-bold shadow-lg border ${
+                        <span className={`inline-flex items-center gap-1 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-bold shadow-sm border ${
                           category.hasProducts
-                            ? 'bg-black/90 text-white border-white/20'
-                            : 'bg-orange-500/90 text-white border-orange-300/20'
+                            ? 'bg-green-600/95 text-white border-green-400/30'
+                            : 'bg-orange-500/95 text-white border-orange-400/30'
                         }`}>
                           <Package className="h-3 w-3" />
                           {category.badge}
                         </span>
                       </div>
 
-                      {/* Elegant Hover Arrow */}
+                      {/* Green Hover Arrow */}
                       <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-x-3 group-hover:translate-x-0">
-                        <div className="bg-white/95 backdrop-blur-md p-2.5 rounded-full shadow-lg border border-gray-200/50">
-                          <ArrowRight className="h-4 w-4 text-black" />
+                        <div className="bg-white/95 backdrop-blur-md p-2.5 rounded-full shadow-sm border border-green-200/50">
+                          <ArrowRight className="h-4 w-4 text-green-600" />
                         </div>
                       </div>
                     </div>
                   </div>
-
+                  
                   <CardContent className="p-6 pt-2">
                     <div className="space-y-3 text-center">
-                      {/* Elegant Title */}
-                      <h3 className="text-lg md:text-xl font-black text-black group-hover:text-gray-800 transition-colors duration-500 leading-tight tracking-tight">
+                      {/* Clean Title */}
+                      <h3 className="text-lg md:text-xl font-black text-black group-hover:text-green-600 transition-colors duration-500 leading-tight tracking-tight">
                         {category.title}
                       </h3>
 
-                      {/* Sophisticated Subtitle */}
+                      {/* Clean Subtitle */}
                       <p className="text-sm font-semibold text-black/70 line-clamp-2 leading-snug">
                         {category.subtitle}
                       </p>
 
-                      {/* Refined Description */}
+                      {/* Clean Description */}
                       <p className="text-black/60 text-sm leading-relaxed line-clamp-2 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-2 group-hover:translate-y-0">
                         {category.description}
                       </p>
 
-                      {/* Premium CTA */}
+                      {/* Green CTA */}
                       <div className="pt-2">
                         <Button
                           variant="ghost"
                           size="sm"
                           className={`p-0 h-auto font-bold group/btn text-sm transition-all duration-300 ${
                             category.hasProducts
-                              ? 'text-black hover:text-gray-700'
+                              ? 'text-green-600 hover:text-green-700'
                               : 'text-orange-600 hover:text-orange-700'
                           }`}
                         >
