@@ -8,49 +8,49 @@ export default function References() {
     const brands = [
         {
             id: 1,
-            name: "Kartago",
+            name: "",
             logo: "/nos-references/logo_kartago.png",
             website: "https://kartagodattes.com/"
         },
         {
             id: 2,
-            name: "Le Panier",
+            name: "",
             logo: "/nos-references/LOGO-LE-PANIER-3.png",
             website: "https://lepanier.net/product/mais-grille-au-fromage-laperitivo/"
         },
         {
             id: 3,
-            name: "Masmoudi",
+            name: "",
             logo: "/nos-references/logo-circle-small.webp",
             website: "https://masmoudi.com/"
         },
         {
             id: 4,
-            name: "My Oya",
+            name: "",
             logo: "/nos-references/cropped-Capture-removebg-preview-1.png",
             website: "https://my-oya.com/"
         },
         {
             id: 5,
-            name: "Karina",
+            name: "",
             logo: "/nos-references/karina.webp",
             website: "https://karina.tn/?_ga=2.200218669.249647480.1750010777-185105044.1750010777"
         },
         {
             id: 6,
-            name: "La Maison Caroube",
+            name: "",
             logo: "/nos-references/LaMaisonCaroube.webp",
             website: "https://www.facebook.com/maisonkharoub/photos?locale=fr_FR&_ga=2.192755881.249647480.1750010777-185105044.1750010777"
         },
         {
             id: 7,
-            name: "Mon Sapo",
+            name: "",
             logo: "/nos-references/monsapo.webp",
             website: "https://monsapo.tn/"
         },
         {
             id: 8,
-            name: "Pur Nat",
+            name: "",
             logo: "/nos-references/purnat.webp",
             website: "https://www.instagram.com/purnat_purnat/?hl=fr&_ga=2.191705257.249647480.1750010777-185105044.1750010777#"
         },

@@ -16,6 +16,8 @@ export default function Home() {
         <HeroSection />
         
       </section>
+      
+      <Categories />
 
       {/* Featured Products Section */}
       <Suspense fallback={
@@ -50,7 +52,7 @@ export default function Home() {
       </Suspense>
 
       {/* Categories Section */}
-      <Categories />
+      
 
       {/* CTA Section */}
       <CTASection />
