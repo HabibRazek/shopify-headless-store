@@ -99,6 +99,61 @@ interface ShopifyProduct {
   updatedAt: string;
 }
 
+interface ProcessedProduct {
+  id: string;
+  title: string;
+  handle: string;
+  description?: string;
+  priceRange: {
+    minVariantPrice: {
+      amount: string;
+      currencyCode: string;
+    };
+    maxVariantPrice: {
+      amount: string;
+      currencyCode: string;
+    };
+  };
+  compareAtPriceRange?: {
+    minVariantPrice: {
+      amount: string;
+      currencyCode: string;
+    };
+  };
+  images: Array<{
+    url: string;
+    altText?: string;
+    width?: number;
+    height?: number;
+  }>;
+  variants: Array<{
+    id: string;
+    title: string;
+    price: {
+      amount: string;
+      currencyCode: string;
+    };
+    compareAtPrice?: {
+      amount: string;
+      currencyCode: string;
+    };
+    availableForSale: boolean;
+    selectedOptions: Array<{
+      name: string;
+      value: string;
+    }>;
+  }>;
+  tags: string[];
+  availableForSale: boolean;
+  totalInventory?: number;
+  createdAt: string;
+  updatedAt: string;
+  onSale: boolean;
+  primaryImage: string | null;
+  formattedPrice: string;
+  formattedCompareAtPrice: string | null;
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ handle: string }> }
@@ -231,7 +286,7 @@ export async function GET(
     }
 
     // Transform and validate products
-    let products = collection.products?.edges?.map((edge) => {
+    let products: ProcessedProduct[] = collection.products?.edges?.map((edge) => {
       const product = edge.node;
 
       if (!isValidProduct(product)) {
@@ -259,12 +314,12 @@ export async function GET(
 
     // Apply search filter if provided
     if (search) {
-      products = filterProducts(products as any, search) as any;
+      products = filterProducts(products as any, search) as ProcessedProduct[];
     }
 
     // Apply additional sorting if needed (client-side refinement)
     if (sortBy && sortBy !== sortKey) {
-      products = sortProducts(products as any, sortBy, reverse) as any;
+      products = sortProducts(products as any, sortBy, reverse) as ProcessedProduct[];
     }
 
     const transformedCollection = {

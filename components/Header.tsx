@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 // import Image from 'next/image';
-import { useShopContext } from '@/context/ShopContext';
+// import { useShopContext } from '@/context/ShopContext';
 import Cart from './Cart';
 
 export default function Header() {

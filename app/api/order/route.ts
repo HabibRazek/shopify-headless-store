@@ -344,8 +344,9 @@ export async function POST(request: NextRequest) {
         });
 
 
-      } catch (error) {
+      } catch (dbError) {
         // Continue with the order process even if saving to database fails
+        console.error('Database save error:', dbError);
       }
     }
 

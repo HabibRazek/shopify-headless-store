@@ -49,6 +49,16 @@ interface ShopifyCollectionsResponse {
     }>;
   };
 }
+
+interface ProcessedCollection {
+  id: string;
+  title: string;
+  handle: string;
+  description?: string;
+  productCount: number;
+  image: ShopifyImage | null;
+  products?: ShopifyProduct[];
+}
 import {
   sortCollections,
   filterCollections,
@@ -84,7 +94,7 @@ export async function GET(request: NextRequest) {
 
     // Transform and validate collections
     const shopifyResponse = body as ShopifyCollectionsResponse;
-    let collections = shopifyResponse.collections?.edges?.map((edge) => {
+    let collections: ProcessedCollection[] = shopifyResponse.collections?.edges?.map((edge) => {
       const collection = edge.node;
 
       if (!isValidCollection(collection)) {
@@ -110,15 +120,15 @@ export async function GET(request: NextRequest) {
 
     // Apply search filter if provided
     if (search) {
-      collections = filterCollections(collections as any, search) as any;
+      collections = filterCollections(collections as any, search) as ProcessedCollection[];
     }
 
     // Apply sorting
     if (sortBy) {
-      collections = sortCollections(collections as any, sortBy) as any;
+      collections = sortCollections(collections as any, sortBy) as ProcessedCollection[];
     } else {
       // Default sort: by product count (most products first), then by title
-      collections = sortCollections(collections as any, 'products') as any;
+      collections = sortCollections(collections as any, 'products') as ProcessedCollection[];
     }
 
     return {

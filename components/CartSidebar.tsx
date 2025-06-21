@@ -13,7 +13,7 @@ export default function CartSidebar() {
     toggleCart,
     removeFromCart,
     updateQuantity,
-    checkoutUrl
+    // checkoutUrl
   } = useShopContext();
 
   // State for showing checkout form

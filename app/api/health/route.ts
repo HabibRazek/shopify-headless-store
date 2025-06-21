@@ -14,26 +14,49 @@ export async function GET() {
 
     // Test database connection
     let dbStatus = 'unknown';
+    let dbLatency = 0;
+    let dbError = '';
+
     try {
       if (process.env.DATABASE_URL) {
+        const startTime = Date.now();
         const { getPrismaClient } = await import('@/lib/prisma');
         const prisma = getPrismaClient();
-        await prisma.$connect();
+
+        await Promise.race([
+          prisma.$connect(),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Connection timeout')), 5000)
+          )
+        ]);
+
+        await Promise.race([
+          prisma.$queryRaw`SELECT 1`,
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Query timeout')), 3000)
+          )
+        ]);
+
         await prisma.$disconnect();
+        dbLatency = Date.now() - startTime;
         dbStatus = 'connected';
       } else {
         dbStatus = 'no_url';
       }
     } catch (error) {
       dbStatus = 'error';
-      console.error('Database health check error:', error);
+      dbError = error instanceof Error ? error.message : 'Unknown error';
     }
 
     return NextResponse.json({
       status: 'ok',
       timestamp: new Date().toISOString(),
       environment: envCheck,
-      database: dbStatus,
+      database: {
+        status: dbStatus,
+        latency: dbLatency,
+        error: dbError || undefined
+      },
     });
   } catch (error) {
     console.error('Health check error:', error);

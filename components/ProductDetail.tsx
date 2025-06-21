@@ -4,14 +4,50 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { formatPrice, getProductImage } from '@/lib/utils';
 import { useShopContext } from '@/context/ShopContext';
-import { ShopifyProduct } from '@/types/shopify';
+// import { ShopifyProduct } from '@/types/shopify';
+
+interface ProductVariant {
+  id: string;
+  title: string;
+  price: {
+    amount: string;
+    currencyCode: string;
+  };
+}
+
+interface ProductImage {
+  node: {
+    id: string;
+    url: string;
+    altText?: string;
+  };
+}
+
+interface ProductDetailData {
+  title: string;
+  descriptionHtml: string;
+  priceRange: {
+    minVariantPrice: {
+      amount: string;
+      currencyCode: string;
+    };
+  };
+  variants?: {
+    edges: Array<{
+      node: ProductVariant;
+    }>;
+  };
+  images?: {
+    edges: ProductImage[];
+  };
+}
 
 type ProductDetailProps = {
-  product: any; // Using any for now since we're passing the raw product data
-  handle: string;
+  product: ProductDetailData;
+  handle?: string; // Made optional since it's not used
 };
 
-export default function ProductDetail({ product, handle }: ProductDetailProps) {
+export default function ProductDetail({ product }: ProductDetailProps) {
   const { addToCart } = useShopContext();
   const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
@@ -26,7 +62,7 @@ export default function ProductDetail({ product, handle }: ProductDetailProps) {
   }
 
   const currentVariant = variants.find(
-    (v: any) => v.node.id === selectedVariant
+    (v) => v.node.id === selectedVariant
   )?.node || firstVariant;
 
   const price = currentVariant?.price?.amount || product.priceRange.minVariantPrice.amount;
@@ -63,7 +99,7 @@ export default function ProductDetail({ product, handle }: ProductDetailProps) {
             </div>
             {images.length > 1 && (
               <div className="mt-4 sm:mt-6 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
-                {images.map((image: any) => (
+                {images.map((image) => (
                   <div
                     key={image.node.id}
                     className="relative h-16 sm:h-20 md:h-24 cursor-pointer overflow-hidden rounded-lg"
@@ -107,7 +143,7 @@ export default function ProductDetail({ product, handle }: ProductDetailProps) {
                   <h3 className="text-sm text-gray-600">Variants</h3>
                   <div className="mt-2">
                     <div className="flex flex-wrap items-center gap-2">
-                      {variants.map((variant: any) => (
+                      {variants.map((variant) => (
                         <button
                           key={variant.node.id}
                           type="button"

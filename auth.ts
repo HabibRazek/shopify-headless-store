@@ -172,10 +172,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session
     },
     async signIn({ user, account, profile }) {
+
+
       if (account?.provider === "google") {
         try {
           // Check if database is available
           if (!process.env.DATABASE_URL || process.env.SKIP_ENV_VALIDATION === '1') {
+
             return true;
           }
 
@@ -183,8 +186,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           const { getPrismaClient } = await import('@/lib/prisma');
           const prisma = getPrismaClient();
 
-          // Test database connection
-          await prisma.$connect();
+          // Test database connection with timeout
+          await Promise.race([
+            prisma.$connect(),
+            new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('Database connection timeout')), 5000)
+            )
+          ]);
 
           // Check if user already exists by email
           let dbUser = await prisma.user.findUnique({
@@ -220,8 +228,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           user.image = dbUser.image;
 
         } catch (error) {
-          // Log error for debugging in production
-          console.error('Google OAuth database error:', error);
+          // Log detailed error for debugging in production
+          console.error('Google OAuth database error:', {
+            error: error instanceof Error ? error.message : error,
+            stack: error instanceof Error ? error.stack : undefined,
+            user: { email: user.email, id: user.id },
+            timestamp: new Date().toISOString()
+          });
           // Allow sign-in even if database operation fails
           return true
         } finally {

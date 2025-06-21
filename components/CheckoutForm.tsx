@@ -169,7 +169,7 @@ export default function CheckoutForm({ onClose }: { onClose: () => void }) {
   };
 
   // State for checkout URL
-  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
+  // const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
 
   // Success screen
   if (isSuccess) {

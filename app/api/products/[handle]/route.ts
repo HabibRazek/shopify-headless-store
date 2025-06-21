@@ -28,7 +28,8 @@ export async function GET(request: NextRequest) {
         { status }
       );
     }
-  } catch (error) {
+  } catch (fetchError) {
+    console.error('Product fetch error:', fetchError);
     return NextResponse.json(
       { error: 'Error fetching product' },
       { status: 500 }

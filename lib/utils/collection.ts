@@ -187,7 +187,7 @@ export function filterCollections(collections: Collection[], searchTerm: string)
 /**
  * Sorts products by various criteria
  */
-export function sortProducts(products: Product[], sortBy: string, reverse: boolean = false): Product[] {
+export function sortProducts<T extends Product>(products: T[], sortBy: string, reverse: boolean = false): T[] {
   const sorted = [...products];
   
   switch (sortBy) {
@@ -227,7 +227,7 @@ export function sortProducts(products: Product[], sortBy: string, reverse: boole
 /**
  * Filters products by search term
  */
-export function filterProducts(products: Product[], searchTerm: string): Product[] {
+export function filterProducts<T extends Product>(products: T[], searchTerm: string): T[] {
   if (!searchTerm.trim()) return products;
   
   const term = searchTerm.toLowerCase();
