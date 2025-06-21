@@ -1,26 +1,44 @@
 import NextAuth from "next-auth"
-import Google from "next-auth/providers/google"
-import Credentials from "next-auth/providers/credentials"
-import { compare } from "bcrypt"
+import GoogleProvider from "next-auth/providers/google"
+import CredentialsProvider from "next-auth/providers/credentials"
+import { compare } from "bcryptjs"
 
-// Robust environment validation
+// Environment validation
 const isProduction = process.env.NODE_ENV === 'production';
 
-// Google OAuth configuration with fallbacks
-const googleClientId = process.env.GOOGLE_CLIENT_ID || '';
-const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET || '';
-const hasGoogleConfig = googleClientId && googleClientSecret && googleClientId.length > 10;
+// Google OAuth configuration - STRICT validation
+const googleClientId = process.env.GOOGLE_CLIENT_ID;
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+
+// Validate Google OAuth configuration
+if (!googleClientId || !googleClientSecret) {
+  console.error('❌ CRITICAL: Google OAuth credentials missing!');
+  console.error('GOOGLE_CLIENT_ID:', !!googleClientId);
+  console.error('GOOGLE_CLIENT_SECRET:', !!googleClientSecret);
+}
 
 // NextAuth configuration
-const nextAuthSecret = process.env.NEXTAUTH_SECRET || 'fallback-secret-for-dev';
-const nextAuthUrl = process.env.NEXTAUTH_URL || (isProduction ? 'https://shopify-headless-store-sigma.vercel.app' : 'http://localhost:3000');
+const nextAuthSecret = process.env.NEXTAUTH_SECRET;
+const nextAuthUrl = process.env.NEXTAUTH_URL;
 
 // Database configuration
-const databaseUrl = process.env.DATABASE_URL || '';
+const databaseUrl = process.env.DATABASE_URL;
 
-console.log('🔧 Auth Configuration Status:', {
+// Validate NextAuth configuration
+if (isProduction && (!nextAuthSecret || !nextAuthUrl)) {
+  console.error('❌ CRITICAL: NextAuth configuration missing in production!');
+  console.error('NEXTAUTH_SECRET:', !!nextAuthSecret);
+  console.error('NEXTAUTH_URL:', !!nextAuthUrl);
+}
+
+// Check if Google OAuth is properly configured
+const hasGoogleConfig = !!(googleClientId && googleClientSecret);
+
+console.log('🔧 Auth Configuration:', {
   environment: process.env.NODE_ENV,
-  hasGoogleConfig: !!hasGoogleConfig,
+  hasGoogleClientId: !!googleClientId,
+  hasGoogleClientSecret: !!googleClientSecret,
+  hasGoogleConfig,
   hasNextAuthSecret: !!nextAuthSecret,
   hasNextAuthUrl: !!nextAuthUrl,
   hasDatabaseUrl: !!databaseUrl,
@@ -32,7 +50,7 @@ const providers = [];
 
 // Always add credentials provider
 providers.push(
-  Credentials({
+  CredentialsProvider({
     name: "credentials",
     credentials: {
       email: { label: "Email", type: "email" },
@@ -104,7 +122,7 @@ providers.push(
 if (hasGoogleConfig) {
   console.log('✅ Adding Google OAuth provider');
   providers.push(
-    Google({
+    GoogleProvider({
       clientId: googleClientId,
       clientSecret: googleClientSecret,
       authorization: {
