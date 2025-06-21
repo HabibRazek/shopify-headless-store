@@ -94,30 +94,11 @@ export function SignInForm() {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
-      const result = await signIn('google', {
-        callbackUrl,
-        redirect: false
+      // Use standard NextAuth redirect approach
+      await signIn('google', {
+        callbackUrl: callbackUrl,
+        redirect: true // Let NextAuth handle the redirect
       });
-
-      // Check for errors in the result
-      if (result?.error) {
-        console.error('Google OAuth error:', result.error);
-        toast.error('Google Sign In Failed', {
-          description: 'Please try again or contact support if the issue persists.',
-          duration: 4000,
-        });
-        setIsGoogleLoading(false);
-      } else if (result?.ok) {
-        // Success - redirect will happen automatically
-        toast.success('Signing in with Google...', {
-          description: 'Redirecting to your account',
-          duration: 2000,
-        });
-        // Let NextAuth handle the redirect
-        if (result.url) {
-          window.location.href = result.url;
-        }
-      }
     } catch (error) {
       console.error('Google sign in error:', error);
       toast.error('Connection Error', {
