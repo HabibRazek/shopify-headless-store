@@ -1,6 +1,6 @@
 import NextAuth from "next-auth"
-import GoogleProvider from "next-auth/providers/google"
-import CredentialsProvider from "next-auth/providers/credentials"
+import Google from "next-auth/providers/google"
+import Credentials from "next-auth/providers/credentials"
 import { compare } from "bcrypt"
 
 // Robust environment validation
@@ -32,7 +32,7 @@ const providers = [];
 
 // Always add credentials provider
 providers.push(
-  CredentialsProvider({
+  Credentials({
     name: "credentials",
     credentials: {
       email: { label: "Email", type: "email" },
@@ -104,7 +104,7 @@ providers.push(
 if (hasGoogleConfig) {
   console.log('✅ Adding Google OAuth provider');
   providers.push(
-    GoogleProvider({
+    Google({
       clientId: googleClientId,
       clientSecret: googleClientSecret,
       authorization: {
