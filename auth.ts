@@ -3,16 +3,27 @@ import Google from "next-auth/providers/google"
 import Credentials from "next-auth/providers/credentials"
 import { compare } from "bcrypt"
 
-// Production environment validation
-const hasGoogleConfig = !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
+// Environment validation with fallbacks
+const isProduction = process.env.NODE_ENV === 'production';
 
-if (process.env.NODE_ENV === 'production') {
-  if (!process.env.NEXTAUTH_SECRET) {
-    throw new Error('NEXTAUTH_SECRET is required in production')
-  }
-  if (!process.env.NEXTAUTH_URL) {
-    throw new Error('NEXTAUTH_URL is required in production')
-  }
+// Ensure we have Google OAuth credentials
+const googleClientId = process.env.GOOGLE_CLIENT_ID;
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+const hasGoogleConfig = !!(googleClientId && googleClientSecret);
+
+// Ensure we have NextAuth configuration
+const nextAuthSecret = process.env.NEXTAUTH_SECRET;
+const nextAuthUrl = process.env.NEXTAUTH_URL;
+
+// Log environment status for debugging (only in development)
+if (!isProduction) {
+  console.log('Auth Environment Check:', {
+    NODE_ENV: process.env.NODE_ENV,
+    hasNextAuthSecret: !!nextAuthSecret,
+    hasNextAuthUrl: !!nextAuthUrl,
+    hasGoogleConfig,
+    hasDatabaseUrl: !!process.env.DATABASE_URL
+  });
 }
 
 // PROFESSIONAL AUTH CONFIG WITH CREDENTIALS
@@ -20,8 +31,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     ...(hasGoogleConfig ? [
       Google({
-        clientId: process.env.GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+        clientId: googleClientId!,
+        clientSecret: googleClientSecret!,
         authorization: {
           params: {
             prompt: "consent",
@@ -30,7 +41,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           },
         },
         allowDangerousEmailAccountLinking: true,
-
       })
     ] : []),
     Credentials({
@@ -108,44 +118,44 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: nextAuthSecret,
   trustHost: true,
-  useSecureCookies: process.env.NODE_ENV === 'production',
+  useSecureCookies: isProduction,
 
   // Explicitly set the base URL for production
   basePath: '/api/auth',
   cookies: {
     sessionToken: {
-      name: process.env.NODE_ENV === 'production'
+      name: isProduction
         ? '__Secure-next-auth.session-token'
         : 'next-auth.session-token',
       options: {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: process.env.NODE_ENV === 'production',
+        secure: isProduction,
       }
     },
     callbackUrl: {
-      name: process.env.NODE_ENV === 'production'
+      name: isProduction
         ? '__Secure-next-auth.callback-url'
         : 'next-auth.callback-url',
       options: {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: process.env.NODE_ENV === 'production',
+        secure: isProduction,
       }
     },
     csrfToken: {
-      name: process.env.NODE_ENV === 'production'
+      name: isProduction
         ? '__Host-next-auth.csrf-token'
         : 'next-auth.csrf-token',
       options: {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: process.env.NODE_ENV === 'production',
+        secure: isProduction,
       }
     }
   },

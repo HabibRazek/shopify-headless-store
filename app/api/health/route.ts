@@ -10,6 +10,11 @@ export async function GET() {
       GOOGLE_CLIENT_ID: !!process.env.GOOGLE_CLIENT_ID,
       GOOGLE_CLIENT_SECRET: !!process.env.GOOGLE_CLIENT_SECRET,
       DATABASE_URL: !!process.env.DATABASE_URL,
+
+      // Show actual values for debugging (safe parts only)
+      NEXTAUTH_URL_VALUE: process.env.NEXTAUTH_URL,
+      GOOGLE_CLIENT_ID_PARTIAL: process.env.GOOGLE_CLIENT_ID ?
+        process.env.GOOGLE_CLIENT_ID.substring(0, 20) + '...' : 'Not set',
     };
 
     // Test database connection
@@ -48,6 +53,19 @@ export async function GET() {
       dbError = error instanceof Error ? error.message : 'Unknown error';
     }
 
+    // Test auth configuration
+    let authStatus = 'unknown';
+    let authError = '';
+
+    try {
+      // Try to import auth configuration
+      await import('@/auth');
+      authStatus = 'loaded';
+    } catch (error) {
+      authStatus = 'error';
+      authError = error instanceof Error ? error.message : 'Unknown error';
+    }
+
     return NextResponse.json({
       status: 'ok',
       timestamp: new Date().toISOString(),
@@ -56,6 +74,10 @@ export async function GET() {
         status: dbStatus,
         latency: dbLatency,
         error: dbError || undefined
+      },
+      auth: {
+        status: authStatus,
+        error: authError || undefined
       },
     });
   } catch (error) {
