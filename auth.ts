@@ -32,6 +32,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           },
         },
         allowDangerousEmailAccountLinking: true,
+        profile(profile) {
+          console.log('🔍 Google profile received:', {
+            id: profile.sub,
+            email: profile.email,
+            name: profile.name,
+            picture: profile.picture,
+            timestamp: new Date().toISOString()
+          });
+          return {
+            id: profile.sub,
+            name: profile.name,
+            email: profile.email,
+            image: profile.picture,
+          };
+        },
       })
     ] : []),
     Credentials({
@@ -172,7 +187,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session
     },
     async signIn({ user, account, profile }) {
-
+      // Log OAuth attempt for production debugging
+      console.log('🔍 OAuth signIn attempt:', {
+        provider: account?.provider,
+        userEmail: user?.email,
+        userId: user?.id,
+        accountType: account?.type,
+        environment: process.env.NODE_ENV,
+        timestamp: new Date().toISOString()
+      });
 
       if (account?.provider === "google") {
         try {
@@ -251,4 +274,39 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return true
     },
   },
+  events: {
+    async signIn(message) {
+      console.log('✅ OAuth signIn successful:', {
+        user: message.user?.email,
+        account: message.account?.provider,
+        timestamp: new Date().toISOString()
+      });
+    },
+    async signOut(message) {
+      console.log('👋 OAuth signOut:', {
+        hasSession: 'session' in message,
+        timestamp: new Date().toISOString()
+      });
+    },
+    async createUser(message) {
+      console.log('👤 OAuth createUser:', {
+        user: message.user?.email,
+        timestamp: new Date().toISOString()
+      });
+    },
+    async linkAccount(message) {
+      console.log('🔗 OAuth linkAccount:', {
+        user: message.user?.email,
+        account: message.account?.provider,
+        timestamp: new Date().toISOString()
+      });
+    },
+    async session(message) {
+      console.log('📱 OAuth session:', {
+        hasSession: 'session' in message,
+        timestamp: new Date().toISOString()
+      });
+    },
+  },
+  debug: process.env.NODE_ENV === 'development',
 })
