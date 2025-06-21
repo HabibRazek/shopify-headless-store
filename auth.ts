@@ -3,18 +3,16 @@ import Google from "next-auth/providers/google"
 import Credentials from "next-auth/providers/credentials"
 import { compare } from "bcrypt"
 
-// Validate required environment variables
-if (!process.env.NEXTAUTH_SECRET) {
-  console.error('❌ NEXTAUTH_SECRET is required for authentication')
-}
+// Production environment validation
+const hasGoogleConfig = !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
 
-// Google OAuth is optional - only validate if we're trying to use it
-const hasGoogleConfig = process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET;
-if (process.env.GOOGLE_CLIENT_ID && !process.env.GOOGLE_CLIENT_SECRET) {
-  console.error('❌ GOOGLE_CLIENT_SECRET is required when GOOGLE_CLIENT_ID is set')
-}
-if (process.env.GOOGLE_CLIENT_SECRET && !process.env.GOOGLE_CLIENT_ID) {
-  console.error('❌ GOOGLE_CLIENT_ID is required when GOOGLE_CLIENT_SECRET is set')
+if (process.env.NODE_ENV === 'production') {
+  if (!process.env.NEXTAUTH_SECRET) {
+    throw new Error('NEXTAUTH_SECRET is required in production')
+  }
+  if (!process.env.NEXTAUTH_URL) {
+    throw new Error('NEXTAUTH_URL is required in production')
+  }
 }
 
 // PROFESSIONAL AUTH CONFIG WITH CREDENTIALS
@@ -32,21 +30,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           },
         },
         allowDangerousEmailAccountLinking: true,
-        profile(profile) {
-          console.log('🔍 Google profile received:', {
-            id: profile.sub,
-            email: profile.email,
-            name: profile.name,
-            picture: profile.picture,
-            timestamp: new Date().toISOString()
-          });
-          return {
-            id: profile.sub,
-            name: profile.name,
-            email: profile.email,
-            image: profile.picture,
-          };
-        },
+
       })
     ] : []),
     Credentials({
@@ -187,16 +171,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session
     },
     async signIn({ user, account, profile }) {
-      // Log OAuth attempt for production debugging
-      console.log('🔍 OAuth signIn attempt:', {
-        provider: account?.provider,
-        userEmail: user?.email,
-        userId: user?.id,
-        accountType: account?.type,
-        environment: process.env.NODE_ENV,
-        timestamp: new Date().toISOString()
-      });
-
       if (account?.provider === "google") {
         try {
           // Check if database is available
@@ -251,13 +225,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           user.image = dbUser.image;
 
         } catch (error) {
-          // Log detailed error for debugging in production
-          console.error('Google OAuth database error:', {
-            error: error instanceof Error ? error.message : error,
-            stack: error instanceof Error ? error.stack : undefined,
-            user: { email: user.email, id: user.id },
-            timestamp: new Date().toISOString()
-          });
           // Allow sign-in even if database operation fails
           return true
         } finally {
@@ -274,39 +241,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return true
     },
   },
-  events: {
-    async signIn(message) {
-      console.log('✅ OAuth signIn successful:', {
-        user: message.user?.email,
-        account: message.account?.provider,
-        timestamp: new Date().toISOString()
-      });
-    },
-    async signOut(message) {
-      console.log('👋 OAuth signOut:', {
-        hasSession: 'session' in message,
-        timestamp: new Date().toISOString()
-      });
-    },
-    async createUser(message) {
-      console.log('👤 OAuth createUser:', {
-        user: message.user?.email,
-        timestamp: new Date().toISOString()
-      });
-    },
-    async linkAccount(message) {
-      console.log('🔗 OAuth linkAccount:', {
-        user: message.user?.email,
-        account: message.account?.provider,
-        timestamp: new Date().toISOString()
-      });
-    },
-    async session(message) {
-      console.log('📱 OAuth session:', {
-        hasSession: 'session' in message,
-        timestamp: new Date().toISOString()
-      });
-    },
-  },
-  debug: process.env.NODE_ENV === 'development',
+
 })
