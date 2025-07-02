@@ -38,11 +38,12 @@ export default function RootLayout({
         <Providers>
           <ShopProvider>
             <CartProvider>
-              <div className="sm:block hidden">
+              {/* TopBar temporarily hidden - remove this comment to show TopBar */}
+              {/* <div className="sm:block hidden">
                 <TopBar />
-              </div>
+              </div> */}
               <Navbar />
-              <main className="pt-20 sm:pt-28 md:pt-32 lg:pt-36">
+              <main className="pt-16 sm:pt-20 md:pt-24 lg:pt-28">
                 {children}
               </main>
               <Footer />

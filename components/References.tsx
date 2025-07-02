@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { Star, ExternalLink, Users, Award, TrendingUp } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function References() {
     // Updated brand logos based on the files in the public folder with proper website links
@@ -126,54 +127,120 @@ export default function References() {
                     </p>
                 </div>
 
-                {/* Brand Cards Grid */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                    {brands.map((brand) => (
-                        <div
-                            key={brand.id}
-                            className="group relative"
-                        >
-                            <a
-                                href={brand.website}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="block"
-                                aria-label={`Visiter le site de ${brand.name}`}
+                {/* Moving Carousel */}
+                <div className="relative overflow-hidden">
+                    {/* Infinite Scrolling Container */}
+                    <motion.div
+                        className="flex gap-6"
+                        animate={{
+                            x: [0, -100 * brands.length]
+                        }}
+                        transition={{
+                            x: {
+                                repeat: Infinity,
+                                repeatType: "loop",
+                                duration: 20,
+                                ease: "linear"
+                            }
+                        }}
+                        style={{ width: `${200 * brands.length}%` }}
+                    >
+                        {/* First set of brands */}
+                        {brands.map((brand) => (
+                            <div
+                                key={`first-${brand.id}`}
+                                className="group relative flex-shrink-0 w-64"
                             >
-                                {/* Card Container */}
-                                <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group-hover:border-green-300/50">
-                                    {/* Logo Container */}
-                                    <div className="relative h-20 w-full mb-4 grayscale group-hover:grayscale-0 transition-all duration-500">
-                                        <Image
-                                            src={brand.logo}
-                                            alt={brand.name}
-                                            fill
-                                            className="object-contain"
-                                            sizes="(max-width: 768px) 150px, 200px"
-                                            loading="lazy"
-                                        />
-                                    </div>
-
-                                    {/* Brand Name */}
-                                    <div className="text-center">
-                                        <h3 className="font-semibold text-gray-900 group-hover:text-green-600 transition-colors duration-300">
-                                            {brand.name}
-                                        </h3>
-                                        <div className="flex items-center justify-center mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                            <ExternalLink className="w-4 h-4 text-green-600" />
-                                            <span className="text-sm text-green-600 ml-1">Visiter</span>
+                                <a
+                                    href={brand.website}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="block"
+                                    aria-label={`Visiter le site de ${brand.name}`}
+                                >
+                                    {/* Card Container */}
+                                    <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group-hover:border-green-300/50">
+                                        {/* Logo Container */}
+                                        <div className="relative h-20 w-full mb-4 grayscale group-hover:grayscale-0 transition-all duration-500">
+                                            <Image
+                                                src={brand.logo}
+                                                alt={brand.name}
+                                                fill
+                                                className="object-contain"
+                                                sizes="200px"
+                                                loading="lazy"
+                                            />
                                         </div>
+
+                                        {/* Brand Name */}
+                                        <div className="text-center">
+                                            <h3 className="font-semibold text-gray-900 group-hover:text-green-600 transition-colors duration-300">
+                                                {brand.name}
+                                            </h3>
+                                            <div className="flex items-center justify-center mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                <ExternalLink className="w-4 h-4 text-green-600" />
+                                                <span className="text-sm text-green-600 ml-1">Visiter</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Hover Glow Effect */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-green-500/5 via-transparent to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
+
+                                        {/* Corner Accent */}
+                                        <div className="absolute top-0 right-0 w-8 h-8 bg-gradient-to-bl from-green-400/20 to-transparent rounded-tr-2xl rounded-bl-full" />
                                     </div>
+                                </a>
+                            </div>
+                        ))}
 
-                                    {/* Hover Glow Effect */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-green-500/5 via-transparent to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
+                        {/* Second set of brands for seamless loop */}
+                        {brands.map((brand) => (
+                            <div
+                                key={`second-${brand.id}`}
+                                className="group relative flex-shrink-0 w-64"
+                            >
+                                <a
+                                    href={brand.website}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="block"
+                                    aria-label={`Visiter le site de ${brand.name}`}
+                                >
+                                    {/* Card Container */}
+                                    <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group-hover:border-green-300/50">
+                                        {/* Logo Container */}
+                                        <div className="relative h-20 w-full mb-4 grayscale group-hover:grayscale-0 transition-all duration-500">
+                                            <Image
+                                                src={brand.logo}
+                                                alt={brand.name}
+                                                fill
+                                                className="object-contain"
+                                                sizes="200px"
+                                                loading="lazy"
+                                            />
+                                        </div>
 
-                                    {/* Corner Accent */}
-                                    <div className="absolute top-0 right-0 w-8 h-8 bg-gradient-to-bl from-green-400/20 to-transparent rounded-tr-2xl rounded-bl-full" />
-                                </div>
-                            </a>
-                        </div>
-                    ))}
+                                        {/* Brand Name */}
+                                        <div className="text-center">
+                                            <h3 className="font-semibold text-gray-900 group-hover:text-green-600 transition-colors duration-300">
+                                                {brand.name}
+                                            </h3>
+                                            <div className="flex items-center justify-center mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                <ExternalLink className="w-4 h-4 text-green-600" />
+                                                <span className="text-sm text-green-600 ml-1">Visiter</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Hover Glow Effect */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-green-500/5 via-transparent to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
+
+                                        {/* Corner Accent */}
+                                        <div className="absolute top-0 right-0 w-8 h-8 bg-gradient-to-bl from-green-400/20 to-transparent rounded-tr-2xl rounded-bl-full" />
+                                    </div>
+                                </a>
+                            </div>
+                        ))}
+                    </motion.div>
                 </div>
             </div>
         </section>
