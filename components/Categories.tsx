@@ -3,9 +3,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Package, Sparkles, TrendingUp, Award } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+
 
 // Collection data mapping all 9 images to collection handles and metadata
 // First 5 collections have actual products, others are coming soon
@@ -16,7 +14,7 @@ const COLLECTION_CATEGORIES = [
     title: 'KraftView™',
     subtitle: 'Pochettes Zip Kraft Brun avec Fenêtre',
     description: 'Emballages écologiques en kraft avec fenêtre transparente pour une présentation optimale de vos produits.',
-    image: '/images/collections/kraftview-collection-doypacks.jpeg',
+    image: '/images/collections/KraftView.png',
     handle: 'kraftview™-pochettes-zip-kraft-brun-avec-fenetre-transparente',
     color: 'from-amber-50 to-orange-50',
     accent: 'text-amber-700',
@@ -28,7 +26,7 @@ const COLLECTION_CATEGORIES = [
     title: 'BlackView™',
     subtitle: 'Pochettes Zip Noir avec Fenêtre',
     description: 'Design élégant et moderne avec finition mate pour un impact visuel maximal.',
-    image: '/images/collections/blackview-collection-doypacks.jpeg',
+    image: '/images/collections/BlackView.png',
     handle: 'blackview™-pochettes-zip-noir-avec-fenetre-transparente',
     color: 'from-gray-50 to-slate-50',
     accent: 'text-gray-700',
@@ -40,7 +38,7 @@ const COLLECTION_CATEGORIES = [
     title: 'KraftAlu™',
     subtitle: 'Pochette Zip Kraft avec intérieur Aluminium',
     description: 'Combinaison parfaite entre esthétique kraft et protection aluminium.',
-    image: '/images/collections/kraftalu-collection-doypacks.jpeg',
+    image: '/images/collections/KraftAlu.png',
     handle: 'kraftalu™-pochette-zip-kraft-avec-interieur-aluminium',
     color: 'from-emerald-50 to-green-50',
     accent: 'text-emerald-700',
@@ -52,7 +50,7 @@ const COLLECTION_CATEGORIES = [
     title: 'WhiteView™',
     subtitle: 'Pochettes Zip Kraft Blanc avec Fenêtre Mate',
     description: 'Pureté et élégance pour une présentation raffinée de vos produits premium.',
-    image: '/images/collections/whiteview-collection-doypacks.jpeg',
+    image: '/images/collections/WhiteView.png',
     handle: 'whiteview',
     color: 'from-blue-50 to-indigo-50',
     accent: 'text-blue-700',
@@ -64,7 +62,7 @@ const COLLECTION_CATEGORIES = [
     title: 'FullViewKraft™',
     subtitle: 'Pochettes Stand Up Kraft avec fenêtre pleine',
     description: 'Visibilité maximale avec fenêtre frontale intégrale pour une exposition optimale.',
-    image: '/images/collections/kraftview-collection-doypacks.jpeg', // Using kraftview image as placeholder
+    image: '/images/collections/KraftView.png', // Using kraftview image as placeholder
     handle: 'fullviewkraft™-pochettes-stand-up-kraft-avec-fenetre-pleine',
     color: 'from-green-50 to-emerald-50',
     accent: 'text-green-700',
@@ -78,7 +76,7 @@ const COLLECTION_CATEGORIES = [
     title: 'FullViewAlu™',
     subtitle: 'Pochettes Zip Aluminisées avec Face Transparente',
     description: 'Protection maximale avec barrière aluminium et fenêtre pour la visibilité produit.',
-    image: '/images/collections/aluview-collection-doypacks.jpeg',
+    image: '/images/collections/FullViewAlu.png',
     handle: 'fullviewalu™-pochettes-zip-aluminisees-avec-face-transparente',
     color: 'from-slate-50 to-gray-50',
     accent: 'text-slate-700',
@@ -90,7 +88,7 @@ const COLLECTION_CATEGORIES = [
     title: 'FullAlu™',
     subtitle: 'Pochettes Zip en Aluminium',
     description: 'Protection ultime avec aluminium intégral pour les produits les plus sensibles.',
-    image: '/images/collections/fullalu-collection-doypacks.jpeg',
+    image: '/images/collections/FullAlu.png',
     handle: 'fullalu™-pochettes-zip-en-aluminium-1',
     color: 'from-zinc-50 to-slate-50',
     accent: 'text-zinc-700',
@@ -102,7 +100,7 @@ const COLLECTION_CATEGORIES = [
     title: 'FullTrans™',
     subtitle: 'Pochettes Stand Up Transparentes Givrées',
     description: 'Visibilité totale du produit avec matériaux transparents givrés de haute qualité.',
-    image: '/images/collections/fulltrans-collection-doypacks.jpeg',
+    image: '/images/collections/FullTrans.png',
     handle: 'fulltrans™-pochettes-stand-up-transparentes-givrees',
     color: 'from-cyan-50 to-blue-50',
     accent: 'text-cyan-700',
@@ -115,7 +113,7 @@ const COLLECTION_CATEGORIES = [
     title: 'Spout Pouch',
     subtitle: 'Pochettes avec Bec Verseur',
     description: 'Solution pratique pour liquides et produits versables avec bec intégré.',
-    image: '/images/collections/spout-pouch-collection-doypacks.jpeg',
+    image: '/images/collections/SpoutPouch.png',
     handle: 'spout-pouch-pochettes-avec-bec-verseur',
     color: 'from-teal-50 to-cyan-50',
     accent: 'text-teal-700',
@@ -127,7 +125,7 @@ const COLLECTION_CATEGORIES = [
     title: 'Sacs Kraft',
     subtitle: 'Sacs en Papier Kraft',
     description: 'Solutions d\'emballage écologiques en papier kraft pour tous vos besoins.',
-    image: '/images/collections/sac-kraft-collection.jpeg',
+    image: '/images/collections/SacKraft.png',
     handle: 'sacs-kraft-ecologiques',
     color: 'from-yellow-50 to-amber-50',
     accent: 'text-yellow-700',
@@ -138,92 +136,47 @@ const COLLECTION_CATEGORIES = [
 
 export default function Categories() {
   return (
-    <section className="bg-gradient-to-br from-white via-green-50/30 to-emerald-50/20 relative overflow-hidden">
-      {/* Innovative Background Design */}
-      <div className="absolute inset-0">
-        {/* Green Gradient Mesh */}
-        <div className="absolute inset-0 bg-gradient-to-br from-green-50/40 via-white to-emerald-50/30" />
-
-        {/* Geometric Pattern */}
-        <div className="absolute top-0 left-0 w-full h-full opacity-[0.04]">
-          <div className="h-full w-full" style={{
-            backgroundImage: `
-              linear-gradient(90deg, #10b981 1px, transparent 1px),
-              linear-gradient(180deg, #10b981 1px, transparent 1px)
-            `,
-            backgroundSize: '40px 40px'
-          }} />
-        </div>
-
-        {/* Floating Green Elements */}
-        <div className="absolute top-20 right-20 w-40 h-40 bg-gradient-to-r from-green-400/10 to-emerald-400/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 left-20 w-32 h-32 bg-gradient-to-r from-emerald-400/10 to-green-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
-
-        {/* Green Chart Pattern */}
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 opacity-[0.02]">
-          <svg viewBox="0 0 200 200" className="w-full h-full">
-            <defs>
-              <pattern id="greenChart" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                <rect width="20" height="20" fill="none" stroke="#10b981" strokeWidth="0.5"/>
-              </pattern>
-            </defs>
-            <rect width="200" height="200" fill="url(#greenChart)" />
-          </svg>
-        </div>
-      </div>
-
+    <section className="bg-white py-16 md:py-20 relative overflow-hidden mt-[-100px]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Innovative Header Section */}
-        <div className="text-center mb-20">
+        {/* Header Section matching the design */}
+        <div className="text-center mb-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            {/* Stats Row */}
-            <div className="flex justify-center items-center gap-6 mb-8">
-              <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-green-200/50">
-                <TrendingUp className="w-4 h-4 text-green-600" />
-                <span className="text-sm font-bold text-black">10+ Collections</span>
-              </div>
-              <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-green-200/50">
-                <Award className="w-4 h-4 text-green-600" />
-                <span className="text-sm font-bold text-black">Qualité Premium</span>
-              </div>
-            </div>
+            
 
-            {/* Premium Badge */}
-            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-full mb-8 shadow-lg">
-              <Sparkles className="h-4 w-4" />
+            {/* Green "NOS COLLECTIONS" Button */}
+            <div className="inline-flex items-center gap-2 bg-green-500 text-white px-6 py-3 rounded-full mb-8 shadow-lg">
               <span className="text-sm font-bold tracking-wider uppercase">
-                NOS COLLECTIONS
+                ✓ NOS COLLECTIONS
               </span>
             </div>
 
-            {/* Elegant Title with Green Accent */}
-            <h2 className="text-5xl md:text-6xl lg:text-7xl font-black text-black mb-8 tracking-tight">
+            {/* Title with Green "Collections" */}
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-black mb-6 tracking-tight">
               Découvrez Nos
-              <span className="block bg-gradient-to-r from-green-600 via-emerald-500 to-green-600 bg-clip-text text-transparent">
-                Collections
-              </span>
+              <br />
+              <span className="text-green-500">Collections</span>
             </h2>
 
-            {/* Refined Description */}
-            <p className="text-xl md:text-2xl text-black/80 max-w-4xl mx-auto leading-relaxed font-medium">
-              Découvrez nos 10 collections d'emballages innovants, chacune conçue pour répondre
-              à des besoins spécifiques tout en maintenant la plus haute qualité.
+            {/* Description */}
+            <p className="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-8">
+              Découvrez nos 10 collections d'emballages innovants, chacune conçue pour<br />
+              répondre à des besoins spécifiques tout en maintenant la plus haute qualité.
             </p>
 
             {/* Green Decorative Line */}
-            <div className="mt-8 flex justify-center">
-              <div className="w-32 h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent rounded-full" />
+            <div className="flex justify-center">
+              <div className="w-24 h-1 bg-green-500 rounded-full" />
             </div>
           </motion.div>
         </div>
 
-        {/* Innovative Categories Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-8">
+        {/* Circular Categories Grid - 3 cols on mobile, 5 on desktop */}
+        <div className="grid grid-cols-3 md:grid-cols-5 gap-4 md:gap-8 lg:gap-12 max-w-6xl mx-auto">
           {COLLECTION_CATEGORIES.map((category, index) => (
             <motion.div
               key={category.id}
@@ -231,79 +184,32 @@ export default function Categories() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
+              className="flex flex-col items-center"
             >
               <Link href={category.hasProducts ? `/collections/${category.handle}` : category.handle}>
-                <Card className="group overflow-hidden border border-green-200/30 shadow-lg hover:shadow-2xl transition-all duration-700 transform hover:-translate-y-3 bg-white/95 backdrop-blur-sm rounded-3xl hover:border-green-400/50 hover:bg-white">
-                  <div className="relative overflow-hidden">
-                    {/* Clean Category Image */}
-                    <div className="aspect-square relative overflow-hidden rounded-3xl m-4">
-                      <Image
-                        src={category.image}
-                        alt={category.title}
-                        fill
-                        className="object-cover transition-all duration-700 group-hover:scale-105 rounded-3xl"
-                        sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
-                      />
-
-                      {/* Green Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-green-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-3xl" />
-
-                      {/* Clean Badge */}
-                      <div className="absolute top-3 left-3">
-                        <span className={`inline-flex items-center gap-1 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-bold shadow-sm border ${
-                          category.hasProducts
-                            ? 'bg-green-600/95 text-white border-green-400/30'
-                            : 'bg-orange-500/95 text-white border-orange-400/30'
-                        }`}>
-                          <Package className="h-3 w-3" />
-                          {category.badge}
-                        </span>
-                      </div>
-
-                      {/* Green Hover Arrow */}
-                      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-x-3 group-hover:translate-x-0">
-                        <div className="bg-white/95 backdrop-blur-md p-2.5 rounded-full shadow-sm border border-green-200/50">
-                          <ArrowRight className="h-4 w-4 text-green-600" />
-                        </div>
-                      </div>
-                    </div>
+                <div className="group cursor-pointer relative">
+                  {/* Large Product Image */}
+                  <div className="relative w-32 h-40 md:w-40 md:h-48 lg:w-48 lg:h-56 mb-4">
+                    <Image
+                      src={category.image}
+                      alt={category.title}
+                      fill
+                      className="object-contain z-30"
+                      sizes="(max-width: 768px) 128px, (max-width: 1024px) 160px, 192px"
+                    />
                   </div>
-                  
-                  <CardContent className="p-6 pt-2">
-                    <div className="space-y-3 text-center">
-                      {/* Clean Title */}
-                      <h3 className="text-lg md:text-xl font-black text-black group-hover:text-green-600 transition-colors duration-500 leading-tight tracking-tight">
-                        {category.title}
-                      </h3>
 
-                      {/* Clean Subtitle */}
-                      <p className="text-sm font-semibold text-black/70 line-clamp-2 leading-snug">
-                        {category.subtitle}
-                      </p>
+                  {/* Circular Background - Positioned at bottom of image */}
+                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-2 w-24 h-24 md:w-40 md:h-40 lg:w-40 lg:h-40 bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] rounded-full flex items-center justify-center transition-all duration-300 shadow-lg group-hover:opacity-0">
+                  </div>
 
-                      {/* Clean Description */}
-                      <p className="text-black/60 text-sm leading-relaxed line-clamp-2 group-hover:opacity-100 transition-all duration-500 transform translate-y-2 group-hover:translate-y-0">
-                        {category.description}
-                      </p>
-
-                      {/* Green CTA */}
-                      <div className="pt-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className={`p-0 h-auto font-bold group/btn text-sm transition-all duration-300 ${
-                            category.hasProducts
-                              ? 'text-green-600 hover:text-green-700'
-                              : 'text-orange-600 hover:text-orange-700'
-                          }`}
-                        >
-                          {category.hasProducts ? 'Voir la collection' : 'Demander un devis'}
-                          <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover/btn:translate-x-1" />
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                  {/* Text that stays visible on hover */}
+                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-2 w-24 h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 flex items-center justify-center z-40">
+                    <h3 className=" mt-16 text-[10px] md:text-xs lg:text-sm font-bold text-white group-hover:text-black text-center leading-tight px-2">
+                      {category.title}
+                    </h3>
+                  </div>
+                </div>
               </Link>
             </motion.div>
           ))}

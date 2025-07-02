@@ -38,7 +38,7 @@ export default function FeaturedProducts() {
 
   if (isLoading) {
     return (
-      <section className="bg-gradient-to-b from-white to-gray-50">
+      <section className="bg-gradient-to-b from-white to-gray-50  ">
         <div className="container mx-auto px-4">
           {/* Header Skeleton */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-12">
