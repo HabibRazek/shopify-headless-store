@@ -136,7 +136,7 @@ const COLLECTION_CATEGORIES = [
 
 export default function Categories() {
   return (
-    <section className="bg-white py-16 md:py-20 relative overflow-hidden mt-[-100px]">
+    <section className="bg-white py-12 md:py-16 relative overflow-hidden mt-[-100px]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header Section matching the design */}
         <div className="text-center mb-16">

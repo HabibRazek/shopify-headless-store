@@ -58,7 +58,7 @@ export default function References() {
     ];
 
     return (
-        <section className="relative py-20 overflow-hidden">
+        <section className="relative py-12 overflow-hidden">
             {/* Innovative Background Design */}
             <div className="absolute inset-0">
                 {/* Modern Gradient */}

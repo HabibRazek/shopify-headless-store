@@ -9,18 +9,20 @@ import HeroSection from '@/components/HeroSection';
 import Image from 'next/image';
 import WhyChooseUs from '@/components/WhyChooseUs';
 import ProductCategories from '@/components/ProductCategories';
+import CustomPackaging from '@/components/CustomPackaging';
+import SocialFollow from '@/components/SocialFollow';
 
 
 export default function Home() {
   return (
-    <div className=" ">
+    <div className="overflow-x-hidden">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <HeroSection />
       </section>
       <div>
-        <div className="absolute left-0 w-full h-4 bg-gradient-to-r from-green-800 via-green-500 to-[#70db19] -rotate-2 "></div>
-        <div className="flex justify-end mt-[-100px] ">
+        <div className="absolute left-0 w-full h-4 bg-gradient-to-r from-green-800 via-green-500 to-[#70db19] -rotate-2  mt-[-50px]"></div>
+        <div className="hidden md:flex justify-end mt-[-120px] ">
           <div className='z-30 sm:lg:mt-[-90px] '>
             <Image
               src="/Arrow.png"
@@ -35,7 +37,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className='sm:lg:-mt-[100px] mt-[-20px]'>
+      <div className='sm:lg:-mt-[120px] mt-[-40px]'>
         <Suspense fallback={
           <section className="py-4 bg-transparent">
             <div className="container mx-auto px-4">
@@ -67,7 +69,7 @@ export default function Home() {
         </Suspense>
       </div>
 
-      <div className="flex justify-start ring-offset-slate-200">
+      <div className="hidden md:flex justify-start ring-offset-slate-200 mt-[-40px]">
         <div className='z-30'>
           <Image
             src="/ArrowLeft.png"
@@ -76,17 +78,21 @@ export default function Home() {
             height={160}
             className="object-contain z-30 w-[120px] h-[100px] sm:w-[180px] sm:h-[160px] sm:lg:ml-10 mt-[15px]"
           />
-          <h1 className='font-extrabold mb-20 sm:text-3xl ml-[100px] mt-[-100px] lg:sm:ml-40 -rotate-12 z-30 sm:lg:mt-[-200px]'>
+          <h1 className='font-extrabold mb-10 sm:text-3xl ml-[100px] mt-[-100px] lg:sm:ml-40 -rotate-12 z-30 sm:lg:mt-[-200px]'>
             Nos <br /> Categories
           </h1>
         </div>
       </div>
 
-      <Categories />
-      <WhyChooseUs />
+      <div className="mt-[-20px]">
+        <Categories />
+      </div>
+      <div className="mt-[-40px]">
+        <WhyChooseUs />
+      </div>
 
 
-      <div className="flex justify-end mt-[40px] ">
+      <div className="hidden md:flex justify-end mt-[-20px] ">
         <div className='z-30 sm:lg:mt-[-90px] '>
           <Image
             src="/Arrow.png"
@@ -101,21 +107,25 @@ export default function Home() {
         </div>
       </div>
 
-
-
+      <div className="mt-[-30px]">
         <ProductCategories />
+      </div>
+
+      <CustomPackaging />
 
       {/* CTA Section */}
-      <CTASection />
-
-
+      <div className="mt-[-40px]">
+        <CTASection />
+      </div>
 
       {/* References Section */}
-      <section className="relative py-16 bg-white">
+      <section className="relative py-8 bg-white mt-[-40px]">
         <References />
+
         {/* Subtle decorative divider */}
         <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-green-200/20 to-transparent" />
       </section>
+      <SocialFollow />
     </div>
   );
 }

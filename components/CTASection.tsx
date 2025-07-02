@@ -8,7 +8,7 @@ import { MultiProductQuoteDialog } from '@/components/quote/MultiProductQuoteDia
 
 export default function CTASection() {
   return (
-    <section className="py-16 bg-gradient-to-br from-gray-50 via-white to-green-50/30">
+    <section className="py-12 bg-gradient-to-br from-gray-50 via-white to-green-50/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Bottom CTA */}
         <motion.div

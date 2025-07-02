@@ -72,13 +72,13 @@ export default function WhyChooseUs() {
   ];
 
   return (
-    <section className="relative py-16 md:py-20 bg-gradient-to-br from-gray-50 to-white">
+    <section className="relative py-12 md:py-16 bg-gradient-to-br from-gray-50 to-white">
       {/* Decorative Elements */}
       <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-600 via-green-500 to-green-400 transform skew-y-1"></div>
       <div className="absolute bottom-0 right-0 w-full h-2 bg-gradient-to-l from-green-600 via-green-500 to-green-400 transform skew-y-1"></div>
 
       {/* Curved Arrow Decorations */}
-      <div className="flex justify-start ring-offset-slate-200">
+      <div className="hidden md:flex justify-start ring-offset-slate-200">
         <div className='z-30'>
           <Image
             src="/ArrowLeft.png"
@@ -94,85 +94,174 @@ export default function WhyChooseUs() {
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Header Section */}
-        <div className="max-w-4xl mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            {/* Target Icon and Title */}
-            <div className="flex items-start mb-6">
-              <h1 className="flex-shrink-0 mr-4 mt-1 ">
-                🎯
-              </h1>
-              <div>
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-black mb-4 leading-tight">
-                  Pourquoi choisir les pochettes<br />
-                  de <span className="text-green-600">PACKEDIN</span>® ?
-                </h2>
-                <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-3xl">
-                  Optimisez vos produits avec un emballage intelligent, moderne et rentable.
-                  Que vous lanciez une nouvelle gamme ou souhaitez upgrader votre packaging,
-                  nous sommes là pour vous accompagner.
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Features Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {features.map((feature, index) => (
+        {/* Mobile Layout - Header + Grid */}
+        <div className="lg:hidden">
+          {/* Header Section */}
+          <div className="max-w-4xl mb-16">
             <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
+              transition={{ duration: 0.6 }}
             >
-              <Card className={`h-full ${feature.bgColor} ${feature.borderColor} border-2 hover:shadow-lg transition-all duration-300 group`}>
-                <CardContent className="p-6">
-                  {/* Icon */}
-                  <div className="mb-4">
-                    <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
-                      <feature.icon className="w-6 h-6 text-green-600" />
-                    </div>
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="text-lg font-bold text-black mb-3 leading-tight">
-                    {feature.title}
-                  </h3>
-
-                  {/* Description */}
-                  <p className="text-sm text-gray-600 mb-4 leading-relaxed">
-                    {feature.description}
+              {/* Target Icon and Title */}
+              <div className="flex items-start mb-6">
+                <h1 className="flex-shrink-0 mr-4 mt-1 ">
+                  🎯
+                </h1>
+                <div>
+                  <h2 className="text-3xl md:text-4xl font-black text-black mb-4 leading-tight">
+                    Pourquoi choisir les pochettes<br />
+                    de <span className="text-green-600">PACKEDIN</span>® ?
+                  </h2>
+                  <p className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-3xl">
+                    Optimisez vos produits avec un emballage intelligent, moderne et rentable.
+                    Que vous lanciez une nouvelle gamme ou souhaitez upgrader votre packaging,
+                    nous sommes là pour vous accompagner.
                   </p>
-
-                  {/* Highlight */}
-                  <div className="mb-6">
-                    <p className="text-sm font-medium text-green-700 bg-white/80 rounded-lg px-3 py-2 border border-green-200">
-                      {feature.highlight}
-                    </p>
-                  </div>
-
-                  {/* Button */}
-                  <Button
-                    variant={feature.buttonVariant}
-                    size="sm"
-                    className={`w-full font-semibold ${feature.buttonVariant === 'default'
-                        ? 'bg-green-600 hover:bg-green-700 text-white'
-                        : 'border-green-600 text-green-600 hover:bg-green-600 hover:text-white'
-                      }`}
-                  >
-                    {feature.buttonText}
-                  </Button>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </motion.div>
-          ))}
+          </div>
+
+          {/* Features Grid - Mobile */}
+          <div className="grid grid-cols-2 gap-4">
+            {features.map((feature, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+              >
+                <Card className={`h-full ${feature.bgColor} ${feature.borderColor} border-2 hover:shadow-lg transition-all duration-300 group`}>
+                  <CardContent className="p-4">
+                    {/* Icon */}
+                    <div className="mb-3">
+                      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
+                        <feature.icon className="w-5 h-5 text-green-600" />
+                      </div>
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="text-sm font-bold text-black mb-2 leading-tight">
+                      {feature.title}
+                    </h3>
+
+                    {/* Description */}
+                    <p className="text-xs text-gray-600 mb-3 leading-relaxed">
+                      {feature.description}
+                    </p>
+
+                    {/* Highlight */}
+                    <div className="mb-4">
+                      <p className="text-xs font-medium text-green-700 bg-white/80 rounded-lg px-2 py-1 border border-green-200">
+                        {feature.highlight}
+                      </p>
+                    </div>
+
+                    {/* Button */}
+                    <Button
+                      variant={feature.buttonVariant}
+                      size="sm"
+                      className={`w-full font-semibold text-xs ${feature.buttonVariant === 'default'
+                          ? 'bg-green-600 hover:bg-green-700 text-white'
+                          : 'border-green-600 text-green-600 hover:bg-green-600 hover:text-white'
+                        }`}
+                    >
+                      {feature.buttonText}
+                    </Button>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Desktop Layout - Side by Side */}
+        <div className="hidden lg:flex lg:gap-12 lg:items-start">
+          {/* Left Side - Text Content */}
+          <div className="lg:w-1/2">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              {/* Target Icon and Title */}
+              <div className="flex items-start mb-6">
+                <h1 className="flex-shrink-0 mr-4 mt-1 text-4xl">
+                  🎯
+                </h1>
+                <div>
+                  <h2 className="text-4xl lg:text-5xl font-black text-black mb-4 leading-tight">
+                    Pourquoi choisir les pochettes<br />
+                    de <span className="text-green-600">PACKEDIN</span>® ?
+                  </h2>
+                  <p className="text-lg lg:text-xl text-gray-600 leading-relaxed">
+                    Optimisez vos produits avec un emballage intelligent, moderne et rentable.
+                    Que vous lanciez une nouvelle gamme ou souhaitez upgrader votre packaging,
+                    nous sommes là pour vous accompagner.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Right Side - 6 Cards in 3x2 Grid */}
+          <div className="lg:w-1/2">
+            <div className="grid grid-cols-3 gap-4">
+              {features.map((feature, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                >
+                  <Card className={`h-full ${feature.bgColor} ${feature.borderColor} border-2 hover:shadow-lg transition-all duration-300 group`}>
+                    <CardContent className="p-4">
+                      {/* Icon - Bigger for desktop */}
+                      <div className="mb-3">
+                        <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
+                          <feature.icon className="w-7 h-7 text-green-600" />
+                        </div>
+                      </div>
+
+                      {/* Title */}
+                      <h3 className="text-sm font-bold text-black mb-2 leading-tight">
+                        {feature.title}
+                      </h3>
+
+                      {/* Description */}
+                      <p className="text-xs text-gray-600 mb-3 leading-relaxed">
+                        {feature.description}
+                      </p>
+
+                      {/* Highlight */}
+                      <div className="mb-4">
+                        <p className="text-xs font-medium text-green-700 bg-white/80 rounded-lg px-2 py-1 border border-green-200">
+                          {feature.highlight}
+                        </p>
+                      </div>
+
+                      {/* Button */}
+                      <Button
+                        variant={feature.buttonVariant}
+                        size="sm"
+                        className={`w-full font-semibold text-xs ${feature.buttonVariant === 'default'
+                            ? 'bg-green-600 hover:bg-green-700 text-white'
+                            : 'border-green-600 text-green-600 hover:bg-green-600 hover:text-white'
+                          }`}
+                      >
+                        {feature.buttonText}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
