@@ -29,7 +29,7 @@ export default function Home() {
               alt="Arrow pointing to products"
               width={180}
               height={160}
-              className="object-contain z-30 w-[120px] h-[100px] sm:w-[180px] sm:h-[160px] mt-[15px] rotate-[-40deg]"
+              className="object-contain z-30 w-[120px] h-[100px] sm:w-[180px] sm:h-[160px] mt-[15px] rotate-[-93deg]"
             />
             <h1 className='font-extrabold sm:text-3xl sm:mr-20 rotate-2 z-30'>
               Nos Best <br /> Sellers
