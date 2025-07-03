@@ -190,7 +190,7 @@ export default function FeaturedProducts() {
           className="mt-8 sm:mt-12 md:mt-16 text-center"
         >
           <Link href="/products">
-            <Button size="lg" className="text-base sm:text-lg px-8 sm:px-12 w-full sm:w-auto">
+            <Button size="lg" className="text-base sm:text-lg px-8 sm:px-12 w-full sm:w-auto mb-6">
               Explorer notre catalogue complet
             </Button>
           </Link>

@@ -280,9 +280,9 @@ export default function Footer() {
                     <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-green-200/50">
                         <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
                             <div className="flex items-center">
-                                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-3">
+                                <div className="w-10 h-10  flex items-center justify-center mr-3">
                                     <Image
-                                        src="/cropped-packedIn-LOGO-FINAL-2021-BLACK-01.webp"
+                                        src="/packedin.jpg"
                                         alt="Packedin Logo"
                                         width={20}
                                         height={20}
