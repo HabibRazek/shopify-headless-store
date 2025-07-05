@@ -1,15 +1,29 @@
 {
-  "name": "shopify-headless-store",
-  "version": "0.1.0",
+  "name": "packedin-website",
+  "version": "1.0.0",
   "private": true,
+  "description": "Packedin - Leader en emballages flexibles en Tunisie. Site e-commerce pour doypacks kraft, sachets zip et emballages alimentaires personnalisés.",
+  "keywords": ["emballages flexibles", "doypacks", "sachets zip", "packaging", "tunisie", "ecommerce"],
+  "author": "Packedin <packedin.tn@gmail.com>",
+  "homepage": "https://packedin.tn",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/packedin/website.git"
+  },
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "prisma generate && next build",
+    "build:production": "npm run seo:cleanup && npm run build",
     "start": "next start -p 3000",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "type-check": "tsc --noEmit",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "seo:cleanup": "node scripts/seo-cleanup.js",
+    "seo:check": "npm run type-check && npm run lint",
+    "seo:report": "node scripts/seo-cleanup.js",
+    "optimize": "npm run seo:cleanup && npm run build",
+    "deploy:check": "npm run seo:check && npm run build"
   },
   "dependencies": {
     "@auth/core": "^0.39.1",

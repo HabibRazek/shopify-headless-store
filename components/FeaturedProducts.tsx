@@ -38,7 +38,7 @@ export default function FeaturedProducts() {
 
   if (isLoading) {
     return (
-      <section className="bg-gradient-to-b from-white to-gray-50  ">
+      <section className="bg-transparent ">
         <div className="container mx-auto px-4">
           {/* Header Skeleton */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-12">
@@ -126,7 +126,7 @@ export default function FeaturedProducts() {
   };
 
   return (
-    <section className="py-12 sm:py-16 md:py-20 lg:py-24 bg-gradient-to-br from-white via-green-50/30 to-white relative overflow-hidden">
+    <section className="py-12 sm:py-16 md:py-20 lg:py-24  relative overflow-hidden">
       {/* Soft Decorative Background Elements */}
       <div className="absolute top-0 left-0 w-48 h-48 sm:w-72 sm:h-72 bg-green-100/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 right-0 w-64 h-64 sm:w-96 sm:h-96 bg-green-200/20 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />

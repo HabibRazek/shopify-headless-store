@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import { ShoppingCart, Clock, Package, Recycle, Settings, Headphones } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import Image from 'next/image';
 
 export default function WhyChooseUs() {
   const features = [
@@ -77,21 +76,7 @@ export default function WhyChooseUs() {
       <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-green-600 via-green-500 to-green-400 transform skew-y-1"></div>
       <div className="absolute bottom-0 right-0 w-full h-2 bg-gradient-to-l from-green-600 via-green-500 to-green-400 transform skew-y-1"></div>
 
-      {/* Curved Arrow Decorations */}
-      <div className="hidden md:flex justify-start ring-offset-slate-200">
-        <div className='z-30'>
-          <Image
-            src="/ArrowLeft.png"
-            alt="Arrow pointing to products"
-            width={180}
-            height={160}
-            className="object-contain z-30 w-[120px] h-[100px] sm:w-[180px] sm:h-[160px] sm:lg:ml-10 mt-[15px]"
-          />
-          <h1 className='font-extrabold mb-20 sm:text-3xl ml-[100px] mt-[-100px] lg:sm:ml-40 -rotate-12 z-30 sm:lg:mt-[-200px]'>
-            On ne veut pas <br /> se vanter <br /> mais...
-          </h1>
-        </div>
-      </div>
+      
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Mobile Layout - Header + Grid */}
