@@ -5,13 +5,18 @@ import Link from 'next/link';
 import { ShopifyProduct } from '@/types/shopify';
 import ProductGrid from '@/components/ProductGrid';
 import { ArrowRight } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Button } from './ui/button';
 
 export default function FeaturedProducts() {
   const [products, setProducts] = useState<ShopifyProduct[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
+
+  // Parallax scroll effects
+  const { scrollYProgress } = useScroll();
+  const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.05]);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -126,50 +131,114 @@ export default function FeaturedProducts() {
   };
 
   return (
-    <section className="py-12 sm:py-16 md:py-20 lg:py-24  relative overflow-hidden">
-      {/* Soft Decorative Background Elements */}
-      <div className="absolute top-0 left-0 w-48 h-48 sm:w-72 sm:h-72 bg-green-100/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-      <div className="absolute bottom-0 right-0 w-64 h-64 sm:w-96 sm:h-96 bg-green-200/20 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
+    <section className="py-12 sm:py-16 md:py-20 lg:py-24 relative overflow-hidden">
+      {/* Enhanced Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <motion.div
+          animate={{
+            scale: [1, 1.2, 1],
+            rotate: [0, 180, 360],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="absolute top-0 left-0 w-48 h-48 sm:w-72 sm:h-72 bg-green-100/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"
+        />
+        <motion.div
+          animate={{
+            scale: [1.1, 1, 1.1],
+            rotate: [360, 180, 0],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="absolute bottom-0 right-0 w-64 h-64 sm:w-96 sm:h-96 bg-green-200/15 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"
+        />
+      </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex flex-col lg:flex-row justify-between items-center mb-8 sm:mb-12 md:mb-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="mb-6 sm:mb-8 lg:mb-0 text-center lg:text-left"
           >
-            {/* Badge */}
-            <div className="inline-flex items-center mb-3 sm:mb-4 bg-white/80 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-lg border border-green-200/50">
-              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full mr-2 sm:mr-3 animate-pulse" />
-              <span className="text-xs sm:text-sm font-semibold text-green-700 tracking-wide">SÉLECTION PREMIUM</span>
-            </div>
+            {/* Enhanced Badge */}
+            <motion.div
+              className="inline-flex items-center mb-4 sm:mb-6 bg-white/80 backdrop-blur-sm px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-lg border border-green-200/50"
+              initial={{ scale: 0 }}
+              whileInView={{ scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2, type: "spring", stiffness: 200 }}
+              whileHover={{ scale: 1.05 }}
+            >
+              <motion.div
+                className="w-2 h-2 bg-green-500 rounded-full mr-3"
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+              <span className="text-sm font-bold text-green-500 tracking-wide">SÉLECTION PREMIUM</span>
+            </motion.div>
             {/* Title */}
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-green-800 mb-3 sm:mb-4 leading-tight">
-              Produits <span className="bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent">Populaires</span>
-            </h2>
-            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-green-700/80 max-w-2xl leading-relaxed">
-              Découvrez notre sélection exclusive de produits les plus appréciés par nos clients professionnels
-            </p>
+            <motion.h2
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 sm:mb-6 leading-tight"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              <span className="block text-black">Nos Produits</span>
+              <span className="block text-green-500">Populaire</span>
+            </motion.h2>
+            <motion.p
+              className="text-base sm:text-lg md:text-xl text-black max-w-2xl leading-relaxed"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              Découvrez notre sélection d'emballages premium, conçus pour sublimer vos produits et séduire vos clients.
+            </motion.p>
           </motion.div>
 
-          {/* Button */}
+          {/* Enhanced Button */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
             className="w-full lg:w-auto"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             <Link href="/products">
-              <Button size="lg" className="group w-full lg:w-auto text-sm sm:text-base">
-                <span>Voir tous les produits</span>
-                <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform duration-300" />
+              <Button size="lg" className="group w-full lg:w-auto text-sm sm:text-base bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white border-0 shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
+                {/* Animated background shine */}
+                <motion.div
+                  animate={{
+                    x: ['-100%', '100%'],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "linear"
+                  }}
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                />
+                <span className="relative z-10">Voir tous les produits</span>
+                <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform duration-300 relative z-10 ml-2" />
               </Button>
             </Link>
           </motion.div>
         </div>
 
-        {/* Product Grid - Now strictly shows 4 products in a row on lg screens and up */}
+        {/* Product Grid */}
         <motion.div
           variants={containerVariants}
           initial="hidden"

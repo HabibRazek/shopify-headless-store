@@ -21,7 +21,6 @@ export default function Home() {
         <HeroSection />
       </section>
       <div>
-        <div className="absolute left-0 w-full h-4 bg-gradient-to-r from-green-800 via-green-500 to-[#70db19] -rotate-2  mt-[-50px]"></div>
         <div className="hidden md:flex justify-end mt-[-120px] ">
           <div className='z-30 sm:lg:mt-[-150px] animate-bounce '>
             <Image
@@ -37,7 +36,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className='sm:lg:-mt-[120px] mt-[-40px]'>
+      <div className='sm:lg:-mt-[140px] mt-[-60px]'>
         <Suspense fallback={
           <section className="py-4 bg-transparent">
             <div className="container mx-auto px-4">
@@ -68,44 +67,36 @@ export default function Home() {
           <FeaturedProducts />
         </Suspense>
       </div>
-      {/* Awesome Animated Separator */}
-      <div className="relative w-full flex justify-center mt-[-50px] mb-8 z-10">
-        <div className="relative w-9/12 max-w-4xl">
-          {/* Glow effect underneath */}
-          <div className="absolute inset-0 h-4 bg-gradient-to-r from-green-800/20 via-green-500/30 to-[#70db19]/20 rounded-full blur-sm scale-110 -z-10"></div>
 
-          {/* Main gradient line with enhanced effects */}
-          <div className="h-4 bg-gradient-to-r from-green-800 via-green-500 to-[#70db19] rounded-full separator-glow relative overflow-hidden transform hover:scale-105 transition-transform duration-300">
-            {/* Animated shine effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-pulse rounded-full"></div>
 
-            {/* Moving light effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent rounded-full animate-[shimmer_3s_ease-in-out_infinite]"></div>
 
-            {/* Inner highlight */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/50 to-transparent rounded-full"></div>
-          </div>
 
-          {/* Decorative elements */}
-          <div className="absolute -left-3 top-1/2 transform -translate-y-1/2">
-            <div className="w-4 h-4 bg-green-600 rounded-full shadow-lg animate-pulse relative">
-              <div className="absolute inset-0 bg-green-400 rounded-full animate-ping opacity-30"></div>
-            </div>
-          </div>
-
-          <div className="absolute -right-3 top-1/2 transform -translate-y-1/2">
-            <div className="w-4 h-4 bg-green-400 rounded-full shadow-lg animate-pulse relative" style={{ animationDelay: '1s' }}>
-              <div className="absolute inset-0 bg-green-300 rounded-full animate-ping opacity-30" style={{ animationDelay: '1s' }}></div>
-            </div>
-          </div>
-
-          {/* Side sparkles */}
-          <div className="absolute -left-6 top-0 w-2 h-2 bg-green-300 rounded-full animate-bounce opacity-60" style={{ animationDelay: '0.5s' }}></div>
-          <div className="absolute -right-6 bottom-0 w-2 h-2 bg-green-300 rounded-full animate-bounce opacity-60" style={{ animationDelay: '1.5s' }}></div>
+      <div className="hidden md:flex justify-start ring-offset-slate-200 mt-[-120px]">
+        <div className='z-30 animate-bounce'>
+          <Image
+            src="/ArrowLeft.png"
+            alt="Arrow pointing to products"
+            width={180}
+            height={160}
+            className="object-contain z-30 w-[120px] h-[100px] sm:w-[180px] sm:h-[160px] sm:lg:ml-10 mt-[15px]"
+          />
+          <h1 className='font-extrabold mb-5 sm:text-3xl ml-[100px] mt-[-100px] lg:sm:ml-40 -rotate-12 z-30 sm:lg:mt-[-200px]'>
+            Nos <br /> Categories
+          </h1>
         </div>
       </div>
 
-      <div className="hidden md:flex justify-start ring-offset-slate-200 mt-[-100px]">
+      <div className="mt-[-40px]">
+        <Categories />
+      </div>
+
+      
+        <div className='mt-[-80px]'>
+          <CustomPackaging />
+        </div>
+
+      {/* Curved Arrow Decorations */}
+      <div className="hidden md:flex justify-start ring-offset-slate-200 mt-[-20px]">
         <div className='z-30 animate-bounce'>
           <Image
             src="/ArrowLeft.png"
@@ -115,68 +106,31 @@ export default function Home() {
             className="object-contain z-30 w-[120px] h-[100px] sm:w-[180px] sm:h-[160px] sm:lg:ml-10 mt-[15px]"
           />
           <h1 className='font-extrabold mb-10 sm:text-3xl ml-[100px] mt-[-100px] lg:sm:ml-40 -rotate-12 z-30 sm:lg:mt-[-200px]'>
-            Nos <br /> Categories
-          </h1>
-        </div>
-      </div>
-
-      <div className="mt-[-20px]">
-        <Categories />
-      </div>
-      {/* Curved Arrow Decorations */}
-      <div className="hidden md:flex justify-start ring-offset-slate-200">
-        <div className='z-30 animate-bounce'>
-          <Image
-            src="/ArrowLeft.png"
-            alt="Arrow pointing to products"
-            width={180}
-            height={160}
-            className="object-contain z-30 w-[120px] h-[100px] sm:w-[180px] sm:h-[160px] sm:lg:ml-10 mt-[15px]"
-          />
-          <h1 className='font-extrabold mb-20 sm:text-3xl ml-[100px] mt-[-100px] lg:sm:ml-40 -rotate-12 z-30 sm:lg:mt-[-200px]'>
             On ne veut pas <br /> se vanter <br /> mais...
           </h1>
         </div>
       </div>
-      <div className="mt-[-40px]">
+      <div className="mt-[-120px]">
         <WhyChooseUs />
       </div>
 
-
-      <div className="hidden md:flex justify-end mt-[-20px] ">
-        <div className='z-30 sm:lg:mt-[-80px] animate-bounce '>
-          <Image
-            src="/Arrow.png"
-            alt="Arrow pointing to products"
-            width={180}
-            height={160}
-            className="object-contain z-30 w-[120px] h-[100px] sm:w-[180px] sm:h-[160px] mt-[15px] rotate-[-90deg]"
-          />
-          <h1 className='font-extrabold sm:text-3xl sm:mr-20 rotate-2 z-30'>
-            Emballez le <br /> a votre facon
-          </h1>
-        </div>
-      </div>
-
-      <div className="mt-[20px]">
+      <div className="mt-[-80px]">
         <ProductCategories />
       </div>
 
-      <CustomPackaging />
-
       {/* CTA Section */}
-      <div className="mt-[-40px]">
+      <div className="mt-[-100px]">
         <CTASection />
       </div>
 
       {/* References Section */}
-      <section className="relative py-8 bg-white mt-[-40px]">
+      <div className="mt-[-80px]">
         <References />
+      </div>
 
-        {/* Subtle decorative divider */}
-        <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-green-200/20 to-transparent" />
-      </section>
-      <SocialFollow />
+      <div className="mt-[-30px]">
+        <SocialFollow />
+      </div>
     </div>
   );
 }

@@ -1,15 +1,49 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Calculator, Sparkles, ArrowRight, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import { MultiProductQuoteDialog } from '@/components/quote/MultiProductQuoteDialog';
 
 export default function CTASection() {
+  const { scrollYProgress } = useScroll();
+  const y = useTransform(scrollYProgress, [0, 1], [0, -30]);
+
   return (
-    <section className="py-12 bg-gradient-to-br from-gray-50 via-white to-green-50/30">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-16 md:py-20 relative overflow-hidden">
+      {/* Enhanced Animated Background */}
+      <div className="absolute inset-0 overflow-hidden">
+        <motion.div
+          animate={{
+            scale: [1, 1.2, 1],
+            rotate: [0, 180, 360],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-green-200/15 to-emerald-200/15 rounded-full blur-3xl"
+        />
+        <motion.div
+          animate={{
+            scale: [1.1, 1, 1.1],
+            rotate: [360, 180, 0],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-200/15 to-purple-200/15 rounded-full blur-3xl"
+        />
+      </div>
+
+      <motion.div
+        className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
+        style={{ y }}
+      >
         {/* Bottom CTA */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -139,12 +173,24 @@ export default function CTASection() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: 0.4 }}
               >
-                <div className="inline-flex items-center gap-2 bg-green-100 px-4 py-2 rounded-full mb-6">
-                  <Sparkles className="h-4 w-4 text-green-600" />
-                  <span className="text-sm font-semibold text-green-700 tracking-wide">
+                <motion.div
+                  className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full mb-8 border border-green-200/50 shadow-lg"
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.2, type: "spring", stiffness: 200 }}
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    <Sparkles className="h-4 w-4 text-green-500" />
+                  </motion.div>
+                  <span className="text-sm font-bold text-green-500 tracking-wide">
                     SUPPORT EXPERT
                   </span>
-                </div>
+                </motion.div>
               </motion.div>
 
               <motion.h3 
@@ -177,14 +223,31 @@ export default function CTASection() {
               >
                 <MultiProductQuoteDialog
                   trigger={
-                    <Button
-                      size="lg"
-                      className="bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                     >
-                      <Calculator className="mr-2 h-4 w-4" />
-                      Demander un devis
-                      <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                    </Button>
+                      <Button
+                        size="lg"
+                        className="bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white shadow-xl hover:shadow-2xl transition-all duration-300 group relative overflow-hidden"
+                      >
+                        {/* Animated background shine */}
+                        <motion.div
+                          animate={{
+                            x: ['-100%', '100%'],
+                          }}
+                          transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: "linear"
+                          }}
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                        />
+                        <Calculator className="mr-2 h-4 w-4 relative z-10" />
+                        <span className="relative z-10">Demander un devis</span>
+                        <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 relative z-10" />
+                      </Button>
+                    </motion.div>
                   }
                 />
 
@@ -193,15 +256,20 @@ export default function CTASection() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="border-green-300 text-green-700 hover:bg-green-50 shadow-lg hover:shadow-xl transition-all duration-300 group w-full sm:w-auto"
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    <MessageCircle className="mr-2 h-4 w-4" />
-                    Contacter un expert
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                  </Button>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="border-green-500/30 text-green-500 hover:bg-green-500/10 shadow-lg hover:shadow-xl transition-all duration-300 group w-full sm:w-auto"
+                    >
+                      <MessageCircle className="mr-2 h-4 w-4" />
+                      Contacter un expert
+                      <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                    </Button>
+                  </motion.div>
                 </Link>
               </motion.div>
 
@@ -227,7 +295,7 @@ export default function CTASection() {
             </div>
           </div>
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   );
 }

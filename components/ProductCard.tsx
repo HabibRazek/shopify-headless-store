@@ -101,9 +101,9 @@ export default function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <div className="group relative flex flex-col bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-200 hover:border-green-300 h-full">
-      {/* Product Image Container - Optimized for 2-column Mobile */}
-      <div className="relative bg-gray-50 p-2 sm:p-3 md:p-4 lg:p-6">
+    <div className="group relative flex flex-col bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 hover:border-green-300 h-full">
+      {/* Product Image Container */}
+      <div className="relative bg-gray-50 p-3 sm:p-4 md:p-5">
         <Link href={`/products/${handle}`} className="block">
           <div className="relative aspect-square w-full">
             <Image
@@ -115,14 +115,14 @@ export default function ProductCard({ product }: ProductCardProps) {
               priority={false}
             />
 
-            {/* Quick View Overlay - Compact for Mobile */}
+            {/* Quick View Overlay */}
             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-black/5">
               <Button
                 size="sm"
                 variant="outline"
-                className="bg-white/95 text-green-700 hover:bg-white border-green-300 shadow-lg backdrop-blur-sm text-xs px-2 py-1"
+                className="bg-white/95 text-green-700 hover:bg-white border-green-300 shadow-lg backdrop-blur-sm text-xs px-3 py-1.5"
               >
-                <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                 </svg>
@@ -133,24 +133,24 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         </Link>
 
-        {/* Stock Badge - Compact */}
-        <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 flex items-center gap-1 bg-green-100 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">
+        {/* Stock Badge */}
+        <div className="absolute top-2 left-2 sm:top-3 sm:left-3 flex items-center gap-1.5 bg-green-100 px-2 py-1 rounded-full shadow-sm">
           <div className="h-1.5 w-1.5 rounded-full bg-green-500"></div>
           <span className="text-xs font-semibold text-green-700">Stock</span>
         </div>
       </div>
 
-      {/* Product Information - Compact for 2-column Mobile */}
-      <div className="flex flex-col p-2 sm:p-3 md:p-4 lg:p-6 flex-grow">
-        {/* Product Title - Optimized for 2-column Mobile */}
-        <Link href={`/products/${handle}`} className="block group/link mb-2 sm:mb-3">
-          <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 group-hover/link:text-green-700 transition-colors duration-200 leading-tight min-h-[2rem] sm:min-h-[2.5rem] md:min-h-[3rem] line-clamp-2">
+      {/* Product Information */}
+      <div className="flex flex-col p-3 sm:p-4 md:p-5 flex-grow">
+        {/* Product Title */}
+        <Link href={`/products/${handle}`} className="block group/link mb-3">
+          <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 group-hover/link:text-green-700 transition-colors duration-200 leading-tight min-h-[2.5rem] sm:min-h-[3rem] line-clamp-2">
             {title}
           </h3>
         </Link>
 
-        {/* Price Display - Compact for Mobile */}
-        <div className="mb-2 sm:mb-3">
+        {/* Price Display */}
+        <div className="mb-3">
           <div className="text-lg sm:text-xl md:text-2xl font-bold text-green-600">
             {formatPrice(price, currency)}
           </div>
@@ -159,21 +159,21 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         </div>
 
-        {/* Product Features - Compact for 2-column Mobile */}
-        <div className="flex flex-col gap-1.5 sm:gap-2 mb-3 sm:mb-4">
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            <div className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-green-500 flex-shrink-0"></div>
+        {/* Product Features */}
+        <div className="flex flex-col gap-2 mb-4">
+          <div className="flex items-center gap-2">
+            <div className="h-1.5 w-1.5 rounded-full bg-green-500 flex-shrink-0"></div>
             <span className="text-xs text-gray-700 font-medium">Disponible</span>
           </div>
 
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-2">
             <svg className="w-3 h-3 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
             <span className="text-xs text-gray-700 font-medium">Livraison rapide</span>
           </div>
 
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-2">
             <svg className="w-3 h-3 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
             </svg>
@@ -181,23 +181,26 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         </div>
 
-        {/* Action Buttons - Compact for 2-column Mobile */}
-        <div className="mt-auto space-y-1.5 sm:space-y-2">
+        {/* Action Button */}
+        <div className="mt-auto space-y-2">
           <Button
             onClick={handleAddToCart}
             disabled={isLoading}
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 sm:py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 text-xs sm:text-sm"
+            className="w-full bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white font-semibold py-2 sm:py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 text-xs sm:text-sm relative overflow-hidden group"
             size="sm"
             type="button"
           >
-            <ShoppingCart className="mr-1 sm:mr-1.5 h-3 w-3 sm:h-4 sm:w-4" />
+            {/* Animated background shine */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+
+            <ShoppingCart className="mr-1.5 h-3 w-3 sm:h-4 sm:w-4 relative z-10" />
             {isLoading ? (
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5 relative z-10">
                 <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 <span>Ajout...</span>
               </div>
             ) : (
-              <span>Ajouter</span>
+              <span className="relative z-10">Ajouter</span>
             )}
           </Button>
         </div>

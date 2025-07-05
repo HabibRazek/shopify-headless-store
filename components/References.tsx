@@ -1,10 +1,13 @@
 'use client';
 
 import Image from "next/image";
-import { Star, ExternalLink, Users, Award, TrendingUp } from "lucide-react";
-import { motion } from "framer-motion";
+import { Star, ExternalLink, Users, Award, TrendingUp, Shield } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 export default function References() {
+    const { scrollYProgress } = useScroll();
+    const y = useTransform(scrollYProgress, [0, 1], [0, -30]);
+
     // Updated brand logos based on the files in the public folder with proper website links
     const brands = [
         {
@@ -58,73 +61,157 @@ export default function References() {
     ];
 
     return (
-        <section className="relative py-12 overflow-hidden">
-            {/* Innovative Background Design */}
-            <div className="absolute inset-0">
-                {/* Modern Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-green-50/50" />
-
-                {/* Geometric Grid Pattern */}
-                <div className="absolute inset-0 opacity-[0.02]">
-                    <div className="h-full w-full" style={{
-                        backgroundImage: `
-                            linear-gradient(90deg, #10b981 1px, transparent 1px),
-                            linear-gradient(180deg, #10b981 1px, transparent 1px)
-                        `,
-                        backgroundSize: '40px 40px'
-                    }} />
-                </div>
-
-                {/* Floating Elements */}
-                <div className="absolute top-20 right-20 w-32 h-32 bg-gradient-to-r from-green-400/10 to-blue-400/10 rounded-full blur-2xl animate-pulse" />
-                <div className="absolute bottom-20 left-20 w-40 h-40 bg-gradient-to-r from-purple-400/10 to-green-400/10 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '2s' }} />
+        <section className="relative py-16 md:py-24 overflow-hidden">
+            {/* Enhanced Animated Background */}
+            <div className="absolute inset-0 overflow-hidden">
+                <motion.div
+                    animate={{
+                        scale: [1, 1.2, 1],
+                        rotate: [0, 180, 360],
+                    }}
+                    transition={{
+                        duration: 25,
+                        repeat: Infinity,
+                        ease: "linear"
+                    }}
+                    className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-green-200/10 to-emerald-200/10 rounded-full blur-3xl"
+                />
+                <motion.div
+                    animate={{
+                        scale: [1.1, 1, 1.1],
+                        rotate: [360, 180, 0],
+                    }}
+                    transition={{
+                        duration: 30,
+                        repeat: Infinity,
+                        ease: "linear"
+                    }}
+                    className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-200/10 to-purple-200/10 rounded-full blur-3xl"
+                />
             </div>
 
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                {/* Innovative Header */}
+            <motion.div
+                className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
+                style={{ y }}
+            >
+                {/* Enhanced Header */}
                 <div className="text-center mb-20">
-                    {/* Stats Row */}
-                    <div className="flex justify-center items-center gap-8 mb-8">
-                        <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-gray-200/50">
-                            <Users className="w-4 h-4 text-green-600" />
-                            <span className="text-sm font-semibold text-gray-700">50+ Clients</span>
-                        </div>
-                        <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-gray-200/50">
-                            <Award className="w-4 h-4 text-blue-600" />
-                            <span className="text-sm font-semibold text-gray-700">98% Satisfaction</span>
-                        </div>
-                        <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-gray-200/50">
-                            <TrendingUp className="w-4 h-4 text-purple-600" />
-                            <span className="text-sm font-semibold text-gray-700">5+ Années</span>
-                        </div>
-                    </div>
+                    {/* Animated Icon */}
+                    <motion.div
+                        initial={{ scale: 0 }}
+                        whileInView={{ scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: 0.2, type: "spring", stiffness: 200 }}
+                        className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] rounded-full mb-8 shadow-xl"
+                    >
+                        <motion.div
+                            animate={{
+                                rotate: [0, 360],
+                                scale: [1, 1.1, 1]
+                            }}
+                            transition={{
+                                duration: 4,
+                                repeat: Infinity,
+                                ease: "easeInOut"
+                            }}
+                        >
+                            <Shield className="w-8 h-8 text-white" />
+                        </motion.div>
+                    </motion.div>
 
-                    {/* Main Title */}
-                    <div className="relative">
-                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 relative">
-                            <span className="block text-gray-900 mb-2">Ils nous font</span>
-                            <span className="block bg-gradient-to-r from-green-600 via-emerald-500 to-green-600 bg-clip-text text-transparent">
+                    {/* Enhanced Stats Row */}
+                    <motion.div
+                        className="flex flex-wrap justify-center items-center gap-4 md:gap-8 mb-12"
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, delay: 0.3 }}
+                    >
+                        <motion.div
+                            className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full shadow-lg border border-green-200/50"
+                            whileHover={{ scale: 1.05 }}
+                            transition={{ duration: 0.2 }}
+                        >
+                            <Users className="w-4 h-4 text-green-500" />
+                            <span className="text-sm font-bold text-black">50+ Clients</span>
+                        </motion.div>
+                        <motion.div
+                            className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full shadow-lg border border-green-200/50"
+                            whileHover={{ scale: 1.05 }}
+                            transition={{ duration: 0.2 }}
+                        >
+                            <Award className="w-4 h-4 text-green-500" />
+                            <span className="text-sm font-bold text-black">98% Satisfaction</span>
+                        </motion.div>
+                        <motion.div
+                            className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full shadow-lg border border-green-200/50"
+                            whileHover={{ scale: 1.05 }}
+                            transition={{ duration: 0.2 }}
+                        >
+                            <TrendingUp className="w-4 h-4 text-green-500" />
+                            <span className="text-sm font-bold text-black">5+ Années</span>
+                        </motion.div>
+                    </motion.div>
+
+                    {/* Enhanced Main Title */}
+                    <motion.div
+                        className="relative"
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, delay: 0.4 }}
+                    >
+                        <motion.h2
+                            className="text-4xl md:text-5xl lg:text-6xl font-black mb-8 relative"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6, delay: 0.5 }}
+                        >
+                            <span className="block text-black mb-2">Ils nous font</span>
+                            <span className="block text-green-500">
                                 CONFIANCE
                             </span>
-                        </h2>
+                        </motion.h2>
 
-                        {/* Decorative Elements */}
-                        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                        {/* Enhanced Decorative Stars */}
+                        <motion.div
+                            className="absolute -top-6 left-1/2 transform -translate-x-1/2"
+                            initial={{ opacity: 0, scale: 0 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.6 }}
+                        >
                             <div className="flex space-x-1">
-                                <Star className="w-6 h-6 text-yellow-400 fill-current" />
-                                <Star className="w-6 h-6 text-yellow-400 fill-current" />
-                                <Star className="w-6 h-6 text-yellow-400 fill-current" />
-                                <Star className="w-6 h-6 text-yellow-400 fill-current" />
-                                <Star className="w-6 h-6 text-yellow-400 fill-current" />
+                                {[...Array(5)].map((_, i) => (
+                                    <motion.div
+                                        key={i}
+                                        animate={{
+                                            scale: [1, 1.2, 1],
+                                            rotate: [0, 10, 0]
+                                        }}
+                                        transition={{
+                                            duration: 2,
+                                            repeat: Infinity,
+                                            delay: i * 0.1
+                                        }}
+                                    >
+                                        <Star className="w-6 h-6 text-yellow-400 fill-current" />
+                                    </motion.div>
+                                ))}
                             </div>
-                        </div>
+                        </motion.div>
+                    </motion.div>
 
-                        <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent rounded-full" />
-                    </div>
-
-                    <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                    <motion.p
+                        className="text-xl text-black max-w-3xl mx-auto leading-relaxed"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6, delay: 0.7 }}
+                    >
                         Découvrez les marques prestigieuses qui nous font confiance et témoignent de notre excellence
-                    </p>
+                    </motion.p>
                 </div>
 
                 {/* Moving Carousel */}
@@ -242,7 +329,7 @@ export default function References() {
                         ))}
                     </motion.div>
                 </div>
-            </div>
+            </motion.div>
         </section>
     );
 }

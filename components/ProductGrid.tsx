@@ -30,7 +30,7 @@ export default function ProductGrid({ products, className = '' }: ProductGridPro
   };
 
   return (
-    <div className={`grid gap-3 sm:gap-4 md:gap-6 ${className || 'grid-cols-2 lg:grid-cols-3 xl:grid-cols-3'}`}>
+    <div className={`grid gap-6 sm:gap-8 md:gap-10 lg:gap-12 ${className || 'grid-cols-2 lg:grid-cols-3 xl:grid-cols-3'} w-full`}>
       {products.map((product, index) => (
         <motion.div
           key={product.node?.id || product.id || index}
@@ -38,7 +38,12 @@ export default function ProductGrid({ products, className = '' }: ProductGridPro
           initial="hidden"
           animate="visible"
           transition={{ delay: Math.min(index * 0.05, 0.5) }}
-          className="group h-full"
+          className="group h-full w-full"
+          whileHover={{
+            scale: 1.02,
+            y: -5,
+            transition: { duration: 0.3 }
+          }}
         >
           <ProductCard product={product} />
         </motion.div>
