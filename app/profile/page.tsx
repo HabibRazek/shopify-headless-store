@@ -63,36 +63,70 @@ function ProfileContent() {
   // If we have a session, show the profile
 
   return (
-    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8 bg-gray-50 min-h-screen">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-gray-900">Mon Compte</h1>
+    <div className="min-h-screen bg-gradient-to-br pt-12">
+      {/* Professional Header */}
+      <div className="bg-white border-b border-gray-200 shadow-sm">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl flex items-center justify-center">
+                <UserIcon className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Mon Espace Client</h1>
+                <p className="text-gray-600">Gérez votre profil et suivez vos commandes</p>
+              </div>
+            </div>
+            <div className="hidden md:flex flex-col items-end space-y-1">
+              <div className="flex items-center space-x-2 text-sm text-gray-600">
+                <span>Connecté en tant que</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full flex items-center justify-center">
+                  <UserIcon className="h-4 w-4 text-white" />
+                </div>
+                <div className="text-right">
+                  <p className="font-semibold text-gray-900">{session?.user?.name || 'Utilisateur'}</p>
+                  <p className="text-sm text-gray-700">{session?.user?.email}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="mb-8 bg-white border shadow-sm">
-            <TabsTrigger
-              value="profile"
-              className="data-[state=active]:bg-green-50 data-[state=active]:text-green-700 px-6 py-3"
-            >
-              <UserIcon className="h-4 w-4 mr-2" />
-              Profil
-            </TabsTrigger>
-            <TabsTrigger
-              value="orders"
-              className="data-[state=active]:bg-green-50 data-[state=active]:text-green-700 px-6 py-3"
-            >
-              <PackageIcon className="h-4 w-4 mr-2" />
-              Commandes
-            </TabsTrigger>
-          </TabsList>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto">
+          <Tabs defaultValue="profile" className="w-full">
+            {/* Enhanced Tab Navigation */}
+            <div className="mb-8">
+              <TabsList className="grid w-full grid-cols-2 lg:w-auto lg:grid-cols-2 bg-white border border-gray-200 shadow-sm rounded-xl p-1">
+                <TabsTrigger
+                  value="profile"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-600 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-md px-6 py-3 rounded-lg font-medium transition-all duration-200"
+                >
+                  <UserIcon className="h-4 w-4 mr-2" />
+                  Mon Profil
+                </TabsTrigger>
+                <TabsTrigger
+                  value="orders"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-600 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-md px-6 py-3 rounded-lg font-medium transition-all duration-200"
+                >
+                  <PackageIcon className="h-4 w-4 mr-2" />
+                  Mes Commandes
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
-          <TabsContent value="profile">
-            <ProfileEditor />
-          </TabsContent>
+            <TabsContent value="profile" className="space-y-6">
+              <ProfileEditor />
+            </TabsContent>
 
-          <TabsContent value="orders">
-            <OrdersHistory />
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="orders" className="space-y-6">
+              <OrdersHistory />
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   );

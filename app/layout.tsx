@@ -98,6 +98,11 @@ export const metadata: Metadata = {
     yandex: process.env.YANDEX_VERIFICATION_ID,
     yahoo: process.env.YAHOO_VERIFICATION_ID,
   },
+  icons: {
+    icon: '/packedin.ico',
+    shortcut: '/packedin.ico',
+    apple: '/packedin.ico',
+  },
   category: 'business',
   classification: 'Emballages Flexibles et Packaging',
 };

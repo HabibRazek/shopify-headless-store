@@ -260,29 +260,64 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
   if (orders.length === 0) {
     return (
       <div className={className}>
-        <Card className="border-0 shadow-lg">
-          <CardContent className="p-12 text-center">
+        <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50">
+          <CardContent className="p-16 text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="space-y-6"
+              className="space-y-8"
             >
-              <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-green-200 rounded-full flex items-center justify-center mx-auto">
-                <ShoppingBag className="h-10 w-10 text-green-600" />
+              {/* Enhanced Empty State Icon */}
+              <div className="relative mx-auto w-32 h-32">
+                <div className="absolute inset-0 bg-gradient-to-br from-green-100 via-green-200 to-emerald-200 rounded-full animate-pulse"></div>
+                <div className="absolute inset-4 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center shadow-lg">
+                  <ShoppingBag className="h-12 w-12 text-white" />
+                </div>
+                {/* Floating decorative elements */}
+                <motion.div
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute -top-2 -right-2 w-6 h-6 bg-blue-500 rounded-full opacity-70"
+                />
+                <motion.div
+                  animate={{ y: [0, -8, 0] }}
+                  transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                  className="absolute -bottom-1 -left-3 w-4 h-4 bg-purple-500 rounded-full opacity-60"
+                />
               </div>
-              <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Aucune commande trouvée</h3>
-                <p className="text-gray-600 max-w-md mx-auto">
-                  Vous n'avez pas encore passé de commande. Découvrez notre collection de produits d'emballage !
+
+              <div className="space-y-4">
+                <h3 className="text-3xl font-bold text-gray-900">Aucune commande trouvée</h3>
+                <p className="text-lg text-gray-600 max-w-lg mx-auto leading-relaxed">
+                  Vous n'avez pas encore passé de commande. Découvrez notre collection exceptionnelle de produits d'emballage premium !
                 </p>
               </div>
-              <Button
-                className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
-                onClick={() => window.location.href = '/products'}
-              >
-                <ShoppingBag className="h-4 w-4 mr-2" />
-                Découvrir nos produits
-              </Button>
+
+              {/* Call to Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+                  onClick={() => window.location.href = '/products'}
+                >
+                  <ShoppingBag className="h-5 w-5 mr-2" />
+                  Découvrir nos produits
+                </Button>
+                <Button
+                  variant="outline"
+                  className="border-2 border-green-200 hover:bg-green-50 text-green-700 px-8 py-4 rounded-xl font-semibold transition-all duration-200"
+                  onClick={() => window.location.href = '/collections'}
+                >
+                  <Package className="h-5 w-5 mr-2" />
+                  Voir les collections
+                </Button>
+              </div>
+
+              {/* Additional Info */}
+              <div className="pt-8 border-t border-gray-200">
+                <p className="text-sm text-gray-500">
+                  Besoin d'aide ? Contactez notre équipe pour un devis personnalisé
+                </p>
+              </div>
             </motion.div>
           </CardContent>
         </Card>
@@ -292,62 +327,138 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
 
   return (
     <div className={className}>
-      <Card className="border-0 shadow-lg">
-        <CardHeader className="bg-gradient-to-r from-green-50 to-green-100 border-b">
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-3">
-              <div className="p-2 bg-green-600 rounded-lg">
-                <Package className="h-5 w-5 text-white" />
+      {/* Professional Orders Header */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl flex items-center justify-center">
+              <Package className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Mes Commandes</h2>
+              <p className="text-gray-600">Suivez l'état de vos commandes et consultez l'historique</p>
+            </div>
+          </div>
+          <Button
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg"
+            title="Synchroniser avec Shopify pour vérifier les statuts des commandes"
+          >
+            {isRefreshing ? (
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            ) : (
+              <RefreshCw className="h-4 w-4 mr-2" />
+            )}
+            {isRefreshing ? 'Synchronisation...' : 'Actualiser'}
+          </Button>
+        </div>
+
+        {/* Orders Statistics */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                <ShoppingBag className="h-5 w-5 text-blue-600" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Mes Commandes</h2>
-                <div className="flex items-center gap-3">
-                  <p className="text-sm text-gray-600 font-normal">{filteredOrders.length} commande(s) trouvée(s)</p>
-                  {lastSyncTime && !isRefreshing && (
-                    <div className="text-xs text-gray-500">
-                      Dernière sync: {lastSyncTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-                    </div>
-                  )}
-                </div>
+                <p className="text-2xl font-bold text-blue-600">{orders.length}</p>
+                <p className="text-sm text-gray-600">Total</p>
               </div>
-            </CardTitle>
-            <Button
-              onClick={handleRefresh}
-              disabled={isRefreshing}
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2 border-green-200 hover:bg-green-50"
-              title="Synchroniser avec Shopify pour vérifier les statuts des commandes"
-            >
-              {isRefreshing ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <RefreshCw className="h-4 w-4" />
+            </div>
+          </div>
+          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+                <Clock className="h-5 w-5 text-amber-600" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-amber-600">
+                  {orders.filter((o: Order) => ['pending', 'pending_payment', 'processing', 'confirmed'].includes(o.status.toLowerCase())).length}
+                </p>
+                <p className="text-sm text-gray-600">En cours</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <CheckCircle className="h-5 w-5 text-green-600" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-green-600">
+                  {orders.filter((o: Order) => ['delivered', 'completed', 'fulfilled'].includes(o.status.toLowerCase())).length}
+                </p>
+                <p className="text-sm text-gray-600">Terminées</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                <XCircle className="h-5 w-5 text-red-600" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-red-600">
+                  {orders.filter((o: Order) => ['cancelled', 'refunded'].includes(o.status.toLowerCase())).length}
+                </p>
+                <p className="text-sm text-gray-600">Annulées</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Card className="border-0 shadow-lg">
+        <CardHeader className="bg-gradient-to-r from-gray-50 to-white border-b">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <p className="text-lg font-semibold text-gray-900">{filteredOrders.length} commande(s) trouvée(s)</p>
+              {lastSyncTime && !isRefreshing && (
+                <div className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                  Dernière sync: {lastSyncTime.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                </div>
               )}
-              {isRefreshing ? 'Synchronisation...' : 'Actualiser'}
-            </Button>
+            </div>
           </div>
 
-          {/* Filter Tabs */}
-          <div className="flex gap-2 mt-4">
+          {/* Enhanced Filter Tabs */}
+          <div className="flex flex-wrap gap-2 mt-4">
             {[
-              { key: 'all', label: 'Toutes', count: orders.length },
-              { key: 'pending', label: 'En cours', count: orders.filter((o: Order) => ['pending', 'pending_payment', 'processing', 'confirmed'].includes(o.status.toLowerCase())).length },
-              { key: 'completed', label: 'Terminées', count: orders.filter((o: Order) => ['delivered', 'completed', 'fulfilled'].includes(o.status.toLowerCase())).length },
-              { key: 'cancelled', label: 'Annulées', count: orders.filter((o: Order) => ['cancelled', 'refunded'].includes(o.status.toLowerCase())).length },
-            ].map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setFilter(tab.key as any)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  filter === tab.key
-                    ? 'bg-green-600 text-white shadow-md'
-                    : 'bg-white text-gray-600 hover:bg-green-50 border border-gray-200'
-                }`}
-              >
-                {tab.label} ({tab.count})
-              </button>
-            ))}
+              { key: 'all', label: 'Toutes', count: orders.length, icon: ShoppingBag, color: 'blue' },
+              { key: 'pending', label: 'En cours', count: orders.filter((o: Order) => ['pending', 'pending_payment', 'processing', 'confirmed'].includes(o.status.toLowerCase())).length, icon: Clock, color: 'amber' },
+              { key: 'completed', label: 'Terminées', count: orders.filter((o: Order) => ['delivered', 'completed', 'fulfilled'].includes(o.status.toLowerCase())).length, icon: CheckCircle, color: 'green' },
+              { key: 'cancelled', label: 'Annulées', count: orders.filter((o: Order) => ['cancelled', 'refunded'].includes(o.status.toLowerCase())).length, icon: XCircle, color: 'red' },
+            ].map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.key}
+                  onClick={() => setFilter(tab.key as any)}
+                  className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                    filter === tab.key
+                      ? tab.color === 'blue' ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg transform scale-105' :
+                        tab.color === 'amber' ? 'bg-gradient-to-r from-amber-600 to-amber-500 text-white shadow-lg transform scale-105' :
+                        tab.color === 'green' ? 'bg-gradient-to-r from-green-600 to-green-500 text-white shadow-lg transform scale-105' :
+                        'bg-gradient-to-r from-red-600 to-red-500 text-white shadow-lg transform scale-105'
+                      : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200 hover:border-gray-300 hover:shadow-md'
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                  {tab.label}
+                  <span className={`px-2 py-1 rounded-full text-xs font-bold ${
+                    filter === tab.key
+                      ? 'bg-white/20 text-white'
+                      : tab.color === 'blue' ? 'bg-blue-100 text-blue-700' :
+                        tab.color === 'amber' ? 'bg-amber-100 text-amber-700' :
+                        tab.color === 'green' ? 'bg-green-100 text-green-700' :
+                        'bg-red-100 text-red-700'
+                  }`}>
+                    {tab.count}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </CardHeader>
 
@@ -367,59 +478,65 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
                 >
-                  <Card className="border border-gray-200 hover:border-green-300 hover:shadow-md transition-all duration-200 group">
+                  <Card className="border border-gray-200 hover:border-green-300 hover:shadow-xl transition-all duration-300 group bg-gradient-to-r from-white to-gray-50/50">
                     <CardContent className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-4">
+                      {/* Enhanced Order Header */}
+                      <div className="flex items-start justify-between mb-6">
+                        <div className="flex items-start gap-4">
                           <div className="flex items-center gap-3">
-                            {getStatusIcon(order.status)}
-                            <Badge className={`${getStatusColor(order.status)} px-3 py-1 font-medium`}>
-                              {getStatusText(order.status)}
-                            </Badge>
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="font-semibold text-gray-900">
-                              #{order.orderNumber || order.id.slice(-8)}
-                            </span>
-                            {order.shopifyOrderId && (
-                              <span className="text-xs text-gray-500 flex items-center gap-1">
-                                <ExternalLink className="h-3 w-3" />
-                                Shopify
-                              </span>
-                            )}
+                            <div className="w-12 h-12 bg-white rounded-xl shadow-sm border border-gray-200 flex items-center justify-center group-hover:shadow-md transition-shadow">
+                              {getStatusIcon(order.status)}
+                            </div>
+                            <div>
+                              <Badge className={`${getStatusColor(order.status)} px-4 py-2 font-semibold text-sm`}>
+                                {getStatusText(order.status)}
+                              </Badge>
+                              <div className="flex items-center gap-2 mt-2">
+                                <span className="font-bold text-lg text-gray-900">
+                                  #{order.orderNumber || order.id.slice(-8)}
+                                </span>
+                                {order.shopifyOrderId && (
+                                  <span className="text-xs text-gray-500 flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-full">
+                                    <ExternalLink className="h-3 w-3" />
+                                    Shopify
+                                  </span>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-xl font-bold text-green-600">
+                          <p className="text-2xl font-bold text-green-600 mb-1">
                             {formatPrice(order.total, order.currency || 'TND')}
                           </p>
                           <p className="text-sm text-gray-500 flex items-center gap-1 justify-end">
-                            <Calendar className="h-3 w-3" />
+                            <Calendar className="h-4 w-4" />
                             {new Date(order.createdAt).toLocaleDateString('fr-FR', {
                               day: 'numeric',
-                              month: 'short',
+                              month: 'long',
                               year: 'numeric'
                             })}
                           </p>
                         </div>
                       </div>
 
+                      {/* Enhanced Order Details */}
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-6">
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <div className="flex items-center gap-2 text-sm bg-blue-50 text-blue-700 px-3 py-2 rounded-lg border border-blue-200">
                             <Package className="h-4 w-4" />
-                            <span>{order.items?.length || 0} article(s)</span>
+                            <span className="font-medium">{order.items?.length || 0} article(s)</span>
                           </div>
                           {order.paymentMethod && (
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <div className="flex items-center gap-2 text-sm bg-gray-50 text-gray-700 px-3 py-2 rounded-lg border border-gray-200">
                               <CreditCard className="h-4 w-4" />
-                              <span>{order.paymentMethod}</span>
+                              <span className="font-medium">{order.paymentMethod}</span>
                             </div>
                           )}
                           {order.bankReceiptPath && (
-                            <div className="flex items-center gap-2 text-sm text-green-600">
+                            <div className="flex items-center gap-2 text-sm bg-green-50 text-green-700 px-3 py-2 rounded-lg border border-green-200">
                               <FileImage className="h-4 w-4" />
-                              <span>Reçu joint</span>
+                              <span className="font-medium">Reçu joint</span>
                             </div>
                           )}
                         </div>
@@ -427,14 +544,12 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
                         <Dialog>
                           <DialogTrigger asChild>
                             <Button
-                              variant="outline"
-                              size="sm"
                               onClick={() => setSelectedOrder(order)}
-                              className="flex items-center gap-2 border-green-200 hover:bg-green-50 group-hover:border-green-300"
+                              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
                             >
-                              <Eye className="h-4 w-4" />
+                              <Eye className="h-4 w-4 mr-2" />
                               Voir détails
-                              <ChevronRight className="h-4 w-4" />
+                              <ChevronRight className="h-4 w-4 ml-1" />
                             </Button>
                           </DialogTrigger>
                           <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">

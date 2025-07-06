@@ -17,7 +17,9 @@ import {
   Shield,
   Globe,
   Calendar,
-  Check
+  Check,
+  Star,
+  Package
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -264,10 +266,13 @@ export function ProfileEditor({ className }: ProfileEditorProps) {
 
   return (
     <div className={className}>
-      <Card className="overflow-hidden border-0 shadow-lg bg-gradient-to-br from-white to-gray-50">
-        <CardHeader className="relative bg-gradient-to-r from-green-600 to-emerald-600 text-white pb-20">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl font-bold">Mon Profil</CardTitle>
+      {/* Professional Profile Overview Card */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        {/* Profile Summary */}
+        <Card className="lg:col-span-2 overflow-hidden border-0 shadow-lg bg-gradient-to-br from-white to-gray-50">
+          <CardHeader className="relative bg-gradient-to-r from-green-600 via-green-500 to-emerald-600 text-white pb-20">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-2xl font-bold">Mon Profil</CardTitle>
             <AnimatePresence mode="wait">
               {!isEditing ? (
                 <motion.div
@@ -539,33 +544,87 @@ export function ProfileEditor({ className }: ProfileEditorProps) {
               </div>
             </div>
 
-            {/* Account Stats */}
-            {profileData && (
-              <div className="space-y-4">
-                <h4 className="text-lg font-semibold text-gray-900">Statistiques</h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
-                    <div className="text-2xl font-bold text-blue-600">{orderCount}</div>
-                    <div className="text-sm text-blue-700">Commandes</div>
-                  </div>
-                  <div className="text-center p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
-                    <div className="text-2xl font-bold text-green-600">{getCompletionPercentage()}%</div>
-                    <div className="text-sm text-green-700">Profil complété</div>
-                  </div>
-                  <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200">
-                    <div className="text-2xl font-bold text-purple-600">
-                      <Badge variant="secondary" className="bg-purple-100 text-purple-700">
-                        Nouveau
-                      </Badge>
-                    </div>
-                    <div className="text-sm text-purple-700 mt-1">Statut</div>
-                  </div>
-                </div>
-              </div>
-            )}
           </form>
         </CardContent>
       </Card>
+
+      {/* Quick Stats Card */}
+      <Card className="border-0 shadow-lg">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+              <Star className="h-4 w-4 text-white" />
+            </div>
+            Aperçu du compte
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Order Count */}
+          <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl border border-blue-200">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                <Package className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="font-semibold text-blue-900">Commandes</p>
+                <p className="text-sm text-blue-700">Total passées</p>
+              </div>
+            </div>
+            <div className="text-2xl font-bold text-blue-600">{orderCount}</div>
+          </div>
+
+          {/* Profile Completion */}
+          <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-green-100 rounded-xl border border-green-200">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
+                <User className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="font-semibold text-green-900">Profil</p>
+                <p className="text-sm text-green-700">Complété à</p>
+              </div>
+            </div>
+            <div className="text-2xl font-bold text-green-600">{getCompletionPercentage()}%</div>
+          </div>
+
+          {/* Member Status */}
+          <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl border border-purple-200">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                <Shield className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="font-semibold text-purple-900">Statut</p>
+                <p className="text-sm text-purple-700">Membre depuis</p>
+              </div>
+            </div>
+            <Badge className="bg-purple-100 text-purple-700 border-purple-200">
+              Client Premium
+            </Badge>
+          </div>
+
+          {/* Member Since */}
+          <div className="p-4 bg-gray-50 rounded-xl border border-gray-200">
+            <div className="flex items-center gap-3">
+              <Calendar className="h-5 w-5 text-gray-600" />
+              <div>
+                <p className="font-medium text-gray-900">Membre depuis</p>
+                <p className="text-sm text-gray-600">
+                  {profileData?.createdAt
+                    ? new Date(profileData.createdAt).toLocaleDateString('fr-FR', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })
+                    : 'Récemment'
+                  }
+                </p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
     </div>
   );
 }
