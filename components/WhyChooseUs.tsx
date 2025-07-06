@@ -177,19 +177,19 @@ export default function WhyChooseUs() {
             {features.map((feature, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{
-                  duration: 0.4,
-                  delay: index * 0.05
+                  duration: 0.3,
+                  delay: index * 0.03
                 }}
-                className="hover:scale-[1.02] hover:-translate-y-1 transition-transform duration-150"
+                className="hover:scale-[1.01] transition-transform duration-200 will-change-transform"
               >
                 <Card className={`h-full bg-gradient-to-br ${feature.gradientFrom} ${feature.gradientTo} border border-white/30 hover:border-white/50 backdrop-blur-sm hover:shadow-lg transition-shadow duration-200 group`}>
                   <CardContent className="p-4">
                     {/* Optimized Icon */}
-                    <div className="mb-3 group-hover:scale-105 transition-transform duration-150">
+                    <div className="mb-3 group-hover:scale-[1.03] transition-transform duration-200">
                       <div className={`w-10 h-10 rounded-xl bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-sm flex items-center justify-center shadow-md border border-white/20`}>
                         <feature.icon className={`w-5 h-5 ${feature.iconColor}`} />
                       </div>
@@ -238,19 +238,19 @@ export default function WhyChooseUs() {
               {features.map((feature, index) => (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{
-                    duration: 0.4,
-                    delay: index * 0.05
+                    duration: 0.3,
+                    delay: index * 0.03
                   }}
-                  className="hover:scale-[1.02] hover:-translate-y-1 transition-transform duration-150"
+                  className="hover:scale-[1.01] transition-transform duration-200 will-change-transform"
                 >
                   <Card className={`h-full bg-gradient-to-br ${feature.gradientFrom} ${feature.gradientTo} border border-white/30 hover:border-white/50 backdrop-blur-sm hover:shadow-lg transition-shadow duration-200 group`}>
                     <CardContent className="p-6">
                       {/* Optimized Icon - Desktop */}
-                      <div className="mb-4 group-hover:scale-105 transition-transform duration-150">
+                      <div className="mb-4 group-hover:scale-[1.03] transition-transform duration-200">
                         <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br from-white/40 to-white/10 backdrop-blur-sm flex items-center justify-center shadow-lg border border-white/30`}>
                           <feature.icon className={`w-8 h-8 ${feature.iconColor}`} />
                         </div>

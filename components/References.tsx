@@ -161,28 +161,17 @@ export default function References() {
                         viewport={{ once: true }}
                         transition={{ duration: 0.8, delay: 0.4 }}
                     >
-                        <motion.h2
-                            className="text-4xl md:text-5xl lg:text-6xl font-black mb-8 relative"
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6, delay: 0.5 }}
-                        >
-                            <span className="block text-black mb-2">Ils nous font</span>
-                            <span className="block text-green-500">
-                                CONFIANCE
-                            </span>
-                        </motion.h2>
 
-                        {/* Enhanced Decorative Stars */}
+
+{/* Enhanced Decorative Stars */}
                         <motion.div
-                            className="absolute -top-6 left-1/2 transform -translate-x-1/2"
+                            className=" -top-6 flex items-center justify-center -translate-x-1/2"
                             initial={{ opacity: 0, scale: 0 }}
                             whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.5, delay: 0.6 }}
                         >
-                            <div className="flex space-x-1">
+                            <div className="mx-auto flex  ">
                                 {[...Array(5)].map((_, i) => (
                                     <motion.div
                                         key={i}
@@ -196,11 +185,26 @@ export default function References() {
                                             delay: i * 0.1
                                         }}
                                     >
-                                        <Star className="w-6 h-6 text-yellow-400 fill-current" />
+                                        <Star className="w-6 h-6 text-green-400 fill-current -mt-6" />
                                     </motion.div>
                                 ))}
                             </div>
                         </motion.div>
+
+                        <motion.h2
+                            className="text-4xl md:text-5xl lg:text-6xl font-black mb-8 relative"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6, delay: 0.5 }}
+                        >
+                            <span className="block text-black mb-2">Ils nous font</span>
+                            <span className="block text-green-500">
+                                CONFIANCE
+                            </span>
+                        </motion.h2>
+
+                        
                     </motion.div>
 
                     <motion.p

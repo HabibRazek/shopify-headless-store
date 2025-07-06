@@ -36,7 +36,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className='sm:lg:-mt-[140px] mt-[-60px]'>
+      <div className='sm:lg:-mt-[120px] mt-[-200px] sm:mt-[-60px]'>
         <Suspense fallback={
           <section className="py-4 bg-transparent">
             <div className="container mx-auto px-4">
@@ -95,6 +95,9 @@ export default function Home() {
           <CustomPackaging />
         </div>
 
+      {/* Mobile Spacing Buffer */}
+      <div className="block md:hidden mb-20 h-16 sm:h-20"></div>
+
       {/* Curved Arrow Decorations */}
       <div className="hidden md:flex justify-start ring-offset-slate-200 mt-[-20px]">
         <div className='z-30 animate-bounce'>
@@ -113,7 +116,8 @@ export default function Home() {
           </h1>
         </div>
       </div>
-      <div className="mt-[-20px] sm:mt-[-60px] md:mt-[-100px] lg:mt-[-120px]">
+      
+      <div className="mt-0 md:mt-[-100px] lg:mt-[-120px]">
         <WhyChooseUs />
       </div>
 

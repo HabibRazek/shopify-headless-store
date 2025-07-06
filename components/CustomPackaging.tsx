@@ -1,28 +1,13 @@
 'use client';
 
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Edit3, Sparkles, Zap, Star, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { MultiProductQuoteDialog } from '@/components/quote/MultiProductQuoteDialog';
 import Image from 'next/image';
-import { useRef } from 'react';
+
 
 export default function CustomPackaging() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-
-  // Parallax transforms
-  const imageY = useTransform(scrollYProgress, [0, 1], [50, -50]);
-  const imageRotate = useTransform(scrollYProgress, [0, 1], [0, 5]);
-  const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1.1, 0.9]);
-
-  // Smooth spring animations
-  const smoothY = useSpring(imageY, { stiffness: 100, damping: 30 });
-  const smoothRotate = useSpring(imageRotate, { stiffness: 100, damping: 30 });
-  const smoothScale = useSpring(imageScale, { stiffness: 100, damping: 30 });
 
   const features = [
     {
@@ -48,10 +33,7 @@ export default function CustomPackaging() {
   ];
 
   return (
-    <section
-      ref={containerRef}
-      className="py-16 md:py-24 relative"
-    >
+    <section className="py-16 md:py-24 relative">
 
       <div className="hidden md:flex justify-end mt-[-100px] ">
               <div className='z-30 sm:lg:mt-[-150px] animate-bounce '>
@@ -191,18 +173,11 @@ export default function CustomPackaging() {
             transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
             <motion.div
-              className="relative"
-              style={{
-                y: smoothY,
-                rotate: smoothRotate,
-                scale: smoothScale,
-              }}
-              whileHover={{
-                scale: 1.08,
-                rotate: 3,
-                y: -10,
-                transition: { duration: 0.4, ease: "easeOut" }
-              }}
+              className="relative hover:scale-105 transition-transform duration-300"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
             >
               {/* Multiple glowing auras */}
               <motion.div
@@ -577,18 +552,11 @@ export default function CustomPackaging() {
               className="flex justify-center"
             >
               <motion.div
-                className="relative"
-                style={{
-                  y: smoothY,
-                  rotate: smoothRotate,
-                  scale: smoothScale,
-                }}
-                whileHover={{
-                  scale: 1.1,
-                  rotate: -3,
-                  y: -15,
-                  transition: { duration: 0.4, ease: "easeOut" }
-                }}
+                className="relative hover:scale-105 transition-transform duration-300"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
               >
                 {/* Enhanced multiple glowing auras */}
                 <motion.div
