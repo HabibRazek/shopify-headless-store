@@ -37,13 +37,8 @@ export default function ProductGrid({ products, className = '' }: ProductGridPro
           variants={itemVariants}
           initial="hidden"
           animate="visible"
-          transition={{ delay: Math.min(index * 0.05, 0.5) }}
-          className="group h-full w-full"
-          whileHover={{
-            scale: 1.02,
-            y: -5,
-            transition: { duration: 0.3 }
-          }}
+          transition={{ delay: Math.min(index * 0.03, 0.3) }}
+          className="group h-full w-full hover:scale-[1.01] hover:-translate-y-1 transition-transform duration-150"
         >
           <ProductCard product={product} />
         </motion.div>

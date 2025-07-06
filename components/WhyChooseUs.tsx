@@ -172,72 +172,57 @@ export default function WhyChooseUs() {
         {/* Mobile Layout - Grid */}
         <div className="lg:hidden">
 
-          {/* Features Grid - Mobile */}
-          <div className="grid grid-cols-2 gap-4">
+          {/* Features Grid - Mobile - Fixed height to prevent CLS */}
+          <div className="grid grid-cols-2 gap-4 min-h-[600px]">
             {features.map((feature, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 30, scale: 0.9 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{
-                  duration: 0.6,
-                  delay: index * 0.1,
-                  type: "spring",
-                  stiffness: 100
+                  duration: 0.4,
+                  delay: index * 0.05
                 }}
-                whileHover={{
-                  scale: 1.05,
-                  y: -5,
-                  transition: { duration: 0.2 }
-                }}
+                className="hover:scale-[1.02] hover:-translate-y-1 transition-transform duration-150"
               >
-                <Card className={`h-full bg-gradient-to-br ${feature.gradientFrom} ${feature.gradientTo} border border-white/20 hover:border-white/40 backdrop-blur-sm hover:shadow-xl transition-all duration-300 group`}>
+                <Card className={`h-full bg-gradient-to-br ${feature.gradientFrom} ${feature.gradientTo} border border-white/30 hover:border-white/50 backdrop-blur-sm hover:shadow-lg transition-shadow duration-200 group`}>
                   <CardContent className="p-4">
-                    {/* Animated Icon */}
-                    <motion.div
-                      className="mb-3"
-                      whileHover={{ rotate: 360, scale: 1.1 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      <div className={`w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-sm`}>
+                    {/* Optimized Icon */}
+                    <div className="mb-3 group-hover:scale-105 transition-transform duration-150">
+                      <div className={`w-10 h-10 rounded-xl bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-sm flex items-center justify-center shadow-md border border-white/20`}>
                         <feature.icon className={`w-5 h-5 ${feature.iconColor}`} />
                       </div>
-                    </motion.div>
+                    </div>
 
-                    {/* Title */}
+                    {/* Optimized Title */}
                     <h3 className="text-sm font-bold text-black mb-2 leading-tight">
                       {feature.title}
                     </h3>
 
-                    {/* Description */}
+                    {/* Optimized Description */}
                     <p className="text-xs text-gray-600 mb-3 leading-relaxed">
                       {feature.description}
                     </p>
 
-                    {/* Highlight */}
-                    <div className="mb-4">
-                      <p className="text-xs font-medium text-green-500 bg-white/80 rounded-lg px-2 py-1 border border-green-200/50">
+                    {/* Optimized Highlight */}
+                    <div className="mb-3">
+                      <p className="text-xs font-bold text-green-500 bg-white/90 rounded-lg px-2 py-1.5 border border-green-200/50 shadow-sm">
                         {feature.highlight}
                       </p>
                     </div>
 
-                    {/* Button */}
-                    <motion.div
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                    {/* Optimized Button */}
+                    <Button
+                      variant={feature.buttonVariant}
+                      size="sm"
+                      className={`w-full font-semibold text-xs transition-colors duration-150 ${feature.buttonVariant === 'default'
+                          ? 'bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white border-0'
+                          : 'border-green-500/30 text-green-500 hover:bg-green-500/10'
+                        }`}
                     >
-                      <Button
-                        variant={feature.buttonVariant}
-                        size="sm"
-                        className={`w-full font-semibold text-xs transition-all duration-300 ${feature.buttonVariant === 'default'
-                            ? 'bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white border-0'
-                            : 'border-green-500/30 text-green-500 hover:bg-green-500/10'
-                          }`}
-                      >
-                        {feature.buttonText}
-                      </Button>
-                    </motion.div>
+                      {feature.buttonText}
+                    </Button>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -249,71 +234,56 @@ export default function WhyChooseUs() {
         <div className="hidden lg:block">
           {/* 6 Cards in 3x2 Grid */}
           <div className="w-full">
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 gap-4 min-h-[500px]">
               {features.map((feature, index) => (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, y: 30, scale: 0.9 }}
-                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{
-                    duration: 0.6,
-                    delay: index * 0.1,
-                    type: "spring",
-                    stiffness: 100
+                    duration: 0.4,
+                    delay: index * 0.05
                   }}
-                  whileHover={{
-                    scale: 1.05,
-                    y: -8,
-                    transition: { duration: 0.3 }
-                  }}
+                  className="hover:scale-[1.02] hover:-translate-y-1 transition-transform duration-150"
                 >
-                  <Card className={`h-full bg-gradient-to-br ${feature.gradientFrom} ${feature.gradientTo} border border-white/20 hover:border-white/40 backdrop-blur-sm hover:shadow-xl transition-all duration-300 group`}>
+                  <Card className={`h-full bg-gradient-to-br ${feature.gradientFrom} ${feature.gradientTo} border border-white/30 hover:border-white/50 backdrop-blur-sm hover:shadow-lg transition-shadow duration-200 group`}>
                     <CardContent className="p-6">
-                      {/* Animated Icon - Bigger for desktop */}
-                      <motion.div
-                        className="mb-4"
-                        whileHover={{ rotate: 360, scale: 1.2 }}
-                        transition={{ duration: 0.5 }}
-                      >
-                        <div className={`w-16 h-16 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg`}>
+                      {/* Optimized Icon - Desktop */}
+                      <div className="mb-4 group-hover:scale-105 transition-transform duration-150">
+                        <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br from-white/40 to-white/10 backdrop-blur-sm flex items-center justify-center shadow-lg border border-white/30`}>
                           <feature.icon className={`w-8 h-8 ${feature.iconColor}`} />
                         </div>
-                      </motion.div>
+                      </div>
 
-                      {/* Title */}
-                      <h3 className="text-sm font-bold text-black mb-2 leading-tight">
+                      {/* Optimized Title */}
+                      <h3 className="text-base font-bold text-black mb-3 leading-tight">
                         {feature.title}
                       </h3>
 
-                      {/* Description */}
-                      <p className="text-xs text-gray-600 mb-3 leading-relaxed">
+                      {/* Optimized Description */}
+                      <p className="text-sm text-gray-600 mb-4 leading-relaxed">
                         {feature.description}
                       </p>
 
-                      {/* Highlight */}
+                      {/* Optimized Highlight */}
                       <div className="mb-4">
-                        <p className="text-xs font-medium text-green-500 bg-white/80 rounded-lg px-2 py-1 border border-green-200/50">
+                        <p className="text-sm font-bold text-green-500 bg-white/90 rounded-lg px-3 py-2 border border-green-200/50 shadow-sm">
                           {feature.highlight}
                         </p>
                       </div>
 
-                      {/* Button */}
-                      <motion.div
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
+                      {/* Optimized Button */}
+                      <Button
+                        variant={feature.buttonVariant}
+                        size="sm"
+                        className={`w-full font-semibold text-xs transition-colors duration-150 ${feature.buttonVariant === 'default'
+                            ? 'bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white border-0'
+                            : 'border-green-500/30 text-green-500 hover:bg-green-500/10'
+                          }`}
                       >
-                        <Button
-                          variant={feature.buttonVariant}
-                          size="sm"
-                          className={`w-full font-semibold text-xs transition-all duration-300 ${feature.buttonVariant === 'default'
-                              ? 'bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white border-0'
-                              : 'border-green-500/30 text-green-500 hover:bg-green-500/10'
-                            }`}
-                        >
-                          {feature.buttonText}
-                        </Button>
-                      </motion.div>
+                        {feature.buttonText}
+                      </Button>
                     </CardContent>
                   </Card>
                 </motion.div>

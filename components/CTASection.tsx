@@ -41,7 +41,7 @@ export default function CTASection() {
       </div>
 
       <motion.div
-        className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
+        className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 min-h-[600px] sm:min-h-[500px] lg:min-h-[400px]"
         style={{ y }}
       >
         {/* Bottom CTA */}
@@ -181,12 +181,9 @@ export default function CTASection() {
                   transition={{ duration: 0.5, delay: 0.2, type: "spring", stiffness: 200 }}
                   whileHover={{ scale: 1.05 }}
                 >
-                  <motion.div
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
+                  <div className="animate-pulse">
                     <Sparkles className="h-4 w-4 text-green-500" />
-                  </motion.div>
+                  </div>
                   <span className="text-sm font-bold text-green-500 tracking-wide">
                     SUPPORT EXPERT
                   </span>
@@ -223,31 +220,18 @@ export default function CTASection() {
               >
                 <MultiProductQuoteDialog
                   trigger={
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
+                    <div className="hover:scale-[1.02] transition-transform duration-150">
                       <Button
                         size="lg"
                         className="bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white shadow-xl hover:shadow-2xl transition-all duration-300 group relative overflow-hidden"
                       >
-                        {/* Animated background shine */}
-                        <motion.div
-                          animate={{
-                            x: ['-100%', '100%'],
-                          }}
-                          transition={{
-                            duration: 2,
-                            repeat: Infinity,
-                            ease: "linear"
-                          }}
-                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                        />
+                        {/* Optimized background shine */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-500" />
                         <Calculator className="mr-2 h-4 w-4 relative z-10" />
                         <span className="relative z-10">Demander un devis</span>
                         <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 relative z-10" />
                       </Button>
-                    </motion.div>
+                    </div>
                   }
                 />
 
@@ -256,10 +240,7 @@ export default function CTASection() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
+                  <div className="hover:scale-[1.02] transition-transform duration-150">
                     <Button
                       size="lg"
                       variant="outline"
@@ -269,7 +250,7 @@ export default function CTASection() {
                       Contacter un expert
                       <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                     </Button>
-                  </motion.div>
+                  </div>
                 </Link>
               </motion.div>
 

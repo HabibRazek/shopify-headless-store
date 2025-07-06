@@ -175,27 +175,30 @@ export default function Categories() {
           </motion.div>
         </div>
 
-        {/* Circular Categories Grid - 3 cols on mobile, 5 on desktop */}
-        <div className="grid grid-cols-3 md:grid-cols-5 gap-4 md:gap-8 lg:gap-12 max-w-6xl mx-auto">
+        {/* Circular Categories Grid - 3 cols on mobile, 5 on desktop - Fixed height to prevent CLS */}
+        <div className="grid grid-cols-3 md:grid-cols-5 gap-4 md:gap-8 lg:gap-12 max-w-6xl mx-auto min-h-[400px] md:min-h-[300px]">
           {COLLECTION_CATEGORIES.map((category, index) => (
             <motion.div
               key={category.id}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
+              transition={{ duration: 0.4, delay: index * 0.05 }}
               className="flex flex-col items-center"
             >
               <Link href={category.hasProducts ? `/collections/${category.handle}` : category.handle}>
                 <div className="group cursor-pointer relative">
-                  {/* Large Product Image */}
-                  <div className="relative w-32 h-40 md:w-40 md:h-48 lg:w-48 lg:h-56 mb-4">
+                  {/* Large Product Image - Fixed dimensions to prevent CLS */}
+                  <div className="relative w-32 h-40 md:w-40 md:h-48 lg:w-48 lg:h-56 mb-4 min-h-[160px] md:min-h-[192px] lg:min-h-[224px]">
                     <Image
                       src={category.image}
                       alt={category.title}
                       fill
                       className="object-contain z-30"
                       sizes="(max-width: 768px) 128px, (max-width: 1024px) 160px, 192px"
+                      priority={index < 3}
+                      placeholder="blur"
+                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R+Rw="
                     />
                   </div>
 

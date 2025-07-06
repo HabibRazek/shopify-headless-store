@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ShopifyProduct } from '@/types/shopify';
 import ProductGrid from '@/components/ProductGrid';
 import { ArrowRight } from 'lucide-react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 
 export default function FeaturedProducts() {
@@ -13,10 +13,7 @@ export default function FeaturedProducts() {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
-  // Parallax scroll effects
-  const { scrollYProgress } = useScroll();
-  const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 1.05]);
+
 
   useEffect(() => {
     async function fetchProducts() {
@@ -161,13 +158,13 @@ export default function FeaturedProducts() {
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex flex-col lg:flex-row justify-between items-center mb-8 sm:mb-12 md:mb-16">
+        <div className="flex flex-col lg:flex-row justify-between items-center mb-8 sm:mb-12 md:mb-16 min-h-[200px] sm:min-h-[250px] lg:min-h-[300px]">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="mb-6 sm:mb-8 lg:mb-0 text-center lg:text-left"
+            className="mb-6 sm:mb-8 lg:mb-0 text-center lg:text-left flex-1"
           >
             {/* Enhanced Badge */}
             <motion.div

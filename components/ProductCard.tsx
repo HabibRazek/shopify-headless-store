@@ -105,7 +105,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* Product Image Container */}
       <div className="relative bg-gray-50 p-3 sm:p-4 md:p-5">
         <Link href={`/products/${handle}`} className="block">
-          <div className="relative aspect-square w-full">
+          <div className="relative aspect-square w-full min-h-[200px] sm:min-h-[250px] md:min-h-[300px]">
             <Image
               src={imageUrl}
               alt={imageAlt}
@@ -113,6 +113,8 @@ export default function ProductCard({ product }: ProductCardProps) {
               sizes="(max-width: 640px) 50vw, (max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
               className="object-contain transition-transform duration-300 group-hover:scale-105"
               priority={false}
+              placeholder="blur"
+              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R+Rw="
             />
 
             {/* Quick View Overlay */}
@@ -190,8 +192,8 @@ export default function ProductCard({ product }: ProductCardProps) {
             size="sm"
             type="button"
           >
-            {/* Animated background shine */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+            {/* Optimized background shine */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-300" />
 
             <ShoppingCart className="mr-1.5 h-3 w-3 sm:h-4 sm:w-4 relative z-10" />
             {isLoading ? (
