@@ -56,6 +56,7 @@
     "@shopify/shopify-api": "^11.12.0",
     "@shopify/storefront-api-client": "^1.0.7",
     "@types/nodemailer": "^6.4.17",
+    "@uploadthing/react": "^7.3.2",
     "bcryptjs": "^3.0.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -75,6 +76,7 @@
     "swr": "^2.3.3",
     "tailwind-merge": "^3.3.0",
     "tailwindcss-animate": "^1.0.7",
+    "uploadthing": "^7.7.3",
     "zod": "^3.25.36"
   },
   "devDependencies": {
