@@ -99,9 +99,9 @@ export const metadata: Metadata = {
     yahoo: process.env.YAHOO_VERIFICATION_ID,
   },
   icons: {
-    icon: '/packedin.ico',
-    shortcut: '/packedin.ico',
-    apple: '/packedin.ico',
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
   },
   category: 'business',
   classification: 'Emballages Flexibles et Packaging',

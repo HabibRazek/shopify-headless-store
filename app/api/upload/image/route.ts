@@ -6,6 +6,16 @@ import { existsSync } from 'fs';
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if we're in production environment
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    if (isProduction) {
+      return NextResponse.json(
+        { error: 'Upload de fichiers non disponible en production. Veuillez utiliser une URL d\'image externe.' },
+        { status: 503 }
+      );
+    }
+
     // Check authentication
     const session = await auth();
     if (!session?.user || session.user.role !== 'admin') {

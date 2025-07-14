@@ -227,8 +227,8 @@ export default function AboutContent() {
             </motion.div>
             <motion.div variants={itemVariants} className="relative w-[600px] h-[600px] rounded-xl overflow-hidden shadow-xl">
               <Image
-                src="/images/collections/sac-kraft-collection.jpeg"
-                alt="PackedIn Zipbag Kraft Tunisie"
+                src="/Doypacks-Zip.png"
+                alt="PackedIn Doypacks Zip - Emballages Écologiques Tunisie"
                 fill
                 className="object-cover"
               />
@@ -245,8 +245,8 @@ export default function AboutContent() {
           >
             <motion.div variants={itemVariants} className="order-2 lg:order-1 relative w-[600px] h-[600px] rounded-xl overflow-hidden shadow-xl">
               <Image
-                src="/images/collections/aluview-collection-doypacks.jpeg"
-                alt="Doypack Tunisie Écologique E-commerce"
+                src="/Doypacks-Zip.png"
+                alt="PackedIn Doypacks Zip - Solutions d'Emballage Écologique"
                 fill
                 className="object-cover"
               />
