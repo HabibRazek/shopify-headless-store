@@ -86,7 +86,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         position: 'top-right',
         duration: 3000,
       });
-    } catch (error) {
+    } catch {
       toast.error('Error', {
         description: 'There was an error adding the product to your cart. Please try again.',
         position: 'top-right',

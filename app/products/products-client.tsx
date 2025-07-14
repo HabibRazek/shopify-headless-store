@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import ProductGrid from '@/components/ProductGrid';
 import { ShopifyProduct } from '@/types/shopify';
 import SearchInput from '@/components/SearchInput';
@@ -15,7 +15,7 @@ import {
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
+
   PaginationItem,
   PaginationLink,
   PaginationNext,

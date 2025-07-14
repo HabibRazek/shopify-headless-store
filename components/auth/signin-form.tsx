@@ -81,7 +81,7 @@ export function SignInForm() {
           duration: 4000,
         });
       }
-    } catch (error) {
+    } catch {
       toast.error('Connection Error', {
         description: 'Please check your internet connection.',
         duration: 4000,

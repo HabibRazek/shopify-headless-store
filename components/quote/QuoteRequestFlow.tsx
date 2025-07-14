@@ -14,7 +14,6 @@ import {
   ArrowRight,
   ArrowLeft,
   Check,
-  X,
   Building2,
   Phone,
   Mail
@@ -169,7 +168,7 @@ export function QuoteRequestFlow({ product, trigger }: QuoteRequestFlowProps) {
         finalPrice: 0,
         paymentMethod: 'card',
       });
-    } catch (error) {
+    } catch {
       toast.error('Erreur', {
         description: 'Une erreur est survenue lors de la soumission du devis.',
       });

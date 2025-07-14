@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+// import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 
 export async function POST(
@@ -7,13 +7,13 @@ export async function POST(
   { params }: { params: { slug: string } }
 ) {
   try {
-    const session = await auth();
+    // const session = await auth();
     const { slug } = params;
 
-    // Get client IP and User Agent for anonymous tracking
-    const forwarded = request.headers.get('x-forwarded-for');
-    const ip = forwarded ? forwarded.split(',')[0] : request.headers.get('x-real-ip') || 'unknown';
-    const userAgent = request.headers.get('user-agent') || 'unknown';
+    // Get client IP and User Agent for anonymous tracking (currently not used)
+    // const forwarded = request.headers.get('x-forwarded-for');
+    // const ip = forwarded ? forwarded.split(',')[0] : request.headers.get('x-real-ip') || 'unknown';
+    // const userAgent = request.headers.get('user-agent') || 'unknown';
 
     // Find the blog post
     const post = await prisma.blogPost.findUnique({
@@ -33,7 +33,7 @@ export async function POST(
     const viewKey = `blog_view_${post.id}`;
     const hasViewedInSession = request.headers.get('x-viewed-posts')?.includes(viewKey);
 
-    let shouldIncrementView = !hasViewedInSession;
+    const shouldIncrementView = !hasViewedInSession;
 
     // If no existing view found, create one and increment the counter
     if (shouldIncrementView) {
@@ -76,13 +76,13 @@ export async function GET(
   { params }: { params: { slug: string } }
 ) {
   try {
-    const session = await auth();
+    // const session = await auth();
     const { slug } = params;
 
-    // Get client IP and User Agent for anonymous tracking
-    const forwarded = request.headers.get('x-forwarded-for');
-    const ip = forwarded ? forwarded.split(',')[0] : request.headers.get('x-real-ip') || 'unknown';
-    const userAgent = request.headers.get('user-agent') || 'unknown';
+    // Get client IP and User Agent for anonymous tracking (currently not used)
+    // const forwarded = request.headers.get('x-forwarded-for');
+    // const ip = forwarded ? forwarded.split(',')[0] : request.headers.get('x-real-ip') || 'unknown';
+    // const userAgent = request.headers.get('user-agent') || 'unknown';
 
     // Find the blog post
     const post = await prisma.blogPost.findUnique({
@@ -97,7 +97,7 @@ export async function GET(
       );
     }
 
-    let viewRecord = null;
+    const viewRecord = null;
 
     // TODO: Re-enable after Prisma client regeneration
     // if (session?.user?.id) {
@@ -122,7 +122,7 @@ export async function GET(
 
     return NextResponse.json({
       hasViewed: !!viewRecord,
-      viewedAt: viewRecord?.viewedAt || null,
+      viewedAt: null, // viewRecord?.viewedAt || null, // Currently disabled
       totalViews: post.views
     });
 

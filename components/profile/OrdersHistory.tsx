@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import useSWR from 'swr';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,13 +21,13 @@ import {
   ShoppingBag,
   RefreshCw,
   Download,
-  Star,
+
   XCircle,
   Loader2,
   FileImage,
   ExternalLink
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { InlineLoader } from '@/components/ui/loader';
 import { Button } from '@/components/ui/button';
@@ -81,7 +81,7 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
   const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
 
   // Use SWR for data fetching with automatic deduplication
-  const { data: ordersData, error, isLoading, mutate } = useSWR(
+  const { data: ordersData, isLoading, mutate } = useSWR(
     session?.user ? '/api/user/orders' : null,
     fetcher,
     {

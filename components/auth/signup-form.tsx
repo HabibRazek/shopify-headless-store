@@ -143,7 +143,7 @@ export function SignUpForm() {
       setTimeout(() => {
         router.push('/auth/signin');
       }, 2000);
-    } catch (error: unknown) {
+    } catch {
       toast.error('Erreur de connexion', {
         description: 'Problème de connexion au serveur. Veuillez réessayer.',
       });
@@ -160,7 +160,7 @@ export function SignUpForm() {
     setIsGoogleLoading(true);
     try {
       await signIn('google', { callbackUrl: '/' });
-    } catch (error) {
+    } catch {
       toast.error('Error', {
         description: 'Failed to sign in with Google',
       });

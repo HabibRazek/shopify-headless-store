@@ -382,7 +382,7 @@ export async function GET(request: NextRequest) {
       success: true,
       orders,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }

@@ -86,7 +86,7 @@ export async function GET() {
       { user },
       { status: 200 }
     );
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { message: 'Something went wrong' },
       { status: 500 }
@@ -199,6 +199,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Remove password from response
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userWithoutPassword } = updatedUser;
 
     return NextResponse.json(

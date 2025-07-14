@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Calendar, User, Eye, ArrowLeft, Tag, Clock, Share2, Bookmark, ThumbsUp } from 'lucide-react';
+import { Calendar, User, Eye, ArrowLeft, Tag, Clock, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { InlineLoader } from '@/components/ui/loader';
@@ -45,7 +45,7 @@ export default function BlogPostPage() {
   const [error, setError] = useState<string | null>(null);
   const [viewTracked, setViewTracked] = useState(false);
 
-  const fetchPost = async () => {
+  const fetchPost = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/blog/posts/${slug}`);
@@ -62,14 +62,14 @@ export default function BlogPostPage() {
       const data = await response.json();
       setPost(data);
       setError(null);
-    } catch (error) {
+    } catch {
       setError('Erreur lors du chargement de l\'article');
     } finally {
       setLoading(false);
     }
-  };
+  }, [slug]);
 
-  const trackView = async (slug: string) => {
+  const trackView = useCallback(async (slug: string) => {
     const viewKey = `blog_view_${slug}`;
     const viewedPosts = localStorage.getItem('viewedPosts') || '';
     
@@ -97,16 +97,16 @@ export default function BlogPostPage() {
           }
         }
       }
-    } catch (error) {
+    } catch {
       // Silent fail for view tracking
     }
-  };
+  }, [post, viewTracked]);
 
   useEffect(() => {
     if (slug) {
       fetchPost();
     }
-  }, [slug]);
+  }, [slug, fetchPost]);
 
   useEffect(() => {
     if (post && !viewTracked) {
@@ -116,7 +116,7 @@ export default function BlogPostPage() {
 
       return () => clearTimeout(timer);
     }
-  }, [post, slug, viewTracked]);
+  }, [post, slug, viewTracked, trackView]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('fr-FR', {
@@ -141,12 +141,12 @@ export default function BlogPostPage() {
         await navigator.clipboard.writeText(window.location.href);
         alert('Lien copié dans le presse-papiers !');
       }
-    } catch (error) {
+    } catch {
       // Fallback: copy to clipboard
       try {
         await navigator.clipboard.writeText(window.location.href);
         alert('Lien copié dans le presse-papiers !');
-      } catch (clipboardError) {
+      } catch {
         // Final fallback: show URL in prompt
         prompt('Copiez ce lien pour partager:', window.location.href);
       }

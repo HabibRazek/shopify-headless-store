@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
@@ -72,22 +72,7 @@ export default function EditBlogPostPage() {
     tagIds: [] as string[],
   });
 
-  useEffect(() => {
-    if (status === 'loading') return;
-    
-    if (!session || session.user?.role !== 'admin') {
-      router.push('/');
-      return;
-    }
-
-    if (params.slug) {
-      fetchPost(params.slug as string);
-      fetchCategories();
-      fetchTags();
-    }
-  }, [session, status, router, params.slug]);
-
-  const fetchPost = async (slug: string) => {
+  const fetchPost = useCallback(async (slug: string) => {
     try {
       // Add admin=true parameter to allow fetching draft posts
       const response = await fetch(`/api/blog/posts/${slug}?admin=true`);
@@ -116,7 +101,22 @@ export default function EditBlogPostPage() {
     } finally {
       setInitialLoading(false);
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    if (status === 'loading') return;
+
+    if (!session || session.user?.role !== 'admin') {
+      router.push('/');
+      return;
+    }
+
+    if (params.slug) {
+      fetchPost(params.slug as string);
+      fetchCategories();
+      fetchTags();
+    }
+  }, [session, status, router, params.slug, fetchPost]);
 
   const fetchCategories = async () => {
     try {

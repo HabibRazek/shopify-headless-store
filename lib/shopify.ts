@@ -31,7 +31,7 @@ export async function shopifyFetch<T>({
       status: 200,
       body: data as T,
     };
-  } catch (error) {
+  } catch {
     return {
       status: 500,
       body: { error: 'Error fetching data from Shopify' } as unknown as T,

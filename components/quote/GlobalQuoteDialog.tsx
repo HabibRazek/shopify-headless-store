@@ -23,7 +23,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+
 import { Separator } from '@/components/ui/separator';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
@@ -32,13 +32,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+
 import { formatPrice } from '@/lib/utils';
 
 interface QuoteItem {
@@ -244,7 +238,7 @@ export function GlobalQuoteDialog({ isOpen, onClose }: GlobalQuoteDialogProps) {
       });
 
       onClose();
-    } catch (error) {
+    } catch {
       toast.error('Erreur', {
         description: 'Une erreur est survenue lors de la soumission du devis.',
       });

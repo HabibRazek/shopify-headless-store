@@ -37,7 +37,7 @@ const profileSchema = z.object({
   country: z.string().optional(),
 });
 
-type ProfileFormValues = z.infer<typeof profileSchema>;
+// type ProfileFormValues = z.infer<typeof profileSchema>;
 
 interface ProfileEditorProps {
   className?: string;
@@ -144,7 +144,7 @@ export function ProfileEditor({ className }: ProfileEditorProps) {
         let errorData;
         try {
           errorData = await response.text();
-        } catch (e) {
+        } catch {
           errorData = 'Could not read error response';
         }
 

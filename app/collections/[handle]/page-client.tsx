@@ -76,7 +76,6 @@ const COLLECTIONS_INFO: Record<string, CollectionInfo> = {
 
 export default function CollectionPage() {
   const [handle, setHandle] = useState<string>('');
-  const [metadataHandle, setMetadataHandle] = useState<string>('');
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [title, setTitle] = useState<string>('');
@@ -118,7 +117,7 @@ export default function CollectionPage() {
     else if (simpleHandle.includes('blackview')) simpleHandle = 'blackview';
     else if (simpleHandle.includes('fullalu')) simpleHandle = 'fullalu';
 
-    setMetadataHandle(simpleHandle);
+    // setMetadataHandle(simpleHandle); // Currently not used
 
     // Set collection metadata from our mapping
     if (COLLECTIONS_INFO[simpleHandle]) {
@@ -163,7 +162,7 @@ export default function CollectionPage() {
         } else {
           setProducts([]);
         }
-      } catch (error) {
+      } catch {
         setProducts([]);
       } finally {
         setIsLoading(false);

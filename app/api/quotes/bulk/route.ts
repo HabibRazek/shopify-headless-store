@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
       message: 'Demande de devis groupé soumise avec succès',
       quoteId: bulkQuote.id,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Erreur interne du serveur' },
       { status: 500 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -28,7 +28,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { FullScreenLoader, InlineLoader } from '@/components/ui/loader';
+import { FullScreenLoader } from '@/components/ui/loader';
 
 interface BlogPost {
   id: string;
@@ -68,18 +68,7 @@ export default function AdminBlogPostsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  useEffect(() => {
-    if (status === 'loading') return;
-    
-    if (!session || session.user?.role !== 'admin') {
-      router.push('/');
-      return;
-    }
-
-    fetchPosts();
-  }, [session, status, router, currentPage, statusFilter, viewFilter, sortBy, searchTerm]);
-
-  const fetchPosts = async () => {
+  const fetchPosts = useCallback(async () => {
     try {
       const params = new URLSearchParams({
         page: currentPage.toString(),
@@ -108,7 +97,18 @@ export default function AdminBlogPostsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, statusFilter, viewFilter, sortBy, searchTerm]);
+
+  useEffect(() => {
+    if (status === 'loading') return;
+
+    if (!session || session.user?.role !== 'admin') {
+      router.push('/');
+      return;
+    }
+
+    fetchPosts();
+  }, [session, status, router, fetchPosts]);
 
   const handleDeletePost = async (slug: string) => {
     if (!confirm('Êtes-vous sûr de vouloir supprimer cet article ?')) {

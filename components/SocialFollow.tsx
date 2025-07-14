@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 import { Instagram, Youtube, Facebook, Linkedin } from 'lucide-react';
-import Image from 'next/image';
 
 export default function SocialFollow() {
   const socialLinks = [

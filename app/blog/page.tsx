@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Search, Calendar, ArrowRight, BookOpen, Clock, Eye, Tag, Filter, RotateCcw, ArrowLeft, Mail } from 'lucide-react';
+import { Search, Calendar, ArrowRight, BookOpen, Clock, Eye, Tag, Filter, RotateCcw, ArrowLeft } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -58,12 +58,7 @@ export default function BlogPage() {
   const [sortBy, setSortBy] = useState('newest');
   const [viewFilter, setViewFilter] = useState('all');
 
-  useEffect(() => {
-    fetchPosts();
-    fetchCategories();
-  }, [currentPage, selectedCategory, searchTerm, sortBy, viewFilter]);
-
-  const fetchPosts = async () => {
+  const fetchPosts = useCallback(async () => {
     try {
       const params = new URLSearchParams({
         page: currentPage.toString(),
@@ -92,7 +87,12 @@ export default function BlogPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, selectedCategory, searchTerm, sortBy, viewFilter]);
+
+  useEffect(() => {
+    fetchPosts();
+    fetchCategories();
+  }, [fetchPosts]);
 
   const fetchCategories = async () => {
     try {

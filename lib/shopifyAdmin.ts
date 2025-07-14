@@ -73,8 +73,8 @@ export async function shopifyAdminFetch({
   }
 }
 
-// GraphQL mutation for creating draft orders
-const CREATE_DRAFT_ORDER_MUTATION = `
+// GraphQL mutation for creating draft orders (currently not used)
+/* const CREATE_DRAFT_ORDER_MUTATION = `
   mutation draftOrderCreate($input: DraftOrderInput!) {
     draftOrderCreate(input: $input) {
       draftOrder {
@@ -119,7 +119,7 @@ const CREATE_DRAFT_ORDER_MUTATION = `
       }
     }
   }
-`;
+`; */
 
 interface CustomerInfo {
   firstName: string;
@@ -204,7 +204,7 @@ export async function createShopifyOrder(orderData: {
     console.log('Enriched cart with variants:', enrichedCart);
 
     // Calculate totals
-    const subtotal = enrichedCart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
+    // const subtotal = enrichedCart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0); // Currently not used
     const deliveryFee = 8; // TND
 
     // Prepare line items for REST API

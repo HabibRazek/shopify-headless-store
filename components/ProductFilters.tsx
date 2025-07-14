@@ -242,14 +242,14 @@ export default function ProductFilters({ products, onFilterChange }: ProductFilt
     );
   };
 
-  // Toggle size selection
-  const toggleSize = (size: string) => {
-    setSelectedSizes(prev =>
-      prev.includes(size)
-        ? prev.filter(s => s !== size)
-        : [...prev, size]
-    );
-  };
+  // Toggle size selection (currently not used)
+  // const toggleSize = (size: string) => {
+  //   setSelectedSizes(prev =>
+  //     prev.includes(size)
+  //       ? prev.filter(s => s !== size)
+  //       : [...prev, size]
+  //   );
+  // };
 
   // Toggle category selection
   const toggleCategory = (category: string) => {

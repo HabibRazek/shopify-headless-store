@@ -16,7 +16,6 @@ import {
   List,
   Package,
   ArrowRight,
-  Loader2,
   AlertCircle,
   Eye,
   ShoppingBag,
