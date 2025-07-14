@@ -1,6 +1,7 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
+import { FullScreenLoader, InlineLoader } from '@/components/ui/loader';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -37,12 +38,7 @@ function ProfileContent() {
   }, [status, router, redirecting]);
 
   if (status === 'loading') {
-    return (
-      <div className="flex justify-center items-center min-h-[calc(100vh-4rem)]">
-        <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin"></div>
-        <p className="mt-4 text-gray-600">Loading your profile...</p>
-      </div>
-    );
+    return <FullScreenLoader />;
   }
 
   if (status === 'unauthenticated' || redirecting) {
@@ -63,7 +59,7 @@ function ProfileContent() {
   // If we have a session, show the profile
 
   return (
-    <div className="min-h-screen bg-gradient-to-br pt-12">
+    <div className="min-h-screen bg-gradient-to-br pt-1è">
       {/* Professional Header */}
       <div className="bg-white border-b border-gray-200 shadow-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -134,12 +130,7 @@ function ProfileContent() {
 
 export default function ProfilePage() {
   return (
-    <Suspense fallback={
-      <div className="flex justify-center items-center min-h-[calc(100vh-4rem)]">
-        <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin"></div>
-        <p className="mt-4 text-gray-600">Loading profile...</p>
-      </div>
-    }>
+    <Suspense fallback={<InlineLoader text="Chargement du profil..." />}>
       <ProfileContent />
     </Suspense>
   );

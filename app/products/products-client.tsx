@@ -21,6 +21,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { FullScreenLoader } from '@/components/ui/loader';
 
 export default function ProductsClient() {
   // Define a type for the product with node structure
@@ -138,7 +139,7 @@ export default function ProductsClient() {
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   if (isLoading) {
-    return <div className="text-center py-10">Loading products...</div>;
+    return <FullScreenLoader />;
   }
 
   if (isError) {

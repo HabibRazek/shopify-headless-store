@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle, ShoppingBag, Clock } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { formatPrice } from '@/lib/utils';
+import { FullScreenLoader } from '@/components/ui/loader';
 
 function SuccessContent() {
   // const router = useRouter();
@@ -138,15 +139,7 @@ function SuccessContent() {
 
 // Loading fallback component
 function LoadingFallback() {
-  return (
-    <div className="bg-white min-h-[calc(100vh-4rem)] flex items-center justify-center">
-      <div className="text-center p-8">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-        <h2 className="text-xl font-medium text-gray-700">Loading order details...</h2>
-        <p className="text-gray-500 mt-2">Please wait while we retrieve your order information.</p>
-      </div>
-    </div>
-  );
+  return <FullScreenLoader />;
 }
 
 // Main component with Suspense boundary

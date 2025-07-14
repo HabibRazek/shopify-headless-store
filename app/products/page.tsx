@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
-import { Suspense } from 'react';
-import ProductsClient from './products-client';
+import ProductsPageClient from '@/components/ProductsPageClient';
 export const metadata: Metadata = {
   title: "Catalogue Produits - Emballages Flexibles Premium",
   description: "Découvrez notre gamme complète d'emballages flexibles : doypacks kraft, sachets zip, emballages alimentaires personnalisés. Plus de 100 produits disponibles avec livraison rapide en Tunisie.",
@@ -139,16 +138,7 @@ export default function ProductsPage() {
             </p>
           </div>
 
-          <Suspense fallback={
-            <div className="text-center py-20">
-              <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full shadow-lg">
-                <div className="w-5 h-5 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
-                <span className="text-gray-700 font-medium">Chargement des produits...</span>
-              </div>
-            </div>
-          }>
-            <ProductsClient />
-          </Suspense>
+          <ProductsPageClient />
         </div>
       </div>
     </>

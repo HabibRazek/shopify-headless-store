@@ -10,6 +10,7 @@ import { ShopifyProduct } from '@/types/shopify';
 import { toast } from 'sonner';
 import { Check } from 'lucide-react';
 import CheckoutDialog from '@/components/CheckoutDialog';
+import { FullScreenLoader } from '@/components/ui/loader';
 
 export default function ProductPage() {
   // State for product data and UI
@@ -72,11 +73,7 @@ export default function ProductPage() {
 
   // Loading state
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-indigo-600"></div>
-      </div>
-    );
+    return <FullScreenLoader />;
   }
 
   // Error state

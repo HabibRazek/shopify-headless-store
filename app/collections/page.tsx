@@ -27,6 +27,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { FullScreenLoader } from '@/components/ui/loader';
 
 // Enhanced Collection Card Component
 function CollectionCard({ collection, viewMode, variants }: any) {
@@ -175,23 +176,7 @@ function ModernCollections() {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="text-center">
-              <Loader2 className="h-12 w-12 animate-spin text-green-600 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Chargement des collections...
-              </h3>
-              <p className="text-gray-500">
-                Nous récupérons toutes nos collections pour vous
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <FullScreenLoader />;
   }
 
   if (isError) {

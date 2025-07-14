@@ -24,7 +24,7 @@ export default function CTASection() {
             repeat: Infinity,
             ease: "linear"
           }}
-          className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-green-200/15 to-emerald-200/15 rounded-full blur-3xl"
+          className="absolute -top-40 -right-40 w-80 h-80 rounded-full blur-3xl"
         />
         <motion.div
           animate={{

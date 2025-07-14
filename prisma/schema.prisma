@@ -61,6 +61,8 @@ model User {
   orders        Order[]
   quotes        Quote[]
   bulkQuotes    BulkQuote[]
+  blogPosts     BlogPost[]
+  postViews     PostView[]
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime? @updatedAt
@@ -143,4 +145,63 @@ model BulkQuote {
   updatedAt       DateTime @updatedAt
 
   @@map("bulk_quotes")
+}
+
+// Blog Models
+model BlogPost {
+  id          String      @id @default(cuid())
+  title       String
+  slug        String      @unique
+  excerpt     String?
+  content     String      @db.Text
+  featuredImage String?
+  images      String[]    @default([])
+  published   Boolean     @default(false)
+  authorId    String
+  author      User        @relation(fields: [authorId], references: [id])
+  categoryId  String?
+  category    BlogCategory? @relation(fields: [categoryId], references: [id])
+  tags        BlogTag[]   @relation("BlogPostTags")
+  views       Int         @default(0)
+  postViews   PostView[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("blog_posts")
+}
+
+model BlogCategory {
+  id          String      @id @default(cuid())
+  name        String      @unique
+  slug        String      @unique
+  description String?
+  posts       BlogPost[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("blog_categories")
+}
+
+model BlogTag {
+  id        String      @id @default(cuid())
+  name      String      @unique
+  slug      String      @unique
+  posts     BlogPost[]  @relation("BlogPostTags")
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@map("blog_tags")
+}
+
+model PostView {
+  id        String      @id @default(cuid())
+  postId    String
+  post      BlogPost    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String?     // Optional - for registered users
+  user      User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ipAddress String?     // For anonymous users
+  userAgent String?     // Browser/device info
+  viewedAt  DateTime    @default(now())
+
+  @@map("post_views")
 }

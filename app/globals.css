@@ -837,4 +837,47 @@
       0 0 40px rgba(34, 197, 94, 0.1),
       inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
+
+  /* Blog Content Styles */
+  .blog-content p {
+    @apply mb-4 leading-relaxed;
+  }
+
+  .blog-content h1,
+  .blog-content h2,
+  .blog-content h3,
+  .blog-content h4,
+  .blog-content h5,
+  .blog-content h6 {
+    @apply mt-8 mb-4 font-semibold;
+  }
+
+  .blog-content ul,
+  .blog-content ol {
+    @apply mb-4 pl-6;
+  }
+
+  .blog-content li {
+    @apply mb-2;
+  }
+
+  .blog-content blockquote {
+    @apply border-l-4 border-green-500 pl-4 my-6 italic text-gray-600;
+  }
+
+  .blog-content code {
+    @apply bg-gray-100 px-2 py-1 rounded text-sm;
+  }
+
+  .blog-content pre {
+    @apply bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-4;
+  }
+
+  .blog-content img {
+    @apply rounded-lg my-4;
+  }
+
+  .blog-content a {
+    @apply text-green-600 hover:text-green-700 underline;
+  }
 }

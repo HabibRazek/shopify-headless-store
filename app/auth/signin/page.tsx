@@ -3,6 +3,7 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
+import { FullScreenLoader } from '@/components/ui/loader';
 import { SignInForm } from '@/components/auth/signin-form';
 import { ArrowLeft } from 'lucide-react';
 
@@ -112,16 +113,7 @@ function SignInContent() {
 
 // Loading fallback component
 function LoadingFallback() {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md shadow-2xl border-0 bg-white/80 backdrop-blur-sm p-8">
-        <div className="flex flex-col items-center justify-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </Card>
-    </div>
-  );
+  return <FullScreenLoader />;
 }
 
 // Main component with Suspense boundary

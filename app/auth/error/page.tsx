@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AlertCircleIcon, HomeIcon, RefreshCwIcon } from 'lucide-react';
+import { FullScreenLoader } from '@/components/ui/loader';
 
 function ErrorContent() {
   const searchParams = useSearchParams();
@@ -103,16 +104,7 @@ function ErrorContent() {
 
 // Loading fallback component
 function LoadingFallback() {
-  return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
-      <Card className="w-full max-w-md shadow-lg border-0 p-8">
-        <div className="flex flex-col items-center justify-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </Card>
-    </div>
-  );
+  return <FullScreenLoader />;
 }
 
 // Main component with Suspense boundary

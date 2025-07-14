@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, User, X, LogIn, LogOut } from 'lucide-react';
+import { Menu, User, X, LogIn, LogOut, Settings } from 'lucide-react';
 import { useShopContext } from '@/context/ShopContext';
 import { Button } from '@/components/ui/button';
 import Cart from '@/components/Cart';
@@ -102,6 +102,13 @@ export default function Navbar() {
               <span className="relative z-10">À propos</span>
               <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-green-500/5 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300 origin-center" />
             </Link>
+            <Link
+              href="/blog"
+              className="relative px-6 py-3 rounded-full text-sm font-medium text-gray-700 hover:text-green-700 transition-all duration-300 group overflow-hidden"
+            >
+              <span className="relative z-10">Blog</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-green-500/5 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300 origin-center" />
+            </Link>
           </nav>
 
           {/* Desktop Actions */}
@@ -135,6 +142,16 @@ export default function Navbar() {
                       <span>Profile</span>
                     </Link>
                   </DropdownMenuItem>
+                  {session?.user?.role === 'admin' && (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin">
+                          <Settings className="mr-2 h-4 w-4" />
+                          <span>Administration</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={() => signOut({ callbackUrl: '/', redirect: true })}
@@ -206,6 +223,14 @@ export default function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <span className="relative z-10 text-base font-medium">À propos</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl scale-0 group-hover:scale-100 transition-transform duration-300 origin-left" />
+              </Link>
+              <Link
+                href="/blog"
+                className="relative px-4 sm:px-5 py-3 sm:py-4 rounded-xl text-gray-700 hover:text-primary transition-all duration-300 flex items-center group overflow-hidden touch-target"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <span className="relative z-10 text-base font-medium">Blog</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl scale-0 group-hover:scale-100 transition-transform duration-300 origin-left" />
               </Link>
               {status === 'authenticated' ? (

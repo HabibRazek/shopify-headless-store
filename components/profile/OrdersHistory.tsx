@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { InlineLoader } from '@/components/ui/loader';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -241,16 +242,7 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
       <div className={className}>
         <Card className="border-0 shadow-lg">
           <CardContent className="p-12">
-            <div className="flex flex-col items-center justify-center space-y-4">
-              <div className="relative">
-                <div className="w-12 h-12 border-4 border-green-200 border-t-green-600 rounded-full animate-spin"></div>
-                <Package className="absolute inset-0 m-auto h-6 w-6 text-green-600" />
-              </div>
-              <div className="text-center">
-                <h3 className="text-lg font-semibold text-gray-900 mb-1">Chargement de vos commandes</h3>
-                <p className="text-gray-600">Veuillez patienter...</p>
-              </div>
-            </div>
+            <InlineLoader text="Chargement de vos commandes..." />
           </CardContent>
         </Card>
       </div>
