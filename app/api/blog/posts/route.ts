@@ -119,50 +119,92 @@ export async function GET(request: NextRequest) {
 
 // POST /api/blog/posts - Create a new blog post (admin only)
 export async function POST(request: NextRequest) {
+  console.log('🚀 Blog post creation API called');
+
   try {
+    // Check authentication
+    console.log('🔐 Checking authentication...');
     const session = await auth();
 
-    if (!session?.user || session.user.role !== 'admin') {
+    if (!session?.user) {
+      console.log('❌ No user session found');
       return NextResponse.json(
-        { error: 'Unauthorized - Admin access required' },
+        { error: 'Non authentifié - Connexion requise' },
         { status: 401 }
       );
     }
 
+    if (session.user.role !== 'admin') {
+      console.log('❌ User is not admin:', session.user.role);
+      return NextResponse.json(
+        { error: 'Accès non autorisé - Droits administrateur requis' },
+        { status: 403 }
+      );
+    }
+
+    console.log('✅ Authentication successful for user:', session.user.name);
+
+    // Parse request body
+    console.log('📝 Parsing request body...');
     const body = await request.json();
     const { title, slug, excerpt, content, featuredImage, images, published, categoryId, tagIds } = body;
 
+    console.log('📊 Received data:', {
+      title: title?.substring(0, 50) + '...',
+      slug,
+      published,
+      hasContent: !!content,
+      contentLength: content?.length || 0,
+      hasImages: images?.length || 0,
+      categoryId,
+      tagCount: tagIds?.length || 0
+    });
+
     // Validation
     if (!title || !title.trim()) {
+      console.log('❌ Validation failed: Title is required');
       return NextResponse.json(
-        { error: 'Title is required' },
+        { error: 'Le titre est requis' },
         { status: 400 }
       );
     }
 
     if (!slug || !slug.trim()) {
+      console.log('❌ Validation failed: Slug is required');
       return NextResponse.json(
-        { error: 'Slug is required' },
+        { error: 'Le slug est requis' },
         { status: 400 }
       );
     }
 
     if (!content || !content.trim()) {
+      console.log('❌ Validation failed: Content is required');
       return NextResponse.json(
-        { error: 'Content is required' },
+        { error: 'Le contenu est requis' },
         { status: 400 }
       );
     }
 
     // Check if slug already exists
-    const existingPost = await prisma.blogPost.findUnique({
-      where: { slug: slug.trim() },
-    });
+    console.log('🔍 Checking if slug already exists...');
+    try {
+      const existingPost = await prisma.blogPost.findUnique({
+        where: { slug: slug.trim() },
+      });
 
-    if (existingPost) {
+      if (existingPost) {
+        console.log('❌ Slug already exists:', slug);
+        return NextResponse.json(
+          { error: 'Un article avec ce slug existe déjà' },
+          { status: 400 }
+        );
+      }
+      console.log('✅ Slug is available');
+    } catch (dbError) {
+      console.error('❌ Database error checking slug:', dbError);
       return NextResponse.json(
-        { error: 'Un article avec ce slug existe déjà' },
-        { status: 400 }
+        { error: 'Erreur de base de données lors de la vérification du slug' },
+        { status: 500 }
       );
     }
 
@@ -194,39 +236,71 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const post = await prisma.blogPost.create({
-      data: {
-        title: title.trim(),
-        slug: slug.trim(),
-        excerpt: excerpt?.trim() || '',
-        content: content.trim(),
-        featuredImage: featuredImage?.trim() || '',
-        images: images || [],
-        published: published || false,
-        authorId: session.user.id,
-        categoryId: categoryId || null,
-        tags: tagIds && tagIds.length > 0 ? {
-          connect: tagIds.map((id: string) => ({ id })),
-        } : undefined,
-      },
-      include: {
-        author: {
-          select: {
-            id: true,
-            name: true,
-            image: true,
-          },
+    // Create the blog post
+    console.log('💾 Creating blog post in database...');
+    try {
+      const post = await prisma.blogPost.create({
+        data: {
+          title: title.trim(),
+          slug: slug.trim(),
+          excerpt: excerpt?.trim() || '',
+          content: content.trim(),
+          featuredImage: featuredImage?.trim() || '',
+          images: images || [],
+          published: published || false,
+          authorId: session.user.id,
+          categoryId: categoryId || null,
+          tags: tagIds && tagIds.length > 0 ? {
+            connect: tagIds.map((id: string) => ({ id })),
+          } : undefined,
         },
-        category: true,
-        tags: true,
-      },
-    });
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            },
+          },
+          category: true,
+          tags: true,
+        },
+      });
 
-    return NextResponse.json(post, { status: 201 });
+      console.log('✅ Blog post created successfully:', post.id);
+      return NextResponse.json(post, { status: 201 });
+    } catch (dbError) {
+      console.error('❌ Database error creating post:', dbError);
+      return NextResponse.json(
+        { error: 'Erreur de base de données lors de la création de l\'article: ' + (dbError instanceof Error ? dbError.message : 'Erreur inconnue') },
+        { status: 500 }
+      );
+    }
   } catch (error) {
-    console.error('Error creating blog post:', error);
+    console.error('❌ Unexpected error creating blog post:', error);
+
+    // More specific error handling
+    if (error instanceof Error) {
+      if (error.message.includes('connect ECONNREFUSED')) {
+        return NextResponse.json(
+          { error: 'Erreur de connexion à la base de données. Veuillez réessayer.' },
+          { status: 503 }
+        );
+      } else if (error.message.includes('timeout')) {
+        return NextResponse.json(
+          { error: 'Délai d\'attente dépassé. Veuillez réessayer.' },
+          { status: 504 }
+        );
+      } else if (error.message.includes('authentication')) {
+        return NextResponse.json(
+          { error: 'Erreur d\'authentification. Veuillez vous reconnecter.' },
+          { status: 401 }
+        );
+      }
+    }
+
     return NextResponse.json(
-      { error: 'Failed to create blog post: ' + (error instanceof Error ? error.message : 'Unknown error') },
+      { error: 'Erreur inattendue lors de la création de l\'article: ' + (error instanceof Error ? error.message : 'Erreur inconnue') },
       { status: 500 }
     );
   }

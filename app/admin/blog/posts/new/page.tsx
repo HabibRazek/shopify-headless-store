@@ -142,25 +142,61 @@ export default function NewBlogPostPage() {
         tagIds: formData.tagIds.length > 0 ? formData.tagIds : [],
       };
 
+      console.log('🚀 Sending blog post data:', {
+        title: submitData.title,
+        slug: submitData.slug,
+        published: submitData.published,
+        hasContent: !!submitData.content,
+        hasImages: submitData.images?.length || 0
+      });
+
+      // Create AbortController for timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
       const response = await fetch('/api/blog/posts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(submitData),
+        signal: controller.signal,
       });
 
-      const data = await response.json();
+      clearTimeout(timeoutId);
 
-      if (response.ok) {
-        toast.success(asDraft ? 'Brouillon sauvegardé avec succès!' : 'Article créé avec succès!');
-        router.push('/admin/blog/posts');
-      } else {
-        toast.error(data.error || `Erreur ${response.status}: ${response.statusText}`);
+      console.log('📡 Response status:', response.status, response.statusText);
+
+      if (!response.ok) {
+        // Try to get error details
+        let errorMessage = `Erreur ${response.status}: ${response.statusText}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorMessage;
+          console.error('❌ Server error details:', errorData);
+        } catch (parseError) {
+          console.error('❌ Could not parse error response:', parseError);
+        }
+        toast.error(errorMessage);
+        return;
       }
+
+      const data = await response.json();
+      console.log('✅ Blog post created successfully:', data.id);
+
+      toast.success(asDraft ? 'Brouillon sauvegardé avec succès!' : 'Article créé avec succès!');
+      router.push('/admin/blog/posts');
     } catch (error) {
-      console.error('Error creating post:', error);
-      toast.error('Erreur de connexion. Vérifiez votre connexion internet.');
+      console.error('❌ Network/Connection error:', error);
+
+      // More specific error messages
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        toast.error('Erreur de réseau. Vérifiez votre connexion internet et réessayez.');
+      } else if (error instanceof Error && error.name === 'AbortError') {
+        toast.error('Délai d\'attente dépassé. Réessayez dans quelques instants.');
+      } else {
+        toast.error('Erreur inattendue. Vérifiez la console pour plus de détails.');
+      }
     } finally {
       setLoading(false);
     }
