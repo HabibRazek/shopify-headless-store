@@ -24,11 +24,12 @@ export function MultipleImageUpload({
   className = ""
 }: MultipleImageUploadProps) {
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    
+
     if (files.length === 0) return;
 
     // Check if adding these files would exceed the limit
@@ -38,33 +39,56 @@ export function MultipleImageUpload({
     }
 
     setUploading(true);
+    setUploadProgress(`Téléchargement de ${files.length} image(s)...`);
 
     try {
-      const uploadPromises = files.map(async (file) => {
+      const uploadPromises = files.map(async (file, index) => {
+        setUploadProgress(`Téléchargement ${index + 1}/${files.length}: ${file.name}`);
+        // Validate file type
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+        if (!allowedTypes.includes(file.type)) {
+          throw new Error(`Type de fichier invalide pour ${file.name}. Seuls JPEG, PNG, WebP et GIF sont autorisés.`);
+        }
+
+        // Validate file size (max 4MB)
+        const maxSize = 4 * 1024 * 1024; // 4MB
+        if (file.size > maxSize) {
+          throw new Error(`Fichier ${file.name} trop volumineux. Taille maximale : 4MB.`);
+        }
+
         const formData = new FormData();
         formData.append('file', file);
 
-        const response = await fetch('/api/upload/image', {
+        const response = await fetch('/api/upload', {
           method: 'POST',
           body: formData,
         });
 
         if (!response.ok) {
-          throw new Error(`Failed to upload ${file.name}`);
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || `Échec du téléchargement de ${file.name}`);
         }
 
         const data = await response.json();
+
+        if (!data.success || !data.url) {
+          throw new Error(`Réponse invalide pour ${file.name}`);
+        }
+
+        console.log(`✅ Image supplémentaire téléchargée: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`);
         return data.url;
       });
 
       const uploadedUrls = await Promise.all(uploadPromises);
       onImagesChange([...images, ...uploadedUrls]);
-      toast.success(`${uploadedUrls.length} image(s) ajoutée(s) avec succès`);
+      toast.success(`${uploadedUrls.length} image(s) supplémentaire(s) ajoutée(s) avec succès`);
     } catch (error) {
-      console.error('Error uploading images:', error);
-      toast.error('Erreur lors du téléchargement des images');
+      console.error('❌ Error uploading supplementary images:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Erreur lors du téléchargement des images supplémentaires';
+      toast.error(errorMessage);
     } finally {
       setUploading(false);
+      setUploadProgress('');
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -119,7 +143,10 @@ export function MultipleImageUpload({
               disabled={uploading}
             >
               {uploading ? (
-                <div className="animate-spin rounded-full h-6 w-6 border-2 border-green-500 border-t-transparent" />
+                <div className="flex flex-col items-center gap-1">
+                  <div className="animate-spin rounded-full h-6 w-6 border-2 border-green-500 border-t-transparent" />
+                  <span className="text-xs text-gray-500 text-center">Upload...</span>
+                </div>
               ) : (
                 <>
                   <Plus className="h-6 w-6 text-gray-400" />
@@ -153,10 +180,17 @@ export function MultipleImageUpload({
           <Upload className="h-4 w-4" />
           {uploading ? 'Téléchargement...' : 'Choisir des images'}
         </Button>
-        
-        <p className="text-sm text-gray-500">
-          {images.length}/{maxImages} images • Formats: JPG, PNG, WebP
-        </p>
+
+        <div className="flex flex-col gap-1">
+          <p className="text-sm text-gray-500">
+            {images.length}/{maxImages} images • Formats: JPG, PNG, WebP (max 4MB)
+          </p>
+          {uploadProgress && (
+            <p className="text-xs text-green-600 font-medium">
+              {uploadProgress}
+            </p>
+          )}
+        </div>
       </div>
 
       {images.length === 0 && (
