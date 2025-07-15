@@ -123,7 +123,7 @@ export default function AdminDashboard() {
               Bienvenue, {session.user.name}. Créez et gérez votre contenu blog pour engager vos clients.
             </p>
             <Link href="/admin/blog/posts/new">
-              <Button size="lg" className="bg-blue-600 text-white hover:bg-blue-700 font-semibold px-8 py-3">
+              <Button size="lg" className="bg-green-600 text-white hover:bg-green-700 font-semibold px-8 py-3">
                 <Plus className="h-5 w-5 mr-2" />
                 Créer un nouvel article
               </Button>
@@ -189,9 +189,9 @@ export default function AdminDashboard() {
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Actions Rapides</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Link href="/admin/blog/posts/new">
-              <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 cursor-pointer bg-blue-50 hover:bg-blue-100">
+              <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 cursor-pointer bg-green-50 hover:bg-green-100">
                 <CardContent className="p-6 text-center">
-                  <Plus className="h-12 w-12 mx-auto mb-4 text-blue-600" />
+                  <Plus className="h-12 w-12 mx-auto mb-4 text-green-600" />
                   <h3 className="font-semibold text-lg mb-2 text-gray-900">Nouvel Article</h3>
                   <p className="text-gray-600 text-sm">Créer un nouveau post</p>
                 </CardContent>
