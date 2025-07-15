@@ -3,6 +3,14 @@
   "functions": {
     "app/api/auth/[...nextauth]/route.ts": {
       "maxDuration": 30
+    },
+    "app/api/blog/posts/route.ts": {
+      "maxDuration": 60,
+      "memory": 1024
+    },
+    "app/api/upload/route.ts": {
+      "maxDuration": 60,
+      "memory": 1024
     }
   },
   "env": {
@@ -12,6 +20,15 @@
   "headers": [
     {
       "source": "/api/auth/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
+      ]
+    },
+    {
+      "source": "/api/blog/(.*)",
       "headers": [
         {
           "key": "Cache-Control",

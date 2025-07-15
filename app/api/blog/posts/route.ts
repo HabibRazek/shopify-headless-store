@@ -144,21 +144,51 @@ export async function POST(request: NextRequest) {
 
     console.log('✅ Authentication successful for user:', session.user.name);
 
-    // Parse request body
+    // Parse request body with size checking
     console.log('📝 Parsing request body...');
+
+    // Check content-length header if available
+    const contentLength = request.headers.get('content-length');
+    if (contentLength) {
+      const sizeInMB = parseInt(contentLength) / 1024 / 1024;
+      console.log('📏 Request size:', `${sizeInMB.toFixed(2)}MB`);
+
+      if (sizeInMB > 10) {
+        console.log('❌ Request too large:', `${sizeInMB.toFixed(2)}MB`);
+        return NextResponse.json(
+          { error: `Contenu trop volumineux (${sizeInMB.toFixed(2)}MB). Limite: 10MB. Réduisez la taille des images ou du contenu.` },
+          { status: 413 }
+        );
+      }
+    }
+
     const body = await request.json();
     const { title, slug, excerpt, content, featuredImage, images, published, categoryId, tagIds } = body;
+
+    // Optimize content size
+    const optimizedContent = content ? content.trim() : '';
+    const optimizedImages = images ? images.slice(0, 20) : []; // Limit to 20 images max
 
     console.log('📊 Received data:', {
       title: title?.substring(0, 50) + '...',
       slug,
       published,
-      hasContent: !!content,
-      contentLength: content?.length || 0,
-      hasImages: images?.length || 0,
+      hasContent: !!optimizedContent,
+      contentLength: optimizedContent?.length || 0,
+      originalImageCount: images?.length || 0,
+      optimizedImageCount: optimizedImages.length,
       categoryId,
       tagCount: tagIds?.length || 0
     });
+
+    // Additional content size validation
+    if (optimizedContent && optimizedContent.length > 500000) { // 500KB text limit
+      console.log('❌ Content too large:', `${optimizedContent.length} characters`);
+      return NextResponse.json(
+        { error: 'Contenu textuel trop volumineux. Limite: 500,000 caractères. Réduisez la longueur du texte.' },
+        { status: 413 }
+      );
+    }
 
     // Validation
     if (!title || !title.trim()) {
@@ -244,9 +274,9 @@ export async function POST(request: NextRequest) {
           title: title.trim(),
           slug: slug.trim(),
           excerpt: excerpt?.trim() || '',
-          content: content.trim(),
+          content: optimizedContent,
           featuredImage: featuredImage?.trim() || '',
-          images: images || [],
+          images: optimizedImages,
           published: published || false,
           authorId: session.user.id,
           categoryId: categoryId || null,

@@ -142,13 +142,23 @@ export default function NewBlogPostPage() {
         tagIds: formData.tagIds.length > 0 ? formData.tagIds : [],
       };
 
+      // Check content size before sending
+      const contentSize = new Blob([JSON.stringify(submitData)]).size;
+      const maxSize = 8 * 1024 * 1024; // 8MB limit
+
       console.log('🚀 Sending blog post data:', {
         title: submitData.title,
         slug: submitData.slug,
         published: submitData.published,
         hasContent: !!submitData.content,
-        hasImages: submitData.images?.length || 0
+        hasImages: submitData.images?.length || 0,
+        contentSize: `${(contentSize / 1024 / 1024).toFixed(2)}MB`
       });
+
+      if (contentSize > maxSize) {
+        toast.error(`Contenu trop volumineux (${(contentSize / 1024 / 1024).toFixed(2)}MB). Limite: 8MB. Réduisez la taille des images ou du contenu.`);
+        return;
+      }
 
       // Create AbortController for timeout
       const controller = new AbortController();
@@ -168,6 +178,12 @@ export default function NewBlogPostPage() {
       console.log('📡 Response status:', response.status, response.statusText);
 
       if (!response.ok) {
+        // Handle specific error codes
+        if (response.status === 413) {
+          toast.error('Contenu trop volumineux. Réduisez la taille des images ou du texte et réessayez.');
+          return;
+        }
+
         // Try to get error details
         let errorMessage = `Erreur ${response.status}: ${response.statusText}`;
         try {
@@ -176,6 +192,10 @@ export default function NewBlogPostPage() {
           console.error('❌ Server error details:', errorData);
         } catch (parseError) {
           console.error('❌ Could not parse error response:', parseError);
+          // For 413 errors, the response might not be JSON
+          if (response.status === 413) {
+            errorMessage = 'Contenu trop volumineux. Réduisez la taille des images ou du texte.';
+          }
         }
         toast.error(errorMessage);
         return;
@@ -315,9 +335,20 @@ export default function NewBlogPostPage() {
                       rows={20}
                       required
                     />
-                    <p className="text-sm text-gray-500 mt-1">
-                      Vous pouvez utiliser du HTML pour formater votre contenu
-                    </p>
+                    <div className="flex justify-between items-center mt-1">
+                      <p className="text-sm text-gray-500">
+                        Vous pouvez utiliser du HTML pour formater votre contenu
+                      </p>
+                      <p className={`text-sm ${
+                        formData.content.length > 400000
+                          ? 'text-red-500 font-medium'
+                          : formData.content.length > 300000
+                            ? 'text-orange-500'
+                            : 'text-gray-400'
+                      }`}>
+                        {(formData.content.length / 1000).toFixed(0)}k / 500k caractères
+                      </p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -439,6 +470,45 @@ export default function NewBlogPostPage() {
                   <CardTitle>Actions</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
+                  {/* Content Size Indicator */}
+                  <div className="p-3 bg-gray-50 rounded-lg border">
+                    <div className="text-sm text-gray-600 mb-1">Taille estimée du contenu:</div>
+                    <div className={`text-sm font-medium ${
+                      (() => {
+                        const size = new Blob([JSON.stringify({
+                          title: formData.title,
+                          content: formData.content,
+                          images: formData.images,
+                          excerpt: formData.excerpt
+                        })]).size / 1024 / 1024;
+                        return size > 8 ? 'text-red-500' : size > 6 ? 'text-orange-500' : 'text-green-600';
+                      })()
+                    }`}>
+                      {(() => {
+                        const size = new Blob([JSON.stringify({
+                          title: formData.title,
+                          content: formData.content,
+                          images: formData.images,
+                          excerpt: formData.excerpt
+                        })]).size / 1024 / 1024;
+                        return `${size.toFixed(2)}MB / 8MB`;
+                      })()}
+                    </div>
+                    {(() => {
+                      const size = new Blob([JSON.stringify({
+                        title: formData.title,
+                        content: formData.content,
+                        images: formData.images,
+                        excerpt: formData.excerpt
+                      })]).size / 1024 / 1024;
+                      return size > 8 && (
+                        <div className="text-xs text-red-500 mt-1">
+                          ⚠️ Contenu trop volumineux. Réduisez les images ou le texte.
+                        </div>
+                      );
+                    })()}
+                  </div>
+
                   <Button
                     type="button"
                     variant="outline"
