@@ -12,6 +12,8 @@ import WhyChooseUs from '@/components/WhyChooseUs';
 import ProductCategories from '@/components/ProductCategories';
 import CustomPackaging from '@/components/CustomPackaging';
 import SocialFollow from '@/components/SocialFollow';
+import ServiceFeatures from '@/components/ServiceFeatures';
+import GrowthPartnership from '@/components/GrowthPartnership';
 
 
 export default function Home() {
@@ -94,6 +96,11 @@ export default function Home() {
         <WhyChooseUs />
       </div>
 
+      {/* Service Features Section */}
+      <div className="mt-[-20px] sm:mt-[-40px] md:mt-[-60px] lg:mt-[-80px]">
+        <ServiceFeatures />
+      </div>
+
       <div className="mt-[-20px] sm:mt-[-40px] md:mt-[-60px] lg:mt-[-80px]">
         <ProductCategories />
       </div>
@@ -108,8 +115,32 @@ export default function Home() {
         <References />
       </div>
 
-      <div className="mt-[-10px] sm:mt-[-20px] md:mt-[-30px]">
-        <SocialFollow />
+      {/* Growth Partnership Section */}
+      <div className="mt-[-20px] sm:mt-[-40px] md:mt-[-60px] lg:mt-[-80px]">
+        <GrowthPartnership />
+      </div>
+
+      <div className="relative">
+        {/* Arrow positioned to align with social media title */}
+        <div className="hidden md:flex justify-end absolute top-[80px] right-0 z-30">
+          <div className='animate-bounce'>
+            <Image
+              src="/Arrow.png"
+              alt="Arrow pointing to products"
+              width={180}
+              height={160}
+              className="object-contain w-[120px] h-[100px] sm:w-[180px] sm:h-[160px] rotate-[-90deg]"
+            />
+            <h1 className='font-extrabold sm:text-3xl sm:mr-20 rotate-2 text-center'>
+              suivez-nous!
+            </h1>
+          </div>
+        </div>
+
+        {/* Social Follow Component */}
+        <div className="mt-[-10px] sm:mt-[-20px] md:mt-[-30px]">
+          <SocialFollow />
+        </div>
       </div>
     </div>
   );

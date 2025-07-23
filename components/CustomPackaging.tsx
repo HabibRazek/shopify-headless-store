@@ -36,19 +36,19 @@ export default function CustomPackaging() {
     <section className="py-16 md:py-24 relative">
 
       <div className="hidden md:flex justify-end mt-[-100px] ">
-              <div className='z-30 sm:lg:mt-[-150px] animate-bounce '>
-                <Image
-                  src="/Arrow.png"
-                  alt="Arrow pointing to products"
-                  width={180}
-                  height={160}
-                  className="object-contain z-30 w-[120px] h-[100px] sm:w-[180px] sm:h-[160px] mt-[15px] rotate-[-90deg]"
-                />
-                <h1 className='font-extrabold sm:text-3xl sm:mr-20 rotate-2 z-30'>
-                  Emballez le <br /> a votre facon
-                </h1>
-              </div>
-            </div>
+        <div className='z-30 sm:lg:mt-[-150px] animate-bounce '>
+          <Image
+            src="/Arrow.png"
+            alt="Arrow pointing to products"
+            width={180}
+            height={160}
+            className="object-contain z-30 w-[120px] h-[100px] sm:w-[180px] sm:h-[160px] mt-[15px] rotate-[-90deg]"
+          />
+          <h1 className='font-extrabold sm:text-3xl sm:mr-20 rotate-2 z-30'>
+            Emballez le <br /> a votre facon
+          </h1>
+        </div>
+      </div>
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Floating Printer Icon Background */}
