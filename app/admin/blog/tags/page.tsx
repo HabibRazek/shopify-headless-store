@@ -21,6 +21,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { FullScreenLoader } from '@/components/ui/loader';
+import AdminLayout from '@/components/admin/AdminLayout';
 
 interface BlogTag {
   id: string;
@@ -174,30 +175,24 @@ export default function AdminBlogTagsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header Section */}
-      <div className="bg-white border-b border-gray-200 shadow-sm mt-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                Gérer les Tags
-              </h1>
-              <p className="text-gray-600 mt-2">
-                Organisez vos articles avec des tags pertinents
-              </p>
-            </div>
-            <Link href="/admin">
-              <Button variant="outline" size="lg" className="h-12">
-                <ArrowLeft className="h-5 w-5 mr-2" />
-                Retour à l'Admin
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <AdminLayout
+      title="Gérer les Tags"
+      description="Organisez vos articles avec des tags pertinents"
+      actions={
+        <Button
+          onClick={() => {
+            setEditingTag(null);
+            setFormData({ name: '', slug: '' });
+            setDialogOpen(true);
+          }}
+          className="bg-green-600 hover:bg-green-700 text-white"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Nouveau Tag
+        </Button>
+      }
+    >
+      <div className="space-y-8">
         <Card className="border border-gray-200 shadow-sm">
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -210,70 +205,6 @@ export default function AdminBlogTagsPage() {
                   Gérez les tags utilisés pour catégoriser vos articles
                 </CardDescription>
               </div>
-              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button 
-                    onClick={() => resetForm()}
-                    className="bg-green-600 hover:bg-green-700 text-white"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nouveau Tag
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>
-                      {editingTag ? 'Modifier le Tag' : 'Créer un Nouveau Tag'}
-                    </DialogTitle>
-                    <DialogDescription>
-                      {editingTag 
-                        ? 'Modifiez les informations du tag.' 
-                        : 'Ajoutez un nouveau tag pour organiser vos articles.'
-                      }
-                    </DialogDescription>
-                  </DialogHeader>
-                  <form onSubmit={handleSubmit}>
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="name">Nom du Tag</Label>
-                        <Input
-                          id="name"
-                          value={formData.name}
-                          onChange={(e) => handleNameChange(e.target.value)}
-                          placeholder="Ex: Technologie, Design..."
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="slug">Slug (URL)</Label>
-                        <Input
-                          id="slug"
-                          value={formData.slug}
-                          onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
-                          placeholder="Ex: technologie, design..."
-                          required
-                        />
-                      </div>
-                    </div>
-                    <DialogFooter className="mt-6">
-                      <Button 
-                        type="button" 
-                        variant="outline" 
-                        onClick={() => setDialogOpen(false)}
-                      >
-                        Annuler
-                      </Button>
-                      <Button 
-                        type="submit" 
-                        disabled={loading}
-                        className="bg-green-600 hover:bg-green-700 text-white"
-                      >
-                        {loading ? 'Sauvegarde...' : (editingTag ? 'Mettre à jour' : 'Créer')}
-                      </Button>
-                    </DialogFooter>
-                  </form>
-                </DialogContent>
-              </Dialog>
             </div>
           </CardHeader>
           <CardContent>
@@ -334,6 +265,63 @@ export default function AdminBlogTagsPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+
+      {/* Dialog for creating/editing tags */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {editingTag ? 'Modifier le Tag' : 'Créer un Nouveau Tag'}
+            </DialogTitle>
+            <DialogDescription>
+              {editingTag
+                ? 'Modifiez les informations du tag.'
+                : 'Ajoutez un nouveau tag pour organiser vos articles.'
+              }
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmit}>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="name">Nom du Tag</Label>
+                <Input
+                  id="name"
+                  value={formData.name}
+                  onChange={(e) => handleNameChange(e.target.value)}
+                  placeholder="Ex: Technologie, Design..."
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="slug">Slug (URL)</Label>
+                <Input
+                  id="slug"
+                  value={formData.slug}
+                  onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
+                  placeholder="Ex: technologie, design..."
+                  required
+                />
+              </div>
+            </div>
+            <DialogFooter className="mt-6">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setDialogOpen(false)}
+              >
+                Annuler
+              </Button>
+              <Button
+                type="submit"
+                disabled={loading}
+                className="bg-green-600 hover:bg-green-700 text-white"
+              >
+                {loading ? 'Sauvegarde...' : (editingTag ? 'Mettre à jour' : 'Créer')}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </AdminLayout>
   );
 }

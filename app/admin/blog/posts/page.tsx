@@ -29,6 +29,7 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { FullScreenLoader } from '@/components/ui/loader';
+import AdminLayout from '@/components/admin/AdminLayout';
 
 interface BlogPost {
   id: string;
@@ -149,41 +150,22 @@ export default function AdminBlogPostsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 pt-20">
-      {/* Header Section */}
-      <div className="bg-gradient-to-r from-white to-gray-50 border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <Link href="/admin" className="text-gray-500 hover:text-green-600 transition-colors group">
-                  <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
-                </Link>
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <FileText className="h-6 w-6 text-green-600" />
-                </div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                  Gestion des Articles
-                </h1>
-              </div>
-              <p className="text-gray-600">
-                Créez, modifiez et gérez tous vos articles de blog avec style
-              </p>
-            </div>
-            <Link href="/admin/blog/posts/new">
-              <Button size="lg" className="bg-gradient-to-r text-white from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105">
-                <Plus className="h-5 w-5 mr-2" />
-                Nouvel article
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <AdminLayout
+      title="Gestion des Articles"
+      description="Créez, modifiez et gérez tous vos articles de blog"
+      actions={
+        <Link href="/admin/blog/posts/new">
+          <Button className="bg-green-600 hover:bg-green-700 text-white">
+            <Plus className="h-4 w-4 mr-2" />
+            Nouvel Article
+          </Button>
+        </Link>
+      }
+    >
+      <div className="space-y-8">
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-blue-100">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -242,7 +224,7 @@ export default function AdminBlogPostsPage() {
         </div>
 
         {/* Filters */}
-        <Card className="mb-8 border-0 shadow-lg">
+        <Card className="border-0 shadow-lg">
           <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-t-lg">
             <CardTitle className="flex items-center gap-2">
               <Filter className="h-5 w-5 text-green-600" />
@@ -473,7 +455,7 @@ export default function AdminBlogPostsPage() {
                                 </Button>
                               </Link>
                             )}
-                            <Link href={`/admin/blog/posts/${post.slug}/edit`}>
+                            <Link href={`/admin/blog/posts/${post.id}/edit`}>
                               <Button
                                 variant="outline"
                                 size="sm"
@@ -555,6 +537,6 @@ export default function AdminBlogPostsPage() {
           </Card>
         )}
       </div>
-    </div>
+    </AdminLayout>
   );
 }

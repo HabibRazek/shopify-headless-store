@@ -27,6 +27,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { FullScreenLoader } from '@/components/ui/loader';
+import AdminLayout from '@/components/admin/AdminLayout';
 
 interface BlogCategory {
   id: string;
@@ -181,47 +182,24 @@ export default function AdminBlogCategoriesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header Section */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center gap-4">
-            <Link href="/admin">
-              <Button variant="outline" size="lg" className="h-12">
-                <ArrowLeft className="h-5 w-5 mr-2" />
-                Retour au Dashboard
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-                <Folder className="h-8 w-8" />
-                Gestion des Catégories
-              </h1>
-              <p className="text-gray-600 mt-2">
-                Organisez vos articles par catégories thématiques
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Create Category Button */}
-        <div className="mb-8">
-          <Button
-            onClick={() => {
-              setEditingCategory(null);
-              setFormData({ name: '', slug: '', description: '' });
-              setDialogOpen(true);
-            }}
-            size="lg"
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-          >
-            <Plus className="h-5 w-5 mr-2" />
+    <AdminLayout
+      title="Gestion des Catégories"
+      description="Organisez vos articles par catégories thématiques"
+      actions={
+        <Button
+          onClick={() => {
+            setEditingCategory(null);
+            setFormData({ name: '', slug: '', description: '' });
+            setDialogOpen(true);
+          }}
+          className="bg-green-600 hover:bg-green-700 text-white"
+        >
+            <Plus className="h-4 w-4 mr-2" />
             Nouvelle Catégorie
           </Button>
-        </div>
-
+      }
+    >
+      <div className="space-y-8">
         {/* Categories List */}
         <Card>
           <CardHeader>
@@ -341,6 +319,6 @@ export default function AdminBlogCategoriesPage() {
           </DialogContent>
         </Dialog>
       </div>
-    </div>
+    </AdminLayout>
   );
 }

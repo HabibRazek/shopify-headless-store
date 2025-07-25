@@ -1,7 +1,5 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
@@ -11,11 +9,20 @@ import {
   Tag,
   Folder,
   Eye,
-  BarChart3
+  BarChart3,
+  Users,
+  Settings,
+  Shield,
+  TrendingUp,
+  Calendar,
+  Clock,
+  Activity
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { FullScreenLoader, InlineLoader } from '@/components/ui/loader';
+import { Badge } from '@/components/ui/badge';
+import AdminLayout from '@/components/admin/AdminLayout';
+import DashboardStats from '@/components/admin/DashboardStats';
 
 interface BlogPost {
   id: string;
@@ -25,8 +32,6 @@ interface BlogPost {
 }
 
 export default function AdminDashboard() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
   const [blogStats, setBlogStats] = useState({
     totalPosts: 0,
     publishedPosts: 0,
@@ -35,19 +40,18 @@ export default function AdminDashboard() {
     categories: 0,
     tags: 0
   });
+  const [userStats, setUserStats] = useState({
+    totalUsers: 0,
+    activeUsers: 0,
+    adminUsers: 0,
+  });
   const [isLoadingStats, setIsLoadingStats] = useState(true);
 
   useEffect(() => {
-    if (status === 'loading') return;
-
-    if (!session || session.user?.role !== 'admin') {
-      router.push('/');
-      return;
-    }
-
-    // Fetch blog statistics
+    // Fetch blog statistics and user statistics
     fetchBlogStats();
-  }, [session, status, router]);
+    fetchUserStats();
+  }, []);
 
   const fetchBlogStats = async () => {
     setIsLoadingStats(true);
@@ -102,273 +106,102 @@ export default function AdminDashboard() {
     }
   };
 
-  if (status === 'loading') {
-    return <FullScreenLoader />;
-  }
+  const fetchUserStats = async () => {
+    try {
+      const response = await fetch('/api/admin/users?limit=1000'); // Get all users for stats
+      if (response.ok) {
+        const data = await response.json();
+        const users = data.users || [];
 
-  if (!session || session.user?.role !== 'admin') {
-    return null;
-  }
+        setUserStats({
+          totalUsers: users.length,
+          activeUsers: users.filter((user: any) => user.status === 'active').length,
+          adminUsers: users.filter((user: any) => user.role === 'admin' || user.role === 'super_admin').length,
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching user stats:', error);
+    }
+  };
+
+  const quickActions = [
+    {
+      title: 'Nouvel Article',
+      description: 'Créer un nouveau post de blog',
+      href: '/admin/blog/posts/new',
+      icon: Plus,
+      color: 'bg-green-600 hover:bg-green-700'
+    },
+    {
+      title: 'Gérer Utilisateurs',
+      description: 'Administrer les comptes utilisateurs',
+      href: '/admin/users',
+      icon: Users,
+      color: 'bg-blue-600 hover:bg-blue-700'
+    },
+    {
+      title: 'Voir Articles',
+      description: 'Gérer les articles existants',
+      href: '/admin/blog/posts',
+      icon: FileText,
+      color: 'bg-purple-600 hover:bg-purple-700'
+    },
+    {
+      title: 'Statistiques',
+      description: 'Voir les métriques détaillées',
+      href: '/admin/analytics',
+      icon: BarChart3,
+      color: 'bg-orange-600 hover:bg-orange-700'
+    }
+  ];
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header Section */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Gestion du Blog
-            </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Bienvenue, {session.user.name}. Créez et gérez votre contenu blog pour engager vos clients.
-            </p>
-            <Link href="/admin/blog/posts/new">
-              <Button size="lg" className="bg-green-600 text-white hover:bg-green-700 font-semibold px-8 py-3">
-                <Plus className="h-5 w-5 mr-2" />
-                Créer un nouvel article
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
+    <AdminLayout
+      title="Tableau de Bord"
+      description="Vue d'ensemble de votre administration"
+      actions={
+        <Link href="/admin/blog/posts/new">
+          <Button className="bg-green-600 hover:bg-green-700 text-white">
+            <Plus className="h-4 w-4 mr-2" />
+            Nouvel Article
+          </Button>
+        </Link>
+      }
+    >
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Blog Statistics */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Statistiques du Blog</h2>
-          {isLoadingStats ? (
-            <div className="py-12">
-              <InlineLoader text="Chargement des statistiques..." />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">Total Articles</CardTitle>
-                <FileText className="h-5 w-5 text-blue-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-gray-900">{blogStats.totalPosts}</div>
-                <p className="text-sm text-gray-500 mt-1">
-                  {blogStats.publishedPosts} publiés, {blogStats.draftPosts} brouillons
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">Vues Totales</CardTitle>
-                <Eye className="h-5 w-5 text-blue-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-gray-900">{blogStats.totalViews.toLocaleString()}</div>
-                <p className="text-sm text-gray-500 mt-1">
-                  Lectures de vos articles
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">Catégories & Tags</CardTitle>
-                <Tag className="h-5 w-5 text-blue-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-gray-900">{blogStats.categories + blogStats.tags}</div>
-                <p className="text-sm text-gray-500 mt-1">
-                  {blogStats.categories} catégories, {blogStats.tags} tags
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-          )}
-        </div>
+      <div className="space-y-8">
+        {/* Dashboard Statistics */}
+        <DashboardStats userStats={userStats} blogStats={blogStats} />
 
         {/* Quick Actions */}
-        <div className="mb-12">
+        <div>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Actions Rapides</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Link href="/admin/blog/posts/new">
-              <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 cursor-pointer bg-green-50 hover:bg-green-100">
-                <CardContent className="p-6 text-center">
-                  <Plus className="h-12 w-12 mx-auto mb-4 text-green-600" />
-                  <h3 className="font-semibold text-lg mb-2 text-gray-900">Nouvel Article</h3>
-                  <p className="text-gray-600 text-sm">Créer un nouveau post</p>
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link href="/admin/blog/posts">
-              <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 cursor-pointer bg-gray-50 hover:bg-gray-100">
-                <CardContent className="p-6 text-center">
-                  <Edit className="h-12 w-12 mx-auto mb-4 text-gray-600" />
-                  <h3 className="font-semibold text-lg mb-2 text-gray-900">Gérer Articles</h3>
-                  <p className="text-gray-600 text-sm">Modifier vos posts</p>
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link href="/admin/blog/categories">
-              <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 cursor-pointer bg-purple-50 hover:bg-purple-100">
-                <CardContent className="p-6 text-center">
-                  <Folder className="h-12 w-12 mx-auto mb-4 text-purple-600" />
-                  <h3 className="font-semibold text-lg mb-2 text-gray-900">Catégories</h3>
-                  <p className="text-gray-600 text-sm">Organiser le contenu</p>
-                </CardContent>
-              </Card>
-            </Link>
-
-            <Link href="/admin/blog/tags">
-              <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 cursor-pointer bg-orange-50 hover:bg-orange-100">
-                <CardContent className="p-6 text-center">
-                  <Tag className="h-12 w-12 mx-auto mb-4 text-orange-600" />
-                  <h3 className="font-semibold text-lg mb-2 text-gray-900">Tags</h3>
-                  <p className="text-gray-600 text-sm">Étiqueter les articles</p>
-                </CardContent>
-              </Card>
-            </Link>
+            {quickActions.map((action, index) => (
+              <Link key={action.href} href={action.href}>
+                <Card className="border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer group">
+                  <CardContent className="p-6">
+                    <div className="flex items-center space-x-4">
+                      <div className={`p-3 rounded-lg ${action.color} transition-colors`}>
+                        <action.icon className="h-6 w-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-lg text-gray-900 group-hover:text-gray-700">
+                          {action.title}
+                        </h3>
+                        <p className="text-gray-600 text-sm mt-1">
+                          {action.description}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
           </div>
         </div>
 
-        {/* Blog Management Sections */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
-          {/* Content Management */}
-          <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
-            <CardHeader className="bg-gray-50 border-b border-gray-200">
-              <CardTitle className="flex items-center gap-3 text-xl text-gray-900">
-                <FileText className="h-6 w-6 text-blue-600" />
-                Gestion du Contenu
-              </CardTitle>
-              <CardDescription className="text-gray-600">
-                Créez et organisez vos articles de blog
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-6 space-y-4">
-              <Link href="/admin/blog/posts">
-                <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 cursor-pointer bg-white hover:bg-gray-50">
-                  <CardContent className="p-4 flex items-center gap-4">
-                    <div className="p-3 bg-blue-100 rounded-lg">
-                      <Edit className="h-6 w-6 text-blue-600" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-semibold text-lg text-gray-900">Gérer les Articles</div>
-                      <div className="text-sm text-gray-600">Modifier, supprimer vos posts</div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-
-              <Link href="/blog">
-                <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 cursor-pointer bg-white hover:bg-gray-50">
-                  <CardContent className="p-4 flex items-center gap-4">
-                    <div className="p-3 bg-green-100 rounded-lg">
-                      <Eye className="h-6 w-6 text-green-600" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-semibold text-lg text-gray-900">Voir le Blog Public</div>
-                      <div className="text-sm text-gray-600">Aperçu de votre blog</div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            </CardContent>
-          </Card>
-
-          {/* Organization */}
-          <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300">
-            <CardHeader className="bg-gray-50 border-b border-gray-200">
-              <CardTitle className="flex items-center gap-3 text-xl text-gray-900">
-                <Folder className="h-6 w-6 text-purple-600" />
-                Organisation
-              </CardTitle>
-              <CardDescription className="text-gray-600">
-                Structurez votre contenu avec des catégories et tags
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-6 space-y-4">
-              <Link href="/admin/blog/categories">
-                <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 cursor-pointer bg-white hover:bg-gray-50">
-                  <CardContent className="p-4 flex items-center gap-4">
-                    <div className="p-3 bg-purple-100 rounded-lg">
-                      <Folder className="h-6 w-6 text-purple-600" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-semibold text-lg text-gray-900">Gérer les Catégories</div>
-                      <div className="text-sm text-gray-600">{blogStats.categories} catégories actives</div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-
-              <Link href="/admin/blog/tags">
-                <Card className="border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 cursor-pointer bg-white hover:bg-gray-50">
-                  <CardContent className="p-4 flex items-center gap-4">
-                    <div className="p-3 bg-orange-100 rounded-lg">
-                      <Tag className="h-6 w-6 text-orange-600" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-semibold text-lg text-gray-900">Gérer les Tags</div>
-                      <div className="text-sm text-gray-600">{blogStats.tags} tags disponibles</div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Tips & Resources */}
-        <Card className="border border-gray-200 shadow-sm bg-gray-50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3 text-xl text-gray-900">
-              <BarChart3 className="h-6 w-6 text-blue-600" />
-              Conseils pour votre Blog
-            </CardTitle>
-            <CardDescription className="text-gray-600">
-              Optimisez votre contenu pour un meilleur engagement
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="flex items-start gap-3 p-4 bg-white rounded-lg border border-gray-200">
-                  <div className="h-2 w-2 bg-blue-500 rounded-full mt-2"></div>
-                  <div>
-                    <p className="font-medium text-gray-900">Publiez régulièrement</p>
-                    <p className="text-sm text-gray-600">Maintenez un rythme de publication constant pour fidéliser vos lecteurs</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 p-4 bg-white rounded-lg border border-gray-200">
-                  <div className="h-2 w-2 bg-blue-500 rounded-full mt-2"></div>
-                  <div>
-                    <p className="font-medium text-gray-900">Utilisez des images</p>
-                    <p className="text-sm text-gray-600">Les articles avec images obtiennent plus d'engagement</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-start gap-3 p-4 bg-white rounded-lg border border-gray-200">
-                  <div className="h-2 w-2 bg-blue-500 rounded-full mt-2"></div>
-                  <div>
-                    <p className="font-medium text-gray-900">Organisez avec des catégories</p>
-                    <p className="text-sm text-gray-600">Facilitez la navigation de vos lecteurs</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 p-4 bg-white rounded-lg border border-gray-200">
-                  <div className="h-2 w-2 bg-blue-500 rounded-full mt-2"></div>
-                  <div>
-                    <p className="font-medium text-gray-900">Rédigez des extraits</p>
-                    <p className="text-sm text-gray-600">Les extraits aident au référencement et à l'aperçu</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
-    </div>
+    </AdminLayout>
   );
 }

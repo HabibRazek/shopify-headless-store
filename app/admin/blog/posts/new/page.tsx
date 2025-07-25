@@ -21,6 +21,7 @@ import {
 import { toast } from 'sonner';
 import { ImageUpload } from '@/components/ui/image-upload';
 import { MultipleImageUpload } from '@/components/ui/multiple-image-upload';
+import AdminLayout from '@/components/admin/AdminLayout';
 
 interface BlogCategory {
   id: string;
@@ -222,6 +223,16 @@ export default function NewBlogPostPage() {
     }
   };
 
+  const handleSaveDraft = async () => {
+    const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+    await handleSubmit(fakeEvent, true);
+  };
+
+  const handlePublish = async () => {
+    const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+    await handleSubmit(fakeEvent, false);
+  };
+
   if (status === 'loading') {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -235,31 +246,32 @@ export default function NewBlogPostPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header Section */}
-      <div className="bg-white border-b border-gray-200 shadow-sm mt-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                Créer un Nouvel Article
-              </h1>
-              <p className="text-gray-600 mt-2">
-                Rédigez et publiez un nouvel article de blog pour engager vos lecteurs
-              </p>
-            </div>
-            <Link href="/admin/blog/posts">
-              <Button variant="outline" size="lg" className="h-12">
-                <ArrowLeft className="h-5 w-5 mr-2" />
-                Retour aux Articles
-              </Button>
-            </Link>
-          </div>
+    <AdminLayout
+      title="Créer un Nouvel Article"
+      description="Rédigez et publiez un nouvel article de blog pour engager vos lecteurs"
+      actions={
+        <div className="flex gap-2">
+          <Button
+            onClick={handleSaveDraft}
+            variant="outline"
+            disabled={loading}
+            className="bg-yellow-50 text-yellow-600 border-yellow-200 hover:bg-yellow-100"
+          >
+            <Edit className="h-4 w-4 mr-2" />
+            {loading ? 'Sauvegarde...' : 'Sauvegarder Brouillon'}
+          </Button>
+          <Button
+            onClick={handlePublish}
+            disabled={loading}
+            className="bg-green-600 hover:bg-green-700 text-white"
+          >
+            <Eye className="h-4 w-4 mr-2" />
+            {loading ? 'Publication...' : 'Publier'}
+          </Button>
         </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
+      }
+    >
+      <div className="space-y-8">
         <form onSubmit={(e) => handleSubmit(e, false)}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Content - Left Column (2/3 width) */}
@@ -544,6 +556,6 @@ export default function NewBlogPostPage() {
           </div>
         </form>
       </div>
-    </div>
+    </AdminLayout>
   );
 }

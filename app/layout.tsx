@@ -8,6 +8,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/sonner";
 import { Providers } from "./providers";
+import ConditionalLayout from "@/components/ConditionalLayout";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -175,14 +176,9 @@ export default function RootLayout({
         <Providers>
           <ShopProvider>
             <CartProvider>
-              <div className="sm:block hidden">
-                <TopBar />
-              </div>
-              <Navbar />
-              <main className="pt-16 sm:pt-20 md:pt-24 lg:pt-28">
+              <ConditionalLayout>
                 {children}
-              </main>
-              <Footer />
+              </ConditionalLayout>
               <Toaster />
             </CartProvider>
           </ShopProvider>

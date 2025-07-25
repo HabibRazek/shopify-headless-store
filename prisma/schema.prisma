@@ -45,7 +45,8 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?
-  role          String    @default("user")
+  role          String    @default("user") // "user", "admin", "super_admin"
+  status        String    @default("active") // "active", "inactive", "suspended"
   shopifyCustomerId String?
 
   // Profile information
