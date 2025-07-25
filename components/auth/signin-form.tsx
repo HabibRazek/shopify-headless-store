@@ -64,9 +64,23 @@ export function SignInForm() {
           duration: 2000,
         });
 
-        // Redirect after showing success message
-        setTimeout(() => {
-          window.location.href = callbackUrl;
+        // Check if user is admin and redirect accordingly
+        setTimeout(async () => {
+          try {
+            // Fetch user session to check role
+            const response = await fetch('/api/auth/session');
+            const session = await response.json();
+
+            // If user is admin and no specific callback URL, redirect to admin
+            if (session?.user?.role === 'admin' && callbackUrl === '/') {
+              window.location.href = '/admin';
+            } else {
+              window.location.href = callbackUrl;
+            }
+          } catch (error) {
+            // Fallback to original callback URL
+            window.location.href = callbackUrl;
+          }
         }, 2000);
       } else if (result?.ok && !result?.error) {
         // Sometimes NextAuth returns ok:true but no URL for failed logins
