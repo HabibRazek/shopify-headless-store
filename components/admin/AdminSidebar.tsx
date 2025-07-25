@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -89,13 +89,14 @@ const navigationItems: NavItem[] = [
   },
 ];
 
-export default function AdminSidebar({ 
-  isCollapsed, 
-  setIsCollapsed, 
-  isMobileOpen, 
-  setIsMobileOpen 
+export default function AdminSidebar({
+  isCollapsed,
+  setIsCollapsed,
+  isMobileOpen,
+  setIsMobileOpen
 }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const { data: session } = useSession();
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
@@ -135,10 +136,11 @@ export default function AdminSidebar({
       <div className="w-full">
         <Link
           href={item.href}
-          onClick={() => {
-            if (hasChildren && !isCollapsed) {
-              toggleExpanded(item.title);
-            }
+          onClick={hasChildren && !isCollapsed ? (e) => {
+            e.preventDefault();
+            toggleExpanded(item.title);
+          } : (e) => {
+            // Close mobile menu on navigation
             if (window.innerWidth < 768) {
               setIsMobileOpen(false);
             }
@@ -251,13 +253,15 @@ export default function AdminSidebar({
                 Actions Rapides
               </p>
               <div className="space-y-1">
-                <Link
-                  href="/"
-                  className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-600 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 rounded-xl transition-all duration-200 hover:shadow-sm"
+                <button
+                  onClick={() => {
+                    window.location.href = '/';
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-gray-600 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 rounded-xl transition-all duration-200 hover:shadow-sm"
                 >
                   <Home className="h-4 w-4" />
                   Voir le Site
-                </Link>
+                </button>
                 <Link
                   href="/admin/help"
                   className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-600 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 rounded-xl transition-all duration-200 hover:shadow-sm"

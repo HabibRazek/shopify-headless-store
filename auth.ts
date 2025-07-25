@@ -252,22 +252,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return true;
     },
     async redirect({ url, baseUrl }) {
-      // If user is signing in and no specific redirect URL is provided
-      if (url === baseUrl || url === `${baseUrl}/`) {
-        try {
-          // Get the current session to check user role
-          const session = await auth();
-
-          // If user is admin, redirect to admin panel
-          if (session?.user?.role === 'admin') {
-            return `${baseUrl}/admin`;
-          }
-        } catch (error) {
-          // If there's an error getting session, continue with default redirect
-          console.error('Error checking user role for redirect:', error);
-        }
-      }
-
       // Default behavior: if URL is relative, make it absolute
       if (url.startsWith("/")) return `${baseUrl}${url}`;
       // If URL is on the same origin, return it

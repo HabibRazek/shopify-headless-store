@@ -243,6 +243,16 @@ export default function Navbar() {
                     <User className="h-4 w-4 mr-2" />
                     <span className="text-sm font-medium">Mon Profil</span>
                   </Link>
+                  {session?.user?.role === 'admin' && (
+                    <Link
+                      href="/admin"
+                      className="px-4 py-2.5 rounded-full text-gray-700 hover:bg-gray-100 hover:text-green-600 transition-colors duration-200 flex items-center"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      <Settings className="h-4 w-4 mr-2" />
+                      <span className="text-sm font-medium">Administration</span>
+                    </Link>
+                  )}
                   <button
                     onClick={() => {
                       setMobileMenuOpen(false);
