@@ -6,7 +6,7 @@ import { motion, useScroll, useTransform } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { MultiProductQuoteDialog } from "@/components/quote/MultiProductQuoteDialog"
 import { ArrowRight, Sparkles } from "lucide-react"
-import { useRef } from "react"
+import React, { useRef } from "react"
 
 const heroData = {
     title: "Le packaging flexible qui",
@@ -16,10 +16,12 @@ const heroData = {
     cta2: "Demander Un Devis",
     ctaLink: "/products",
 
-    images: [
-        { src: "/Doypacks.png", alt: "Large kraft doypack", size: "large" },
-        { src: "/doypack-Tunisie-ecologique-e-commerce.png", alt: "Silver doypack with window", size: "small" }
-    ]
+    // Generate array of 21 hero images
+    carouselImages: Array.from({ length: 21 }, (_, i) => ({
+        src: `/images/hero/${i + 1}.jpg`,
+        alt: `Packaging solution ${i + 1}`,
+        id: i + 1
+    }))
 }
 
 export default function HeroSection() {
@@ -130,152 +132,156 @@ export default function HeroSection() {
                         </div>
                     </div>
 
-                    {/* Right Content - Images with CSS-based mobile optimization */}
+                    {/* Right Content - Vertical Carousel */}
                     <div className="w-full lg:w-1/2 relative">
-                        <div className="relative flex justify-center items-center min-h-[400px] md:min-h-[650px] mt-[-50px] md:mt-[-100px] py-2 md:py-4">
-                            {/* Background Kraft Doypack */}
-                            <div className="absolute z-10 left-[-90px]">
-                                <div className="md:hidden">
-                                    {/* Static for Mobile */}
-                                    <Image
-                                        src="/doypacks-kraft-view-personalisée.png"
-                                        alt="Kraft View Doypack"
-                                        className="object-contain drop-shadow-2xl select-none pointer-events-none w-[250px] h-[300px] opacity-50"
-                                        width={480}
-                                        height={580}
-                                        draggable={false}
-                                    />
-                                </div>
-                                <div className="hidden md:block">
-                                    {/* Animated for Desktop */}
+                        <div className="relative overflow-hidden h-[600px] mt-[-50px] md:mt-[-100px] py-2 md:py-4">
+                            {/* Top blur gradient */}
+                            <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-white to-transparent z-10 pointer-events-none"></div>
+                            {/* Bottom blur gradient */}
+                            <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent z-10 pointer-events-none"></div>
+
+                            {/* Vertical Carousel Container */}
+                            <div className="relative h-full flex justify-center overflow-hidden">
+                                <div className="grid grid-cols-3 gap-4 md:gap-6">
+                                    {/* Column 1 - Slides Up */}
                                     <motion.div
+                                        className="flex flex-col gap-4"
+                                        initial={{ y: 800 }}
                                         animate={{
-                                            y: [0, -15, 0],
+                                            y: [800, -2000],
                                         }}
                                         transition={{
-                                            duration: 3,
+                                            duration: 25,
                                             repeat: Infinity,
-                                            ease: "easeInOut"
+                                            ease: "linear",
+                                            repeatType: "loop"
                                         }}
                                     >
-                                        <Image
-                                            src="/doypacks-kraft-view-personalisée.png"
-                                            alt="Kraft View Doypack"
-                                            className="object-contain drop-shadow-2xl select-none pointer-events-none w-[480px] h-[580px] opacity-50"
-                                            width={480}
-                                            height={580}
-                                            draggable={false}
-                                        />
+                                        {/* Multiple sets for truly infinite scroll */}
+                                        {Array.from({ length: 6 }).map((_, setIndex) => (
+                                            <React.Fragment key={`col1-set-${setIndex}`}>
+                                                {heroData.carouselImages.filter((_, index) => index % 3 === 0).map((image, index) => (
+                                                    <motion.div
+                                                        key={`col1-${setIndex}-${image.id}`}
+                                                        className="flex-shrink-0"
+                                                        whileHover={{ scale: 1.1, rotate: 8 }}
+                                                        initial={{ rotate: -3 }}
+                                                        animate={{ rotate: [-3, 3, -3] }}
+                                                        transition={{
+                                                            rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" },
+                                                            hover: { duration: 0.3 }
+                                                        }}
+                                                    >
+                                                        <Image
+                                                            src={image.src}
+                                                            alt={image.alt}
+                                                            className="object-cover rounded-xl shadow-xl select-none pointer-events-none w-[140px] h-[180px] md:w-[180px] md:h-[240px]"
+                                                            width={180}
+                                                            height={240}
+                                                            draggable={false}
+                                                            priority={setIndex === 0 && index < 2}
+                                                        />
+                                                    </motion.div>
+                                                ))}
+                                            </React.Fragment>
+                                        ))}
                                     </motion.div>
-                                </div>
-                            </div>
 
-                            {/* Right Zip Doypack */}
-                            <div className="absolute z-20 right-[-30px]">
-                                <div className="md:hidden">
-                                    {/* Static for Mobile */}
-                                    <Image
-                                        src="/Doypacks-Zip.png"
-                                        alt="Zip Doypack"
-                                        className="object-contain drop-shadow-2xl select-none pointer-events-none w-[270px] h-[320px] opacity-60"
-                                        width={520}
-                                        height={620}
-                                        draggable={false}
-                                    />
-                                </div>
-                                <div className="hidden md:block">
-                                    {/* Animated for Desktop */}
+                                    {/* Column 2 - Slides Down */}
                                     <motion.div
+                                        className="flex flex-col gap-4"
+                                        style={{ marginTop: '40px' }}
+                                        initial={{ y: -2000 }}
                                         animate={{
-                                            y: [0, -18, 0],
+                                            y: [-2000, 800],
                                         }}
                                         transition={{
-                                            duration: 3.5,
+                                            duration: 30,
                                             repeat: Infinity,
-                                            ease: "easeInOut",
-                                            delay: 0.5
+                                            ease: "linear",
+                                            repeatType: "loop"
                                         }}
                                     >
-                                        <Image
-                                            src="/Doypacks-Zip.png"
-                                            alt="Zip Doypack"
-                                            className="object-contain drop-shadow-2xl select-none pointer-events-none w-[520px] h-[620px] opacity-60"
-                                            width={520}
-                                            height={620}
-                                            draggable={false}
-                                        />
+                                        {/* Multiple sets for truly infinite scroll */}
+                                        {Array.from({ length: 6 }).map((_, setIndex) => (
+                                            <React.Fragment key={`col2-set-${setIndex}`}>
+                                                {heroData.carouselImages.filter((_, index) => index % 3 === 1).map((image, index) => (
+                                                    <motion.div
+                                                        key={`col2-${setIndex}-${image.id}`}
+                                                        className="flex-shrink-0"
+                                                        whileHover={{ scale: 1.1, rotate: -8 }}
+                                                        initial={{ rotate: 2 }}
+                                                        animate={{ rotate: [2, -2, 2] }}
+                                                        transition={{
+                                                            rotate: { duration: 5, repeat: Infinity, ease: "easeInOut" },
+                                                            hover: { duration: 0.3 }
+                                                        }}
+                                                    >
+                                                        <Image
+                                                            src={image.src}
+                                                            alt={image.alt}
+                                                            className="object-cover rounded-xl shadow-xl select-none pointer-events-none w-[140px] h-[180px] md:w-[180px] md:h-[240px]"
+                                                            width={180}
+                                                            height={240}
+                                                            draggable={false}
+                                                            priority={setIndex === 0 && index < 2}
+                                                        />
+                                                    </motion.div>
+                                                ))}
+                                            </React.Fragment>
+                                        ))}
                                     </motion.div>
-                                </div>
-                            </div>
 
-                            {/* Main Center Doypack */}
-                            <div className="relative z-30">
-                                <div className="md:hidden">
-                                    {/* Static for Mobile */}
-                                    <Image
-                                        src={heroData.images[0].src}
-                                        alt={heroData.images[0].alt}
-                                        className="object-contain drop-shadow-2xl select-none pointer-events-none w-[350px] h-[420px]"
-                                        priority
-                                        width={650}
-                                        height={780}
-                                        draggable={false}
-                                    />
-                                </div>
-                                <div className="hidden md:block">
-                                    {/* Animated for Desktop */}
+                                    {/* Column 3 - Slides Up */}
                                     <motion.div
+                                        className="flex flex-col gap-4"
+                                        style={{ marginTop: '80px' }}
+                                        initial={{ y: 600 }}
                                         animate={{
-                                            y: [0, -20, 0],
+                                            y: [600, -2200],
                                         }}
                                         transition={{
-                                            duration: 4,
+                                            duration: 28,
                                             repeat: Infinity,
-                                            ease: "easeInOut"
+                                            ease: "linear",
+                                            repeatType: "loop"
                                         }}
                                     >
-                                        <Image
-                                            src={heroData.images[0].src}
-                                            alt={heroData.images[0].alt}
-                                            className="object-contain drop-shadow-2xl select-none pointer-events-none w-[650px] h-[780px]"
-                                            priority
-                                            width={650}
-                                            height={780}
-                                            draggable={false}
-                                        />
+                                        {/* Multiple sets for truly infinite scroll */}
+                                        {Array.from({ length: 6 }).map((_, setIndex) => (
+                                            <React.Fragment key={`col3-set-${setIndex}`}>
+                                                {heroData.carouselImages.filter((_, index) => index % 3 === 2).map((image, index) => (
+                                                    <motion.div
+                                                        key={`col3-${setIndex}-${image.id}`}
+                                                        className="flex-shrink-0"
+                                                        whileHover={{ scale: 1.1, rotate: 5 }}
+                                                        initial={{ rotate: -1 }}
+                                                        animate={{ rotate: [-1, 4, -1] }}
+                                                        transition={{
+                                                            rotate: { duration: 7, repeat: Infinity, ease: "easeInOut" },
+                                                            hover: { duration: 0.3 }
+                                                        }}
+                                                    >
+                                                        <Image
+                                                            src={image.src}
+                                                            alt={image.alt}
+                                                            className="object-cover rounded-xl shadow-xl select-none pointer-events-none w-[140px] h-[180px] md:w-[180px] md:h-[240px]"
+                                                            width={180}
+                                                            height={240}
+                                                            draggable={false}
+                                                            priority={setIndex === 0 && index < 2}
+                                                        />
+                                                    </motion.div>
+                                                ))}
+                                            </React.Fragment>
+                                        ))}
                                     </motion.div>
                                 </div>
-                            </div>
-
-                            {/* Green Splash Effects - Desktop Only */}
-                            <div className="hidden md:block">
-                                <motion.div
-                                    animate={{
-                                        scale: [1, 1.3, 1],
-                                        opacity: [0.3, 0.6, 0.3],
-                                    }}
-                                    transition={{
-                                        duration: 4,
-                                        repeat: Infinity,
-                                        ease: "easeInOut"
-                                    }}
-                                    className="absolute inset-0 bg-gradient-to-br from-green-400/20 to-emerald-400/20 rounded-full blur-2xl"
-                                />
                             </div>
                         </div>
                     </div>
                 </div>
             </motion.div>
-
-            {/* Enhanced Bottom Decorative Elements - Desktop Only */}
-            <div className="hidden md:block">
-                <motion.div
-                    className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white/50 to-transparent"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 1, delay: 2 }}
-                />
-            </div>
         </section>
-    )
-}
+    );
+};
