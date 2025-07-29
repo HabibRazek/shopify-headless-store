@@ -36,10 +36,10 @@ export default function ServiceFeatures() {
   ];
 
   return (
-    <section className="py-16 bg-gradient-to-b from-gray-50 to-white">
+    <section className="py-4 ">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {features.map((feature, index) => {
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+          {features.map((feature) => {
             const IconComponent = feature.icon;
             return (
               <motion.div

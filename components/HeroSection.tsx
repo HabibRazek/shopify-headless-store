@@ -70,6 +70,35 @@ export default function HeroSection() {
                 style={{ y, opacity }}
             >
                 <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16 min-h-[80vh]">
+                    {/* Mobile Carousel - Above text content */}
+                    <div className="w-full md:hidden mb-8">
+                        <div className="relative overflow-hidden h-[300px] rounded-2xl">
+                            {/* Mobile carousel with horizontal scroll - All 21 images repeated */}
+                            <div className="flex gap-4 animate-scroll-horizontal">
+                                {/* Repeat all 21 images multiple times for continuous scroll */}
+                                {Array.from({ length: 5 }).map((_, repeatIndex) =>
+                                    heroData.carouselImages.map((image, imageIndex) => (
+                                        <div
+                                            key={`mobile-${repeatIndex}-${image.id}-${imageIndex}`}
+                                            className="flex-shrink-0"
+                                        >
+                                            <Image
+                                                src={image.src}
+                                                alt={`${image.alt} - Set ${repeatIndex + 1}`}
+                                                className="object-cover rounded-lg shadow-lg select-none pointer-events-none w-[180px] h-[280px]"
+                                                width={180}
+                                                height={280}
+                                                draggable={false}
+                                                priority={repeatIndex === 0 && imageIndex < 5}
+                                                loading={repeatIndex === 0 && imageIndex < 5 ? "eager" : "lazy"}
+                                            />
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
                     {/* Left Content - Enhanced Text */}
                     <div className="w-full lg:w-1/2 space-y-8">
                         {/* Premium Badge - Animated on Desktop, Static on Mobile */}
@@ -134,148 +163,89 @@ export default function HeroSection() {
 
                     {/* Right Content - Vertical Carousel */}
                     <div className="w-full lg:w-1/2 relative">
-                        <div className="relative overflow-hidden h-[600px] mt-[-50px] md:mt-[-100px] py-2 md:py-4">
+                        <div className="hidden md:block relative overflow-hidden h-[600px] mt-[-100px] py-4">
                             {/* Top blur gradient */}
                             <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-white to-transparent z-10 pointer-events-none"></div>
                             {/* Bottom blur gradient */}
                             <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent z-10 pointer-events-none"></div>
 
-                            {/* Vertical Carousel Container */}
-                            <div className="relative h-full flex justify-center overflow-hidden">
-                                <div className="grid grid-cols-3 gap-4 md:gap-6">
-                                    {/* Column 1 - Slides Up */}
-                                    <motion.div
-                                        className="flex flex-col gap-4"
-                                        initial={{ y: 800 }}
-                                        animate={{
-                                            y: [800, -2000],
-                                        }}
-                                        transition={{
-                                            duration: 25,
-                                            repeat: Infinity,
-                                            ease: "linear",
-                                            repeatType: "loop"
-                                        }}
-                                    >
-                                        {/* Multiple sets for truly infinite scroll */}
+                            {/* Simple 3-Column Carousel */}
+                            <div className="hidden md:block relative w-full max-w-6xl mx-auto overflow-hidden h-[600px]">
+                                <div className="flex gap-8 h-full justify-center">
+                                    {/* Column 1 - All 21 images, scrolls up */}
+                                    <div className="flex flex-col gap-6 animate-scroll-up">
                                         {Array.from({ length: 6 }).map((_, setIndex) => (
                                             <React.Fragment key={`col1-set-${setIndex}`}>
-                                                {heroData.carouselImages.filter((_, index) => index % 3 === 0).map((image, index) => (
-                                                    <motion.div
-                                                        key={`col1-${setIndex}-${image.id}`}
+                                                {heroData.carouselImages.map((image, index) => (
+                                                    <div
+                                                        key={`col1-${setIndex}-${image.id}-${index}`}
                                                         className="flex-shrink-0"
-                                                        whileHover={{ scale: 1.1, rotate: 8 }}
-                                                        initial={{ rotate: -3 }}
-                                                        animate={{ rotate: [-3, 3, -3] }}
-                                                        transition={{
-                                                            rotate: { duration: 6, repeat: Infinity, ease: "easeInOut" },
-                                                            hover: { duration: 0.3 }
-                                                        }}
                                                     >
                                                         <Image
                                                             src={image.src}
                                                             alt={image.alt}
-                                                            className="object-cover rounded-xl shadow-xl select-none pointer-events-none w-[140px] h-[180px] md:w-[180px] md:h-[240px]"
-                                                            width={180}
-                                                            height={240}
+                                                            className="object-cover rounded-lg shadow-lg select-none pointer-events-none w-[200px] h-[250px]"
+                                                            width={200}
+                                                            height={250}
                                                             draggable={false}
-                                                            priority={setIndex === 0 && index < 2}
+                                                            priority={setIndex === 0 && index < 3}
                                                         />
-                                                    </motion.div>
+                                                    </div>
                                                 ))}
                                             </React.Fragment>
                                         ))}
-                                    </motion.div>
+                                    </div>
 
-                                    {/* Column 2 - Slides Down */}
-                                    <motion.div
-                                        className="flex flex-col gap-4"
-                                        style={{ marginTop: '40px' }}
-                                        initial={{ y: -2000 }}
-                                        animate={{
-                                            y: [-2000, 800],
-                                        }}
-                                        transition={{
-                                            duration: 30,
-                                            repeat: Infinity,
-                                            ease: "linear",
-                                            repeatType: "loop"
-                                        }}
-                                    >
-                                        {/* Multiple sets for truly infinite scroll */}
+                                    {/* Column 2 - All 21 images reversed, scrolls down */}
+                                    <div className="flex flex-col gap-6 animate-scroll-down">
                                         {Array.from({ length: 6 }).map((_, setIndex) => (
                                             <React.Fragment key={`col2-set-${setIndex}`}>
-                                                {heroData.carouselImages.filter((_, index) => index % 3 === 1).map((image, index) => (
-                                                    <motion.div
-                                                        key={`col2-${setIndex}-${image.id}`}
+                                                {[...heroData.carouselImages].reverse().map((image, index) => (
+                                                    <div
+                                                        key={`col2-${setIndex}-${image.id}-${index}`}
                                                         className="flex-shrink-0"
-                                                        whileHover={{ scale: 1.1, rotate: -8 }}
-                                                        initial={{ rotate: 2 }}
-                                                        animate={{ rotate: [2, -2, 2] }}
-                                                        transition={{
-                                                            rotate: { duration: 5, repeat: Infinity, ease: "easeInOut" },
-                                                            hover: { duration: 0.3 }
-                                                        }}
                                                     >
                                                         <Image
                                                             src={image.src}
                                                             alt={image.alt}
-                                                            className="object-cover rounded-xl shadow-xl select-none pointer-events-none w-[140px] h-[180px] md:w-[180px] md:h-[240px]"
-                                                            width={180}
-                                                            height={240}
+                                                            className="object-cover rounded-lg shadow-lg select-none pointer-events-none w-[200px] h-[250px]"
+                                                            width={200}
+                                                            height={250}
                                                             draggable={false}
-                                                            priority={setIndex === 0 && index < 2}
+                                                            priority={setIndex === 0 && index < 3}
                                                         />
-                                                    </motion.div>
+                                                    </div>
                                                 ))}
                                             </React.Fragment>
                                         ))}
-                                    </motion.div>
+                                    </div>
 
-                                    {/* Column 3 - Slides Up */}
-                                    <motion.div
-                                        className="flex flex-col gap-4"
-                                        style={{ marginTop: '80px' }}
-                                        initial={{ y: 600 }}
-                                        animate={{
-                                            y: [600, -2200],
-                                        }}
-                                        transition={{
-                                            duration: 28,
-                                            repeat: Infinity,
-                                            ease: "linear",
-                                            repeatType: "loop"
-                                        }}
-                                    >
-                                        {/* Multiple sets for truly infinite scroll */}
+                                    {/* Column 3 - All 21 images shuffled, scrolls up slower */}
+                                    <div className="flex flex-col gap-6 animate-scroll-up-slow">
                                         {Array.from({ length: 6 }).map((_, setIndex) => (
                                             <React.Fragment key={`col3-set-${setIndex}`}>
-                                                {heroData.carouselImages.filter((_, index) => index % 3 === 2).map((image, index) => (
-                                                    <motion.div
-                                                        key={`col3-${setIndex}-${image.id}`}
+                                                {heroData.carouselImages
+                                                    .slice()
+                                                    .sort(() => 0.5 - Math.random())
+                                                    .map((image, index) => (
+                                                    <div
+                                                        key={`col3-${setIndex}-${image.id}-${index}`}
                                                         className="flex-shrink-0"
-                                                        whileHover={{ scale: 1.1, rotate: 5 }}
-                                                        initial={{ rotate: -1 }}
-                                                        animate={{ rotate: [-1, 4, -1] }}
-                                                        transition={{
-                                                            rotate: { duration: 7, repeat: Infinity, ease: "easeInOut" },
-                                                            hover: { duration: 0.3 }
-                                                        }}
                                                     >
                                                         <Image
                                                             src={image.src}
                                                             alt={image.alt}
-                                                            className="object-cover rounded-xl shadow-xl select-none pointer-events-none w-[140px] h-[180px] md:w-[180px] md:h-[240px]"
-                                                            width={180}
-                                                            height={240}
+                                                            className="object-cover rounded-lg shadow-lg select-none pointer-events-none w-[200px] h-[250px]"
+                                                            width={200}
+                                                            height={250}
                                                             draggable={false}
-                                                            priority={setIndex === 0 && index < 2}
+                                                            priority={setIndex === 0 && index < 3}
                                                         />
-                                                    </motion.div>
+                                                    </div>
                                                 ))}
                                             </React.Fragment>
                                         ))}
-                                    </motion.div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

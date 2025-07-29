@@ -156,7 +156,10 @@ export default function CollectionPage() {
             setTitle(data.data.title);
           }
 
-          if (data.data.description) {
+          // Use descriptionHtml if available, otherwise fall back to description
+          if (data.data.descriptionHtml) {
+            setDescription(data.data.descriptionHtml);
+          } else if (data.data.description) {
             setDescription(data.data.description);
           }
         } else {
@@ -178,27 +181,15 @@ export default function CollectionPage() {
 
   return (
     <div className="min-h-screen relative">
-      {/* Innovative Background */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-white to-green-50/30" />
-        <div className="absolute inset-0 opacity-[0.02]">
-          <div className="h-full w-full" style={{
-            backgroundImage: `
-              linear-gradient(90deg, #10b981 1px, transparent 1px),
-              linear-gradient(180deg, #10b981 1px, transparent 1px)
-            `,
-            backgroundSize: '40px 40px'
-          }} />
-        </div>
-      </div>
+    
 
       {/* Simplified Collection Banner */}
-      <div className="relative z-10 overflow-hidden">
+      <div className="relative z-10 overflow-hidden mt-20">
         <div className={`w-full min-h-[50vh] flex items-center justify-center relative ${getCollectionBgColor()}`}>
           <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
             {/* Simple Collection Badge */}
             <div className="inline-flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full mb-6">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <div className="w-2 h-2  rounded-full"></div>
               <span className="text-sm font-semibold text-gray-700 tracking-wide">COLLECTION PREMIUM</span>
             </div>
 
@@ -206,31 +197,7 @@ export default function CollectionPage() {
               {title}
             </h1>
 
-            {description && (
-              <div className={`${getTextColor()} max-w-4xl mx-auto mb-8 text-center`}>
-                {/* Main Description */}
-                <p className="text-lg md:text-xl leading-relaxed mb-8 font-normal">
-                  {description.split(/[🌿✨🛡️🌟🖤🥈⚡🔬🎯🎨]/)[0].trim()}
-                </p>
 
-                {/* Feature Sections - Simple Text Layout */}
-                <div className="space-y-6 text-base">
-                  {description.match(/[🌿✨🛡️🌟🖤🥈⚡🔬🎯🎨][^🌿✨🛡️🌟🖤🥈⚡🔬🎯🎨]*/g)?.map((section, index) => {
-                    const [title, ...content] = section.substring(1).split(':');
-                    return (
-                      <div key={index} className="mb-6">
-                        <h4 className="font-semibold mb-3 text-lg">
-                          {title.trim()}
-                        </h4>
-                        <p className="leading-relaxed text-base opacity-90">
-                          {content.join(':').trim()}
-                        </p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
 
             {/* Simplified Collection Stats */}
             <div className="flex flex-wrap justify-center items-center gap-6">
@@ -265,7 +232,7 @@ export default function CollectionPage() {
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-4xl font-bold text-gray-900 mt-[-100px] mb-4">
             Produits de la Collection
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
@@ -298,6 +265,93 @@ export default function CollectionPage() {
           </div>
         )}
       </div>
+
+      {/* Enhanced Dynamic Product Information Section from Shopify */}
+      {description && (
+        <div className="relative overflow-hidden bg-gradient-to-br from-gray-50 via-white to-green-50/30 py-20">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-[0.03]">
+            <div className="h-full w-full" style={{
+              backgroundImage: `
+                linear-gradient(90deg, #10b981 1px, transparent 1px),
+                linear-gradient(180deg, #10b981 1px, transparent 1px)
+              `,
+              backgroundSize: '60px 60px'
+            }} />
+          </div>
+
+          {/* Decorative Elements */}
+          <div className="absolute top-10 left-10 w-20 h-20 bg-green-100 rounded-full opacity-20 animate-pulse"></div>
+          <div className="absolute bottom-10 right-10 w-32 h-32 bg-green-200 rounded-full opacity-15 animate-pulse delay-1000"></div>
+          <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-green-50 rounded-full opacity-25 animate-pulse delay-500"></div>
+
+          <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="max-w-5xl mx-auto">
+              {/* Enhanced Content Container */}
+              <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200/50 p-8 md:p-12 lg:p-16">
+                <div className="prose prose-lg max-w-none">
+                  <div
+                    className="shopify-description
+                      [&>h1]:text-4xl [&>h1]:md:text-5xl [&>h1]:lg:text-6xl [&>h1]:font-black [&>h1]:text-gray-900 [&>h1]:mb-8 [&>h1]:text-center [&>h1]:leading-tight [&>h1]:tracking-tight
+                      [&>h2]:text-3xl [&>h2]:md:text-4xl [&>h2]:font-bold [&>h2]:text-green-800 [&>h2]:mb-6 [&>h2]:mt-12 [&>h2]:text-center [&>h2]:relative [&>h2]:after:content-[''] [&>h2]:after:block [&>h2]:after:w-24 [&>h2]:after:h-1 [&>h2]:after:bg-gradient-to-r [&>h2]:after:from-green-500 [&>h2]:after:to-green-700 [&>h2]:after:mx-auto [&>h2]:after:mt-4 [&>h2]:after:rounded-full
+                      [&>h3]:text-2xl [&>h3]:md:text-3xl [&>h3]:font-bold [&>h3]:text-gray-800 [&>h3]:mb-6 [&>h3]:mt-10 [&>h3]:text-center
+                      [&>p]:text-lg [&>p]:md:text-xl [&>p]:mb-8 [&>p]:leading-relaxed [&>p]:text-gray-700 [&>p]:text-center [&>p]:max-w-4xl [&>p]:mx-auto
+                      [&>ul]:grid [&>ul]:md:grid-cols-2 [&>ul]:gap-4 [&>ul]:mb-10 [&>ul]:mt-8
+                      [&>li]:flex [&>li]:items-start [&>li]:gap-4 [&>li]:p-4 [&>li]:bg-green-50 [&>li]:rounded-xl [&>li]:border [&>li]:border-green-100 [&>li]:shadow-sm [&>li]:transition-all [&>li]:duration-300 [&>li]:hover:shadow-md [&>li]:hover:bg-green-100/50
+                      [&>li]:before:content-['✓'] [&>li]:before:text-green-600 [&>li]:before:font-bold [&>li]:before:text-xl [&>li]:before:bg-white [&>li]:before:rounded-full [&>li]:before:w-8 [&>li]:before:h-8 [&>li]:before:flex [&>li]:before:items-center [&>li]:before:justify-center [&>li]:before:shadow-sm [&>li]:before:border [&>li]:before:border-green-200 [&>li]:before:flex-shrink-0
+                      [&>li]:text-gray-800 [&>li]:font-medium [&>li]:text-base
+                      [&>strong]:font-bold [&>strong]:text-gray-900 [&>strong]:bg-yellow-100 [&>strong]:px-2 [&>strong]:py-1 [&>strong]:rounded [&>strong]:text-sm
+                      [&>blockquote]:bg-gradient-to-r [&>blockquote]:from-green-700 [&>blockquote]:via-green-500 [&>blockquote]:to-[#77db19bd] [&>blockquote]:text-white [&>blockquote]:p-8 [&>blockquote]:rounded-2xl [&>blockquote]:text-center [&>blockquote]:shadow-xl [&>blockquote]:mt-12 [&>blockquote]:mb-8
+                      [&>blockquote>p]:text-white [&>blockquote>p]:text-xl [&>blockquote>p]:font-semibold [&>blockquote>p]:mb-4 [&>blockquote>p]:leading-relaxed
+                      [&_em]:text-white [&_em]:opacity-90 [&_em]:text-lg [&_em]:not-italic [&_em]:font-medium"
+                    dangerouslySetInnerHTML={{ __html: description }}
+                  />
+                </div>
+
+                {/* Enhanced Call-to-Action Section */}
+                <div className="mt-16 text-center">
+                  <div className="inline-flex items-center gap-2 bg-green-100 px-6 py-3 rounded-full mb-8">
+                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                    <span className="text-green-800 font-semibold text-lg">Emballage Premium Disponible</span>
+                  </div>
+
+                  <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                    <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-2xl border border-green-200 shadow-lg">
+                      <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                      </div>
+                      <h4 className="text-xl font-bold text-green-800 mb-2">Livraison Rapide</h4>
+                      <p className="text-green-700">Expédition sous 24-48h partout en Tunisie</p>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-2xl border border-green-200 shadow-lg">
+                      <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
+                        </svg>
+                      </div>
+                      <h4 className="text-xl font-bold text-green-800 mb-2">Qualité Garantie</h4>
+                      <p className="text-green-700">Matériaux premium et finition professionnelle</p>
+                    </div>
+
+                    <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-2xl border border-green-200 shadow-lg">
+                      <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                        </svg>
+                      </div>
+                      <h4 className="text-xl font-bold text-green-800 mb-2">Support Expert</h4>
+                      <p className="text-green-700">Conseil personnalisé pour vos projets</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -798,6 +798,50 @@
     }
   }
 
+  /* Hero Carousel Scroll Animations */
+  .animate-scroll-up {
+    animation: scrollUp 30s linear infinite;
+  }
+
+  .animate-scroll-down {
+    animation: scrollDown 30s linear infinite;
+  }
+
+  .animate-scroll-up-slow {
+    animation: scrollUp 40s linear infinite;
+  }
+
+  .animate-scroll-horizontal {
+    animation: scrollHorizontal 12s linear infinite;
+  }
+
+  @keyframes scrollUp {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-50%);
+    }
+  }
+
+  @keyframes scrollDown {
+    0% {
+      transform: translateY(-50%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scrollHorizontal {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-20%);
+    }
+  }
+
   /* Line Clamp Utilities */
   .line-clamp-1 {
     overflow: hidden;

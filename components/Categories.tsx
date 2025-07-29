@@ -5,10 +5,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 
-// Collection data mapping all 9 images to collection handles and metadata
-// First 5 collections have actual products, others are coming soon
+
 const COLLECTION_CATEGORIES = [
-  // COLLECTIONS WITH PRODUCTS (Working Shopify collections)
   {
     id: 'kraftview',
     title: 'KraftView™',
@@ -62,7 +60,7 @@ const COLLECTION_CATEGORIES = [
     title: 'FullViewKraft™',
     subtitle: 'Pochettes Stand Up Kraft avec fenêtre pleine',
     description: 'Visibilité maximale avec fenêtre frontale intégrale pour une exposition optimale.',
-    image: '/images/collections/KraftView.png', // Using kraftview image as placeholder
+    image: '/images/collections/FullViewKraft.png', 
     handle: 'fullviewkraft™-pochettes-stand-up-kraft-avec-fenetre-pleine',
     color: 'from-green-50 to-emerald-50',
     accent: 'text-green-700',
@@ -70,7 +68,6 @@ const COLLECTION_CATEGORIES = [
     hasProducts: true
   },
 
-  // MORE COLLECTIONS WITH PRODUCTS
   {
     id: 'fullviewalu',
     title: 'FullViewAlu™',
@@ -175,8 +172,186 @@ export default function Categories() {
           </motion.div>
         </div>
 
-        {/* Circular Categories Grid - 3 cols on mobile, 5 on desktop - Fixed height to prevent CLS */}
-        <div className="grid grid-cols-3 md:grid-cols-5 gap-4 md:gap-8 lg:gap-12 max-w-6xl mx-auto min-h-[400px] md:min-h-[300px]">
+        {/* Enhanced Mobile Layout for 10 Collections */}
+
+        {/* Mobile: Custom layout to handle 10 items nicely (3-3-2-2 pattern) */}
+        <div className="block md:hidden max-w-sm mx-auto">
+          {/* First row: 3 items */}
+          <div className="grid grid-cols-3 gap-3 mb-6 justify-items-center">
+            {COLLECTION_CATEGORIES.slice(0, 3).map((category, index) => (
+              <motion.div
+                key={category.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.05 }}
+                className="flex flex-col items-center"
+              >
+                <Link href={category.hasProducts ? `/collections/${category.handle}` : category.handle}>
+                  <div className="group cursor-pointer relative">
+                    {/* Compact Product Image for mobile */}
+                    <div className="relative w-24 h-28 mb-4 min-h-[112px]">
+                      <Image
+                        src={category.image}
+                        alt={category.title}
+                        fill
+                        className="object-contain z-30"
+                        sizes="96px"
+                        priority={index < 3}
+                        placeholder="blur"
+                        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                      />
+                    </div>
+
+                    {/* Green Circle Background - positioned at bottom */}
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-2 w-20 h-20 bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] rounded-full z-10" />
+
+                    {/* Innovative Badge Design for Category Title */}
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-6 z-40">
+                      <div className="bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] backdrop-blur-sm rounded-full px-3 py-1 shadow-lg border border-white/20">
+                        <h3 className="text-white font-bold text-xs text-center leading-tight whitespace-nowrap">
+                          {category.title}
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Second row: 3 items */}
+          <div className="grid grid-cols-3 gap-3 mb-6 justify-items-center">
+            {COLLECTION_CATEGORIES.slice(3, 6).map((category, index) => (
+              <motion.div
+                key={category.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: (index + 3) * 0.05 }}
+                className="flex flex-col items-center"
+              >
+                <Link href={category.hasProducts ? `/collections/${category.handle}` : category.handle}>
+                  <div className="group cursor-pointer relative">
+                    {/* Compact Product Image for mobile */}
+                    <div className="relative w-24 h-28 mb-4 min-h-[112px]">
+                      <Image
+                        src={category.image}
+                        alt={category.title}
+                        fill
+                        className="object-contain z-30"
+                        sizes="96px"
+                        placeholder="blur"
+                        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                      />
+                    </div>
+
+                    {/* Green Circle Background - positioned at bottom */}
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-2 w-20 h-20 bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] rounded-full z-10" />
+
+                    {/* Innovative Badge Design for Category Title */}
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-6 z-40">
+                      <div className="bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] backdrop-blur-sm rounded-full px-3 py-1 shadow-lg border border-white/20">
+                        <h3 className="text-white font-bold text-xs text-center leading-tight whitespace-nowrap">
+                          {category.title}
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Third row: 2 items centered */}
+          <div className="flex justify-center gap-8 mb-6">
+            {COLLECTION_CATEGORIES.slice(6, 8).map((category, index) => (
+              <motion.div
+                key={category.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: (index + 6) * 0.05 }}
+                className="flex flex-col items-center"
+              >
+                <Link href={category.hasProducts ? `/collections/${category.handle}` : category.handle}>
+                  <div className="group cursor-pointer relative">
+                    {/* Slightly larger Product Image for bottom rows */}
+                    <div className="relative w-28 h-32 mb-4 min-h-[128px]">
+                      <Image
+                        src={category.image}
+                        alt={category.title}
+                        fill
+                        className="object-contain z-30"
+                        sizes="112px"
+                        placeholder="blur"
+                        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                      />
+                    </div>
+
+                    {/* Green Circle Background - positioned at bottom */}
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-2 w-24 h-24 bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] rounded-full z-10" />
+
+                    {/* Innovative Badge Design for Category Title */}
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-6 z-40">
+                      <div className="bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] backdrop-blur-sm rounded-full px-4 py-1.5 shadow-lg border border-white/20">
+                        <h3 className="text-white font-bold text-sm text-center leading-tight whitespace-nowrap">
+                          {category.title}
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Fourth row: 2 items centered */}
+          <div className="flex justify-center gap-8">
+            {COLLECTION_CATEGORIES.slice(8, 10).map((category, index) => (
+              <motion.div
+                key={category.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: (index + 8) * 0.05 }}
+                className="flex flex-col items-center"
+              >
+                <Link href={category.hasProducts ? `/collections/${category.handle}` : category.handle}>
+                  <div className="group cursor-pointer relative">
+                    {/* Slightly larger Product Image for bottom rows */}
+                    <div className="relative w-28 h-32 mb-4 min-h-[128px]">
+                      <Image
+                        src={category.image}
+                        alt={category.title}
+                        fill
+                        className="object-contain z-30"
+                        sizes="112px"
+                        placeholder="blur"
+                        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+                      />
+                    </div>
+
+                    {/* Green Circle Background - positioned at bottom */}
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-2 w-24 h-24 bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] rounded-full z-10" />
+
+                    {/* Innovative Badge Design for Category Title */}
+                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-6 z-40">
+                      <div className="bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] backdrop-blur-sm rounded-full px-4 py-1.5 shadow-lg border border-white/20">
+                        <h3 className="text-white font-bold text-sm text-center leading-tight whitespace-nowrap">
+                          {category.title}
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Desktop: Original grid layout */}
+        <div className="hidden md:grid grid-cols-5 gap-4 md:gap-8 lg:gap-12 max-w-6xl mx-auto min-h-[400px] md:min-h-[300px]">
           {COLLECTION_CATEGORIES.map((category, index) => (
             <motion.div
               key={category.id}
