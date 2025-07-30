@@ -90,14 +90,20 @@ export function stripHtml(html: string | null | undefined): string {
 }
 
 /**
- * Formats a price for display
+ * Formats a price for display (no dollar signs)
  */
-export function formatPrice(amount: string | number, currencyCode: string = 'EUR'): string {
+export function formatPrice(amount: string | number, currencyCode: string = 'TND'): string {
   const numericAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
-  return new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: currencyCode,
-  }).format(numericAmount);
+
+  // Always format without dollar signs and use TND as default
+  if (currencyCode === 'TND') {
+    return `${numericAmount.toFixed(2)} TND`;
+  } else if (currencyCode === 'EUR') {
+    return `${numericAmount.toFixed(2)} €`;
+  } else {
+    // For any other currency, just show the amount with currency code
+    return `${numericAmount.toFixed(2)} ${currencyCode}`;
+  }
 }
 
 /**

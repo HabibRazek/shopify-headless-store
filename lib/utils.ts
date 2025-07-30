@@ -6,24 +6,24 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * Format a price with the given currency
+ * Format a price with the given currency (no dollar signs)
  * @param price - The price to format
- * @param currency - The currency code (e.g., 'USD', 'TND')
+ * @param currency - The currency code (e.g., 'TND', 'EUR')
  * @returns Formatted price string
  */
 export function formatPrice(price: string | number, currency: string = 'TND'): string {
   const numericPrice = typeof price === 'string' ? parseFloat(price) : price;
 
-  // Format the price based on the currency
+  // Always format without dollar signs and use TND as default
   if (currency === 'TND') {
     // For Tunisian Dinar
     return `${numericPrice.toFixed(2)} TND`;
+  } else if (currency === 'EUR') {
+    // For Euro
+    return `${numericPrice.toFixed(2)} €`;
   } else {
-    // For other currencies, use the Intl.NumberFormat
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency,
-    }).format(numericPrice);
+    // For any other currency, just show the amount with currency code
+    return `${numericPrice.toFixed(2)} ${currency}`;
   }
 }
 
