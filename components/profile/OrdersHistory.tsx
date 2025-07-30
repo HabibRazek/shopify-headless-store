@@ -323,12 +323,12 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl flex items-center justify-center">
+            <div className="hidden sm:flex w-12 h-12 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl items-center justify-center">
               <Package className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">Mes Commandes</h2>
-              <p className="text-gray-600">Suivez l'état de vos commandes et consultez l'historique</p>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Mes Commandes</h2>
+              <p className="text-sm sm:text-base text-gray-600">Suivez l'état de vos commandes et consultez l'historique</p>
             </div>
           </div>
           <Button
@@ -346,55 +346,55 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
           </Button>
         </div>
 
-        {/* Orders Statistics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <ShoppingBag className="h-5 w-5 text-blue-600" />
+        {/* Enhanced Mobile-Responsive Orders Statistics */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+          <div className="bg-white p-3 sm:p-4 rounded-xl border border-gray-200 shadow-sm">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
               </div>
-              <div>
-                <p className="text-2xl font-bold text-blue-600">{orders.length}</p>
-                <p className="text-sm text-gray-600">Total</p>
+              <div className="text-center sm:text-left">
+                <p className="text-xl sm:text-2xl font-bold text-blue-600">{orders.length}</p>
+                <p className="text-xs sm:text-sm text-gray-600">Total</p>
               </div>
             </div>
           </div>
-          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-                <Clock className="h-5 w-5 text-amber-600" />
+          <div className="bg-white p-3 sm:p-4 rounded-xl border border-gray-200 shadow-sm">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-amber-600" />
               </div>
-              <div>
-                <p className="text-2xl font-bold text-amber-600">
+              <div className="text-center sm:text-left">
+                <p className="text-xl sm:text-2xl font-bold text-amber-600">
                   {orders.filter((o: Order) => ['pending', 'pending_payment', 'processing', 'confirmed'].includes(o.status.toLowerCase())).length}
                 </p>
-                <p className="text-sm text-gray-600">En cours</p>
+                <p className="text-xs sm:text-sm text-gray-600">En cours</p>
               </div>
             </div>
           </div>
-          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <CheckCircle className="h-5 w-5 text-green-600" />
+          <div className="bg-white p-3 sm:p-4 rounded-xl border border-gray-200 shadow-sm">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
               </div>
-              <div>
-                <p className="text-2xl font-bold text-green-600">
+              <div className="text-center sm:text-left">
+                <p className="text-xl sm:text-2xl font-bold text-green-600">
                   {orders.filter((o: Order) => ['delivered', 'completed', 'fulfilled'].includes(o.status.toLowerCase())).length}
                 </p>
-                <p className="text-sm text-gray-600">Terminées</p>
+                <p className="text-xs sm:text-sm text-gray-600">Terminées</p>
               </div>
             </div>
           </div>
-          <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                <XCircle className="h-5 w-5 text-red-600" />
+          <div className="bg-white p-3 sm:p-4 rounded-xl border border-gray-200 shadow-sm">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <XCircle className="h-4 w-4 sm:h-5 sm:w-5 text-red-600" />
               </div>
-              <div>
-                <p className="text-2xl font-bold text-red-600">
+              <div className="text-center sm:text-left">
+                <p className="text-xl sm:text-2xl font-bold text-red-600">
                   {orders.filter((o: Order) => ['cancelled', 'refunded'].includes(o.status.toLowerCase())).length}
                 </p>
-                <p className="text-sm text-gray-600">Annulées</p>
+                <p className="text-xs sm:text-sm text-gray-600">Annulées</p>
               </div>
             </div>
           </div>
@@ -414,8 +414,8 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
             </div>
           </div>
 
-          {/* Enhanced Filter Tabs */}
-          <div className="flex flex-wrap gap-2 mt-4">
+          {/* Enhanced Mobile-Responsive Filter Tabs */}
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 mt-4">
             {[
               { key: 'all', label: 'Toutes', count: orders.length, icon: ShoppingBag, color: 'blue' },
               { key: 'pending', label: 'En cours', count: orders.filter((o: Order) => ['pending', 'pending_payment', 'processing', 'confirmed'].includes(o.status.toLowerCase())).length, icon: Clock, color: 'amber' },
@@ -427,18 +427,18 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
                 <button
                   key={tab.key}
                   onClick={() => setFilter(tab.key as any)}
-                  className={`flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
+                  className={`flex items-center justify-center sm:justify-start gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 min-w-0 ${
                     filter === tab.key
-                      ? tab.color === 'blue' ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg transform scale-105' :
-                        tab.color === 'amber' ? 'bg-gradient-to-r from-amber-600 to-amber-500 text-white shadow-lg transform scale-105' :
-                        tab.color === 'green' ? 'bg-gradient-to-r from-green-600 to-green-500 text-white shadow-lg transform scale-105' :
-                        'bg-gradient-to-r from-red-600 to-red-500 text-white shadow-lg transform scale-105'
+                      ? tab.color === 'blue' ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg' :
+                        tab.color === 'amber' ? 'bg-gradient-to-r from-amber-600 to-amber-500 text-white shadow-lg' :
+                        tab.color === 'green' ? 'bg-gradient-to-r from-green-600 to-green-500 text-white shadow-lg' :
+                        'bg-gradient-to-r from-red-600 to-red-500 text-white shadow-lg'
                       : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200 hover:border-gray-300 hover:shadow-md'
                   }`}
                 >
-                  <Icon className="h-4 w-4" />
-                  {tab.label}
-                  <span className={`px-2 py-1 rounded-full text-xs font-bold ${
+                  <Icon className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                  <span className="truncate">{tab.label}</span>
+                  <span className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-bold flex-shrink-0 ${
                     filter === tab.key
                       ? 'bg-white/20 text-white'
                       : tab.color === 'blue' ? 'bg-blue-100 text-blue-700' :
@@ -454,7 +454,7 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
           </div>
         </CardHeader>
 
-        <CardContent className="p-6">
+        <CardContent className="p-3 sm:p-6">
           <AnimatePresence mode="wait">
             <motion.div
               key={filter}
@@ -471,64 +471,64 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
                   transition={{ delay: index * 0.05 }}
                 >
                   <Card className="border border-gray-200 hover:border-green-300 hover:shadow-xl transition-all duration-300 group bg-gradient-to-r from-white to-gray-50/50">
-                    <CardContent className="p-6">
-                      {/* Enhanced Order Header */}
-                      <div className="flex items-start justify-between mb-6">
-                        <div className="flex items-start gap-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-12 h-12 bg-white rounded-xl shadow-sm border border-gray-200 flex items-center justify-center group-hover:shadow-md transition-shadow">
-                              {getStatusIcon(order.status)}
-                            </div>
-                            <div>
-                              <Badge className={`${getStatusColor(order.status)} px-4 py-2 font-semibold text-sm`}>
-                                {getStatusText(order.status)}
-                              </Badge>
-                              <div className="flex items-center gap-2 mt-2">
-                                <span className="font-bold text-lg text-gray-900">
-                                  #{order.orderNumber || order.id.slice(-8)}
+                    <CardContent className="p-4 sm:p-6">
+                      {/* Enhanced Mobile-Responsive Order Header */}
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+                        <div className="flex items-start gap-3 sm:gap-4 min-w-0 flex-1">
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-xl shadow-sm border border-gray-200 flex items-center justify-center group-hover:shadow-md transition-shadow flex-shrink-0">
+                            {getStatusIcon(order.status)}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <Badge className={`${getStatusColor(order.status)} px-3 sm:px-4 py-1.5 sm:py-2 font-semibold text-xs sm:text-sm`}>
+                              {getStatusText(order.status)}
+                            </Badge>
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mt-2">
+                              <span className="font-bold text-base sm:text-lg text-gray-900 truncate">
+                                #{order.orderNumber || order.id.slice(-8)}
+                              </span>
+                              {order.shopifyOrderId && (
+                                <span className="text-xs text-gray-500 flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-full w-fit">
+                                  <ExternalLink className="h-3 w-3 flex-shrink-0" />
+                                  <span>Shopify</span>
                                 </span>
-                                {order.shopifyOrderId && (
-                                  <span className="text-xs text-gray-500 flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-full">
-                                    <ExternalLink className="h-3 w-3" />
-                                    Shopify
-                                  </span>
-                                )}
-                              </div>
+                              )}
                             </div>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-2xl font-bold text-green-600 mb-1">
+                        <div className="text-left sm:text-right flex-shrink-0">
+                          <p className="text-xl sm:text-2xl font-bold text-green-600 mb-1">
                             {formatPrice(order.total, order.currency || 'TND')}
                           </p>
-                          <p className="text-sm text-gray-500 flex items-center gap-1 justify-end">
-                            <Calendar className="h-4 w-4" />
-                            {new Date(order.createdAt).toLocaleDateString('fr-FR', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric'
-                            })}
+                          <p className="text-xs sm:text-sm text-gray-500 flex items-center gap-1 sm:justify-end">
+                            <Calendar className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                            <span className="truncate">
+                              {new Date(order.createdAt).toLocaleDateString('fr-FR', {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric'
+                              })}
+                            </span>
                           </p>
                         </div>
                       </div>
 
-                      {/* Enhanced Order Details */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-6">
-                          <div className="flex items-center gap-2 text-sm bg-blue-50 text-blue-700 px-3 py-2 rounded-lg border border-blue-200">
-                            <Package className="h-4 w-4" />
-                            <span className="font-medium">{order.items?.length || 0} article(s)</span>
+                      {/* Enhanced Mobile-Responsive Order Details */}
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 min-w-0">
+                          <div className="flex items-center gap-2 text-xs sm:text-sm bg-blue-50 text-blue-700 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border border-blue-200">
+                            <Package className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                            <span className="font-medium whitespace-nowrap">{order.items?.length || 0} article(s)</span>
                           </div>
                           {order.paymentMethod && (
-                            <div className="flex items-center gap-2 text-sm bg-gray-50 text-gray-700 px-3 py-2 rounded-lg border border-gray-200">
-                              <CreditCard className="h-4 w-4" />
-                              <span className="font-medium">{order.paymentMethod}</span>
+                            <div className="flex items-center gap-2 text-xs sm:text-sm bg-gray-50 text-gray-700 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border border-gray-200">
+                              <CreditCard className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                              <span className="font-medium truncate">{order.paymentMethod}</span>
                             </div>
                           )}
                           {order.bankReceiptPath && (
-                            <div className="flex items-center gap-2 text-sm bg-green-50 text-green-700 px-3 py-2 rounded-lg border border-green-200">
-                              <FileImage className="h-4 w-4" />
-                              <span className="font-medium">Reçu joint</span>
+                            <div className="flex items-center gap-2 text-xs sm:text-sm bg-green-50 text-green-700 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border border-green-200">
+                              <FileImage className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                              <span className="font-medium whitespace-nowrap">Reçu joint</span>
                             </div>
                           )}
                         </div>
@@ -537,14 +537,15 @@ export function OrdersHistory({ className }: OrdersHistoryProps) {
                           <DialogTrigger asChild>
                             <Button
                               onClick={() => setSelectedOrder(order)}
-                              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+                              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto"
+                              size="sm"
                             >
-                              <Eye className="h-4 w-4 mr-2" />
-                              Voir détails
-                              <ChevronRight className="h-4 w-4 ml-1" />
+                              <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                              <span className="text-xs sm:text-sm">Voir détails</span>
+                              <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4 ml-1" />
                             </Button>
                           </DialogTrigger>
-                          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto mx-4 sm:mx-auto">
                             <DialogHeader className="border-b pb-4">
                               <DialogTitle className="flex items-center gap-3 text-xl">
                                 <div className="p-2 bg-green-100 rounded-lg">

@@ -27,11 +27,9 @@ function ProfileContent() {
 
 
   useEffect(() => {
-    // Handle unauthenticated state
     if (status === 'unauthenticated' && !redirecting) {
       setRedirecting(true);
 
-      // Use router.replace instead of router.push to avoid back button issues
       const callbackUrl = encodeURIComponent('/profile');
       router.replace(`/auth/signin?callbackUrl=${callbackUrl}`);
     }
@@ -56,10 +54,8 @@ function ProfileContent() {
     );
   }
 
-  // If we have a session, show the profile
-
   return (
-    <div className="min-h-screen bg-gradient-to-br pt-1è">
+    <div className="min-h-screen mt-24 bg-gradient-to-br pt-10">
       {/* Professional Header */}
       <div className="bg-white border-b border-gray-200 shadow-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -91,24 +87,25 @@ function ProfileContent() {
         </div>
       </div>
 
+
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-7xl mx-auto">
           <Tabs defaultValue="profile" className="w-full">
-            {/* Enhanced Tab Navigation */}
+            {/* Enhanced Underline Tab Navigation */}
             <div className="mb-8">
-              <TabsList className="grid w-full grid-cols-2 lg:w-auto lg:grid-cols-2 bg-white border border-gray-200 shadow-sm rounded-xl p-1">
+              <TabsList className="grid w-full grid-cols-2 lg:w-auto lg:grid-cols-2 bg-transparent border-b border-gray-200 rounded-none p-0 h-auto">
                 <TabsTrigger
                   value="profile"
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-600 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-md px-6 py-3 rounded-lg font-medium transition-all duration-200"
+                  className="relative bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-green-600 text-gray-600 hover:text-green-500 px-6 py-4 rounded-none font-semibold transition-all duration-300 border-b-2 border-transparent data-[state=active]:border-green-600 data-[state=active]:shadow-none"
                 >
-                  <UserIcon className="h-4 w-4 mr-2" />
+                  <UserIcon className="h-5 w-5 mr-2" />
                   Mon Profil
                 </TabsTrigger>
                 <TabsTrigger
                   value="orders"
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-600 data-[state=active]:to-emerald-600 data-[state=active]:text-white data-[state=active]:shadow-md px-6 py-3 rounded-lg font-medium transition-all duration-200"
+                  className="relative bg-transparent data-[state=active]:bg-transparent data-[state=active]:text-green-600 text-gray-600 hover:text-green-500 px-6 py-4 rounded-none font-semibold transition-all duration-300 border-b-2 border-transparent data-[state=active]:border-green-600 data-[state=active]:shadow-none"
                 >
-                  <PackageIcon className="h-4 w-4 mr-2" />
+                  <PackageIcon className="h-5 w-5 mr-2" />
                   Mes Commandes
                 </TabsTrigger>
               </TabsList>

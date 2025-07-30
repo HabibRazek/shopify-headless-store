@@ -270,7 +270,7 @@ export function ProfileEditor({ className }: ProfileEditorProps) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         {/* Profile Summary */}
         <Card className="lg:col-span-2 overflow-hidden border-0 shadow-lg bg-gradient-to-br from-white to-gray-50">
-          <CardHeader className="relative bg-gradient-to-r from-green-600 via-green-500 to-emerald-600 text-white pb-20">
+          <CardHeader className="relative  text-black pb-20">
             <div className="flex items-center justify-between">
               <CardTitle className="text-2xl font-bold">Mon Profil</CardTitle>
             <AnimatePresence mode="wait">
@@ -285,7 +285,7 @@ export function ProfileEditor({ className }: ProfileEditorProps) {
                     variant="secondary"
                     size="sm"
                     onClick={() => setIsEditing(true)}
-                    className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+                    className="bg-white/20 hover:bg-white/30 text-black border-green-600"
                   >
                     <Edit3 className="h-4 w-4 mr-2" />
                     Modifier
@@ -346,10 +346,10 @@ export function ProfileEditor({ className }: ProfileEditorProps) {
               </Button>
             </div>
             <div className="pb-2">
-              <h3 className="text-xl font-bold text-white">
+              <h3 className="text-xl font-bold text-black">
                 {session.user.name || 'Utilisateur'}
               </h3>
-              <p className="text-green-100 text-sm">{session.user.email}</p>
+              <p className="text-black text-sm">{session.user.email}</p>
             </div>
           </div>
         </CardHeader>

@@ -15,9 +15,8 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
-
+  Receipt,
   BarChart3,
-
   HelpCircle,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -46,10 +45,15 @@ const navigationItems: NavItem[] = [
     icon: LayoutDashboard,
   },
   {
+    title: 'Factures',
+    href: '/admin/factures',
+    icon: Receipt,
+    badge: 'Nouveau',
+  },
+  {
     title: 'Gestion des Utilisateurs',
     href: '/admin/users',
     icon: Users,
-    badge: 'Nouveau',
   },
   {
     title: 'Blog',

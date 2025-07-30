@@ -21,19 +21,30 @@ function createPrismaClient(): PrismaClient {
 // Export a function that creates the client only when needed
 export function getPrismaClient(): PrismaClient {
   if (!process.env.DATABASE_URL) {
-    throw new Error('Database not available');
+    throw new Error('Database not available - DATABASE_URL is not set');
   }
 
-  if (process.env.NODE_ENV === 'production') {
-    if (!prismaInstance) {
-      prismaInstance = createPrismaClient();
+  try {
+    if (process.env.NODE_ENV === 'production') {
+      if (!prismaInstance) {
+        prismaInstance = createPrismaClient();
+      }
+      if (!prismaInstance) {
+        throw new Error('Failed to create Prisma client instance');
+      }
+      return prismaInstance;
+    } else {
+      if (!globalForPrisma.prisma) {
+        globalForPrisma.prisma = createPrismaClient();
+      }
+      if (!globalForPrisma.prisma) {
+        throw new Error('Failed to create global Prisma client instance');
+      }
+      return globalForPrisma.prisma;
     }
-    return prismaInstance;
-  } else {
-    if (!globalForPrisma.prisma) {
-      globalForPrisma.prisma = createPrismaClient();
-    }
-    return globalForPrisma.prisma;
+  } catch (error) {
+    console.error('Error creating Prisma client:', error);
+    throw new Error(`Prisma client creation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
