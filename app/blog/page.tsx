@@ -132,15 +132,12 @@ export default function BlogPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen sm:mt-20 mt-10 bg-white">
       {/* Clean Hero Section */}
       <div className="relative bg-white overflow-hidden">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 bg-green-50 rounded-full px-4 py-2 mb-6">
-              <BookOpen className="h-5 w-5 text-green-600" />
-              <span className="text-green-600 font-medium">Blog Packedin</span>
-            </div>
+            
 
             <h1 className="text-5xl md:text-6xl font-bold text-green-600 mb-6 leading-tight">
               Actualités &

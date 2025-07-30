@@ -166,7 +166,7 @@ export default function ProductPage() {
   };
 
   return (
-    <div className="bg-white mt-36">
+    <div className="bg-white mt-28 sm:mt-32">
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:max-w-7xl lg:px-8">
         {/* Breadcrumbs */}
         <nav className="flex mb-8 text-sm text-gray-500">

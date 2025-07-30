@@ -107,7 +107,7 @@ export default function ProductsPage() {
           </div>
         </div>
 
-        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+        <div className="relative mt-32 z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
           {/* SEO Optimized Header */}
           <div className="text-center mb-8 sm:mb-10 md:mb-12">
             {/* Stats Pills */}

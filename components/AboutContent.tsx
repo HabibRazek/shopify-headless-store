@@ -107,14 +107,14 @@ export default function AboutContent() {
   ];
 
   return (
-    <div className="bg-white sm:mt-[-64px]">
+    <div className="bg-white mt-14 sm:mt-20">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute top-[-10rem] right-[5rem] h-[30rem] w-[70rem] bg-gradient-to-b from-[#bdffad] to-transparent rounded-full blur-[9rem] opacity-70" />
+          <div className="absolute top-[-10rem] right-[-10rem] sm:right-[5rem] h-[20rem] sm:h-[30rem] w-[40rem] sm:w-[70rem] bg-gradient-to-b from-[#bdffad] to-transparent rounded-full blur-[9rem] opacity-70" />
           <div className="absolute inset-0 bg-[url('/pattern-bg.png')] opacity-5" />
         </div>
-        <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
+        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:py-24 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -154,7 +154,7 @@ export default function AboutContent() {
       {/* Tabs Navigation */}
       <div className="bg-white shadow-sm">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <nav className="flex justify-center space-x-1 p-2" aria-label="Tabs">
+          <nav className="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-1 p-2" aria-label="Tabs">
             <motion.button
               onClick={() => setActiveTab('about')}
               whileHover={{ scale: 1.03 }}
@@ -163,7 +163,7 @@ export default function AboutContent() {
                 activeTab === 'about'
                   ? 'bg-green-50 text-green-700 shadow-sm'
                   : 'bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-700'
-              } rounded-lg py-3 px-6 font-medium text-sm transition-all duration-200 flex items-center space-x-2`}
+              } rounded-lg py-3 px-4 sm:px-6 font-medium text-sm transition-all duration-200 flex items-center justify-center sm:justify-start space-x-2 w-full sm:w-auto`}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -178,7 +178,7 @@ export default function AboutContent() {
                 activeTab === 'mission'
                   ? 'bg-green-50 text-green-700 shadow-sm'
                   : 'bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-700'
-              } rounded-lg py-3 px-6 font-medium text-sm transition-all duration-200 flex items-center space-x-2`}
+              } rounded-lg py-3 px-4 sm:px-6 font-medium text-sm transition-all duration-200 flex items-center justify-center sm:justify-start space-x-2 w-full sm:w-auto`}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -193,7 +193,7 @@ export default function AboutContent() {
                 activeTab === 'features'
                   ? 'bg-green-50 text-green-700 shadow-sm'
                   : 'bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-700'
-              } rounded-lg py-3 px-6 font-medium text-sm transition-all duration-200 flex items-center space-x-2`}
+              } rounded-lg py-3 px-4 sm:px-6 font-medium text-sm transition-all duration-200 flex items-center justify-center sm:justify-start space-x-2 w-full sm:w-auto`}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -225,12 +225,13 @@ export default function AboutContent() {
                 Notre objectif depuis le début était de fournir des solutions d'emballages innovantes mais simples magnifiquement construits pour une protection ultime du produit. De plus, nous étions déterminés à produire des emballages qui aidaient les marques à raconter leur histoire. Depuis ce temps, les petites entreprises, les artisans et les artisans du monde entier ont trouvé leur chemin vers notre site, pour lequel nous sommes très reconnaissants.
               </p>
             </motion.div>
-            <motion.div variants={itemVariants} className="relative w-[600px] h-[600px] rounded-xl overflow-hidden shadow-xl">
+            <motion.div variants={itemVariants} className="relative w-full max-w-lg mx-auto lg:max-w-none lg:w-full aspect-square rounded-xl overflow-hidden shadow-xl">
               <Image
                 src="/Doypacks-Zip.png"
                 alt="PackedIn Doypacks Zip - Emballages Écologiques Tunisie"
                 fill
                 className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 600px"
               />
             </motion.div>
           </motion.div>
@@ -243,12 +244,13 @@ export default function AboutContent() {
             animate="visible"
             className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
           >
-            <motion.div variants={itemVariants} className="order-2 lg:order-1 relative w-[600px] h-[600px] rounded-xl overflow-hidden shadow-xl">
+            <motion.div variants={itemVariants} className="order-2 lg:order-1 relative w-full max-w-lg mx-auto lg:max-w-none lg:w-full aspect-square rounded-xl overflow-hidden shadow-xl">
               <Image
                 src="/Doypacks-Zip.png"
                 alt="PackedIn Doypacks Zip - Solutions d'Emballage Écologique"
                 fill
                 className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 600px"
               />
             </motion.div>
             <motion.div variants={itemVariants} className="order-1 lg:order-2 space-y-6">
@@ -301,17 +303,17 @@ export default function AboutContent() {
                   className="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 group"
                 >
                   <div className="h-2 bg-gradient-to-r from-green-400 to-green-600"></div>
-                  <div className="p-6">
-                    <div className="flex items-center mb-4">
-                      <div className="bg-green-50 p-3 rounded-xl text-green-600 mr-4 group-hover:bg-green-100 transition-colors duration-300">
+                  <div className="p-4 sm:p-6">
+                    <div className="flex flex-col sm:flex-row items-center sm:items-start mb-4">
+                      <div className="bg-green-50 p-3 rounded-xl text-green-600 mb-3 sm:mb-0 sm:mr-4 group-hover:bg-green-100 transition-colors duration-300">
                         {feature.icon}
                       </div>
-                      <h3 className="text-xl font-bold text-gray-900 group-hover:text-green-600 transition-colors duration-300">
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-900 group-hover:text-green-600 transition-colors duration-300 text-center sm:text-left">
                         {feature.title}
                       </h3>
                     </div>
-                    <p className="text-gray-600 mb-6 pl-16">{feature.description}</p>
-                    <div className="pl-16">
+                    <p className="text-gray-600 mb-6 pl-0 sm:pl-16">{feature.description}</p>
+                    <div className="pl-0 sm:pl-16">
                       <Link
                         href="/products"
                         className="inline-flex items-center px-4 py-2 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 transition-colors duration-300 text-sm font-medium"

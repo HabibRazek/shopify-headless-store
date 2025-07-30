@@ -360,7 +360,7 @@ export default function CollectionsPage() {
       </div>
 
       {/* Innovative Hero Section */}
-      <div className="relative z-10 overflow-hidden">
+      <div className="relative sm:mt-24 mt-16 z-10 overflow-hidden">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -427,16 +427,28 @@ export default function CollectionsPage() {
               </div>
             </div>
 
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-                <Eye className="mr-2 h-5 w-5" />
-                Explorer les Collections
+            {/* Enhanced CTA Buttons */}
+            <div className="flex flex-col  sm:flex-row gap-4 justify-center">
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white font-bold px-8 py-4 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden group transform hover:scale-[1.02]"
+              >
+                {/* Background shine effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-300" />
+                <Eye className="mr-3 h-5 w-5 relative z-10" />
+                <span className="relative z-10">Explorer les Collections</span>
               </Button>
+
               <Link href="/products">
-                <Button size="lg" variant="outline" className="border-green-300 text-green-700 hover:bg-green-50 px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
-                  <ShoppingBag className="mr-2 h-5 w-5" />
-                  Voir tous les Produits
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-2 border-green-500 text-green-700 hover:text-green-800 hover:bg-green-50 font-bold px-8 py-4 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] relative overflow-hidden group"
+                >
+                  {/* Subtle background effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-green-50 to-green-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <ShoppingBag className="mr-3 h-5 w-5 relative z-10" />
+                  <span className="relative z-10">Voir tous les Produits</span>
                 </Button>
               </Link>
             </div>
@@ -445,7 +457,7 @@ export default function CollectionsPage() {
       </div>
 
       {/* Collections Section */}
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+      <div className="relative z-10 mx-auto max-w-7xl -mt-16 px-4 sm:px-6 lg:px-8 py-16">
         <ModernCollections />
       </div>
     </div>
