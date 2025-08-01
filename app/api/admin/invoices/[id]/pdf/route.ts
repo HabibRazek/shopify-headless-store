@@ -48,10 +48,20 @@ interface Invoice {
     } | null;
 }
 
-// Function to get PACKEDIN header logo - prioritize PNG, then JPG
+// Function to get PACKEDIN header logo - try multiple formats for best compatibility
 async function getLogoBase64(): Promise<{ data: string; format: string }> {
     try {
-        // Try PNG first (better React-PDF support)
+        // Try SVG first (most reliable with React-PDF)
+        const svgPath = path.join(process.cwd(), 'public', 'packedin-logo.svg');
+        if (fs.existsSync(svgPath)) {
+            console.log('🔍 Loading packedin-logo.svg at:', svgPath);
+            const svgContent = fs.readFileSync(svgPath, 'utf8');
+            const base64 = Buffer.from(svgContent).toString('base64');
+            console.log('✅ SVG logo loaded successfully, length:', base64.length);
+            return { data: base64, format: 'svg' };
+        }
+
+        // Try PNG next (better React-PDF support than JPG)
         const pngPath = path.join(process.cwd(), 'public', 'packedin.png');
         if (fs.existsSync(pngPath)) {
             console.log('🔍 Loading packedin.png at:', pngPath);
@@ -61,7 +71,7 @@ async function getLogoBase64(): Promise<{ data: string; format: string }> {
             return { data: base64, format: 'png' };
         }
 
-        // Try JPG next
+        // Try JPG as last resort
         const jpgPath = path.join(process.cwd(), 'public', 'packedin.jpg');
         if (fs.existsSync(jpgPath)) {
             console.log('🔍 Loading packedin.jpg at:', jpgPath);
@@ -261,11 +271,26 @@ const createInvoiceDocument = (invoice: any, headerLogo: { data: string; format:
     console.log('🎨 Creating header section, logo available:', !!headerLogo.data);
     console.log('🎨 Header logo format:', headerLogo.format);
 
-    // Create logo element - try packedin.png/jpg first, with enhanced visibility
+    // Create logo element - try SVG/PNG/JPG with enhanced visibility
     let logoElement;
     if (headerLogo.data) {
-        console.log('🎨 Creating image element for packedin logo');
-        const mimeType = headerLogo.format === 'png' ? 'image/png' : 'image/jpeg';
+        console.log('🎨 Creating image element for packedin logo, format:', headerLogo.format);
+
+        let mimeType: string;
+        switch (headerLogo.format) {
+            case 'svg':
+                mimeType = 'image/svg+xml';
+                break;
+            case 'png':
+                mimeType = 'image/png';
+                break;
+            case 'jpg':
+                mimeType = 'image/jpeg';
+                break;
+            default:
+                mimeType = 'image/jpeg';
+        }
+
         const dataUri = `data:${mimeType};base64,${headerLogo.data}`;
         console.log('🔍 Data URI preview:', dataUri.substring(0, 50) + '...');
 
@@ -274,10 +299,10 @@ const createInvoiceDocument = (invoice: any, headerLogo: { data: string; format:
             key: 'logo-container',
             style: {
                 ...styles.logo,
-                backgroundColor: '#f8f9fa',
-                border: '2px solid #22c55e',
+                backgroundColor: headerLogo.format === 'svg' ? 'transparent' : '#f8f9fa',
+                border: headerLogo.format === 'svg' ? 'none' : '2px solid #22c55e',
                 borderRadius: 8,
-                padding: 8,
+                padding: headerLogo.format === 'svg' ? 0 : 8,
                 alignItems: 'center',
                 justifyContent: 'center'
             }
@@ -286,8 +311,8 @@ const createInvoiceDocument = (invoice: any, headerLogo: { data: string; format:
                 key: 'packedin-logo',
                 src: dataUri,
                 style: {
-                    width: 100,
-                    height: 40,
+                    width: headerLogo.format === 'svg' ? 120 : 100,
+                    height: headerLogo.format === 'svg' ? 60 : 40,
                     objectFit: 'contain'
                 }
             })
