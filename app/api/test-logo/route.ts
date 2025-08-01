@@ -2,53 +2,57 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
-// Function to get PACKEDIN logo - try SVG first (React-PDF compatible), then original
-async function getLogoBase64(): Promise<string> {
+// Function to get PACKEDIN header logo - prioritize PNG, then JPG
+async function getLogoBase64(): Promise<{ data: string; format: string }> {
     try {
-        // Try SVG logo first (React-PDF handles SVG well)
-        const svgPath = path.join(process.cwd(), 'public', 'packedin-logo.svg');
-        if (fs.existsSync(svgPath)) {
-            console.log('🔍 Loading packedin-logo.svg at:', svgPath);
-            const svgContent = fs.readFileSync(svgPath, 'utf8');
-            const base64 = Buffer.from(svgContent).toString('base64');
-            console.log('✅ SVG logo loaded successfully, length:', base64.length);
-            return `image/svg+xml;base64,${base64}`;
+        // Try PNG first (better React-PDF support)
+        const pngPath = path.join(process.cwd(), 'public', 'packedin.png');
+        if (fs.existsSync(pngPath)) {
+            console.log('🔍 Loading packedin.png at:', pngPath);
+            const logoBuffer = fs.readFileSync(pngPath);
+            console.log('✅ PNG logo loaded successfully, size:', logoBuffer.length, 'bytes');
+            const base64 = logoBuffer.toString('base64');
+            return { data: base64, format: 'png' };
         }
 
-        // Fallback to original packedin.jpg
-        const logoPath = path.join(process.cwd(), 'public', 'packedin.jpg');
-        console.log('🔍 Loading packedin.jpg logo at:', logoPath);
-
-        if (!fs.existsSync(logoPath)) {
-            console.log('❌ No logo files found');
-            return '';
+        // Try JPG next
+        const jpgPath = path.join(process.cwd(), 'public', 'packedin.jpg');
+        if (fs.existsSync(jpgPath)) {
+            console.log('🔍 Loading packedin.jpg at:', jpgPath);
+            const logoBuffer = fs.readFileSync(jpgPath);
+            console.log('✅ JPG logo loaded successfully, size:', logoBuffer.length, 'bytes');
+            const base64 = logoBuffer.toString('base64');
+            return { data: base64, format: 'jpg' };
         }
 
-        const logoBuffer = fs.readFileSync(logoPath);
-        console.log('✅ packedin.jpg loaded successfully, size:', logoBuffer.length, 'bytes');
-
-        const base64 = logoBuffer.toString('base64');
-        console.log('✅ Base64 conversion complete, length:', base64.length);
-
-        // Return as JPEG MIME type
-        return `image/jpeg;base64,${base64}`;
+        console.log('❌ No packedin logo files found');
+        return { data: '', format: '' };
     } catch (error) {
-        console.log('❌ Error loading logo:', error);
-        return '';
+        console.log('❌ Error loading packedin logo:', error);
+        return { data: '', format: '' };
     }
 }
 
 export async function GET(request: NextRequest) {
     try {
         console.log('🧪 Testing logo loading...');
-        const logoBase64 = await getLogoBase64();
-        
+        const headerLogo = await getLogoBase64();
+        const footerLogo = await getFooterLogoBase64();
+
         return NextResponse.json({
             success: true,
-            logoLoaded: !!logoBase64,
-            logoLength: logoBase64.length,
-            logoPreview: logoBase64.substring(0, 100) + '...',
-            fullLogo: logoBase64
+            headerLogo: {
+                loaded: !!headerLogo.data,
+                format: headerLogo.format,
+                length: headerLogo.data.length,
+                preview: headerLogo.data.substring(0, 50) + '...'
+            },
+            footerLogo: {
+                loaded: !!footerLogo.data,
+                format: footerLogo.format,
+                length: footerLogo.data.length,
+                preview: footerLogo.data.substring(0, 50) + '...'
+            }
         });
     } catch (error) {
         console.error('❌ Error in logo test:', error);
@@ -56,5 +60,25 @@ export async function GET(request: NextRequest) {
             success: false,
             error: error instanceof Error ? error.message : 'Unknown error'
         }, { status: 500 });
+    }
+}
+
+// Function to get footer logo
+async function getFooterLogoBase64(): Promise<{ data: string; format: string }> {
+    try {
+        const footerPath = path.join(process.cwd(), 'public', 'footer-logo.jpg');
+        if (fs.existsSync(footerPath)) {
+            console.log('🔍 Loading footer-logo.jpg at:', footerPath);
+            const logoBuffer = fs.readFileSync(footerPath);
+            console.log('✅ Footer logo loaded successfully, size:', logoBuffer.length, 'bytes');
+            const base64 = logoBuffer.toString('base64');
+            return { data: base64, format: 'jpg' };
+        }
+
+        console.log('❌ Footer logo not found');
+        return { data: '', format: '' };
+    } catch (error) {
+        console.log('❌ Error loading footer logo:', error);
+        return { data: '', format: '' };
     }
 }
