@@ -2,36 +2,31 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
-// Function to convert logo to base64
+// Function to convert packedin.jpg logo to base64
 async function getLogoBase64(): Promise<string> {
     try {
-        // Try PNG first, then JPG
-        const pngPath = path.join(process.cwd(), 'public', 'packedin.png');
-        const jpgPath = path.join(process.cwd(), 'public', 'packedin.jpg');
-        
-        let logoPath = '';
-        let mimeType = '';
-        
-        if (fs.existsSync(pngPath)) {
-            logoPath = pngPath;
-            mimeType = 'image/png';
-            console.log('🔍 Using PNG logo at:', logoPath);
-        } else if (fs.existsSync(jpgPath)) {
-            logoPath = jpgPath;
-            mimeType = 'image/jpeg';
-            console.log('🔍 Using JPG logo at:', logoPath);
-        } else {
-            console.log('❌ No logo file found (tried PNG and JPG)');
+        const logoPath = path.join(process.cwd(), 'public', 'packedin.jpg');
+        console.log('🔍 Loading packedin.jpg logo at:', logoPath);
+
+        if (!fs.existsSync(logoPath)) {
+            console.log('❌ packedin.jpg not found at:', logoPath);
             return '';
         }
-        
+
         const logoBuffer = fs.readFileSync(logoPath);
-        console.log('✅ Logo loaded successfully, size:', logoBuffer.length, 'bytes');
+        console.log('✅ packedin.jpg loaded successfully, size:', logoBuffer.length, 'bytes');
+
+        // Check if it's actually a JPEG file by looking at the header
+        const header = logoBuffer.toString('hex', 0, 4);
+        console.log('🔍 File header:', header);
+
         const base64 = logoBuffer.toString('base64');
         console.log('✅ Base64 conversion complete, length:', base64.length);
-        return `${mimeType};base64,${base64}`;
+
+        // Return proper JPEG data URI
+        return `image/jpeg;base64,${base64}`;
     } catch (error) {
-        console.log('❌ Error loading logo:', error);
+        console.log('❌ Error loading packedin.jpg:', error);
         return '';
     }
 }

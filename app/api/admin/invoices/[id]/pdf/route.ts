@@ -48,31 +48,31 @@ interface Invoice {
     } | null;
 }
 
-// Function to convert logo to base64
+// Function to convert packedin.jpg logo to base64
 async function getLogoBase64(): Promise<string> {
     try {
-        // Try different logo files in order of React-PDF compatibility
-        const logoOptions = [
-            { path: path.join(process.cwd(), 'public', 'footer-logo.jpg'), mime: 'image/jpeg' },
-            { path: path.join(process.cwd(), 'public', 'packedin.jpg'), mime: 'image/jpeg' },
-            { path: path.join(process.cwd(), 'public', 'packedin.ico'), mime: 'image/x-icon' }
-        ];
+        const logoPath = path.join(process.cwd(), 'public', 'packedin.jpg');
+        console.log('🔍 Loading packedin.jpg logo at:', logoPath);
 
-        for (const option of logoOptions) {
-            if (fs.existsSync(option.path)) {
-                console.log('🔍 Using logo at:', option.path);
-                const logoBuffer = fs.readFileSync(option.path);
-                console.log('✅ Logo loaded successfully, size:', logoBuffer.length, 'bytes');
-                const base64 = logoBuffer.toString('base64');
-                console.log('✅ Base64 conversion complete, length:', base64.length);
-                return `${option.mime};base64,${base64}`;
-            }
+        if (!fs.existsSync(logoPath)) {
+            console.log('❌ packedin.jpg not found at:', logoPath);
+            return '';
         }
 
-        console.log('❌ No compatible logo file found');
-        return '';
+        const logoBuffer = fs.readFileSync(logoPath);
+        console.log('✅ packedin.jpg loaded successfully, size:', logoBuffer.length, 'bytes');
+
+        // Check if it's actually a JPEG file by looking at the header
+        const header = logoBuffer.toString('hex', 0, 4);
+        console.log('🔍 File header:', header);
+
+        const base64 = logoBuffer.toString('base64');
+        console.log('✅ Base64 conversion complete, length:', base64.length);
+
+        // Return proper JPEG data URI
+        return `image/jpeg;base64,${base64}`;
     } catch (error) {
-        console.log('❌ Error loading logo:', error);
+        console.log('❌ Error loading packedin.jpg:', error);
         return '';
     }
 }
@@ -230,25 +230,20 @@ const createInvoiceDocument = (invoice: any, logoBase64: string) => {
     console.log('🎨 Creating header section, logo available:', !!logoBase64);
     console.log('🎨 Logo base64 length:', logoBase64.length);
 
-    // Create logo element - try image first, fallback to text logo
+    // Create logo element - specifically for packedin.jpg
     let logoElement;
     if (logoBase64) {
-        try {
-            logoElement = React.createElement(Image, {
-                key: 'logo',
-                src: `data:${logoBase64}`,
-                style: styles.logo
-            });
-            console.log('✅ Using image logo');
-        } catch (error) {
-            console.log('❌ Image logo failed, using text fallback:', error);
-            logoElement = React.createElement(Text, {
-                key: 'text-logo',
-                style: styles.textLogo
-            }, 'PACKEDIN');
-        }
+        console.log('🎨 Creating image element for packedin.jpg');
+        console.log('🔍 Data URI preview:', `data:${logoBase64}`.substring(0, 50) + '...');
+
+        logoElement = React.createElement(Image, {
+            key: 'packedin-logo',
+            src: `data:${logoBase64}`,
+            style: styles.logo
+        });
+        console.log('✅ packedin.jpg image element created');
     } else {
-        console.log('🔤 Using text logo fallback');
+        console.log('🔤 packedin.jpg not available, using text logo fallback');
         logoElement = React.createElement(Text, {
             key: 'text-logo',
             style: styles.textLogo
