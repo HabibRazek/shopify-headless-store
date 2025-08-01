@@ -51,31 +51,26 @@ interface Invoice {
 // Function to convert logo to base64
 async function getLogoBase64(): Promise<string> {
     try {
-        // Try PNG first, then JPG
-        const pngPath = path.join(process.cwd(), 'public', 'packedin.png');
-        const jpgPath = path.join(process.cwd(), 'public', 'packedin.jpg');
+        // Try different logo files in order of React-PDF compatibility
+        const logoOptions = [
+            { path: path.join(process.cwd(), 'public', 'footer-logo.jpg'), mime: 'image/jpeg' },
+            { path: path.join(process.cwd(), 'public', 'packedin.jpg'), mime: 'image/jpeg' },
+            { path: path.join(process.cwd(), 'public', 'packedin.ico'), mime: 'image/x-icon' }
+        ];
 
-        let logoPath = '';
-        let mimeType = '';
-
-        if (fs.existsSync(pngPath)) {
-            logoPath = pngPath;
-            mimeType = 'image/png';
-            console.log('🔍 Using PNG logo at:', logoPath);
-        } else if (fs.existsSync(jpgPath)) {
-            logoPath = jpgPath;
-            mimeType = 'image/jpeg';
-            console.log('🔍 Using JPG logo at:', logoPath);
-        } else {
-            console.log('❌ No logo file found (tried PNG and JPG)');
-            return '';
+        for (const option of logoOptions) {
+            if (fs.existsSync(option.path)) {
+                console.log('🔍 Using logo at:', option.path);
+                const logoBuffer = fs.readFileSync(option.path);
+                console.log('✅ Logo loaded successfully, size:', logoBuffer.length, 'bytes');
+                const base64 = logoBuffer.toString('base64');
+                console.log('✅ Base64 conversion complete, length:', base64.length);
+                return `${option.mime};base64,${base64}`;
+            }
         }
 
-        const logoBuffer = fs.readFileSync(logoPath);
-        console.log('✅ Logo loaded successfully, size:', logoBuffer.length, 'bytes');
-        const base64 = logoBuffer.toString('base64');
-        console.log('✅ Base64 conversion complete, length:', base64.length);
-        return `${mimeType};base64,${base64}`;
+        console.log('❌ No compatible logo file found');
+        return '';
     } catch (error) {
         console.log('❌ Error loading logo:', error);
         return '';
@@ -104,6 +99,15 @@ const styles = StyleSheet.create({
         width: 120,
         height: 60,
         marginRight: 20,
+    },
+    textLogo: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#22c55e',
+        marginRight: 20,
+        padding: 10,
+        border: '2px solid #22c55e',
+        borderRadius: 5,
     },
     invoiceInfo: {
         textAlign: 'right',
@@ -226,14 +230,30 @@ const createInvoiceDocument = (invoice: any, logoBase64: string) => {
     console.log('🎨 Creating header section, logo available:', !!logoBase64);
     console.log('🎨 Logo base64 length:', logoBase64.length);
 
-    const logoElement = logoBase64 ? React.createElement(Image, {
-        key: 'logo',
-        src: `data:${logoBase64}`,
-        style: styles.logo
-    }) : React.createElement(Text, {
-        key: 'no-logo',
-        style: { color: 'red', fontSize: 10 }
-    }, 'LOGO NOT LOADED');
+    // Create logo element - try image first, fallback to text logo
+    let logoElement;
+    if (logoBase64) {
+        try {
+            logoElement = React.createElement(Image, {
+                key: 'logo',
+                src: `data:${logoBase64}`,
+                style: styles.logo
+            });
+            console.log('✅ Using image logo');
+        } catch (error) {
+            console.log('❌ Image logo failed, using text fallback:', error);
+            logoElement = React.createElement(Text, {
+                key: 'text-logo',
+                style: styles.textLogo
+            }, 'PACKEDIN');
+        }
+    } else {
+        console.log('🔤 Using text logo fallback');
+        logoElement = React.createElement(Text, {
+            key: 'text-logo',
+            style: styles.textLogo
+        }, 'PACKEDIN');
+    }
 
     const headerSection = React.createElement(View, { style: styles.header }, [
         logoElement,
