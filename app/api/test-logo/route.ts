@@ -2,10 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
-// Function to get PACKEDIN header logo - prioritize PNG, then JPG
+// Function to get PACKEDIN header logo - try multiple formats for best compatibility
 async function getLogoBase64(): Promise<{ data: string; format: string }> {
     try {
-        // Try PNG first (better React-PDF support)
+        // Try SVG first (most reliable with React-PDF)
+        const svgPath = path.join(process.cwd(), 'public', 'packedin-logo.svg');
+        if (fs.existsSync(svgPath)) {
+            console.log('🔍 Loading packedin-logo.svg at:', svgPath);
+            const svgContent = fs.readFileSync(svgPath, 'utf8');
+            const base64 = Buffer.from(svgContent).toString('base64');
+            console.log('✅ SVG logo loaded successfully, length:', base64.length);
+            return { data: base64, format: 'svg' };
+        }
+
+        // Try PNG next (better React-PDF support than JPG)
         const pngPath = path.join(process.cwd(), 'public', 'packedin.png');
         if (fs.existsSync(pngPath)) {
             console.log('🔍 Loading packedin.png at:', pngPath);
@@ -15,7 +25,7 @@ async function getLogoBase64(): Promise<{ data: string; format: string }> {
             return { data: base64, format: 'png' };
         }
 
-        // Try JPG next
+        // Try JPG as last resort
         const jpgPath = path.join(process.cwd(), 'public', 'packedin.jpg');
         if (fs.existsSync(jpgPath)) {
             console.log('🔍 Loading packedin.jpg at:', jpgPath);
