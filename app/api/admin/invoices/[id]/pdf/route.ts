@@ -271,7 +271,7 @@ const createInvoiceDocument = (invoice: any, headerLogo: { data: string; format:
     console.log('🎨 Creating header section, logo available:', !!headerLogo.data);
     console.log('🎨 Header logo format:', headerLogo.format);
 
-    // Create logo element - try SVG/PNG/JPG with enhanced visibility
+    // Create logo element - simplified for better React-PDF compatibility
     let logoElement;
     if (headerLogo.data) {
         console.log('🎨 Creating image element for packedin logo, format:', headerLogo.format);
@@ -294,30 +294,25 @@ const createInvoiceDocument = (invoice: any, headerLogo: { data: string; format:
         const dataUri = `data:${mimeType};base64,${headerLogo.data}`;
         console.log('🔍 Data URI preview:', dataUri.substring(0, 50) + '...');
 
-        // Create a container with background to ensure logo visibility
-        logoElement = React.createElement(View, {
-            key: 'logo-container',
-            style: {
-                ...styles.logo,
-                backgroundColor: headerLogo.format === 'svg' ? 'transparent' : '#f8f9fa',
-                border: headerLogo.format === 'svg' ? 'none' : '2px solid #22c55e',
-                borderRadius: 8,
-                padding: headerLogo.format === 'svg' ? 0 : 8,
-                alignItems: 'center',
-                justifyContent: 'center'
-            }
-        }, [
-            React.createElement(Image, {
+        // Simplified logo element for better compatibility
+        try {
+            logoElement = React.createElement(Image, {
                 key: 'packedin-logo',
                 src: dataUri,
                 style: {
-                    width: headerLogo.format === 'svg' ? 120 : 100,
-                    height: headerLogo.format === 'svg' ? 60 : 40,
-                    objectFit: 'contain'
+                    width: 120,
+                    height: 60,
+                    marginRight: 20
                 }
-            })
-        ]);
-        console.log('✅ Packedin logo with container created successfully');
+            });
+            console.log('✅ Packedin logo created successfully');
+        } catch (imageError) {
+            console.log('❌ Image creation failed, using text fallback:', imageError);
+            logoElement = React.createElement(Text, {
+                key: 'text-logo',
+                style: styles.textLogo
+            }, 'PACKEDIN');
+        }
     } else {
         console.log('🔤 Packedin logo not available, using enhanced text logo fallback');
         logoElement = React.createElement(View, {
@@ -457,31 +452,18 @@ const createInvoiceDocument = (invoice: any, headerLogo: { data: string; format:
 
     // Note section removed as requested
 
-    // Create footer section with footer logo
+    // Create footer section with footer logo (simplified)
     console.log('🎨 Creating footer section, footer logo available:', !!footerLogo.data);
 
-    const footerLogoElement = footerLogo.data ? React.createElement(View, {
-        key: 'footer-logo-container',
+    const footerLogoElement = footerLogo.data ? React.createElement(Image, {
+        key: 'footer-logo',
+        src: `data:image/jpeg;base64,${footerLogo.data}`,
         style: {
-            ...styles.footerLogo,
-            backgroundColor: '#f8f9fa',
-            border: '1px solid #22c55e',
-            borderRadius: 5,
-            padding: 3,
-            alignItems: 'center',
-            justifyContent: 'center'
+            width: 40,
+            height: 40,
+            marginRight: 10
         }
-    }, [
-        React.createElement(Image, {
-            key: 'footer-logo',
-            src: `data:image/jpeg;base64,${footerLogo.data}`,
-            style: {
-                width: 32,
-                height: 32,
-                objectFit: 'contain'
-            }
-        })
-    ]) : null;
+    }) : null;
 
     const footerSection = React.createElement(View, { style: styles.footer }, [
         React.createElement(View, { key: 'footer-left', style: styles.footerLeft }, [
@@ -550,15 +532,36 @@ export async function GET(
         console.log('✅ Header logo loaded:', !!headerLogo.data, 'format:', headerLogo.format);
         console.log('✅ Footer logo loaded:', !!footerLogo.data, 'format:', footerLogo.format);
 
-        // Generate PDF using React-PDF (maintains your exact HTML design)
+        // Generate PDF using React-PDF with enhanced error handling
         console.log('📄 Creating React-PDF document...');
-        const doc = createInvoiceDocument(invoice, headerLogo, footerLogo);
+        let doc;
+        try {
+            doc = createInvoiceDocument(invoice, headerLogo, footerLogo);
+            console.log('✅ React-PDF document created successfully');
+        } catch (docError) {
+            console.error('❌ Error creating document with logos, trying fallback:', docError);
+            // Fallback: Create document without logos if image loading fails
+            try {
+                const emptyLogo = { data: '', format: '' };
+                doc = createInvoiceDocument(invoice, emptyLogo, emptyLogo);
+                console.log('✅ Fallback document created successfully (no logos)');
+            } catch (fallbackError) {
+                console.error('❌ Fallback document creation also failed:', fallbackError);
+                throw new Error(`Document creation failed: ${docError instanceof Error ? docError.message : 'Unknown error'}`);
+            }
+        }
 
         console.log('✅ Generating PDF buffer...');
-        const pdfBlob = await pdf(doc).toBlob();
-        const pdfArrayBuffer = await pdfBlob.arrayBuffer();
-        const pdfBuffer = Buffer.from(pdfArrayBuffer);
-        console.log(`✅ PDF generated successfully: ${pdfBuffer.length} bytes`);
+        let pdfBuffer;
+        try {
+            const pdfBlob = await pdf(doc).toBlob();
+            const pdfArrayBuffer = await pdfBlob.arrayBuffer();
+            pdfBuffer = Buffer.from(pdfArrayBuffer);
+            console.log(`✅ PDF generated successfully: ${pdfBuffer.length} bytes`);
+        } catch (pdfGenError) {
+            console.error('❌ Error generating PDF:', pdfGenError);
+            throw new Error(`PDF generation failed: ${pdfGenError instanceof Error ? pdfGenError.message : 'Unknown error'}`);
+        }
 
         // Set up response headers for PDF download
         const headers = new Headers();
