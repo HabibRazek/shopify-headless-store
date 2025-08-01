@@ -141,15 +141,14 @@ export async function GET(request: NextRequest) {
 
     console.log('Fetching products from Shopify...');
     console.log('Store domain:', storeDomain);
-    console.log('Using access token type:', accessToken.startsWith('shpat_') ? 'Admin API' : 'Storefront API');
+    console.log('Using access token type:', isAdminToken ? 'Admin API' : 'Storefront API');
 
     // Determine API endpoint and headers based on token type
-    const isAdminToken = accessToken.startsWith('shpat_');
     const apiEndpoint = isAdminToken
       ? `https://${storeDomain}/admin/api/2024-10/graphql.json`
       : `https://${storeDomain}/api/2023-10/graphql.json`;
 
-    const headers = isAdminToken
+    const headers: Record<string, string> = isAdminToken
       ? {
           'Content-Type': 'application/json',
           'X-Shopify-Access-Token': accessToken,

@@ -559,7 +559,7 @@ export default function InvoiceDetailPage() {
           <Card className="border-0 shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-3">
-                <Printer className="h-5 w-5 text-green-600" />
+                <FileText className="h-5 w-5 text-green-600" />
                 Impression Personnalisée
               </CardTitle>
             </CardHeader>
@@ -639,7 +639,7 @@ export default function InvoiceDetailPage() {
               {invoice.printing?.includePrinting && invoice.printingCosts > 0 && (
                 <div className="bg-white p-4 rounded-lg border border-blue-200">
                   <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
-                    <Printer className="h-4 w-4 text-blue-600" />
+                    <FileText className="h-4 w-4 text-blue-600" />
                     Impression Personnalisée
                   </h4>
                   <div className="space-y-2">
