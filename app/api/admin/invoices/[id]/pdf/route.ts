@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import fs from 'fs';
 import path from 'path';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import React from 'react';
+import { Document, Page, Text, View, StyleSheet, Image, pdf } from '@react-pdf/renderer';
 
 // Force dynamic rendering for this route
 export const dynamic = 'force-dynamic';
@@ -60,12 +60,324 @@ async function getLogoBase64(): Promise<string> {
     }
 }
 
+// Function to convert footer logo to base64
+async function getFooterLogoBase64(): Promise<string> {
+    try {
+        const logoPath = path.join(process.cwd(), 'public', 'footer-logo.jpg');
+        const logoBuffer = fs.readFileSync(logoPath);
+        return logoBuffer.toString('base64');
+    } catch {
+        console.log('Could not load footer logo');
+        return '';
+    }
+}
+
+// Styles that match your HTML design exactly
+const styles = StyleSheet.create({
+    page: {
+        fontFamily: 'Helvetica',
+        fontSize: 12,
+        padding: 30,
+        color: '#333',
+    },
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        marginBottom: 15,
+        paddingBottom: 10,
+        borderBottom: '2px solid #22c55e',
+    },
+    logo: {
+        width: 80,
+        height: 40,
+    },
+    invoiceInfo: {
+        textAlign: 'right',
+    },
+    invoiceTitle: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#22c55e',
+        marginBottom: 5,
+    },
+    invoiceNumber: {
+        fontWeight: 'bold',
+        marginBottom: 3,
+    },
+    invoiceDate: {
+        color: '#666',
+    },
+    companyInfo: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 20,
+    },
+    fromSection: {
+        width: '48%',
+        padding: 10,
+    },
+    toSection: {
+        width: '48%',
+        padding: 10,
+        backgroundColor: '#f8f9fa',
+        border: '1px solid #e9ecef',
+        borderRadius: 5,
+    },
+    sectionTitle: {
+        fontWeight: 'bold',
+        marginBottom: 8,
+        color: '#22c55e',
+        fontSize: 14,
+        borderBottom: '1px solid #eee',
+        paddingBottom: 3,
+    },
+    table: {
+        marginBottom: 15,
+    },
+    tableHeader: {
+        flexDirection: 'row',
+        backgroundColor: '#22c55e',
+        color: 'white',
+        padding: 8,
+        fontWeight: 'bold',
+        fontSize: 11,
+    },
+    tableRow: {
+        flexDirection: 'row',
+        padding: 8,
+        borderBottom: '1px solid #eee',
+    },
+    tableRowEven: {
+        backgroundColor: '#f9f9f9',
+    },
+    col1: { width: '45%' },
+    col2: { width: '10%', textAlign: 'center' },
+    col3: { width: '15%', textAlign: 'right' },
+    col4: { width: '10%', textAlign: 'center' },
+    col5: { width: '20%', textAlign: 'right' },
+    totals: {
+        width: 300,
+        marginLeft: 'auto',
+        marginTop: 10,
+    },
+    totalRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: 5,
+    },
+    totalRowBold: {
+        fontWeight: 'bold',
+        backgroundColor: '#f1f8e9',
+    },
+    grandTotal: {
+        fontWeight: 'bold',
+        fontSize: 14,
+        backgroundColor: '#22c55e',
+        color: 'white',
+        padding: 8,
+    },
+    footer: {
+        position: 'absolute',
+        bottom: 30,
+        left: 30,
+        right: 30,
+        paddingTop: 10,
+        borderTop: '2px solid #22c55e',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        fontSize: 10,
+        color: '#666',
+    },
+    footerLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    footerLogo: {
+        width: 30,
+        height: 30,
+        marginRight: 10,
+    },
+    footerCompany: {
+        fontWeight: 'bold',
+        color: '#22c55e',
+    },
+    note: {
+        marginTop: 20,
+        fontSize: 11,
+        color: '#666',
+        fontStyle: 'italic',
+    },
+});
+
+// Function to create React-PDF Invoice Document using React.createElement (no JSX)
+const createInvoiceDocument = (invoice: any, logoBase64: string, footerLogoBase64: string) => {
+    const hasDiscount = invoice.items.some((item: any) => item.discount && item.discount > 0) ||
+        (invoice.printing?.includePrinting && invoice.printing.discount && invoice.printing.discount > 0);
+
+    // Create header section
+    const headerSection = React.createElement(View, { style: styles.header }, [
+        logoBase64 ? React.createElement(Image, {
+            key: 'logo',
+            src: `data:image/jpeg;base64,${logoBase64}`,
+            style: styles.logo
+        }) : null,
+        React.createElement(View, { key: 'invoice-info', style: styles.invoiceInfo }, [
+            React.createElement(Text, { key: 'title', style: styles.invoiceTitle }, 'FACTURE'),
+            React.createElement(Text, { key: 'number', style: styles.invoiceNumber }, `N°: ${invoice.invoiceNumber}`),
+            React.createElement(Text, { key: 'date', style: styles.invoiceDate },
+                `Date: ${new Date(invoice.invoiceDate).toLocaleDateString('fr-FR')}`
+            )
+        ])
+    ].filter(Boolean));
+
+    // Create company info section
+    const companyInfoSection = React.createElement(View, { style: styles.companyInfo }, [
+        React.createElement(View, { key: 'from', style: styles.fromSection }, [
+            React.createElement(Text, { key: 'from-title', style: styles.sectionTitle }, 'Émetteur'),
+            React.createElement(Text, { key: 'company', style: { fontWeight: 'bold' } }, 'KINGS WORLDWIDE DISTRIBUTION'),
+            React.createElement(Text, { key: 'address1' }, 'B215 Megrine Business Center 2033'),
+            React.createElement(Text, { key: 'address2' }, 'Ben Arous - Tunisie'),
+            React.createElement(Text, { key: 'mf' }, 'MF: 1586831/T/N/M/000'),
+            React.createElement(Text, { key: 'phone' }, 'Tél: +216 50095115 / +216 20387333'),
+            React.createElement(Text, { key: 'email' }, 'Email: contact@packedin.tn')
+        ]),
+        React.createElement(View, { key: 'to', style: styles.toSection }, [
+            React.createElement(Text, { key: 'to-title', style: styles.sectionTitle }, 'Client'),
+            React.createElement(Text, { key: 'client-name', style: { fontWeight: 'bold' } }, invoice.companyName),
+            React.createElement(Text, { key: 'contact' }, invoice.contactPerson),
+            React.createElement(Text, { key: 'client-address' }, invoice.address),
+            invoice.matriculeFiscale ? React.createElement(Text, { key: 'client-mf' }, `MF: ${invoice.matriculeFiscale}`) : null,
+            React.createElement(Text, { key: 'client-phone' }, `Tél: ${invoice.phone}`),
+            React.createElement(Text, { key: 'client-email' }, `Email: ${invoice.email}`)
+        ].filter(Boolean))
+    ]);
+
+    // Create table header
+    const tableHeader = React.createElement(View, { style: styles.tableHeader }, [
+        React.createElement(Text, { key: 'col1', style: styles.col1 }, 'Description'),
+        React.createElement(Text, { key: 'col2', style: styles.col2 }, 'Qté'),
+        React.createElement(Text, { key: 'col3', style: styles.col3 }, 'Prix Unitaire'),
+        hasDiscount ? React.createElement(Text, { key: 'col4', style: styles.col4 }, 'Remise') : null,
+        React.createElement(Text, { key: 'col5', style: styles.col5 }, 'Total')
+    ].filter(Boolean));
+
+    // Create table rows
+    const tableRows = invoice.items.map((item: any, index: number) =>
+        React.createElement(View, {
+            key: `item-${index}`,
+            style: index % 2 === 1 ? [styles.tableRow, styles.tableRowEven] : styles.tableRow
+        }, [
+            React.createElement(Text, { key: 'name', style: styles.col1 }, item.productName),
+            React.createElement(Text, { key: 'qty', style: styles.col2 }, item.quantity.toString()),
+            React.createElement(Text, { key: 'price', style: styles.col3 }, `${item.unitPrice.toFixed(3)} TND`),
+            hasDiscount ? React.createElement(Text, { key: 'discount', style: styles.col4 },
+                item.discount ? `${item.discount}%` : '0%') : null,
+            React.createElement(Text, { key: 'total', style: styles.col5 }, `${item.total.toFixed(2)} TND`)
+        ].filter(Boolean))
+    );
+
+    // Add printing row if needed
+    if (invoice.printing?.includePrinting) {
+        tableRows.push(
+            React.createElement(View, { key: 'printing', style: styles.tableRow }, [
+                React.createElement(Text, { key: 'print-desc', style: styles.col1 },
+                    `Impression personnalisée (${invoice.printing.dimensions})`),
+                React.createElement(Text, { key: 'print-qty', style: styles.col2 },
+                    invoice.printing.quantity.toString()),
+                React.createElement(Text, { key: 'print-price', style: styles.col3 },
+                    `${invoice.printing.printingPricePerUnit.toFixed(3)} TND`),
+                hasDiscount ? React.createElement(Text, { key: 'print-discount', style: styles.col4 }, '0%') : null,
+                React.createElement(Text, { key: 'print-total', style: styles.col5 },
+                    `${invoice.printing.total.toFixed(2)} TND`)
+            ].filter(Boolean))
+        );
+    }
+
+    // Create table section
+    const tableSection = React.createElement(View, { style: styles.table }, [
+        tableHeader,
+        ...tableRows
+    ]);
+
+    // Create totals section
+    const totalsRows = [
+        React.createElement(View, { key: 'subtotal', style: styles.totalRow }, [
+            React.createElement(Text, { key: 'label' }, 'Sous-total:'),
+            React.createElement(Text, { key: 'value' }, `${invoice.subtotal.toFixed(2)} TND`)
+        ]),
+        React.createElement(View, { key: 'delivery', style: [styles.totalRow, styles.totalRowBold] }, [
+            React.createElement(Text, { key: 'label' }, 'Livraison:'),
+            React.createElement(Text, { key: 'value' }, '8.00 TND')
+        ])
+    ];
+
+    if (invoice.totalDiscount > 0) {
+        totalsRows.push(
+            React.createElement(View, { key: 'discount', style: [styles.totalRow, styles.totalRowBold] }, [
+                React.createElement(Text, { key: 'label' }, 'Remise:'),
+                React.createElement(Text, { key: 'value' }, `${invoice.totalDiscount.toFixed(2)} TND`)
+            ])
+        );
+    }
+
+    totalsRows.push(
+        React.createElement(View, { key: 'total', style: [styles.totalRow, styles.grandTotal] }, [
+            React.createElement(Text, { key: 'label' }, 'TOTAL TTC:'),
+            React.createElement(Text, { key: 'value' }, `${invoice.total.toFixed(2)} TND`)
+        ])
+    );
+
+    const totalsSection = React.createElement(View, { style: styles.totals }, totalsRows);
+
+    // Create note section
+    const noteSection = React.createElement(View, { style: styles.note }, [
+        React.createElement(Text, { key: 'payment' }, 'Mode de paiement: Virement bancaire'),
+        React.createElement(Text, { key: 'rib' }, 'RIB: 10 325 124 12457895 78 - STB'),
+        React.createElement(Text, { key: 'delay' }, 'Délai de paiement: 30 jours à partir de la date de facturation')
+    ]);
+
+    // Create footer section
+    const footerSection = React.createElement(View, { style: styles.footer }, [
+        React.createElement(View, { key: 'footer-left', style: styles.footerLeft }, [
+            footerLogoBase64 ? React.createElement(Image, {
+                key: 'footer-logo',
+                src: `data:image/jpeg;base64,${footerLogoBase64}`,
+                style: styles.footerLogo
+            }) : null,
+            React.createElement(View, { key: 'contact' }, [
+                React.createElement(Text, { key: 'phone' }, '+216 50095115 / +216 20387333'),
+                React.createElement(Text, { key: 'web' }, 'contact@packedin.tn - www.packedin.tn'),
+                React.createElement(Text, { key: 'address' }, 'Jasmin 8050 Nabeul- Tunisia')
+            ])
+        ].filter(Boolean)),
+        React.createElement(View, { key: 'footer-right' }, [
+            React.createElement(Text, { key: 'company', style: styles.footerCompany }, 'KINGS WORLDWIDE DISTRIBUTION'),
+            React.createElement(Text, { key: 'thanks' }, 'Merci pour votre confiance')
+        ])
+    ]);
+
+    // Create the complete page
+    const page = React.createElement(Page, { size: 'A4', style: styles.page }, [
+        headerSection,
+        companyInfoSection,
+        tableSection,
+        totalsSection,
+        noteSection,
+        footerSection
+    ]);
+
+    // Create the document
+    return React.createElement(Document, {}, [page]);
+};
+
 export async function GET(
     _request: NextRequest,
     { params }: { params: { id: string } }
 ) {
     try {
-        console.log('🚀 Starting PDF generation with jsPDF...');
+        console.log('🚀 Starting PDF generation with React-PDF...');
+        console.log('📋 Invoice ID:', params.id);
 
         // Fetch invoice with all related data
         const invoice = await prisma.invoice.findUnique({
@@ -77,138 +389,34 @@ export async function GET(
         });
 
         if (!invoice) {
+            console.error('❌ Invoice not found:', params.id);
             return NextResponse.json(
                 { error: 'Invoice not found' },
                 { status: 404 }
             );
         }
 
-        // Generate PDF using jsPDF
-        const doc = new jsPDF();
-
-        // Set font
-        doc.setFont('helvetica');
-
-        // Add logo (optimized)
-        try {
-            const logoBase64 = await getLogoBase64();
-            if (logoBase64) {
-                // Smaller logo to reduce memory usage
-                doc.addImage(`data:image/jpeg;base64,${logoBase64}`, 'JPEG', 15, 15, 25, 12);
-            }
-        } catch (error) {
-            console.log('Could not add logo - continuing without logo');
-        }
-
-        // Header - Company Info
-        doc.setFontSize(20);
-        doc.setTextColor(34, 197, 94); // Green color
-        doc.text('FACTURE', 150, 25);
-
-        // Invoice details
-        doc.setFontSize(10);
-        doc.setTextColor(0, 0, 0);
-        doc.text(`Facture N°: ${invoice.invoiceNumber}`, 150, 35);
-        doc.text(`Date: ${new Date(invoice.invoiceDate).toLocaleDateString('fr-FR')}`, 150, 42);
-
-        // Client information
-        doc.setFontSize(12);
-        doc.setTextColor(34, 197, 94);
-        doc.text('FACTURÉ À:', 15, 55);
-
-        doc.setFontSize(10);
-        doc.setTextColor(0, 0, 0);
-        doc.text(invoice.companyName, 15, 65);
-        doc.text(invoice.contactPerson, 15, 72);
-        doc.text(invoice.address, 15, 79);
-        doc.text(`Tél: ${invoice.phone}`, 15, 86);
-        doc.text(`Email: ${invoice.email}`, 15, 93);
-
-        if (invoice.matriculeFiscale) {
-            doc.text(`MF: ${invoice.matriculeFiscale}`, 15, 100);
-        }
-
-        // Items table
-        const tableData = invoice.items.map((item: InvoiceItem) => [
-            item.productName,
-            item.quantity.toString(),
-            `${item.unitPrice.toFixed(3)} TND`,
-            item.discount ? `${item.discount}%` : '0%',
-            `${item.total.toFixed(2)} TND`
-        ]);
-
-        // Add printing if included
-        if (invoice.printing?.includePrinting) {
-            tableData.push([
-                `Impression personnalisée (${invoice.printing.dimensions})`,
-                invoice.printing.quantity.toString(),
-                `${invoice.printing.printingPricePerUnit.toFixed(3)} TND`,
-                '0%',
-                `${invoice.printing.total.toFixed(2)} TND`
-            ]);
-        }
-
-        // Use autoTable for the items table
-        (doc as any).autoTable({
-            head: [['Description', 'Qté', 'Prix Unitaire', 'Remise', 'Total']],
-            body: tableData,
-            startY: 115,
-            theme: 'grid',
-            headStyles: {
-                fillColor: [34, 197, 94],
-                textColor: [255, 255, 255],
-                fontSize: 10,
-                halign: 'center'
-            },
-            bodyStyles: {
-                fontSize: 9,
-                halign: 'center'
-            },
-            columnStyles: {
-                0: { halign: 'left', cellWidth: 80 },
-                1: { halign: 'center', cellWidth: 20 },
-                2: { halign: 'right', cellWidth: 30 },
-                3: { halign: 'center', cellWidth: 20 },
-                4: { halign: 'right', cellWidth: 30 }
-            }
+        console.log('✅ Invoice found:', {
+            id: invoice.id,
+            number: invoice.invoiceNumber,
+            itemsCount: invoice.items.length,
+            hasPrinting: !!invoice.printing
         });
 
-        // Get the final Y position after the table
-        const finalY = (doc as any).lastAutoTable.finalY + 10;
+        // Load logos
+        console.log('📄 Loading logos...');
+        const logoBase64 = await getLogoBase64();
+        const footerLogoBase64 = await getFooterLogoBase64();
+        console.log('✅ Logos loaded');
 
-        // Totals section
-        const totalsX = 130;
-        let currentY = finalY;
+        // Generate PDF using React-PDF (maintains your exact HTML design)
+        console.log('📄 Creating React-PDF document...');
+        const doc = createInvoiceDocument(invoice, logoBase64, footerLogoBase64);
 
-        doc.setFontSize(10);
-        doc.text(`Sous-total: ${invoice.subtotal.toFixed(2)} TND`, totalsX, currentY);
-        currentY += 7;
-
-        doc.text('Livraison: 8.00 TND', totalsX, currentY);
-        currentY += 7;
-
-        if (invoice.totalDiscount > 0) {
-            doc.text(`Remise: ${invoice.totalDiscount.toFixed(2)} TND`, totalsX, currentY);
-            currentY += 7;
-        }
-
-        // Total
-        doc.setFontSize(12);
-        doc.setTextColor(34, 197, 94);
-        doc.text(`TOTAL TTC: ${invoice.total.toFixed(2)} TND`, totalsX, currentY);
-
-        // Footer
-        doc.setFontSize(8);
-        doc.setTextColor(100, 100, 100);
-        doc.text('KINGS WORLDWIDE DISTRIBUTION', 15, 270);
-        doc.text('+216 50095115 / +216 20387333', 15, 277);
-        doc.text('contact@packedin.tn - www.packedin.tn', 15, 284);
-        doc.text('Jasmin 8050 Nabeul- Tunisia', 15, 291);
-
-        // Convert to buffer
-        const pdfArrayBuffer = doc.output('arraybuffer');
+        console.log('✅ Generating PDF buffer...');
+        const pdfBlob = await pdf(doc).toBlob();
+        const pdfArrayBuffer = await pdfBlob.arrayBuffer();
         const pdfBuffer = Buffer.from(pdfArrayBuffer);
-
         console.log(`✅ PDF generated successfully: ${pdfBuffer.length} bytes`);
 
         // Set up response headers for PDF download

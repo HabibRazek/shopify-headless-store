@@ -59,6 +59,7 @@ export default function Home() {
             height={160}
             className="object-contain z-30 w-[120px] h-[100px] sm:w-[180px] sm:h-[160px] sm:lg:ml-10 mt-[15px]"
           />
+          
           <h1 className='font-extrabold mb-5 sm:text-3xl ml-[100px] mt-[-100px] lg:sm:ml-40 -rotate-12 z-30 sm:lg:mt-[-200px]'>
             Nos <br /> Categories
           </h1>
