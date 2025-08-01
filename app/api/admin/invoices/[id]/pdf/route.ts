@@ -272,8 +272,38 @@ const createInvoiceDocument = (invoice: any, headerLogo: { data: string; format:
     console.log('🎨 Creating header section, logo available:', !!headerLogo.data);
     console.log('🎨 Header logo format:', headerLogo.format);
 
-    // Create logo element - force PNG format for better compatibility
+    // Create logo element - use text logo for guaranteed visibility
     let logoElement;
+
+    // Always use text logo for now to ensure visibility
+    console.log('🎨 Creating text logo for guaranteed visibility');
+    logoElement = React.createElement(View, {
+        key: 'text-logo-wrapper',
+        style: {
+            backgroundColor: '#22c55e',
+            padding: 12,
+            borderRadius: 8,
+            marginRight: 20,
+            alignItems: 'center',
+            justifyContent: 'center',
+            minWidth: 120,
+            minHeight: 50
+        }
+    }, [
+        React.createElement(Text, {
+            key: 'text-logo',
+            style: {
+                color: '#ffffff',
+                fontSize: 18,
+                fontWeight: 'bold',
+                textAlign: 'center'
+            }
+        }, 'PACKEDIN')
+    ]);
+    console.log('✅ Text logo created successfully');
+
+    // TODO: Re-enable image logo once format issues are resolved
+    /*
     if (headerLogo.data) {
         console.log('🎨 Creating image element for packedin logo, format:', headerLogo.format);
 
@@ -326,7 +356,10 @@ const createInvoiceDocument = (invoice: any, headerLogo: { data: string; format:
                 }, 'PACKEDIN')
             ]);
         }
-    } else {
+    */
+
+    // Fallback text logo (currently not used since we always use text logo above)
+    if (false) {
         console.log('🔤 Packedin logo not available, using enhanced text logo fallback');
         logoElement = React.createElement(View, {
             key: 'text-logo-container',
