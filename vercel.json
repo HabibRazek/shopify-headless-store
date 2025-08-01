@@ -11,6 +11,14 @@
     "app/api/upload/route.ts": {
       "maxDuration": 60,
       "memory": 1024
+    },
+    "app/api/admin/invoices/[id]/pdf/route.ts": {
+      "maxDuration": 60,
+      "memory": 3008
+    },
+    "app/api/health/pdf/route.ts": {
+      "maxDuration": 30,
+      "memory": 1024
     }
   },
   "env": {

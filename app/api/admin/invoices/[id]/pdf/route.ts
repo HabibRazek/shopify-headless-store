@@ -4,6 +4,10 @@ import puppeteer from 'puppeteer';
 import fs from 'fs';
 import path from 'path';
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+export const maxDuration = 60;
+
 interface InvoiceItem {
     productName: string;
     quantity: number;
@@ -97,8 +101,13 @@ export async function GET(
         const htmlContent = await generateInvoiceHTML(invoice);
 
         try {
-            // Generate PDF using Puppeteer
-            const browser = await puppeteer.launch({
+            console.log('🚀 Starting PDF generation...');
+            console.log('Environment:', process.env.NODE_ENV);
+            console.log('Platform:', process.platform);
+
+            // Enhanced Puppeteer configuration for Vercel production
+            const isProduction = process.env.NODE_ENV === 'production';
+            const browserConfig = {
                 headless: true,
                 args: [
                     '--no-sandbox',
@@ -107,44 +116,123 @@ export async function GET(
                     '--disable-accelerated-2d-canvas',
                     '--no-first-run',
                     '--no-zygote',
-                    '--disable-gpu'
-                ]
-            });
+                    '--disable-gpu',
+                    '--disable-web-security',
+                    '--disable-features=VizDisplayCompositor',
+                    '--disable-background-timer-throttling',
+                    '--disable-backgrounding-occluded-windows',
+                    '--disable-renderer-backgrounding',
+                    '--disable-ipc-flooding-protection',
+                    '--font-render-hinting=none',
+                    '--disable-extensions',
+                    '--disable-plugins',
+                    '--disable-default-apps',
+                    '--disable-sync',
+                    '--disable-translate',
+                    '--hide-scrollbars',
+                    '--mute-audio',
+                    '--no-default-browser-check',
+                    '--no-pings',
+                    '--single-process'
+                ],
+                // Use executablePath for production if available
+                ...(isProduction && process.env.PUPPETEER_EXECUTABLE_PATH && {
+                    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH
+                })
+            };
+
+            console.log('🔧 Browser config:', JSON.stringify(browserConfig, null, 2));
+            const browser = await puppeteer.launch(browserConfig);
+            console.log('✅ Browser launched successfully');
 
             const page = await browser.newPage();
+            console.log('✅ New page created');
 
-            // Set content and wait for it to load
+            // Set viewport and user agent for consistency
+            await page.setViewport({ width: 1200, height: 800 });
+            await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36');
+            console.log('✅ Page viewport and user agent set');
+
+            // Set content with enhanced options
+            console.log('📄 Setting page content...');
             await page.setContent(htmlContent, {
-                waitUntil: 'networkidle0',
-                timeout: 30000
+                waitUntil: ['load', 'domcontentloaded'],
+                timeout: 60000
             });
+            console.log('✅ Page content set successfully');
 
-            // Generate PDF
+            // Wait a bit more for fonts and images to load
+            console.log('⏳ Waiting for resources to load...');
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            console.log('✅ Resource loading wait completed');
+
+            // Generate PDF with enhanced options
+            console.log('📄 Generating PDF...');
             const pdfBuffer = await page.pdf({
                 format: 'A4',
                 printBackground: true,
+                preferCSSPageSize: false,
+                displayHeaderFooter: false,
                 margin: {
                     top: '10mm',
                     bottom: '10mm',
                     left: '10mm',
                     right: '10mm'
-                }
+                },
+                // Ensure proper PDF generation
+                tagged: false,
+                outline: false
             });
+            console.log('✅ PDF buffer generated:', pdfBuffer.length, 'bytes');
 
             await browser.close();
+
+            // Validate PDF buffer
+            if (!pdfBuffer || pdfBuffer.length === 0) {
+                throw new Error('Generated PDF buffer is empty');
+            }
+
+            // Validate PDF header (should start with %PDF)
+            const pdfHeader = pdfBuffer.slice(0, 4).toString();
+            if (pdfHeader !== '%PDF') {
+                throw new Error('Generated buffer is not a valid PDF');
+            }
+
+            console.log(`✅ PDF generated successfully: ${pdfBuffer.length} bytes`);
 
             // Set up response headers for PDF download
             const headers = new Headers();
             headers.set('Content-Type', 'application/pdf');
             headers.set('Content-Disposition', `attachment; filename="Facture_${invoice.invoiceNumber}_${invoice.companyName.replace(/[^a-zA-Z0-9]/g, '_')}.pdf"`);
+            headers.set('Content-Length', pdfBuffer.length.toString());
+            headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+            headers.set('Pragma', 'no-cache');
+            headers.set('Expires', '0');
 
             // PDF generated successfully using Puppeteer
             return new Response(pdfBuffer, { headers });
 
-        } catch {
-            // Error generating PDF with Puppeteer
+        } catch (pdfError) {
+            console.error('❌ Error generating PDF with Puppeteer:', pdfError);
+            console.error('Error details:', {
+                message: pdfError instanceof Error ? pdfError.message : 'Unknown error',
+                stack: pdfError instanceof Error ? pdfError.stack : 'No stack trace',
+                name: pdfError instanceof Error ? pdfError.name : 'Unknown error type'
+            });
 
-            // Fallback: return HTML for manual printing
+            // In production, return error response instead of HTML fallback
+            if (process.env.NODE_ENV === 'production') {
+                return NextResponse.json(
+                    {
+                        error: 'PDF generation failed in production environment',
+                        details: pdfError instanceof Error ? pdfError.message : 'Unknown error',
+                        suggestion: 'Please try again or contact support if the issue persists'
+                    },
+                    { status: 500 }
+                );
+            }
+
+            // Fallback for development: return HTML for manual printing
             const headers = new Headers();
             headers.set('Content-Type', 'text/html; charset=utf-8');
             headers.set('Content-Disposition', `inline; filename="Facture_${invoice.invoiceNumber}_${invoice.companyName.replace(/[^a-zA-Z0-9]/g, '_')}.html"`);
