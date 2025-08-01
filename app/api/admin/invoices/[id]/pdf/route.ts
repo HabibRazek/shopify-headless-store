@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import puppeteer from 'puppeteer';
 import fs from 'fs';
 import path from 'path';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 // Force dynamic rendering for this route
 export const dynamic = 'force-dynamic';
@@ -54,19 +55,7 @@ async function getLogoBase64(): Promise<string> {
         const logoBuffer = fs.readFileSync(logoPath);
         return logoBuffer.toString('base64');
     } catch {
-        // Error loading logo
-        return '';
-    }
-}
-
-// Function to convert footer logo to base64
-async function getFooterLogoBase64(): Promise<string> {
-    try {
-        const logoPath = path.join(process.cwd(), 'public', 'footer-logo.jpg');
-        const logoBuffer = fs.readFileSync(logoPath);
-        return logoBuffer.toString('base64');
-    } catch {
-        // Error reading footer logo file
+        console.log('Could not load logo');
         return '';
     }
 }
@@ -76,7 +65,7 @@ export async function GET(
     { params }: { params: { id: string } }
 ) {
     try {
-        // PDF generation requested for invoice
+        console.log('🚀 Starting PDF generation with jsPDF...');
 
         // Fetch invoice with all related data
         const invoice = await prisma.invoice.findUnique({
@@ -88,480 +77,160 @@ export async function GET(
         });
 
         if (!invoice) {
-            // Invoice not found
             return NextResponse.json(
                 { error: 'Invoice not found' },
                 { status: 404 }
             );
         }
 
-        // Invoice found, proceeding with PDF generation
+        // Generate PDF using jsPDF
+        const doc = new jsPDF();
 
-        // Generate HTML content for the invoice
-        const htmlContent = await generateInvoiceHTML(invoice);
+        // Set font
+        doc.setFont('helvetica');
 
+        // Add logo
         try {
-            console.log('🚀 Starting PDF generation...');
-            console.log('Environment:', process.env.NODE_ENV);
-            console.log('Platform:', process.platform);
-
-            // Enhanced Puppeteer configuration for Vercel production
-            const isProduction = process.env.NODE_ENV === 'production';
-            const browserConfig = {
-                headless: true,
-                args: [
-                    '--no-sandbox',
-                    '--disable-setuid-sandbox',
-                    '--disable-dev-shm-usage',
-                    '--disable-accelerated-2d-canvas',
-                    '--no-first-run',
-                    '--no-zygote',
-                    '--disable-gpu',
-                    '--disable-web-security',
-                    '--disable-features=VizDisplayCompositor',
-                    '--disable-background-timer-throttling',
-                    '--disable-backgrounding-occluded-windows',
-                    '--disable-renderer-backgrounding',
-                    '--disable-ipc-flooding-protection',
-                    '--font-render-hinting=none',
-                    '--disable-extensions',
-                    '--disable-plugins',
-                    '--disable-default-apps',
-                    '--disable-sync',
-                    '--disable-translate',
-                    '--hide-scrollbars',
-                    '--mute-audio',
-                    '--no-default-browser-check',
-                    '--no-pings',
-                    '--single-process'
-                ],
-                // Use executablePath for production if available
-                ...(isProduction && process.env.PUPPETEER_EXECUTABLE_PATH && {
-                    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH
-                })
-            };
-
-            console.log('🔧 Browser config:', JSON.stringify(browserConfig, null, 2));
-            const browser = await puppeteer.launch(browserConfig);
-            console.log('✅ Browser launched successfully');
-
-            const page = await browser.newPage();
-            console.log('✅ New page created');
-
-            // Set viewport and user agent for consistency
-            await page.setViewport({ width: 1200, height: 800 });
-            await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36');
-            console.log('✅ Page viewport and user agent set');
-
-            // Set content with enhanced options
-            console.log('📄 Setting page content...');
-            await page.setContent(htmlContent, {
-                waitUntil: ['load', 'domcontentloaded'],
-                timeout: 60000
-            });
-            console.log('✅ Page content set successfully');
-
-            // Wait a bit more for fonts and images to load
-            console.log('⏳ Waiting for resources to load...');
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            console.log('✅ Resource loading wait completed');
-
-            // Generate PDF with enhanced options
-            console.log('📄 Generating PDF...');
-            const pdfBuffer = await page.pdf({
-                format: 'A4',
-                printBackground: true,
-                preferCSSPageSize: false,
-                displayHeaderFooter: false,
-                margin: {
-                    top: '10mm',
-                    bottom: '10mm',
-                    left: '10mm',
-                    right: '10mm'
-                },
-                // Ensure proper PDF generation
-                tagged: false,
-                outline: false
-            });
-            console.log('✅ PDF buffer generated:', pdfBuffer.length, 'bytes');
-
-            await browser.close();
-
-            // Validate PDF buffer
-            if (!pdfBuffer || pdfBuffer.length === 0) {
-                throw new Error('Generated PDF buffer is empty');
+            const logoBase64 = await getLogoBase64();
+            if (logoBase64) {
+                doc.addImage(`data:image/jpeg;base64,${logoBase64}`, 'JPEG', 15, 15, 30, 15);
             }
-
-            // Validate PDF header (should start with %PDF)
-            const pdfHeader = pdfBuffer.slice(0, 4).toString();
-            if (pdfHeader !== '%PDF') {
-                throw new Error('Generated buffer is not a valid PDF');
-            }
-
-            console.log(`✅ PDF generated successfully: ${pdfBuffer.length} bytes`);
-
-            // Set up response headers for PDF download
-            const headers = new Headers();
-            headers.set('Content-Type', 'application/pdf');
-            headers.set('Content-Disposition', `attachment; filename="Facture_${invoice.invoiceNumber}_${invoice.companyName.replace(/[^a-zA-Z0-9]/g, '_')}.pdf"`);
-            headers.set('Content-Length', pdfBuffer.length.toString());
-            headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
-            headers.set('Pragma', 'no-cache');
-            headers.set('Expires', '0');
-
-            // PDF generated successfully using Puppeteer
-            return new Response(pdfBuffer, { headers });
-
-        } catch (pdfError) {
-            console.error('❌ Error generating PDF with Puppeteer:', pdfError);
-            console.error('Error details:', {
-                message: pdfError instanceof Error ? pdfError.message : 'Unknown error',
-                stack: pdfError instanceof Error ? pdfError.stack : 'No stack trace',
-                name: pdfError instanceof Error ? pdfError.name : 'Unknown error type'
-            });
-
-            // In production, return error response instead of HTML fallback
-            if (process.env.NODE_ENV === 'production') {
-                return NextResponse.json(
-                    {
-                        error: 'PDF generation failed in production environment',
-                        details: pdfError instanceof Error ? pdfError.message : 'Unknown error',
-                        suggestion: 'Please try again or contact support if the issue persists'
-                    },
-                    { status: 500 }
-                );
-            }
-
-            // Fallback for development: return HTML for manual printing
-            const headers = new Headers();
-            headers.set('Content-Type', 'text/html; charset=utf-8');
-            headers.set('Content-Disposition', `inline; filename="Facture_${invoice.invoiceNumber}_${invoice.companyName.replace(/[^a-zA-Z0-9]/g, '_')}.html"`);
-
-            return new Response(htmlContent, { headers });
+        } catch (error) {
+            console.log('Could not add logo:', error);
         }
 
-    } catch {
-        // Error generating PDF
+        // Header - Company Info
+        doc.setFontSize(20);
+        doc.setTextColor(34, 197, 94); // Green color
+        doc.text('FACTURE', 150, 25);
+
+        // Invoice details
+        doc.setFontSize(10);
+        doc.setTextColor(0, 0, 0);
+        doc.text(`Facture N°: ${invoice.invoiceNumber}`, 150, 35);
+        doc.text(`Date: ${new Date(invoice.invoiceDate).toLocaleDateString('fr-FR')}`, 150, 42);
+
+        // Client information
+        doc.setFontSize(12);
+        doc.setTextColor(34, 197, 94);
+        doc.text('FACTURÉ À:', 15, 55);
+
+        doc.setFontSize(10);
+        doc.setTextColor(0, 0, 0);
+        doc.text(invoice.companyName, 15, 65);
+        doc.text(invoice.contactPerson, 15, 72);
+        doc.text(invoice.address, 15, 79);
+        doc.text(`Tél: ${invoice.phone}`, 15, 86);
+        doc.text(`Email: ${invoice.email}`, 15, 93);
+
+        if (invoice.matriculeFiscale) {
+            doc.text(`MF: ${invoice.matriculeFiscale}`, 15, 100);
+        }
+
+        // Items table
+        const tableData = invoice.items.map((item: InvoiceItem) => [
+            item.productName,
+            item.quantity.toString(),
+            `${item.unitPrice.toFixed(3)} TND`,
+            item.discount ? `${item.discount}%` : '0%',
+            `${item.total.toFixed(2)} TND`
+        ]);
+
+        // Add printing if included
+        if (invoice.printing?.includePrinting) {
+            tableData.push([
+                `Impression personnalisée (${invoice.printing.dimensions})`,
+                invoice.printing.quantity.toString(),
+                `${invoice.printing.printingPricePerUnit.toFixed(3)} TND`,
+                '0%',
+                `${invoice.printing.total.toFixed(2)} TND`
+            ]);
+        }
+
+        // Use autoTable for the items table
+        (doc as any).autoTable({
+            head: [['Description', 'Qté', 'Prix Unitaire', 'Remise', 'Total']],
+            body: tableData,
+            startY: 115,
+            theme: 'grid',
+            headStyles: {
+                fillColor: [34, 197, 94],
+                textColor: [255, 255, 255],
+                fontSize: 10,
+                halign: 'center'
+            },
+            bodyStyles: {
+                fontSize: 9,
+                halign: 'center'
+            },
+            columnStyles: {
+                0: { halign: 'left', cellWidth: 80 },
+                1: { halign: 'center', cellWidth: 20 },
+                2: { halign: 'right', cellWidth: 30 },
+                3: { halign: 'center', cellWidth: 20 },
+                4: { halign: 'right', cellWidth: 30 }
+            }
+        });
+
+        // Get the final Y position after the table
+        const finalY = (doc as any).lastAutoTable.finalY + 10;
+
+        // Totals section
+        const totalsX = 130;
+        let currentY = finalY;
+
+        doc.setFontSize(10);
+        doc.text(`Sous-total: ${invoice.subtotal.toFixed(2)} TND`, totalsX, currentY);
+        currentY += 7;
+
+        doc.text('Livraison: 8.00 TND', totalsX, currentY);
+        currentY += 7;
+
+        if (invoice.totalDiscount > 0) {
+            doc.text(`Remise: ${invoice.totalDiscount.toFixed(2)} TND`, totalsX, currentY);
+            currentY += 7;
+        }
+
+        // Total
+        doc.setFontSize(12);
+        doc.setTextColor(34, 197, 94);
+        doc.text(`TOTAL TTC: ${invoice.total.toFixed(2)} TND`, totalsX, currentY);
+
+        // Footer
+        doc.setFontSize(8);
+        doc.setTextColor(100, 100, 100);
+        doc.text('KINGS WORLDWIDE DISTRIBUTION', 15, 270);
+        doc.text('+216 50095115 / +216 20387333', 15, 277);
+        doc.text('contact@packedin.tn - www.packedin.tn', 15, 284);
+        doc.text('Jasmin 8050 Nabeul- Tunisia', 15, 291);
+
+        // Convert to buffer
+        const pdfArrayBuffer = doc.output('arraybuffer');
+        const pdfBuffer = Buffer.from(pdfArrayBuffer);
+
+        console.log(`✅ PDF generated successfully: ${pdfBuffer.length} bytes`);
+
+        // Set up response headers for PDF download
+        const headers = new Headers();
+        headers.set('Content-Type', 'application/pdf');
+        headers.set('Content-Disposition', `attachment; filename="Facture_${invoice.invoiceNumber}_${invoice.companyName.replace(/[^a-zA-Z0-9]/g, '_')}.pdf"`);
+        headers.set('Content-Length', pdfBuffer.length.toString());
+        headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+        headers.set('Pragma', 'no-cache');
+        headers.set('Expires', '0');
+
+        return new Response(pdfBuffer, { headers });
+
+    } catch (pdfError) {
+        console.error('❌ Error generating PDF:', pdfError);
+
         return NextResponse.json(
-            { error: 'Failed to generate PDF' },
+            {
+                error: 'PDF generation failed',
+                details: pdfError instanceof Error ? pdfError.message : 'Unknown error',
+                suggestion: 'Please try again or contact support if the issue persists'
+            },
             { status: 500 }
         );
     }
-}
-
-async function generateInvoiceHTML(invoice: Invoice): Promise<string> {
-    // Starting HTML generation for invoice
-
-    const logoBase64 = await getLogoBase64();
-    const footerLogoBase64 = await getFooterLogoBase64();
-
-    // Check if any items have a discount to show REMISE column
-    const hasDiscount = invoice.items.some((item: InvoiceItem) => item.discount && item.discount > 0) ||
-        (invoice.printing?.includePrinting && invoice.printing.discount && invoice.printing.discount > 0);
-
-    return `
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Facture ${invoice.invoiceNumber}</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        @page {
-            size: A4;
-            margin: 10mm;
-        }
-
-        body {
-            width: 210mm;
-            height: 297mm;
-            margin: 0 auto;
-            padding: 10mm;
-            color: #333;
-            font-size: 12px;
-            position: relative;
-        }
-
-        .invoice-container {
-            display: flex;
-            flex-direction: column;
-            height: 277mm; /* 297mm - 10mm top - 10mm bottom */
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #22c55e;
-        }
-
-        .logo {
-            height: 60px;
-        }
-
-        .invoice-info {
-            text-align: right;
-        }
-
-        .invoice-title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #22c55e;
-            margin-bottom: 5px;
-        }
-
-        .invoice-number {
-            font-weight: bold;
-            margin-bottom: 3px;
-        }
-
-        .invoice-date {
-            color: #666;
-        }
-
-        .company-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .from, .to {
-            width: 48%;
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        .to {
-            background-color: #f8f9fa;
-            border: 1px solid #e9ecef;
-        }
-
-        .section-title {
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: #22c55e;
-            font-size: 14px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 3px;
-        }
-
-        .items-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 15px;
-        }
-
-        .items-table th {
-            background-color: #22c55e;
-            color: white;
-            padding: 8px 10px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 11px;
-        }
-
-        .items-table td {
-            padding: 8px 10px;
-            border-bottom: 1px solid #eee;
-            text-align: center;
-        }
-
-        .items-table tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        .text-right {
-            text-align: right;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .totals {
-            width: 300px;
-            margin-left: auto;
-            margin-top: 10px;
-        }
-
-        .totals table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .totals td {
-            padding: 5px 10px;
-        }
-
-        .total-row {
-            font-weight: bold;
-            background-color: #f1f8e9 !important;
-        }
-
-        .grand-total {
-            font-weight: bold;
-            font-size: 14px;
-            background-color: #22c55e !important;
-            color: white;
-        }
-
-        .footer {
-            position: absolute;
-            bottom: 0;
-            left: 10mm;
-            right: 10mm;
-            padding-top: 10px;
-            border-top: 2px solid #22c55e;
-            display: flex;
-            justify-content: space-between;
-            font-size: 10px;
-            color: #666;
-        }
-
-        .footer-logo {
-            height: 40px;
-            margin-right: 10px;
-        }
-
-        .footer-left {
-            display: flex;
-            align-items: center;
-        }
-
-        .footer-contact {
-            line-height: 1.4;
-        }
-
-        .footer-company {
-            font-weight: bold;
-            color: #22c55e;
-        }
-
-        .note {
-            margin-top: 20px;
-            font-size: 11px;
-            color: #666;
-            font-style: italic;
-        }
-
-        .page-break {
-            page-break-after: always;
-        }
-    </style>
-</head>
-<body>
-    <div class="invoice-container">
-        <div class="header">
-            <img src="data:image/jpeg;base64,${logoBase64}" alt="Company Logo" class="logo">
-            <div class="invoice-info">
-                <div class="invoice-title">FACTURE</div>
-                <div class="invoice-number">N°: ${invoice.invoiceNumber}</div>
-                <div class="invoice-date">Date: ${new Date(invoice.invoiceDate).toLocaleDateString('fr-FR')}</div>
-            </div>
-        </div>
-
-        <div class="company-info">
-            <div class="from">
-                <div class="section-title">Émetteur</div>
-                <div><strong>KINGS WORLDWIDE DISTRIBUTION</strong></div>
-                <div>B215 Megrine Business Center 2033</div>
-                <div>Ben Arous - Tunisie</div>
-                <div>MF: 1586831/T/N/M/000</div>
-                <div>Tél: +216 50095115 / +216 20387333</div>
-                <div>Email: contact@packedin.tn</div>
-            </div>
-            <div class="to">
-                <div class="section-title">Client</div>
-                <div><strong>${invoice.companyName}</strong></div>
-                <div>${invoice.contactPerson}</div>
-                <div>${invoice.address}</div>
-                ${invoice.matriculeFiscale ? `<div>MF: ${invoice.matriculeFiscale}</div>` : ''}
-                <div>Tél: ${invoice.phone}</div>
-                <div>Email: ${invoice.email}</div>
-            </div>
-        </div>
-
-        <table class="items-table">
-            <thead>
-                <tr>
-                    <th style="width: 45%">Description</th>
-                    <th style="width: 10%">Qté</th>
-                    <th style="width: 15%">Prix Unitaire</th>
-                    ${hasDiscount ? '<th style="width: 10%">Remise</th>' : ''}
-                    <th style="width: 20%" class="text-right">Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${invoice.items.map((item: InvoiceItem) => `
-                    <tr>
-                        <td>${item.productName}</td>
-                        <td class="text-center">${item.quantity}</td>
-                        <td class="text-right">${item.unitPrice.toFixed(3)} TND</td>
-                        ${hasDiscount ? `<td class="text-center">${item.discount ? item.discount + '%' : '0%'}</td>` : ''}
-                        <td class="text-right">${item.total.toFixed(2)} TND</td>
-                    </tr>
-                `).join('')}
-                ${invoice.printing?.includePrinting ? `
-                    <tr>
-                        <td>Impression personnalisée (${invoice.printing.dimensions})</td>
-                        <td class="text-center">${invoice.printing.quantity}</td>
-                        <td class="text-right">${invoice.printing.printingPricePerUnit.toFixed(3)} TND</td>
-                        ${hasDiscount ? `<td class="text-center">${invoice.printing.discount ? invoice.printing.discount + '%' : '0%'}</td>` : ''}
-                        <td class="text-right">${invoice.printing.total.toFixed(2)} TND</td>
-                    </tr>
-                ` : ''}
-            </tbody>
-        </table>
-
-        <div class="totals">
-            <table>
-                <tr>
-                    <td>Sous-total:</td>
-                    <td class="text-right">${invoice.subtotal.toFixed(2)} TND</td>
-                </tr>
-                <tr class="total-row">
-                    <td>Livraison:</td>
-                    <td class="text-right">8.00 TND</td>
-                </tr>
-                ${invoice.totalDiscount > 0 ? `
-                <tr class="total-row">
-                    <td>Remise:</td>
-                    <td class="text-right">${invoice.totalDiscount.toFixed(2)} TND</td>
-                </tr>
-                ` : ''}
-                <tr class="grand-total">
-                    <td>TOTAL TTC:</td>
-                    <td class="text-right">${invoice.total.toFixed(2)} TND</td>
-                </tr>
-            </table>
-        </div>
-
-
-
-        <div class="footer">
-            <div class="footer-left">
-                <img src="data:image/jpeg;base64,${footerLogoBase64}" alt="Footer Logo" class="footer-logo">
-                <div class="footer-contact">
-                    <div>+216 50095115 / +216 20387333</div>
-                    <div>contact@packedin.tn - www.packedin.tn</div>
-                    <div>Jasmin 8050 Nabeul- Tunisia</div>
-                </div>
-            </div>
-            <div class="footer-right">
-                <div class="footer-company">KINGS WORLDWIDE DISTRIBUTION</div>
-                <div>Merci pour votre confiance</div>
-            </div>
-        </div>
-    </div>
-</body>
-</html>`;
 }

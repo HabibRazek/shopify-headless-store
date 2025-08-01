@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import puppeteer from 'puppeteer';
+import jsPDF from 'jspdf';
 
 // Force dynamic rendering for this route
 export const dynamic = 'force-dynamic';
@@ -11,66 +11,27 @@ export async function GET() {
         console.log('Environment:', process.env.NODE_ENV);
         console.log('Platform:', process.platform);
 
-        // Test Puppeteer configuration
-        const isProduction = process.env.NODE_ENV === 'production';
-        const browserConfig = {
-            headless: true,
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-gpu',
-                '--single-process'
-            ],
-            ...(isProduction && process.env.PUPPETEER_EXECUTABLE_PATH && {
-                executablePath: process.env.PUPPETEER_EXECUTABLE_PATH
-            })
-        };
+        // Test jsPDF configuration
+        console.log('🚀 Creating test PDF with jsPDF...');
 
-        console.log('🚀 Launching browser...');
-        const browser = await puppeteer.launch(browserConfig);
-        
-        console.log('📄 Creating test page...');
-        const page = await browser.newPage();
-        
-        // Simple HTML content for testing
-        const testHTML = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <title>PDF Health Check</title>
-                <style>
-                    body { font-family: Arial, sans-serif; padding: 20px; }
-                    .header { color: #22c55e; font-size: 24px; font-weight: bold; }
-                    .content { margin: 20px 0; }
-                </style>
-            </head>
-            <body>
-                <div class="header">✅ PDF Generation Health Check</div>
-                <div class="content">
-                    <p>Environment: ${process.env.NODE_ENV}</p>
-                    <p>Platform: ${process.platform}</p>
-                    <p>Timestamp: ${new Date().toISOString()}</p>
-                    <p>Status: PDF generation is working correctly!</p>
-                </div>
-            </body>
-            </html>
-        `;
+        const doc = new jsPDF();
 
-        await page.setContent(testHTML, {
-            waitUntil: 'domcontentloaded',
-            timeout: 10000
-        });
+        // Add content to test PDF
+        doc.setFontSize(20);
+        doc.setTextColor(34, 197, 94); // Green color
+        doc.text('✅ PDF Generation Health Check', 20, 30);
 
+        doc.setFontSize(12);
+        doc.setTextColor(0, 0, 0);
+        doc.text(`Environment: ${process.env.NODE_ENV}`, 20, 50);
+        doc.text(`Platform: ${process.platform}`, 20, 60);
+        doc.text(`Timestamp: ${new Date().toISOString()}`, 20, 70);
+        doc.text('Status: PDF generation is working correctly!', 20, 80);
+
+        // Generate PDF buffer
         console.log('📄 Generating test PDF...');
-        const pdfBuffer = await page.pdf({
-            format: 'A4',
-            printBackground: true,
-            margin: { top: '20mm', bottom: '20mm', left: '20mm', right: '20mm' }
-        });
-
-        await browser.close();
+        const pdfArrayBuffer = doc.output('arraybuffer');
+        const pdfBuffer = Buffer.from(pdfArrayBuffer);
 
         // Validate PDF
         if (!pdfBuffer || pdfBuffer.length === 0) {
@@ -86,15 +47,13 @@ export async function GET() {
 
         return NextResponse.json({
             status: 'healthy',
-            message: 'PDF generation is working correctly',
+            message: 'PDF generation is working correctly with jsPDF',
             environment: process.env.NODE_ENV,
             platform: process.platform,
             pdfSize: pdfBuffer.length,
             timestamp: new Date().toISOString(),
-            puppeteerConfig: {
-                hasCustomExecutablePath: !!process.env.PUPPETEER_EXECUTABLE_PATH,
-                isProduction
-            }
+            pdfLibrary: 'jsPDF',
+            note: 'Using jsPDF for better serverless compatibility'
         });
 
     } catch (error) {
@@ -107,7 +66,7 @@ export async function GET() {
             environment: process.env.NODE_ENV,
             platform: process.platform,
             timestamp: new Date().toISOString(),
-            suggestion: 'Check Puppeteer configuration and environment variables'
+            suggestion: 'Check jsPDF configuration and dependencies'
         }, { status: 500 });
     }
 }
