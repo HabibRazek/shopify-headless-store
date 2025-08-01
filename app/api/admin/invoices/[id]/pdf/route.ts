@@ -52,10 +52,18 @@ interface Invoice {
 async function getLogoBase64(): Promise<string> {
     try {
         const logoPath = path.join(process.cwd(), 'public', 'packedin.jpg');
+        console.log('🔍 Looking for logo at:', logoPath);
+
+        if (!fs.existsSync(logoPath)) {
+            console.log('❌ Logo file does not exist at:', logoPath);
+            return '';
+        }
+
         const logoBuffer = fs.readFileSync(logoPath);
+        console.log('✅ Logo loaded successfully, size:', logoBuffer.length, 'bytes');
         return logoBuffer.toString('base64');
-    } catch {
-        console.log('Could not load logo');
+    } catch (error) {
+        console.log('❌ Error loading logo:', error);
         return '';
     }
 }
@@ -79,8 +87,9 @@ const styles = StyleSheet.create({
         borderBottom: '2px solid #22c55e',
     },
     logo: {
-        width: 80,
-        height: 40,
+        width: 120,
+        height: 60,
+        marginRight: 20,
     },
     invoiceInfo: {
         textAlign: 'right',
@@ -200,12 +209,20 @@ const createInvoiceDocument = (invoice: any, logoBase64: string) => {
         (invoice.printing?.includePrinting && invoice.printing.discount && invoice.printing.discount > 0);
 
     // Create header section with packedin.jpg logo
+    console.log('🎨 Creating header section, logo available:', !!logoBase64);
+    console.log('🎨 Logo base64 length:', logoBase64.length);
+
+    const logoElement = logoBase64 ? React.createElement(Image, {
+        key: 'logo',
+        src: `data:image/jpeg;base64,${logoBase64}`,
+        style: styles.logo
+    }) : React.createElement(Text, {
+        key: 'no-logo',
+        style: { color: 'red', fontSize: 10 }
+    }, 'LOGO NOT LOADED');
+
     const headerSection = React.createElement(View, { style: styles.header }, [
-        logoBase64 ? React.createElement(Image, {
-            key: 'logo',
-            src: `data:image/jpeg;base64,${logoBase64}`,
-            style: styles.logo
-        }) : null,
+        logoElement,
         React.createElement(View, { key: 'invoice-info', style: styles.invoiceInfo }, [
             React.createElement(Text, { key: 'title', style: styles.invoiceTitle }, 'FACTURE'),
             React.createElement(Text, { key: 'number', style: styles.invoiceNumber }, `N°: ${invoice.invoiceNumber}`),
@@ -379,7 +396,8 @@ export async function GET(
         // Load logo
         console.log('📄 Loading logo...');
         const logoBase64 = await getLogoBase64();
-        console.log('✅ Logo loaded');
+        console.log('✅ Logo loaded, base64 length:', logoBase64.length);
+        console.log('🔍 Logo base64 preview:', logoBase64.substring(0, 50) + '...');
 
         // Generate PDF using React-PDF (maintains your exact HTML design)
         console.log('📄 Creating React-PDF document...');
