@@ -20,17 +20,15 @@
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "prisma generate && next build",
-    "build:production": "npm run seo:cleanup && npm run build",
+    "build:production": "npm run clean && npm run build",
     "start": "next start -p 3000",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "type-check": "tsc --noEmit",
     "postinstall": "prisma generate",
-    "seo:cleanup": "node scripts/seo-cleanup.js",
-    "seo:check": "npm run type-check && npm run lint",
-    "seo:report": "node scripts/seo-cleanup.js",
-    "optimize": "npm run seo:cleanup && npm run build",
-    "deploy:check": "npm run seo:check && npm run build"
+    "clean": "node scripts/clean-build.js",
+    "check": "npm run type-check && npm run lint",
+    "deploy:check": "npm run check && npm run build"
   },
   "dependencies": {
     "@auth/core": "^0.39.1",

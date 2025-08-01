@@ -5,7 +5,6 @@ import { useRouter, useParams } from 'next/navigation';
 import {
   ArrowLeft,
   Edit,
-  Printer,
   Download,
   Trash2,
   Building,
@@ -208,36 +207,7 @@ export default function InvoiceDetailPage() {
     }
   };
 
-  const handlePrint = async () => {
-    if (!invoice) {
-      toast.error('Aucune facture à imprimer');
-      return;
-    }
 
-    try {
-      toast.info('Ouverture pour impression...', {
-        description: 'La facture va s\'ouvrir dans une nouvelle fenêtre'
-      });
-
-      // Open the print-specific URL in a new window
-      const printUrl = `/api/admin/invoices/${invoice.id}/print`;
-      const newWindow = window.open(printUrl, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
-
-      if (!newWindow) {
-        throw new Error('Impossible d\'ouvrir la fenêtre. Vérifiez que les popups ne sont pas bloqués.');
-      }
-
-      toast.success('Facture ouverte pour impression!', {
-        description: `Utilisez Ctrl+P pour imprimer`
-      });
-
-    } catch (error) {
-      console.error('Error opening print view:', error);
-      toast.error('Erreur lors de l\'ouverture pour impression', {
-        description: error instanceof Error ? error.message : 'Erreur inconnue'
-      });
-    }
-  };
 
   const handleDelete = async () => {
     if (!invoice || !confirm(`Êtes-vous sûr de vouloir supprimer la facture ${invoice.invoiceNumber} ?`)) {
@@ -307,14 +277,7 @@ export default function InvoiceDetailPage() {
         <Edit className="h-4 w-4" />
         Modifier
       </Button>
-      <Button
-        variant="outline"
-        onClick={handlePrint}
-        className="flex items-center gap-2"
-      >
-        <Printer className="h-4 w-4" />
-        Imprimer
-      </Button>
+
       <Button
         variant="outline"
         onClick={handleDownload}

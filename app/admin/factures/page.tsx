@@ -10,7 +10,6 @@ import {
   Eye,
   Edit,
   Trash2,
-  Printer,
   Download,
   Mail,
   MoreHorizontal,
@@ -201,31 +200,7 @@ export default function InvoicesPage() {
     router.push(`/admin/factures/${invoice.id}/edit`);
   };
 
-  const handlePrint = async (invoice: Invoice) => {
-    try {
-      toast.info('Ouverture pour impression...', {
-        description: `Facture ${invoice.invoiceNumber}`,
-      });
 
-      // Create a print-specific URL that returns HTML for printing
-      const printUrl = `/api/admin/invoices/${invoice.id}/print`;
-      const newWindow = window.open(printUrl, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
-
-      if (!newWindow) {
-        throw new Error('Impossible d\'ouvrir la fenêtre. Vérifiez que les popups ne sont pas bloqués.');
-      }
-
-      toast.success('Facture ouverte pour impression!', {
-        description: `Utilisez Ctrl+P pour imprimer`,
-      });
-
-    } catch (error) {
-      console.error('Error opening print view:', error);
-      toast.error('Erreur lors de l\'ouverture pour impression', {
-        description: error instanceof Error ? error.message : 'Erreur inconnue',
-      });
-    }
-  };
 
   const handleDownloadPDF = async (invoice: Invoice) => {
     try {
@@ -545,10 +520,7 @@ export default function InvoicesPage() {
                                   Modifier
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem onClick={() => handlePrint(invoice)}>
-                                  <Printer className="mr-2 h-4 w-4" />
-                                  Imprimer
-                                </DropdownMenuItem>
+
                                 <DropdownMenuItem onClick={() => handleDownloadPDF(invoice)}>
                                   <Download className="mr-2 h-4 w-4" />
                                   Télécharger PDF
