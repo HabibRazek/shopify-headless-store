@@ -7,7 +7,7 @@ import 'jspdf-autotable';
 
 // Force dynamic rendering for this route
 export const dynamic = 'force-dynamic';
-export const maxDuration = 60;
+export const maxDuration = 30;
 
 interface InvoiceItem {
     productName: string;
@@ -89,14 +89,15 @@ export async function GET(
         // Set font
         doc.setFont('helvetica');
 
-        // Add logo
+        // Add logo (optimized)
         try {
             const logoBase64 = await getLogoBase64();
             if (logoBase64) {
-                doc.addImage(`data:image/jpeg;base64,${logoBase64}`, 'JPEG', 15, 15, 30, 15);
+                // Smaller logo to reduce memory usage
+                doc.addImage(`data:image/jpeg;base64,${logoBase64}`, 'JPEG', 15, 15, 25, 12);
             }
         } catch (error) {
-            console.log('Could not add logo:', error);
+            console.log('Could not add logo - continuing without logo');
         }
 
         // Header - Company Info
