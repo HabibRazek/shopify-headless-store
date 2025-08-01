@@ -51,17 +51,31 @@ interface Invoice {
 // Function to convert logo to base64
 async function getLogoBase64(): Promise<string> {
     try {
-        const logoPath = path.join(process.cwd(), 'public', 'packedin.jpg');
-        console.log('🔍 Looking for logo at:', logoPath);
+        // Try PNG first, then JPG
+        const pngPath = path.join(process.cwd(), 'public', 'packedin.png');
+        const jpgPath = path.join(process.cwd(), 'public', 'packedin.jpg');
 
-        if (!fs.existsSync(logoPath)) {
-            console.log('❌ Logo file does not exist at:', logoPath);
+        let logoPath = '';
+        let mimeType = '';
+
+        if (fs.existsSync(pngPath)) {
+            logoPath = pngPath;
+            mimeType = 'image/png';
+            console.log('🔍 Using PNG logo at:', logoPath);
+        } else if (fs.existsSync(jpgPath)) {
+            logoPath = jpgPath;
+            mimeType = 'image/jpeg';
+            console.log('🔍 Using JPG logo at:', logoPath);
+        } else {
+            console.log('❌ No logo file found (tried PNG and JPG)');
             return '';
         }
 
         const logoBuffer = fs.readFileSync(logoPath);
         console.log('✅ Logo loaded successfully, size:', logoBuffer.length, 'bytes');
-        return logoBuffer.toString('base64');
+        const base64 = logoBuffer.toString('base64');
+        console.log('✅ Base64 conversion complete, length:', base64.length);
+        return `${mimeType};base64,${base64}`;
     } catch (error) {
         console.log('❌ Error loading logo:', error);
         return '';
@@ -214,7 +228,7 @@ const createInvoiceDocument = (invoice: any, logoBase64: string) => {
 
     const logoElement = logoBase64 ? React.createElement(Image, {
         key: 'logo',
-        src: `data:image/jpeg;base64,${logoBase64}`,
+        src: `data:${logoBase64}`,
         style: styles.logo
     }) : React.createElement(Text, {
         key: 'no-logo',
