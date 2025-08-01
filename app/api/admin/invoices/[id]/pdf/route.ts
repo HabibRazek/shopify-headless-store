@@ -48,39 +48,54 @@ interface Invoice {
     } | null;
 }
 
-// Function to get PACKEDIN logo - try SVG first (React-PDF compatible), then original
-async function getLogoBase64(): Promise<string> {
+// Function to get PACKEDIN header logo - prioritize PNG, then JPG
+async function getLogoBase64(): Promise<{ data: string; format: string }> {
     try {
-        // Try SVG logo first (React-PDF handles SVG well)
-        const svgPath = path.join(process.cwd(), 'public', 'packedin-logo.svg');
-        if (fs.existsSync(svgPath)) {
-            console.log('🔍 Loading packedin-logo.svg at:', svgPath);
-            const svgContent = fs.readFileSync(svgPath, 'utf8');
-            const base64 = Buffer.from(svgContent).toString('base64');
-            console.log('✅ SVG logo loaded successfully, length:', base64.length);
-            return `image/svg+xml;base64,${base64}`;
+        // Try PNG first (better React-PDF support)
+        const pngPath = path.join(process.cwd(), 'public', 'packedin.png');
+        if (fs.existsSync(pngPath)) {
+            console.log('🔍 Loading packedin.png at:', pngPath);
+            const logoBuffer = fs.readFileSync(pngPath);
+            console.log('✅ PNG logo loaded successfully, size:', logoBuffer.length, 'bytes');
+            const base64 = logoBuffer.toString('base64');
+            return { data: base64, format: 'png' };
         }
 
-        // Fallback to original packedin.jpg
-        const logoPath = path.join(process.cwd(), 'public', 'packedin.jpg');
-        console.log('🔍 Loading packedin.jpg logo at:', logoPath);
-
-        if (!fs.existsSync(logoPath)) {
-            console.log('❌ No logo files found');
-            return '';
+        // Try JPG next
+        const jpgPath = path.join(process.cwd(), 'public', 'packedin.jpg');
+        if (fs.existsSync(jpgPath)) {
+            console.log('🔍 Loading packedin.jpg at:', jpgPath);
+            const logoBuffer = fs.readFileSync(jpgPath);
+            console.log('✅ JPG logo loaded successfully, size:', logoBuffer.length, 'bytes');
+            const base64 = logoBuffer.toString('base64');
+            return { data: base64, format: 'jpg' };
         }
 
-        const logoBuffer = fs.readFileSync(logoPath);
-        console.log('✅ packedin.jpg loaded successfully, size:', logoBuffer.length, 'bytes');
-
-        const base64 = logoBuffer.toString('base64');
-        console.log('✅ Base64 conversion complete, length:', base64.length);
-
-        // Return as JPEG MIME type
-        return `image/jpeg;base64,${base64}`;
+        console.log('❌ No packedin logo files found');
+        return { data: '', format: '' };
     } catch (error) {
-        console.log('❌ Error loading logo:', error);
-        return '';
+        console.log('❌ Error loading packedin logo:', error);
+        return { data: '', format: '' };
+    }
+}
+
+// Function to get footer logo
+async function getFooterLogoBase64(): Promise<{ data: string; format: string }> {
+    try {
+        const footerPath = path.join(process.cwd(), 'public', 'footer-logo.jpg');
+        if (fs.existsSync(footerPath)) {
+            console.log('🔍 Loading footer-logo.jpg at:', footerPath);
+            const logoBuffer = fs.readFileSync(footerPath);
+            console.log('✅ Footer logo loaded successfully, size:', logoBuffer.length, 'bytes');
+            const base64 = logoBuffer.toString('base64');
+            return { data: base64, format: 'jpg' };
+        }
+
+        console.log('❌ Footer logo not found');
+        return { data: '', format: '' };
+    } catch (error) {
+        console.log('❌ Error loading footer logo:', error);
+        return { data: '', format: '' };
     }
 }
 
@@ -218,7 +233,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     footerLogo: {
-        width: 30,
+        width: 60,
         height: 30,
         marginRight: 10,
     },
@@ -229,36 +244,38 @@ const styles = StyleSheet.create({
 });
 
 // Function to create React-PDF Invoice Document using React.createElement (no JSX)
-const createInvoiceDocument = (invoice: any, logoBase64: string) => {
+const createInvoiceDocument = (invoice: any, headerLogo: { data: string; format: string }, footerLogo: { data: string; format: string }) => {
     const hasDiscount = invoice.items.some((item: any) => item.discount && item.discount > 0) ||
         (invoice.printing?.includePrinting && invoice.printing.discount && invoice.printing.discount > 0);
 
-    // Create header section with packedin.jpg logo
-    console.log('🎨 Creating header section, logo available:', !!logoBase64);
-    console.log('🎨 Logo base64 length:', logoBase64.length);
+    // Create header section with packedin logo
+    console.log('🎨 Creating header section, logo available:', !!headerLogo.data);
+    console.log('🎨 Header logo format:', headerLogo.format);
 
-    // Create logo element - specifically for packedin.jpg
+    // Create logo element - try packedin.png/jpg first
     let logoElement;
-    if (logoBase64) {
-        console.log('🎨 Creating image element for packedin.jpg');
-        console.log('🔍 Data URI preview:', `data:${logoBase64}`.substring(0, 50) + '...');
+    if (headerLogo.data) {
+        console.log('🎨 Creating image element for packedin logo');
+        const mimeType = headerLogo.format === 'png' ? 'image/png' : 'image/jpeg';
+        const dataUri = `data:${mimeType};base64,${headerLogo.data}`;
+        console.log('🔍 Data URI preview:', dataUri.substring(0, 50) + '...');
 
         try {
             logoElement = React.createElement(Image, {
                 key: 'packedin-logo',
-                src: `data:${logoBase64}`,
+                src: dataUri,
                 style: styles.logo
             });
-            console.log('✅ packedin.jpg image element created successfully');
+            console.log('✅ Packedin logo image element created successfully');
         } catch (error) {
-            console.log('❌ packedin.jpg image creation failed, using text fallback:', error);
+            console.log('❌ Packedin logo image creation failed, using text fallback:', error);
             logoElement = React.createElement(Text, {
                 key: 'text-logo',
                 style: styles.textLogo
             }, 'PACKEDIN');
         }
     } else {
-        console.log('🔤 packedin.jpg not available, using text logo fallback');
+        console.log('🔤 Packedin logo not available, using text logo fallback');
         logoElement = React.createElement(Text, {
             key: 'text-logo',
             style: styles.textLogo
@@ -377,15 +394,24 @@ const createInvoiceDocument = (invoice: any, logoBase64: string) => {
 
     // Note section removed as requested
 
-    // Create footer section (simplified, no footer logo)
+    // Create footer section with footer logo
+    console.log('🎨 Creating footer section, footer logo available:', !!footerLogo.data);
+
+    const footerLogoElement = footerLogo.data ? React.createElement(Image, {
+        key: 'footer-logo',
+        src: `data:image/jpeg;base64,${footerLogo.data}`,
+        style: styles.footerLogo
+    }) : null;
+
     const footerSection = React.createElement(View, { style: styles.footer }, [
         React.createElement(View, { key: 'footer-left', style: styles.footerLeft }, [
+            footerLogoElement,
             React.createElement(View, { key: 'contact' }, [
                 React.createElement(Text, { key: 'phone' }, '+216 50095115 / +216 20387333'),
                 React.createElement(Text, { key: 'web' }, 'contact@packedin.tn - www.packedin.tn'),
                 React.createElement(Text, { key: 'address' }, 'Jasmin 8050 Nabeul- Tunisia')
             ])
-        ]),
+        ].filter(Boolean)),
         React.createElement(View, { key: 'footer-right' }, [
             React.createElement(Text, { key: 'company', style: styles.footerCompany }, 'KINGS WORLDWIDE DISTRIBUTION'),
             React.createElement(Text, { key: 'thanks' }, 'Merci pour votre confiance')
@@ -437,15 +463,16 @@ export async function GET(
             hasPrinting: !!invoice.printing
         });
 
-        // Load logo
-        console.log('📄 Loading logo...');
-        const logoBase64 = await getLogoBase64();
-        console.log('✅ Logo loaded, base64 length:', logoBase64.length);
-        console.log('🔍 Logo base64 preview:', logoBase64.substring(0, 50) + '...');
+        // Load logos
+        console.log('📄 Loading logos...');
+        const headerLogo = await getLogoBase64();
+        const footerLogo = await getFooterLogoBase64();
+        console.log('✅ Header logo loaded:', !!headerLogo.data, 'format:', headerLogo.format);
+        console.log('✅ Footer logo loaded:', !!footerLogo.data, 'format:', footerLogo.format);
 
         // Generate PDF using React-PDF (maintains your exact HTML design)
         console.log('📄 Creating React-PDF document...');
-        const doc = createInvoiceDocument(invoice, logoBase64);
+        const doc = createInvoiceDocument(invoice, headerLogo, footerLogo);
 
         console.log('✅ Generating PDF buffer...');
         const pdfBlob = await pdf(doc).toBlob();
