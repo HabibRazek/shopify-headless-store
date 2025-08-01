@@ -121,6 +121,10 @@ const styles = StyleSheet.create({
         width: 120,
         height: 60,
         marginRight: 20,
+        backgroundColor: 'white',
+        padding: 5,
+        borderRadius: 5,
+        border: '1px solid #e5e5e5',
     },
     textLogo: {
         fontSize: 24,
@@ -130,6 +134,7 @@ const styles = StyleSheet.create({
         padding: 10,
         border: '2px solid #22c55e',
         borderRadius: 5,
+        backgroundColor: 'white',
     },
     invoiceInfo: {
         textAlign: 'right',
@@ -233,9 +238,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     footerLogo: {
-        width: 60,
-        height: 30,
+        width: 40,
+        height: 40,
         marginRight: 10,
+        backgroundColor: 'white',
+        padding: 3,
+        borderRadius: 3,
+        border: '1px solid #e5e5e5',
     },
     footerCompany: {
         fontWeight: 'bold',
@@ -252,7 +261,7 @@ const createInvoiceDocument = (invoice: any, headerLogo: { data: string; format:
     console.log('🎨 Creating header section, logo available:', !!headerLogo.data);
     console.log('🎨 Header logo format:', headerLogo.format);
 
-    // Create logo element - try packedin.png/jpg first
+    // Create logo element - try packedin.png/jpg first, with enhanced visibility
     let logoElement;
     if (headerLogo.data) {
         console.log('🎨 Creating image element for packedin logo');
@@ -260,26 +269,55 @@ const createInvoiceDocument = (invoice: any, headerLogo: { data: string; format:
         const dataUri = `data:${mimeType};base64,${headerLogo.data}`;
         console.log('🔍 Data URI preview:', dataUri.substring(0, 50) + '...');
 
-        try {
-            logoElement = React.createElement(Image, {
+        // Create a container with background to ensure logo visibility
+        logoElement = React.createElement(View, {
+            key: 'logo-container',
+            style: {
+                ...styles.logo,
+                backgroundColor: '#f8f9fa',
+                border: '2px solid #22c55e',
+                borderRadius: 8,
+                padding: 8,
+                alignItems: 'center',
+                justifyContent: 'center'
+            }
+        }, [
+            React.createElement(Image, {
                 key: 'packedin-logo',
                 src: dataUri,
-                style: styles.logo
-            });
-            console.log('✅ Packedin logo image element created successfully');
-        } catch (error) {
-            console.log('❌ Packedin logo image creation failed, using text fallback:', error);
-            logoElement = React.createElement(Text, {
-                key: 'text-logo',
-                style: styles.textLogo
-            }, 'PACKEDIN');
-        }
+                style: {
+                    width: 100,
+                    height: 40,
+                    objectFit: 'contain'
+                }
+            })
+        ]);
+        console.log('✅ Packedin logo with container created successfully');
     } else {
-        console.log('🔤 Packedin logo not available, using text logo fallback');
-        logoElement = React.createElement(Text, {
-            key: 'text-logo',
-            style: styles.textLogo
-        }, 'PACKEDIN');
+        console.log('🔤 Packedin logo not available, using enhanced text logo fallback');
+        logoElement = React.createElement(View, {
+            key: 'text-logo-container',
+            style: {
+                width: 120,
+                height: 60,
+                backgroundColor: '#22c55e',
+                borderRadius: 8,
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginRight: 20,
+                border: '2px solid #1a9c4a'
+            }
+        }, [
+            React.createElement(Text, {
+                key: 'text-logo',
+                style: {
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    color: 'white',
+                    textAlign: 'center'
+                }
+            }, 'PACKEDIN')
+        ]);
     }
 
     const headerSection = React.createElement(View, { style: styles.header }, [
@@ -397,11 +435,28 @@ const createInvoiceDocument = (invoice: any, headerLogo: { data: string; format:
     // Create footer section with footer logo
     console.log('🎨 Creating footer section, footer logo available:', !!footerLogo.data);
 
-    const footerLogoElement = footerLogo.data ? React.createElement(Image, {
-        key: 'footer-logo',
-        src: `data:image/jpeg;base64,${footerLogo.data}`,
-        style: styles.footerLogo
-    }) : null;
+    const footerLogoElement = footerLogo.data ? React.createElement(View, {
+        key: 'footer-logo-container',
+        style: {
+            ...styles.footerLogo,
+            backgroundColor: '#f8f9fa',
+            border: '1px solid #22c55e',
+            borderRadius: 5,
+            padding: 3,
+            alignItems: 'center',
+            justifyContent: 'center'
+        }
+    }, [
+        React.createElement(Image, {
+            key: 'footer-logo',
+            src: `data:image/jpeg;base64,${footerLogo.data}`,
+            style: {
+                width: 32,
+                height: 32,
+                objectFit: 'contain'
+            }
+        })
+    ]) : null;
 
     const footerSection = React.createElement(View, { style: styles.footer }, [
         React.createElement(View, { key: 'footer-left', style: styles.footerLeft }, [
