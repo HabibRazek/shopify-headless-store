@@ -6,7 +6,6 @@ import { motion } from 'framer-motion';
 import {
   ArrowLeft,
   Save,
-  Send,
   Printer,
   Plus,
   Minus,
@@ -21,7 +20,6 @@ import {
   Calculator,
   FileText,
   CheckSquare,
-  Eye,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -352,138 +350,7 @@ export default function CreateInvoicePage() {
     console.log('Printing invoice:', form);
   };
 
-  const testDatabaseConnection = async () => {
-    try {
-      const response = await fetch('/api/admin/test-db');
-      const result = await response.json();
 
-      if (response.ok) {
-        toast.success('Connexion à la base de données réussie!', {
-          description: `${result.userCount} utilisateurs trouvés`,
-        });
-        console.log('DB Test Result:', result);
-      } else {
-        toast.error('Test de connexion échoué', {
-          description: result.error,
-        });
-        console.error('DB Test Error:', result);
-      }
-    } catch (error) {
-      toast.error('Échec du test de connexion');
-      console.error('DB Test Error:', error);
-    }
-  };
-
-  const verifyInvoiceData = async () => {
-    try {
-      const response = await fetch('/api/admin/invoices/verify');
-      const result = await response.json();
-
-      if (response.ok) {
-        const { counts } = result;
-        toast.success('Vérification de la base de données réussie!', {
-          description: `Factures: ${counts.invoices} | Articles: ${counts.items} | Impressions: ${counts.printing}`,
-        });
-        console.log('Invoice Verification:', result);
-      } else {
-        toast.error('Échec de la vérification', {
-          description: result.error,
-        });
-        console.error('Verification Error:', result);
-      }
-    } catch (error) {
-      toast.error('Échec de la vérification des données');
-      console.error('Verification Error:', error);
-    }
-  };
-
-  const testInvoiceCreation = async () => {
-    try {
-      // Use current form data for testing
-      const testData = {
-        ...form,
-        status: 'DRAFT',
-        invoiceNumber: `TEST-${Date.now()}`,
-      };
-
-      console.log('Testing invoice creation with:', testData);
-
-      const response = await fetch('/api/admin/invoices/test-create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(testData),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        alert(`Test successful! Invoice created with ID: ${result.invoice.id}`);
-        console.log('Test Result:', result);
-      } else {
-        alert(`Test failed: ${result.error}\nDetails: ${result.details || 'No details'}`);
-        console.error('Test Error:', result);
-      }
-    } catch (error) {
-      alert('Test failed with exception');
-      console.error('Test Exception:', error);
-    }
-  };
-
-  const testDirectCreation = async () => {
-    try {
-      // Use current form data for testing with direct endpoint
-      const testData = {
-        ...form,
-        status: 'DRAFT',
-        invoiceNumber: `DIRECT-${Date.now()}`,
-      };
-
-      console.log('Testing direct invoice creation with:', testData);
-
-      const response = await fetch('/api/admin/invoices/direct', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(testData),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        alert(`Direct test successful! Invoice created with ID: ${result.invoice.id}`);
-        console.log('Direct Test Result:', result);
-      } else {
-        alert(`Direct test failed: ${result.error}\nDetails: ${result.details || 'No details'}`);
-        console.error('Direct Test Error:', result);
-      }
-    } catch (error) {
-      alert('Direct test failed with exception');
-      console.error('Direct Test Exception:', error);
-    }
-  };
-
-  const testPrismaClient = async () => {
-    try {
-      console.log('Testing Prisma client...');
-
-      const response = await fetch('/api/admin/invoices/prisma-test');
-      const result = await response.json();
-
-      if (response.ok && result.success) {
-        alert(`Prisma test successful!\nInvoice count: ${result.tests.invoiceCount}`);
-        console.log('Prisma Test Result:', result);
-      } else {
-        alert(`Prisma test failed: ${result.error}\nDetails: ${result.details || 'No details'}`);
-        console.error('Prisma Test Error:', result);
-      }
-    } catch (error) {
-      alert('Prisma test failed with exception');
-      console.error('Prisma Test Exception:', error);
-    }
-  };
 
   return (
     <AdminLayout
@@ -500,61 +367,12 @@ export default function CreateInvoicePage() {
             Retour
           </Button>
           <Button
-            variant="outline"
-            onClick={testDatabaseConnection}
-            className="flex items-center gap-2 text-blue-600 border-blue-600 hover:bg-blue-50"
-          >
-            <CheckSquare className="h-4 w-4" />
-            Test DB
-          </Button>
-          <Button
-            variant="outline"
-            onClick={verifyInvoiceData}
-            className="flex items-center gap-2 text-purple-600 border-purple-600 hover:bg-purple-50"
-          >
-            <Eye className="h-4 w-4" />
-            Verify Data
-          </Button>
-          <Button
-            variant="outline"
-            onClick={testInvoiceCreation}
-            className="flex items-center gap-2 text-orange-600 border-orange-600 hover:bg-orange-50"
-          >
-            <FileText className="h-4 w-4" />
-            Test Create
-          </Button>
-          <Button
-            variant="outline"
-            onClick={testDirectCreation}
-            className="flex items-center gap-2 text-red-600 border-red-600 hover:bg-red-50"
-          >
-            <FileText className="h-4 w-4" />
-            Test Direct
-          </Button>
-          <Button
-            variant="outline"
-            onClick={testPrismaClient}
-            className="flex items-center gap-2 text-indigo-600 border-indigo-600 hover:bg-indigo-50"
-          >
-            <CheckSquare className="h-4 w-4" />
-            Test Prisma
-          </Button>
-          <Button
-            variant="outline"
             onClick={() => handleSave('draft')}
-            disabled={isLoading}
-            className="flex items-center gap-2"
-          >
-            <Save className="h-4 w-4" />
-            Sauvegarder
-          </Button>
-          <Button
-            onClick={() => handleSave('sent')}
             disabled={isLoading}
             className="bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white flex items-center gap-2"
           >
-            <Send className="h-4 w-4" />
-            Créer & Envoyer
+            <Save className="h-4 w-4" />
+            {isLoading ? 'Création...' : 'Créer la Facture'}
           </Button>
         </div>
       }
@@ -971,40 +789,7 @@ export default function CreateInvoicePage() {
           </CardContent>
         </Card>
 
-        {/* Action Buttons */}
-        <Card className="border-0 shadow-lg">
-          <CardContent className="pt-6">
-            <div className="flex flex-col sm:flex-row gap-4 justify-end">
-              <Button
-                variant="outline"
-                onClick={handlePrint}
-                className="flex items-center gap-2"
-              >
-                <Printer className="h-4 w-4" />
-                Aperçu & Imprimer
-              </Button>
 
-              <Button
-                variant="outline"
-                onClick={() => handleSave('draft')}
-                disabled={isLoading}
-                className="flex items-center gap-2"
-              >
-                <Save className="h-4 w-4" />
-                {isLoading ? 'Sauvegarde...' : 'Sauvegarder comme brouillon'}
-              </Button>
-
-              <Button
-                onClick={() => handleSave('sent')}
-                disabled={isLoading || !form.companyName || !form.email}
-                className="bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white flex items-center gap-2"
-              >
-                <Send className="h-4 w-4" />
-                {isLoading ? 'Création...' : 'Créer & Envoyer la Facture'}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </AdminLayout>
   );

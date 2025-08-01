@@ -14,7 +14,9 @@ import {
   CheckCircle,
   Clock,
   AlertCircle,
-  XCircle
+  XCircle,
+  Package,
+  ShoppingCart
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,6 +25,7 @@ import { Separator } from '@/components/ui/separator';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { formatPrice } from '@/lib/utils';
 import { toast } from 'sonner';
+
 
 interface Invoice {
   id: string;
@@ -45,6 +48,7 @@ interface Invoice {
   updatedAt: string;
   items: Array<{
     id: string;
+    productId?: string;
     productName: string;
     quantity: number;
     unitPrice: number;
@@ -157,19 +161,82 @@ export default function InvoiceDetailPage() {
     router.push(`/admin/factures/${invoice?.id}/edit`);
   };
 
-  const handlePrint = () => {
-    toast.info('Génération du PDF en cours...');
-    setTimeout(() => {
-      toast.success('PDF généré avec succès!');
-      window.print();
-    }, 1500);
+  const handleDownload = async () => {
+    if (!invoice) {
+      toast.error('Aucune facture à télécharger');
+      return;
+    }
+
+    try {
+      toast.info('Génération du PDF en cours...', {
+        description: 'Veuillez patienter pendant la création du document'
+      });
+
+      // Call the server-side PDF generation API
+      const response = await fetch(`/api/admin/invoices/${invoice.id}/pdf`);
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de la génération du PDF');
+      }
+
+      // Get the PDF blob
+      const blob = await response.blob();
+
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `Facture_${invoice.invoiceNumber}_${invoice.companyName.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+
+      // Trigger download
+      document.body.appendChild(link);
+      link.click();
+
+      // Cleanup
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      toast.success('PDF téléchargé avec succès!', {
+        description: `Facture ${invoice.invoiceNumber} téléchargée`
+      });
+
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      toast.error('Erreur lors du téléchargement du PDF', {
+        description: error instanceof Error ? error.message : 'Erreur inconnue'
+      });
+    }
   };
 
-  const handleDownload = () => {
-    toast.info('Téléchargement du PDF en cours...');
-    setTimeout(() => {
-      toast.success('PDF téléchargé avec succès!');
-    }, 1500);
+  const handlePrint = async () => {
+    if (!invoice) {
+      toast.error('Aucune facture à imprimer');
+      return;
+    }
+
+    try {
+      toast.info('Ouverture pour impression...', {
+        description: 'La facture va s\'ouvrir dans une nouvelle fenêtre'
+      });
+
+      // Open the print-specific URL in a new window
+      const printUrl = `/api/admin/invoices/${invoice.id}/print`;
+      const newWindow = window.open(printUrl, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+
+      if (!newWindow) {
+        throw new Error('Impossible d\'ouvrir la fenêtre. Vérifiez que les popups ne sont pas bloqués.');
+      }
+
+      toast.success('Facture ouverte pour impression!', {
+        description: `Utilisez Ctrl+P pour imprimer`
+      });
+
+    } catch (error) {
+      console.error('Error opening print view:', error);
+      toast.error('Erreur lors de l\'ouverture pour impression', {
+        description: error instanceof Error ? error.message : 'Erreur inconnue'
+      });
+    }
   };
 
   const handleDelete = async () => {
@@ -337,42 +404,310 @@ export default function InvoiceDetailPage() {
           </CardContent>
         </Card>
 
+        {/* Invoice Details Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Invoice Information */}
+          <Card className="border-0 shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <FileText className="h-5 w-5 text-green-600" />
+                Détails de la Facture
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <label className="text-sm font-medium text-gray-500 block mb-1">Date de facture</label>
+                  <p className="font-semibold text-gray-900">
+                    {new Date(invoice.invoiceDate).toLocaleDateString('fr-FR', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </p>
+                </div>
+
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <label className="text-sm font-medium text-gray-500 block mb-1">Date d'échéance</label>
+                  <p className="font-semibold text-gray-900">
+                    {new Date(invoice.dueDate).toLocaleDateString('fr-FR', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <label className="text-sm font-medium text-gray-500 block mb-1">Devise</label>
+                  <p className="font-semibold text-gray-900">{invoice.currency}</p>
+                </div>
+
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <label className="text-sm font-medium text-gray-500 block mb-1">Dernière modification</label>
+                  <p className="font-semibold text-gray-900">
+                    {new Date(invoice.updatedAt).toLocaleDateString('fr-FR')}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Quick Stats */}
+          <Card className="border-0 shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <Hash className="h-5 w-5 text-green-600" />
+                Statistiques Rapides
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                  <label className="text-sm font-medium text-blue-600 block mb-1">Nombre d'articles</label>
+                  <p className="text-2xl font-bold text-blue-700">
+                    {invoice.items?.length || 0}
+                  </p>
+                </div>
+
+                <div className="bg-green-50 p-3 rounded-lg border border-green-200">
+                  <label className="text-sm font-medium text-green-600 block mb-1">Quantité totale</label>
+                  <p className="text-2xl font-bold text-green-700">
+                    {invoice.items?.reduce((sum, item) => sum + item.quantity, 0) || 0}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-purple-50 p-3 rounded-lg border border-purple-200">
+                  <label className="text-sm font-medium text-purple-600 block mb-1">Prix moyen/article</label>
+                  <p className="text-lg font-bold text-purple-700">
+                    {invoice.items && invoice.items.length > 0
+                      ? formatPrice(
+                          invoice.items.reduce((sum, item) => sum + item.unitPrice, 0) / invoice.items.length,
+                          invoice.currency
+                        )
+                      : formatPrice(0, invoice.currency)
+                    }
+                  </p>
+                </div>
+
+                <div className="bg-amber-50 p-3 rounded-lg border border-amber-200">
+                  <label className="text-sm font-medium text-amber-600 block mb-1">Remise totale</label>
+                  <p className="text-lg font-bold text-amber-700">
+                    {invoice.totalDiscount > 0
+                      ? `-${formatPrice(invoice.totalDiscount, invoice.currency)}`
+                      : 'Aucune'
+                    }
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Invoice Items */}
+        {invoice.items && invoice.items.length > 0 && (
+          <Card className="border-0 shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <Package className="h-5 w-5 text-green-600" />
+                Articles ({invoice.items.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-gray-200">
+                      <th className="text-left py-3 px-4 font-medium text-gray-500">Article</th>
+                      <th className="text-center py-3 px-4 font-medium text-gray-500">Quantité</th>
+                      <th className="text-right py-3 px-4 font-medium text-gray-500">Prix unitaire</th>
+                      <th className="text-center py-3 px-4 font-medium text-gray-500">Remise</th>
+                      <th className="text-right py-3 px-4 font-medium text-gray-500">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {invoice.items.map((item) => (
+                      <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50">
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                              <ShoppingCart className="h-5 w-5 text-green-600" />
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-900">{item.productName}</p>
+                              {item.productId && (
+                                <p className="text-sm text-gray-500">ID: {item.productId}</p>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-4 px-4 text-center">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {item.quantity}
+                          </span>
+                        </td>
+                        <td className="py-4 px-4 text-right text-gray-900 font-medium">
+                          {formatPrice(item.unitPrice, invoice.currency)}
+                        </td>
+                        <td className="py-4 px-4 text-center">
+                          {item.discount > 0 ? (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                              -{item.discount}%
+                            </span>
+                          ) : (
+                            <span className="text-gray-400">-</span>
+                          )}
+                        </td>
+                        <td className="py-4 px-4 text-right">
+                          <span className="font-semibold text-gray-900">
+                            {formatPrice(item.total, invoice.currency)}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr className="border-t-2 border-gray-200 bg-gray-50">
+                      <td colSpan={4} className="py-3 px-4 text-right font-medium text-gray-700">
+                        Sous-total des articles:
+                      </td>
+                      <td className="py-3 px-4 text-right font-bold text-gray-900">
+                        {formatPrice(
+                          invoice.items.reduce((sum, item) => sum + item.total, 0),
+                          invoice.currency
+                        )}
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Printing Details */}
+        {invoice.printing?.includePrinting && (
+          <Card className="border-0 shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <Printer className="h-5 w-5 text-green-600" />
+                Impression Personnalisée
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <label className="text-sm font-medium text-gray-500 block mb-1">Dimensions</label>
+                  <p className="text-lg font-semibold text-gray-900">{invoice.printing.dimensions}</p>
+                </div>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <label className="text-sm font-medium text-gray-500 block mb-1">Quantité</label>
+                  <p className="text-lg font-semibold text-gray-900">{invoice.printing.quantity}</p>
+                </div>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <label className="text-sm font-medium text-gray-500 block mb-1">Prix par unité</label>
+                  <p className="text-lg font-semibold text-gray-900">
+                    {formatPrice(invoice.printing.printingPricePerUnit, invoice.currency)}
+                  </p>
+                </div>
+                <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                  <label className="text-sm font-medium text-green-600 block mb-1">Total impression</label>
+                  <p className="text-xl font-bold text-green-700">
+                    {formatPrice(invoice.printing.total, invoice.currency)}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Invoice Totals */}
         <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100">
           <CardHeader>
             <CardTitle className="flex items-center gap-3">
               <Hash className="h-5 w-5 text-green-600" />
-              Récapitulatif
+              Récapitulatif Financier
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center py-2">
-                <span className="text-gray-700">Sous-total:</span>
-                <span className="font-semibold">{formatPrice(invoice.subtotal, invoice.currency)}</span>
-              </div>
-
-              {invoice.totalDiscount > 0 && (
-                <div className="flex justify-between items-center py-2">
-                  <span className="text-gray-700">Remise totale:</span>
-                  <span className="font-semibold text-red-600">-{formatPrice(invoice.totalDiscount, invoice.currency)}</span>
+            <div className="space-y-4">
+              {/* Items Summary */}
+              {invoice.items && invoice.items.length > 0 && (
+                <div className="bg-white p-4 rounded-lg border border-green-200">
+                  <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
+                    <Package className="h-4 w-4 text-green-600" />
+                    Articles ({invoice.items.length})
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Sous-total articles:</span>
+                      <span className="font-semibold">
+                        {formatPrice(
+                          invoice.items.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0),
+                          invoice.currency
+                        )}
+                      </span>
+                    </div>
+                    {invoice.totalDiscount > 0 && (
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-600">Remises appliquées:</span>
+                        <span className="font-semibold text-red-600">
+                          -{formatPrice(invoice.totalDiscount, invoice.currency)}
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex justify-between items-center pt-2 border-t border-gray-200">
+                      <span className="font-medium text-gray-700">Total articles:</span>
+                      <span className="font-bold text-gray-900">
+                        {formatPrice(invoice.subtotal, invoice.currency)}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               )}
 
-              {invoice.printingCosts > 0 && (
-                <div className="flex justify-between items-center py-2">
-                  <span className="text-gray-700">Coûts d'impression:</span>
-                  <span className="font-semibold">{formatPrice(invoice.printingCosts, invoice.currency)}</span>
+              {/* Printing Summary */}
+              {invoice.printing?.includePrinting && invoice.printingCosts > 0 && (
+                <div className="bg-white p-4 rounded-lg border border-blue-200">
+                  <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
+                    <Printer className="h-4 w-4 text-blue-600" />
+                    Impression Personnalisée
+                  </h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Coût impression:</span>
+                      <span className="font-bold text-blue-600">
+                        {formatPrice(invoice.printingCosts, invoice.currency)}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               )}
 
-              <Separator />
+              <Separator className="my-4" />
 
-              <div className="flex justify-between items-center py-3">
-                <span className="text-xl font-bold text-gray-900">Total TTC:</span>
-                <span className="text-2xl font-bold text-green-600">
-                  {formatPrice(invoice.total, invoice.currency)}
-                </span>
+              {/* Grand Total */}
+              <div className="bg-gradient-to-r from-green-600 to-green-700 p-6 rounded-lg text-white">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <span className="text-green-100 text-sm">Total TTC</span>
+                    <p className="text-2xl font-bold">
+                      {formatPrice(invoice.total, invoice.currency)}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-green-100 text-sm">Statut</span>
+                    <p className="text-lg font-semibold">
+                      {getStatusText(invoice.status)}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </CardContent>

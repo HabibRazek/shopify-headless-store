@@ -201,38 +201,72 @@ export default function InvoicesPage() {
     router.push(`/admin/factures/${invoice.id}/edit`);
   };
 
-  const handlePrint = (invoice: Invoice) => {
-    // Generate PDF and print
-    toast.info('Génération du PDF en cours...', {
-      description: `Facture ${invoice.invoiceNumber}`,
-    });
-
-    // Here you would implement PDF generation
-    setTimeout(() => {
-      toast.success('PDF généré avec succès!', {
-        description: 'Le fichier est prêt à être imprimé',
+  const handlePrint = async (invoice: Invoice) => {
+    try {
+      toast.info('Ouverture pour impression...', {
+        description: `Facture ${invoice.invoiceNumber}`,
       });
-      // Trigger print dialog or download
-      window.print();
-    }, 1500);
+
+      // Create a print-specific URL that returns HTML for printing
+      const printUrl = `/api/admin/invoices/${invoice.id}/print`;
+      const newWindow = window.open(printUrl, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+
+      if (!newWindow) {
+        throw new Error('Impossible d\'ouvrir la fenêtre. Vérifiez que les popups ne sont pas bloqués.');
+      }
+
+      toast.success('Facture ouverte pour impression!', {
+        description: `Utilisez Ctrl+P pour imprimer`,
+      });
+
+    } catch (error) {
+      console.error('Error opening print view:', error);
+      toast.error('Erreur lors de l\'ouverture pour impression', {
+        description: error instanceof Error ? error.message : 'Erreur inconnue',
+      });
+    }
   };
 
-  const handleDownloadPDF = (invoice: Invoice) => {
-    toast.info('Téléchargement du PDF en cours...', {
-      description: `Facture ${invoice.invoiceNumber}`,
-    });
-
-    // Here you would implement PDF download
-    setTimeout(() => {
-      toast.success('PDF téléchargé avec succès!', {
-        description: 'Le fichier a été sauvegardé',
+  const handleDownloadPDF = async (invoice: Invoice) => {
+    try {
+      toast.info('Génération du PDF en cours...', {
+        description: `Facture ${invoice.invoiceNumber}`,
       });
-      // Trigger download
+
+      // Call the server-side PDF generation API
+      const response = await fetch(`/api/admin/invoices/${invoice.id}/pdf`);
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de la génération du PDF');
+      }
+
+      // Get the PDF blob
+      const blob = await response.blob();
+
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.href = '#'; // Replace with actual PDF URL
-      link.download = `facture-${invoice.invoiceNumber}.pdf`;
+      link.href = url;
+      link.download = `Facture_${invoice.invoiceNumber}_${invoice.companyName.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+
+      // Trigger download
+      document.body.appendChild(link);
       link.click();
-    }, 1500);
+
+      // Cleanup
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      toast.success('PDF téléchargé avec succès!', {
+        description: `Facture ${invoice.invoiceNumber} téléchargée`,
+      });
+
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+      toast.error('Erreur lors du téléchargement du PDF', {
+        description: error instanceof Error ? error.message : 'Erreur inconnue',
+      });
+    }
   };
 
   const handleDelete = async (invoice: Invoice) => {
