@@ -48,31 +48,52 @@ interface Invoice {
     } | null;
 }
 
-// Function to convert packedin.jpg logo to base64
+// Function to convert logo to base64 - try footer-logo.jpg (real JPEG) first
 async function getLogoBase64(): Promise<string> {
     try {
-        const logoPath = path.join(process.cwd(), 'public', 'packedin.jpg');
-        console.log('🔍 Loading packedin.jpg logo at:', logoPath);
+        // Try footer-logo.jpg first (likely a real JPEG), then packedin.jpg
+        const logoOptions = [
+            { path: path.join(process.cwd(), 'public', 'footer-logo.jpg'), mime: 'image/jpeg', name: 'footer-logo.jpg' },
+            { path: path.join(process.cwd(), 'public', 'packedin.jpg'), mime: 'image/jpeg', name: 'packedin.jpg' }
+        ];
 
-        if (!fs.existsSync(logoPath)) {
-            console.log('❌ packedin.jpg not found at:', logoPath);
-            return '';
+        for (const option of logoOptions) {
+            if (fs.existsSync(option.path)) {
+                console.log(`🔍 Loading ${option.name} logo at:`, option.path);
+
+                const logoBuffer = fs.readFileSync(option.path);
+                console.log(`✅ ${option.name} loaded successfully, size:`, logoBuffer.length, 'bytes');
+
+                // Check file header to determine actual format
+                const header = logoBuffer.toString('hex', 0, 8);
+                console.log('🔍 File header:', header);
+
+                // Detect actual file format
+                let actualMime = option.mime;
+                if (header.startsWith('ffd8ff')) {
+                    actualMime = 'image/jpeg';
+                    console.log('✅ Confirmed JPEG format');
+                } else if (header.startsWith('89504e47')) {
+                    actualMime = 'image/png';
+                    console.log('✅ Detected PNG format');
+                } else if (header.startsWith('52494646')) {
+                    console.log('⚠️ Detected WEBP format - React-PDF may have issues');
+                    actualMime = 'image/webp';
+                } else {
+                    console.log('⚠️ Unknown format, trying as JPEG');
+                }
+
+                const base64 = logoBuffer.toString('base64');
+                console.log('✅ Base64 conversion complete, length:', base64.length);
+
+                return `${actualMime};base64,${base64}`;
+            }
         }
 
-        const logoBuffer = fs.readFileSync(logoPath);
-        console.log('✅ packedin.jpg loaded successfully, size:', logoBuffer.length, 'bytes');
-
-        // Check if it's actually a JPEG file by looking at the header
-        const header = logoBuffer.toString('hex', 0, 4);
-        console.log('🔍 File header:', header);
-
-        const base64 = logoBuffer.toString('base64');
-        console.log('✅ Base64 conversion complete, length:', base64.length);
-
-        // Return proper JPEG data URI
-        return `image/jpeg;base64,${base64}`;
+        console.log('❌ No logo file found');
+        return '';
     } catch (error) {
-        console.log('❌ Error loading packedin.jpg:', error);
+        console.log('❌ Error loading logo:', error);
         return '';
     }
 }
@@ -230,20 +251,32 @@ const createInvoiceDocument = (invoice: any, logoBase64: string) => {
     console.log('🎨 Creating header section, logo available:', !!logoBase64);
     console.log('🎨 Logo base64 length:', logoBase64.length);
 
-    // Create logo element - specifically for packedin.jpg
+    // Create logo element - try image first, fallback to text
     let logoElement;
-    if (logoBase64) {
-        console.log('🎨 Creating image element for packedin.jpg');
+    if (logoBase64 && !logoBase64.includes('webp')) {
+        console.log('🎨 Creating image element for logo');
         console.log('🔍 Data URI preview:', `data:${logoBase64}`.substring(0, 50) + '...');
 
-        logoElement = React.createElement(Image, {
-            key: 'packedin-logo',
-            src: `data:${logoBase64}`,
-            style: styles.logo
-        });
-        console.log('✅ packedin.jpg image element created');
+        try {
+            logoElement = React.createElement(Image, {
+                key: 'logo-image',
+                src: `data:${logoBase64}`,
+                style: styles.logo
+            });
+            console.log('✅ Logo image element created');
+        } catch (error) {
+            console.log('❌ Image creation failed, using text fallback:', error);
+            logoElement = React.createElement(Text, {
+                key: 'text-logo',
+                style: styles.textLogo
+            }, 'PACKEDIN');
+        }
     } else {
-        console.log('🔤 packedin.jpg not available, using text logo fallback');
+        if (logoBase64 && logoBase64.includes('webp')) {
+            console.log('⚠️ WEBP format detected, using text logo for compatibility');
+        } else {
+            console.log('🔤 No logo available, using text logo fallback');
+        }
         logoElement = React.createElement(Text, {
             key: 'text-logo',
             style: styles.textLogo
