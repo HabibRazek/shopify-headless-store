@@ -60,17 +60,7 @@ async function getLogoBase64(): Promise<string> {
     }
 }
 
-// Function to convert footer logo to base64
-async function getFooterLogoBase64(): Promise<string> {
-    try {
-        const logoPath = path.join(process.cwd(), 'public', 'footer-logo.jpg');
-        const logoBuffer = fs.readFileSync(logoPath);
-        return logoBuffer.toString('base64');
-    } catch {
-        console.log('Could not load footer logo');
-        return '';
-    }
-}
+// Footer logo function removed - only using main packedin.jpg logo
 
 // Styles that match your HTML design exactly
 const styles = StyleSheet.create({
@@ -202,20 +192,14 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#22c55e',
     },
-    note: {
-        marginTop: 20,
-        fontSize: 11,
-        color: '#666',
-        fontStyle: 'italic',
-    },
 });
 
 // Function to create React-PDF Invoice Document using React.createElement (no JSX)
-const createInvoiceDocument = (invoice: any, logoBase64: string, footerLogoBase64: string) => {
+const createInvoiceDocument = (invoice: any, logoBase64: string) => {
     const hasDiscount = invoice.items.some((item: any) => item.discount && item.discount > 0) ||
         (invoice.printing?.includePrinting && invoice.printing.discount && invoice.printing.discount > 0);
 
-    // Create header section
+    // Create header section with packedin.jpg logo
     const headerSection = React.createElement(View, { style: styles.header }, [
         logoBase64 ? React.createElement(Image, {
             key: 'logo',
@@ -330,27 +314,17 @@ const createInvoiceDocument = (invoice: any, logoBase64: string, footerLogoBase6
 
     const totalsSection = React.createElement(View, { style: styles.totals }, totalsRows);
 
-    // Create note section
-    const noteSection = React.createElement(View, { style: styles.note }, [
-        React.createElement(Text, { key: 'payment' }, 'Mode de paiement: Virement bancaire'),
-        React.createElement(Text, { key: 'rib' }, 'RIB: 10 325 124 12457895 78 - STB'),
-        React.createElement(Text, { key: 'delay' }, 'Délai de paiement: 30 jours à partir de la date de facturation')
-    ]);
+    // Note section removed as requested
 
-    // Create footer section
+    // Create footer section (simplified, no footer logo)
     const footerSection = React.createElement(View, { style: styles.footer }, [
         React.createElement(View, { key: 'footer-left', style: styles.footerLeft }, [
-            footerLogoBase64 ? React.createElement(Image, {
-                key: 'footer-logo',
-                src: `data:image/jpeg;base64,${footerLogoBase64}`,
-                style: styles.footerLogo
-            }) : null,
             React.createElement(View, { key: 'contact' }, [
                 React.createElement(Text, { key: 'phone' }, '+216 50095115 / +216 20387333'),
                 React.createElement(Text, { key: 'web' }, 'contact@packedin.tn - www.packedin.tn'),
                 React.createElement(Text, { key: 'address' }, 'Jasmin 8050 Nabeul- Tunisia')
             ])
-        ].filter(Boolean)),
+        ]),
         React.createElement(View, { key: 'footer-right' }, [
             React.createElement(Text, { key: 'company', style: styles.footerCompany }, 'KINGS WORLDWIDE DISTRIBUTION'),
             React.createElement(Text, { key: 'thanks' }, 'Merci pour votre confiance')
@@ -363,7 +337,6 @@ const createInvoiceDocument = (invoice: any, logoBase64: string, footerLogoBase6
         companyInfoSection,
         tableSection,
         totalsSection,
-        noteSection,
         footerSection
     ]);
 
@@ -403,15 +376,14 @@ export async function GET(
             hasPrinting: !!invoice.printing
         });
 
-        // Load logos
-        console.log('📄 Loading logos...');
+        // Load logo
+        console.log('📄 Loading logo...');
         const logoBase64 = await getLogoBase64();
-        const footerLogoBase64 = await getFooterLogoBase64();
-        console.log('✅ Logos loaded');
+        console.log('✅ Logo loaded');
 
         // Generate PDF using React-PDF (maintains your exact HTML design)
         console.log('📄 Creating React-PDF document...');
-        const doc = createInvoiceDocument(invoice, logoBase64, footerLogoBase64);
+        const doc = createInvoiceDocument(invoice, logoBase64);
 
         console.log('✅ Generating PDF buffer...');
         const pdfBlob = await pdf(doc).toBlob();
