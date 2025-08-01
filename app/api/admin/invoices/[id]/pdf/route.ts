@@ -525,12 +525,24 @@ export async function GET(
             hasPrinting: !!invoice.printing
         });
 
-        // Load logos
+        // Load logos with error handling
         console.log('📄 Loading logos...');
-        const headerLogo = await getLogoBase64();
-        const footerLogo = await getFooterLogoBase64();
-        console.log('✅ Header logo loaded:', !!headerLogo.data, 'format:', headerLogo.format);
-        console.log('✅ Footer logo loaded:', !!footerLogo.data, 'format:', footerLogo.format);
+        let headerLogo = { data: '', format: '' };
+        let footerLogo = { data: '', format: '' };
+
+        try {
+            headerLogo = await getLogoBase64();
+            console.log('✅ Header logo loaded:', !!headerLogo.data, 'format:', headerLogo.format);
+        } catch (logoError) {
+            console.log('⚠️ Header logo loading failed:', logoError);
+        }
+
+        try {
+            footerLogo = await getFooterLogoBase64();
+            console.log('✅ Footer logo loaded:', !!footerLogo.data, 'format:', footerLogo.format);
+        } catch (logoError) {
+            console.log('⚠️ Footer logo loading failed:', logoError);
+        }
 
         // Generate PDF using React-PDF with enhanced error handling
         console.log('📄 Creating React-PDF document...');
