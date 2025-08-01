@@ -48,33 +48,38 @@ interface Invoice {
     } | null;
 }
 
-// Function to convert packedin.jpg logo to base64 (force as JPEG for React-PDF)
+// Function to get PACKEDIN logo - try SVG first (React-PDF compatible), then original
 async function getLogoBase64(): Promise<string> {
     try {
+        // Try SVG logo first (React-PDF handles SVG well)
+        const svgPath = path.join(process.cwd(), 'public', 'packedin-logo.svg');
+        if (fs.existsSync(svgPath)) {
+            console.log('🔍 Loading packedin-logo.svg at:', svgPath);
+            const svgContent = fs.readFileSync(svgPath, 'utf8');
+            const base64 = Buffer.from(svgContent).toString('base64');
+            console.log('✅ SVG logo loaded successfully, length:', base64.length);
+            return `image/svg+xml;base64,${base64}`;
+        }
+
+        // Fallback to original packedin.jpg
         const logoPath = path.join(process.cwd(), 'public', 'packedin.jpg');
         console.log('🔍 Loading packedin.jpg logo at:', logoPath);
 
         if (!fs.existsSync(logoPath)) {
-            console.log('❌ packedin.jpg not found at:', logoPath);
+            console.log('❌ No logo files found');
             return '';
         }
 
         const logoBuffer = fs.readFileSync(logoPath);
         console.log('✅ packedin.jpg loaded successfully, size:', logoBuffer.length, 'bytes');
 
-        // Check file header to determine actual format
-        const header = logoBuffer.toString('hex', 0, 8);
-        console.log('🔍 File header:', header);
-
-        // Force as JPEG for React-PDF compatibility regardless of actual format
         const base64 = logoBuffer.toString('base64');
         console.log('✅ Base64 conversion complete, length:', base64.length);
-        console.log('🎯 Using packedin.jpg as requested, forcing JPEG MIME type for React-PDF');
 
-        // Always return as JPEG MIME type for React-PDF compatibility
+        // Return as JPEG MIME type
         return `image/jpeg;base64,${base64}`;
     } catch (error) {
-        console.log('❌ Error loading packedin.jpg:', error);
+        console.log('❌ Error loading logo:', error);
         return '';
     }
 }
