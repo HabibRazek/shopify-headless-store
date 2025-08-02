@@ -318,13 +318,6 @@ async function generateInvoiceHTML(invoice: any): Promise<string> {
             color: #22c55e;
         }
 
-        .note {
-            margin-top: 20px;
-            font-size: 11px;
-            color: #666;
-            font-style: italic;
-        }
-
         .page-break {
             page-break-after: always;
         }
@@ -417,11 +410,7 @@ async function generateInvoiceHTML(invoice: any): Promise<string> {
             </table>
         </div>
 
-        <div class="note">
-            <div>Mode de paiement: Virement bancaire</div>
-            <div>RIB: 10 325 124 12457895 78 - STB</div>
-            <div>Délai de paiement: 30 jours à partir de la date de facturation</div>
-        </div>
+
 
         <div class="footer">
             <div class="footer-left">
