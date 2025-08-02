@@ -48,44 +48,33 @@ interface Invoice {
     } | null;
 }
 
-// Function to get PACKEDIN header logo - prioritize actual image files
+// Function to get PACKEDIN header logo - specifically load packedin.JPG
 async function getLogoBase64(): Promise<{ data: string; format: string }> {
     try {
-        // Try PNG first (best React-PDF support for images)
-        const pngPath = path.join(process.cwd(), 'public', 'packedin.png');
-        if (fs.existsSync(pngPath)) {
-            console.log('🔍 Loading packedin.png at:', pngPath);
-            const logoBuffer = fs.readFileSync(pngPath);
-            console.log('✅ PNG logo loaded successfully, size:', logoBuffer.length, 'bytes');
-            const base64 = logoBuffer.toString('base64');
-            return { data: base64, format: 'png' };
-        }
-
-        // Try JPG next (force as PNG for React-PDF)
-        const jpgPath = path.join(process.cwd(), 'public', 'packedin.jpg');
+        // Load packedin.JPG specifically as requested
+        const jpgPath = path.join(process.cwd(), 'public', 'packedin.JPG');
         if (fs.existsSync(jpgPath)) {
-            console.log('🔍 Loading packedin.jpg at:', jpgPath);
+            console.log('🔍 Loading packedin.JPG at:', jpgPath);
             const logoBuffer = fs.readFileSync(jpgPath);
             console.log('✅ JPG logo loaded successfully, size:', logoBuffer.length, 'bytes');
             const base64 = logoBuffer.toString('base64');
-            // Force as PNG format for better React-PDF compatibility
-            return { data: base64, format: 'png' };
+            return { data: base64, format: 'jpg' };
         }
 
-        // Try SVG as last resort (sometimes doesn't render)
-        const svgPath = path.join(process.cwd(), 'public', 'packedin-logo.svg');
-        if (fs.existsSync(svgPath)) {
-            console.log('🔍 Loading packedin-logo.svg at:', svgPath);
-            const svgContent = fs.readFileSync(svgPath, 'utf8');
-            const base64 = Buffer.from(svgContent).toString('base64');
-            console.log('✅ SVG logo loaded successfully, length:', base64.length);
-            return { data: base64, format: 'svg' };
+        // Fallback to lowercase extension
+        const jpgPathLower = path.join(process.cwd(), 'public', 'packedin.jpg');
+        if (fs.existsSync(jpgPathLower)) {
+            console.log('🔍 Loading packedin.jpg at:', jpgPathLower);
+            const logoBuffer = fs.readFileSync(jpgPathLower);
+            console.log('✅ JPG logo loaded successfully, size:', logoBuffer.length, 'bytes');
+            const base64 = logoBuffer.toString('base64');
+            return { data: base64, format: 'jpg' };
         }
 
-        console.log('❌ No packedin logo files found');
+        console.log('❌ packedin.JPG file not found');
         return { data: '', format: '' };
     } catch (error) {
-        console.log('❌ Error loading packedin logo:', error);
+        console.log('❌ Error loading packedin.JPG:', error);
         return { data: '', format: '' };
     }
 }
@@ -272,35 +261,88 @@ const createInvoiceDocument = (invoice: any, headerLogo: { data: string; format:
     console.log('🎨 Creating header section, logo available:', !!headerLogo.data);
     console.log('🎨 Header logo format:', headerLogo.format);
 
-    // Create logo element - use text logo for guaranteed visibility
+    // Create logo element - use packedin.JPG image
     let logoElement;
 
-    // Always use text logo for now to ensure visibility
-    console.log('🎨 Creating text logo for guaranteed visibility');
-    logoElement = React.createElement(View, {
-        key: 'text-logo-wrapper',
-        style: {
-            backgroundColor: '#22c55e',
-            padding: 12,
-            borderRadius: 8,
-            marginRight: 20,
-            alignItems: 'center',
-            justifyContent: 'center',
-            minWidth: 120,
-            minHeight: 50
+    if (headerLogo.data) {
+        console.log('🎨 Creating image element for packedin.JPG, format:', headerLogo.format);
+
+        // Use proper JPEG MIME type
+        const mimeType = 'image/jpeg';
+        const dataUri = `data:${mimeType};base64,${headerLogo.data}`;
+        console.log('🔍 Data URI preview:', dataUri.substring(0, 50) + '...');
+
+        // Create image logo with white background for visibility
+        try {
+            logoElement = React.createElement(View, {
+                key: 'logo-wrapper',
+                style: {
+                    backgroundColor: '#ffffff',
+                    padding: 8,
+                    borderRadius: 8,
+                    marginRight: 20,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '1px solid #e5e7eb'
+                }
+            }, [
+                React.createElement(Image, {
+                    key: 'packedin-logo',
+                    src: dataUri,
+                    style: {
+                        width: 100,
+                        height: 50,
+                        objectFit: 'contain'
+                    }
+                })
+            ]);
+            console.log('✅ Packedin.JPG logo created successfully');
+        } catch (imageError) {
+            console.log('❌ Image creation failed, using text fallback:', imageError);
+            logoElement = React.createElement(View, {
+                key: 'text-logo-wrapper',
+                style: {
+                    backgroundColor: '#22c55e',
+                    padding: 12,
+                    borderRadius: 8,
+                    marginRight: 20,
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }
+            }, [
+                React.createElement(Text, {
+                    key: 'text-logo',
+                    style: {
+                        color: '#ffffff',
+                        fontSize: 16,
+                        fontWeight: 'bold'
+                    }
+                }, 'PACKEDIN')
+            ]);
         }
-    }, [
-        React.createElement(Text, {
-            key: 'text-logo',
+    } else {
+        console.log('🔤 packedin.JPG not available, using text logo fallback');
+        logoElement = React.createElement(View, {
+            key: 'text-logo-wrapper',
             style: {
-                color: '#ffffff',
-                fontSize: 18,
-                fontWeight: 'bold',
-                textAlign: 'center'
+                backgroundColor: '#22c55e',
+                padding: 12,
+                borderRadius: 8,
+                marginRight: 20,
+                alignItems: 'center',
+                justifyContent: 'center'
             }
-        }, 'PACKEDIN')
-    ]);
-    console.log('✅ Text logo created successfully');
+        }, [
+            React.createElement(Text, {
+                key: 'text-logo',
+                style: {
+                    color: '#ffffff',
+                    fontSize: 16,
+                    fontWeight: 'bold'
+                }
+            }, 'PACKEDIN')
+        ]);
+    }
 
     // TODO: Re-enable image logo once format issues are resolved
     /*
