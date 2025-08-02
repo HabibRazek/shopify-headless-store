@@ -261,73 +261,35 @@ const createInvoiceDocument = (invoice: any, headerLogo: { data: string; format:
     console.log('🎨 Creating header section, logo available:', !!headerLogo.data);
     console.log('🎨 Header logo format:', headerLogo.format);
 
-    // Create logo element - use packedin.JPG image
+    // Create logo element - simplified approach like footer logo
     let logoElement;
 
     if (headerLogo.data) {
         console.log('🎨 Creating image element for packedin.JPG, format:', headerLogo.format);
 
-        // Use proper JPEG MIME type
-        const mimeType = 'image/jpeg';
-        const dataUri = `data:${mimeType};base64,${headerLogo.data}`;
+        // Use same approach as footer logo (which works)
+        const dataUri = `data:image/jpeg;base64,${headerLogo.data}`;
         console.log('🔍 Data URI preview:', dataUri.substring(0, 50) + '...');
 
-        // Create image logo with white background for visibility
-        try {
-            logoElement = React.createElement(View, {
-                key: 'logo-wrapper',
-                style: {
-                    backgroundColor: '#ffffff',
-                    padding: 8,
-                    borderRadius: 8,
-                    marginRight: 20,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: '1px solid #e5e7eb'
-                }
-            }, [
-                React.createElement(Image, {
-                    key: 'packedin-logo',
-                    src: dataUri,
-                    style: {
-                        width: 100,
-                        height: 50,
-                        objectFit: 'contain'
-                    }
-                })
-            ]);
-            console.log('✅ Packedin.JPG logo created successfully');
-        } catch (imageError) {
-            console.log('❌ Image creation failed, using text fallback:', imageError);
-            logoElement = React.createElement(View, {
-                key: 'text-logo-wrapper',
-                style: {
-                    backgroundColor: '#22c55e',
-                    padding: 12,
-                    borderRadius: 8,
-                    marginRight: 20,
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }
-            }, [
-                React.createElement(Text, {
-                    key: 'text-logo',
-                    style: {
-                        color: '#ffffff',
-                        fontSize: 16,
-                        fontWeight: 'bold'
-                    }
-                }, 'PACKEDIN')
-            ]);
-        }
+        // Simple direct Image element like footer logo
+        logoElement = React.createElement(Image, {
+            key: 'packedin-logo',
+            src: dataUri,
+            style: {
+                width: 100,
+                height: 50,
+                marginRight: 20
+            }
+        });
+        console.log('✅ Packedin.JPG logo created successfully (simplified)');
     } else {
         console.log('🔤 packedin.JPG not available, using text logo fallback');
         logoElement = React.createElement(View, {
             key: 'text-logo-wrapper',
             style: {
                 backgroundColor: '#22c55e',
-                padding: 12,
-                borderRadius: 8,
+                padding: 8,
+                borderRadius: 5,
                 marginRight: 20,
                 alignItems: 'center',
                 justifyContent: 'center'
@@ -337,7 +299,7 @@ const createInvoiceDocument = (invoice: any, headerLogo: { data: string; format:
                 key: 'text-logo',
                 style: {
                     color: '#ffffff',
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: 'bold'
                 }
             }, 'PACKEDIN')
