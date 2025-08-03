@@ -20,11 +20,11 @@ export default function Home() {
   return (
     <div className="overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative overflow-hidden mt-28">
+      <section className="relative overflow-hidden">
         <HeroSection />
       </section>
       {/* Service Features Section */}
-      <div className="mt-[-60px] sm:mt-[-80px] md:mt-[-100px] lg:mt-[-120px]">
+      <div className="mt-10">
         <ServiceFeatures />
       </div>
       <div>

@@ -299,11 +299,12 @@ export default function Footer() {
                                 </div>
                             </div>
 
-                            <div className="flex flex-wrap justify-center gap-6">
+                            <div className="flex flex-wrap justify-center gap-4 lg:gap-6">
                                 {[
                                     { href: "/mentions-legales", label: "Mentions Légales" },
-                                    { href: "/privacy", label: "Confidentialité" },
-                                    { href: "/terms", label: "CGV" }
+                                    { href: "/politique-confidentialite", label: "Confidentialité" },
+                                    { href: "/conditions-generales", label: "CGV" },
+                                    { href: "/contact", label: "Contact" }
                                 ].map((link, index) => (
                                     <Link
                                         key={index}

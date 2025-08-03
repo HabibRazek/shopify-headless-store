@@ -15,13 +15,10 @@ const heroData = {
     cta1: "Découvrir Nos Produits",
     cta2: "Demander Un Devis",
     ctaLink: "/products",
-
-    // Generate array of 21 hero images
-    carouselImages: Array.from({ length: 21 }, (_, i) => ({
-        src: `/images/hero/${i + 1}.jpg`,
-        alt: `Packaging solution ${i + 1}`,
-        id: i + 1
-    }))
+    heroImage: {
+        src: "/hero.png",
+        alt: "PackedIn - Solutions d'emballage premium"
+    }
 }
 
 export default function HeroSection() {
@@ -36,7 +33,25 @@ export default function HeroSection() {
     const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0.8]);
 
     return (
-        <section ref={containerRef} className="relative min-h-screen overflow-hidden">
+        <section ref={containerRef} className="relative min-h-screen overflow-hidden -mt-28">
+            {/* Full Cover Background Image */}
+            <div className="absolute inset-0">
+                <Image
+                    src={heroData.heroImage.src}
+                    alt={heroData.heroImage.alt}
+                    fill
+                    className="object-cover object-center select-none pointer-events-none"
+                    draggable={false}
+                    priority
+                    sizes="100vw"
+                    style={{ objectPosition: 'center top' }}
+                />
+                {/* Dark overlay for better text readability */}
+                <div className="absolute inset-0 bg-black/40" />
+                {/* Gradient overlay for enhanced visual depth */}
+                <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
+            </div>
+
             {/* Animated Background Elements - Desktop Only */}
             <div className="absolute inset-0 overflow-hidden hidden md:block">
                 <motion.div
@@ -49,7 +64,7 @@ export default function HeroSection() {
                         repeat: Infinity,
                         ease: "linear"
                     }}
-                    className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-green-200/20 to-emerald-200/20 rounded-full blur-3xl"
+                    className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-green-200/10 to-emerald-200/10 rounded-full blur-3xl"
                 />
                 <motion.div
                     animate={{
@@ -61,48 +76,32 @@ export default function HeroSection() {
                         repeat: Infinity,
                         ease: "linear"
                     }}
-                    className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-200/15 to-purple-200/15 rounded-full blur-3xl"
+                    className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-200/10 to-purple-200/10 rounded-full blur-3xl"
                 />
             </div>
 
             <motion.div
-                className="container mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10"
+                className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 h-screen flex items-center"
                 style={{ y, opacity }}
             >
-                <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16 min-h-[80vh]">
-                    {/* Mobile Carousel - Above text content */}
-                    <div className="w-full md:hidden mb-8">
-                        <div className="relative overflow-hidden h-[300px] rounded-2xl">
-                            {/* Mobile carousel with horizontal scroll - All 21 images repeated */}
-                            <div className="flex gap-4 animate-scroll-horizontal">
-                                {/* Repeat all 21 images multiple times for continuous scroll */}
-                                {Array.from({ length: 5 }).map((_, repeatIndex) =>
-                                    heroData.carouselImages.map((image, imageIndex) => (
-                                        <div
-                                            key={`mobile-${repeatIndex}-${image.id}-${imageIndex}`}
-                                            className="flex-shrink-0"
-                                        >
-                                            <Image
-                                                src={image.src}
-                                                alt={`${image.alt} - Set ${repeatIndex + 1}`}
-                                                className="object-cover rounded-lg shadow-lg select-none pointer-events-none w-[180px] h-[280px]"
-                                                width={180}
-                                                height={280}
-                                                draggable={false}
-                                                priority={repeatIndex === 0 && imageIndex < 5}
-                                                loading={repeatIndex === 0 && imageIndex < 5 ? "eager" : "lazy"}
-                                            />
-                                        </div>
-                                    ))
-                                )}
-                            </div>
+                <div className="flex flex-col lg:flex-row items-center lg:items-start justify-start w-full h-full pt-72 lg:pt-80">
+                    {/* Floating Premium Badge - Top Right */}
+                    <motion.div
+                        className="absolute top-6 right-6 bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg hidden md:block"
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.8, duration: 0.6 }}
+                    >
+                        <div className="flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-green-600" />
+                            <span className="text-sm font-semibold text-gray-800">Premium Quality</span>
                         </div>
-                    </div>
+                    </motion.div>
 
-                    {/* Left Content - Enhanced Text */}
-                    <div className="w-full lg:w-1/2 space-y-8">
+                    {/* Main Content - Left Aligned */}
+                    <div className="w-full lg:w-2/3 xl:w-1/2 text-center lg:text-left space-y-8">
                         {/* Premium Badge - Animated on Desktop, Static on Mobile */}
-                        <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-100 to-emerald-100 px-6 py-3 rounded-full border border-green-200/50 shadow-lg">
+                        <div className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm px-6 py-3 rounded-full border border-white/20 shadow-lg">
                             <div className="hidden md:block">
                                 <motion.div
                                     animate={{ rotate: [0, 360] }}
@@ -121,21 +120,21 @@ export default function HeroSection() {
 
                         {/* Main Title */}
                         <h1 className="text-4xl md:text-5xl lg:text-7xl font-black leading-tight">
-                            <span className="block text-black mb-2">
+                            <span className="block text-white mb-2 drop-shadow-lg">
                                 {heroData.title}
                             </span>
-                            <span className="block bg-gradient-to-r from-green-600 via-green-500 to-emerald-600 bg-clip-text text-transparent">
+                            <span className="block bg-gradient-to-r from-green-400 via-green-300 to-emerald-400 bg-clip-text text-transparent drop-shadow-lg">
                                 {heroData.subtitle}
                             </span>
                         </h1>
 
                         {/* Description */}
-                        <p className="text-xl text-gray-600 leading-relaxed max-w-2xl">
+                        <p className="text-xl text-white/90 leading-relaxed max-w-2xl mx-auto lg:mx-0 drop-shadow-md">
                             {heroData.description}
                         </p>
 
                         {/* CTA Buttons */}
-                        <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                        <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center lg:justify-start">
                             <Link href={heroData.ctaLink}>
                                 <Button size="lg" className="bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white border-0 shadow-xl hover:shadow-2xl transition-all duration-300 w-full sm:w-auto group relative overflow-hidden">
                                     {/* Animated background shine - Desktop only */}
@@ -152,102 +151,12 @@ export default function HeroSection() {
                             </Link>
                             <MultiProductQuoteDialog
                                 trigger={
-                                    <Button variant="outline" className="border-green-500/30 text-green-500 hover:bg-green-500/10 px-8 py-6 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 w-full sm:w-auto group">
+                                    <Button variant="outline" className="border-white/30 text-white hover:bg-white/10 bg-white/5 backdrop-blur-sm px-8 py-6 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 w-full sm:w-auto group">
                                         {heroData.cta2}
                                         <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
                                     </Button>
                                 }
                             />
-                        </div>
-                    </div>
-
-                    {/* Right Content - Vertical Carousel */}
-                    <div className="w-full lg:w-1/2 relative">
-                        <div className="hidden md:block relative overflow-hidden h-[600px] mt-[-100px] py-4">
-                            {/* Top blur gradient */}
-                            <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-white to-transparent z-10 pointer-events-none"></div>
-                            {/* Bottom blur gradient */}
-                            <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent z-10 pointer-events-none"></div>
-
-                            {/* Simple 3-Column Carousel */}
-                            <div className="hidden md:block relative w-full max-w-6xl mx-auto overflow-hidden h-[600px]">
-                                <div className="flex gap-8 h-full justify-center">
-                                    {/* Column 1 - All 21 images, scrolls up */}
-                                    <div className="flex flex-col gap-6 animate-scroll-up">
-                                        {Array.from({ length: 6 }).map((_, setIndex) => (
-                                            <React.Fragment key={`col1-set-${setIndex}`}>
-                                                {heroData.carouselImages.map((image, index) => (
-                                                    <div
-                                                        key={`col1-${setIndex}-${image.id}-${index}`}
-                                                        className="flex-shrink-0"
-                                                    >
-                                                        <Image
-                                                            src={image.src}
-                                                            alt={image.alt}
-                                                            className="object-cover rounded-lg shadow-lg select-none pointer-events-none w-[200px] h-[250px]"
-                                                            width={200}
-                                                            height={250}
-                                                            draggable={false}
-                                                            priority={setIndex === 0 && index < 3}
-                                                        />
-                                                    </div>
-                                                ))}
-                                            </React.Fragment>
-                                        ))}
-                                    </div>
-
-                                    {/* Column 2 - All 21 images reversed, scrolls down */}
-                                    <div className="flex flex-col gap-6 animate-scroll-down">
-                                        {Array.from({ length: 6 }).map((_, setIndex) => (
-                                            <React.Fragment key={`col2-set-${setIndex}`}>
-                                                {[...heroData.carouselImages].reverse().map((image, index) => (
-                                                    <div
-                                                        key={`col2-${setIndex}-${image.id}-${index}`}
-                                                        className="flex-shrink-0"
-                                                    >
-                                                        <Image
-                                                            src={image.src}
-                                                            alt={image.alt}
-                                                            className="object-cover rounded-lg shadow-lg select-none pointer-events-none w-[200px] h-[250px]"
-                                                            width={200}
-                                                            height={250}
-                                                            draggable={false}
-                                                            priority={setIndex === 0 && index < 3}
-                                                        />
-                                                    </div>
-                                                ))}
-                                            </React.Fragment>
-                                        ))}
-                                    </div>
-
-                                    {/* Column 3 - All 21 images shuffled, scrolls up slower */}
-                                    <div className="flex flex-col gap-6 animate-scroll-up-slow">
-                                        {Array.from({ length: 6 }).map((_, setIndex) => (
-                                            <React.Fragment key={`col3-set-${setIndex}`}>
-                                                {heroData.carouselImages
-                                                    .slice()
-                                                    .sort(() => 0.5 - Math.random())
-                                                    .map((image, index) => (
-                                                    <div
-                                                        key={`col3-${setIndex}-${image.id}-${index}`}
-                                                        className="flex-shrink-0"
-                                                    >
-                                                        <Image
-                                                            src={image.src}
-                                                            alt={image.alt}
-                                                            className="object-cover rounded-lg shadow-lg select-none pointer-events-none w-[200px] h-[250px]"
-                                                            width={200}
-                                                            height={250}
-                                                            draggable={false}
-                                                            priority={setIndex === 0 && index < 3}
-                                                        />
-                                                    </div>
-                                                ))}
-                                            </React.Fragment>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>

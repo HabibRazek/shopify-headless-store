@@ -78,32 +78,92 @@ export default function WhyChooseUs() {
   ];
 
   return (
-    <section className="relative py-12 md:py-16 mt-[-200px] overflow-hidden">
-      {/* Animated Background Elements */}
+    <section className="relative py-16 md:py-20 mt-[-200px] overflow-hidden bg-gradient-to-br from-gray-50 via-white to-green-50/30">
+      {/* Enhanced Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
+        {/* Main floating orbs */}
         <motion.div
           animate={{
-            scale: [1, 1.2, 1],
+            scale: [1, 1.3, 1],
             rotate: [0, 180, 360],
+            x: [0, 50, 0],
+            y: [0, -30, 0]
           }}
           transition={{
-            duration: 25,
+            duration: 20,
             repeat: Infinity,
-            ease: "linear"
+            ease: "easeInOut"
           }}
-          className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-green-200/10 to-emerald-200/10 rounded-full blur-3xl"
+          className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-green-300/20 to-emerald-300/20 rounded-full blur-3xl"
         />
         <motion.div
           animate={{
             scale: [1.2, 1, 1.2],
             rotate: [360, 180, 0],
+            x: [0, -40, 0],
+            y: [0, 40, 0]
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-300/15 to-purple-300/15 rounded-full blur-3xl"
+        />
+
+        {/* Additional floating elements */}
+        <motion.div
+          animate={{
+            y: [0, -20, 0],
+            rotate: [0, 360],
+            opacity: [0.3, 0.6, 0.3]
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute top-1/4 left-1/4 w-32 h-32 bg-gradient-to-br from-green-400/10 to-emerald-400/10 rounded-full blur-2xl"
+        />
+        <motion.div
+          animate={{
+            y: [0, 30, 0],
+            rotate: [360, 0],
+            opacity: [0.2, 0.5, 0.2]
+          }}
+          transition={{
+            duration: 18,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 5
+          }}
+          className="absolute bottom-1/3 right-1/3 w-24 h-24 bg-gradient-to-br from-teal-400/10 to-cyan-400/10 rounded-full blur-2xl"
+        />
+
+        {/* Geometric shapes */}
+        <motion.div
+          animate={{
+            rotate: [0, 360],
+            scale: [1, 1.1, 1]
           }}
           transition={{
             duration: 30,
             repeat: Infinity,
             ease: "linear"
           }}
-          className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-blue-200/10 to-purple-200/10 rounded-full blur-3xl"
+          className="absolute top-1/2 left-10 w-4 h-4 bg-green-400/30 transform rotate-45"
+        />
+        <motion.div
+          animate={{
+            rotate: [360, 0],
+            scale: [1.1, 1, 1.1]
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="absolute bottom-1/4 right-20 w-6 h-6 bg-emerald-400/30 rounded-full"
         />
       </div>
 
@@ -116,57 +176,178 @@ export default function WhyChooseUs() {
           transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="text-center mb-12 md:mb-16"
         >
+          {/* Enhanced Icon with Pulse Effect */}
           <motion.div
-            initial={{ scale: 0 }}
-            whileInView={{ scale: 1 }}
+            initial={{ scale: 0, rotate: -180 }}
+            whileInView={{ scale: 1, rotate: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2, type: "spring", stiffness: 200 }}
-            className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] rounded-full mb-6 shadow-xl"
+            transition={{ duration: 0.8, delay: 0.2, type: "spring", stiffness: 150 }}
+            className="relative inline-flex items-center justify-center mb-8"
           >
+            {/* Outer pulse ring */}
             <motion.div
               animate={{
-                rotate: [0, 360],
-                scale: [1, 1.1, 1]
+                scale: [1, 1.3, 1],
+                opacity: [0.3, 0.1, 0.3]
               }}
               transition={{
-                duration: 4,
+                duration: 3,
                 repeat: Infinity,
                 ease: "easeInOut"
               }}
+              className="absolute w-24 h-24 bg-gradient-to-r from-green-400/30 to-emerald-400/30 rounded-full"
+            />
+
+            {/* Middle pulse ring */}
+            <motion.div
+              animate={{
+                scale: [1, 1.2, 1],
+                opacity: [0.4, 0.2, 0.4]
+              }}
+              transition={{
+                duration: 2.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 0.5
+              }}
+              className="absolute w-20 h-20 bg-gradient-to-r from-green-500/40 to-emerald-500/40 rounded-full"
+            />
+
+            {/* Main icon container */}
+            <motion.div
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              transition={{ duration: 0.3 }}
+              className="relative w-16 h-16 bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] rounded-full shadow-2xl flex items-center justify-center border-2 border-white/20"
             >
-              <Settings className="w-8 h-8 text-white" />
+              <motion.div
+                animate={{
+                  rotate: [0, 360],
+                  scale: [1, 1.1, 1]
+                }}
+                transition={{
+                  duration: 6,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                <Settings className="w-8 h-8 text-white drop-shadow-lg" />
+              </motion.div>
+
+              {/* Sparkle effects */}
+              <motion.div
+                animate={{
+                  scale: [0, 1, 0],
+                  rotate: [0, 180, 360]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 1
+                }}
+                className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full opacity-80"
+              />
+              <motion.div
+                animate={{
+                  scale: [0, 1, 0],
+                  rotate: [360, 180, 0]
+                }}
+                transition={{
+                  duration: 2.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 2
+                }}
+                className="absolute -bottom-1 -left-1 w-2 h-2 bg-blue-400 rounded-full opacity-70"
+              />
             </motion.div>
           </motion.div>
 
-          <motion.h2
-            className="text-3xl md:text-4xl lg:text-5xl font-black text-black mb-4 leading-tight"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+          {/* Innovative Title with Typing Effect */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="mb-6"
           >
-            Pourquoi choisir les services
-          </motion.h2>
+            <motion.h2
+              className="text-4xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.4, type: "spring", stiffness: 100 }}
+            >
+              <span className="text-gray-800">L'</span>
+              <span className="bg-gradient-to-r from-green-600 via-green-500 to-green-400 bg-clip-text text-transparent">
+                Excellence
+              </span>
+              <br />
+              <span className="text-gray-800">qui fait la</span>{' '}
+              <span className="bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 bg-clip-text text-transparent">
+                Différence
+              </span>
+            </motion.h2>
+          </motion.div>
 
-          <motion.h3
-            className="text-3xl md:text-4xl lg:text-5xl font-black text-green-500 mb-6"
+          {/* Animated Badge */}
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-full px-6 py-3 mb-6"
           >
-            de <span className="text-green-500">PACKEDIN</span>® ?
-          </motion.h3>
+            <motion.div
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+              className="w-2 h-2 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full"
+            />
+            <span className="text-sm font-semibold text-green-700 tracking-wide">
+              PACKEDIN® - Votre Partenaire Innovation
+            </span>
+          </motion.div>
 
           <motion.p
-            className="text-lg md:text-xl text-black max-w-3xl mx-auto leading-relaxed"
+            className="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.5 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
           >
-            Découvrez les avantages qui font de PackedIn votre partenaire idéal pour tous vos besoins d'emballage personnalisé.
+            Explorez nos solutions d'emballage révolutionnaires qui transforment vos idées en
+            <span className="text-green-600 font-semibold"> succès commercial</span>.
+            Chaque détail compte dans votre réussite.
           </motion.p>
+
+          {/* Floating Stats */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+            className="flex flex-wrap justify-center gap-6 mt-8"
+          >
+            {[
+              { number: "50+", label: "Unités minimum", icon: "📦" },
+              { number: "24h", label: "Délai express", icon: "⚡" },
+              { number: "100%", label: "En ligne", icon: "💻" }
+            ].map((stat, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.9 + index * 0.1 }}
+                whileHover={{ scale: 1.05, y: -5 }}
+                className="text-center bg-white/80 backdrop-blur-sm rounded-2xl px-4 py-3 shadow-lg border border-green-100"
+              >
+                <div className="text-2xl mb-1">{stat.icon}</div>
+                <div className="text-2xl font-bold text-green-600">{stat.number}</div>
+                <div className="text-xs text-gray-600 font-medium">{stat.label}</div>
+              </motion.div>
+            ))}
+          </motion.div>
         </motion.div>
 
         {/* Mobile Layout - Grid */}
