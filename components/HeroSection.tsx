@@ -33,18 +33,18 @@ export default function HeroSection() {
     const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0.8]);
 
     return (
-        <section ref={containerRef} className="relative min-h-screen overflow-hidden -mt-28">
+        <section ref={containerRef} className="relative h-[120vh] w-full  -mt-28">
             {/* Full Cover Background Image */}
-            <div className="absolute inset-0">
+            <div className="absolute inset-0 w-full h-full">
                 <Image
                     src={heroData.heroImage.src}
                     alt={heroData.heroImage.alt}
                     fill
-                    className="object-cover object-center select-none pointer-events-none"
+                    className="object-cover object-center select-none pointer-events-none w-full h-full"
                     draggable={false}
                     priority
                     sizes="100vw"
-                    style={{ objectPosition: 'center top' }}
+                    style={{ objectPosition: 'center center', objectFit: 'cover' }}
                 />
                 {/* Dark overlay for better text readability */}
                 <div className="absolute inset-0 bg-black/40" />
@@ -81,7 +81,7 @@ export default function HeroSection() {
             </div>
 
             <motion.div
-                className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 h-screen flex items-center"
+                className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full h-full min-h-[120vh] flex items-center"
                 style={{ y, opacity }}
             >
                 <div className="flex flex-col lg:flex-row items-center lg:items-start justify-start w-full h-full pt-72 lg:pt-80">
