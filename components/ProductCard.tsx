@@ -105,7 +105,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* Product Image Container */}
       <div className="relative bg-gray-50 p-3 sm:p-4 md:p-5">
         <Link href={`/products/${handle}`} className="block">
-          <div className="relative aspect-square w-full min-h-[200px] sm:min-h-[250px] md:min-h-[300px]">
+          <div className="relative w-full h-[250px] sm:h-[300px] md:h-[350px]">
             <Image
               src={imageUrl}
               alt={imageAlt}
@@ -152,34 +152,9 @@ export default function ProductCard({ product }: ProductCardProps) {
         </Link>
 
         {/* Price Display */}
-        <div className="mb-3">
+        <div className="mb-4">
           <div className="text-lg sm:text-xl md:text-2xl font-bold text-green-600">
-            {formatPrice(price, currency)}
-          </div>
-          <div className="text-xs text-gray-500">
-            Prix TTC
-          </div>
-        </div>
-
-        {/* Product Features */}
-        <div className="flex flex-col gap-2 mb-4">
-          <div className="flex items-center gap-2">
-            <div className="h-1.5 w-1.5 rounded-full bg-green-500 flex-shrink-0"></div>
-            <span className="text-xs text-gray-700 font-medium">Disponible</span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <svg className="w-3 h-3 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-            <span className="text-xs text-gray-700 font-medium">Livraison rapide</span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <svg className="w-3 h-3 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
-            </svg>
-            <span className="text-xs text-gray-700 font-medium">Qualité garantie</span>
+            {formatPrice(price, currency)} <span className="text-sm text-gray-500 font-normal">TTC</span>
           </div>
         </div>
 

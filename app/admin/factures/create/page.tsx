@@ -282,14 +282,7 @@ export default function CreateInvoicePage() {
         return;
       }
 
-      // Validate MF format (only if provided)
-      if (form.matriculeFiscale && form.matriculeFiscale.trim()) {
-        const mfRegex = /^[0-9]+\/[A-Z]\/[A-Z]\/[0-9]+$/;
-        if (!mfRegex.test(form.matriculeFiscale)) {
-          toast.error('Veuillez entrer un Matricule Fiscale valide (format: 1234567/A/M/000).');
-          return;
-        }
-      }
+      // MF is optional and accepts any format
 
       // Prepare the invoice data
       const invoiceData = {
@@ -410,9 +403,8 @@ export default function CreateInvoicePage() {
                   id="matriculeFiscale"
                   value={form.matriculeFiscale}
                   onChange={(e) => updateForm('matriculeFiscale', e.target.value)}
-                  placeholder="Ex: 1598742/A/M/000"
-                  pattern="[0-9]+/[A-Z]/[A-Z]/[0-9]+"
-                  title="Format: 1598742/A/M/000 (optionnel)"
+                  placeholder="Matricule Fiscale (optionnel)"
+                  title="Matricule Fiscale (optionnel - tout format accepté)"
                 />
               </div>
               

@@ -158,39 +158,38 @@ export default function FeaturedProducts() {
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="flex flex-col lg:flex-row justify-between items-center mb-8 sm:mb-12 md:mb-16 min-h-[200px] sm:min-h-[250px] lg:min-h-[300px]">
-          <div className="mb-6 sm:mb-8 lg:mb-0 text-center lg:text-left flex-1">
-            {/* Badge - Animated on Desktop, Static on Mobile */}
-            <div className="inline-flex items-center mb-4 sm:mb-6 bg-white/80 backdrop-blur-sm px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-lg border border-green-200/50">
-              <div className="hidden md:block">
-                <motion.div
-                  className="w-2 h-2 bg-green-500 rounded-full mr-3"
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                />
-              </div>
-              <div className="md:hidden">
-                <div className="w-2 h-2 bg-green-500 rounded-full mr-3" />
-              </div>
-              <span className="text-sm font-bold text-green-500 tracking-wide">SÉLECTION PREMIUM</span>
+        {/* Centered Header Section */}
+        <div className="text-center mb-8 sm:mb-12 md:mb-16">
+          {/* Badge - Animated on Desktop, Static on Mobile */}
+          <div className="inline-flex items-center mb-4 sm:mb-6 bg-white/80 backdrop-blur-sm px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-lg border border-green-200/50">
+            <div className="hidden md:block">
+              <motion.div
+                className="w-2 h-2 bg-green-500 rounded-full mr-3"
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
             </div>
-
-            {/* Title */}
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 sm:mb-6 leading-tight">
-              <span className="block text-black">Nos Produits</span>
-              <span className="block text-green-500">Populaire</span>
-            </h2>
-
-            {/* Description */}
-            <p className="text-base sm:text-lg md:text-xl text-black max-w-2xl leading-relaxed">
-              Découvrez notre sélection d'emballages premium, conçus pour sublimer vos produits et séduire vos clients.
-            </p>
+            <div className="md:hidden">
+              <div className="w-2 h-2 bg-green-500 rounded-full mr-3" />
+            </div>
+            <span className="text-sm font-bold text-green-500 tracking-wide">SÉLECTION PREMIUM</span>
           </div>
 
-          {/* Button - Animated on Desktop, Static on Mobile */}
-          <div className="w-full lg:w-auto">
+          {/* Centered Title */}
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 sm:mb-6 leading-tight">
+            <span className="block text-black">Nos Produits</span>
+            <span className="block text-green-500">Populaires</span>
+          </h2>
+
+          {/* Centered Description */}
+          <p className="text-base sm:text-lg md:text-xl text-black max-w-3xl mx-auto leading-relaxed mb-6 sm:mb-8">
+            Découvrez notre sélection d'emballages premium, conçus pour sublimer vos produits et séduire vos clients.
+          </p>
+
+          {/* Centered Button */}
+          <div className="flex justify-center">
             <Link href="/products">
-              <Button size="lg" className="group w-full lg:w-auto text-sm sm:text-base bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white border-0 shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden">
+              <Button size="lg" className="group text-sm sm:text-base bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white border-0 shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden px-8 py-3">
                 {/* Animated background shine - Desktop only */}
                 <div className="hidden md:block">
                   <motion.div

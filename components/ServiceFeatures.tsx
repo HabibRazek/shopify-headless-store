@@ -37,128 +37,8 @@ export default function ServiceFeatures() {
   ];
 
   return (
-    <section className="py-6 relative overflow-hidden bg-gradient-to-br from-green-50 via-emerald-50 to-green-100/50 -mt-16 pt-20">
-      {/* Creative Green Background Elements - Flowing from AutoCarousel */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Large Green Wave - Top Flowing */}
-        <motion.div
-          animate={{
-            scale: [1, 1.4, 1],
-            rotate: [0, 180, 360],
-            opacity: [0.4, 0.6, 0.4]
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-          className="absolute -top-40 -left-40 w-80 h-80 bg-gradient-to-br from-green-400/25 to-emerald-400/35 rounded-full blur-3xl"
-        />
-
-        {/* Connecting Green Flow - Center */}
-        <motion.div
-          animate={{
-            scale: [1.1, 1.3, 1.1],
-            rotate: [0, 90, 180],
-            opacity: [0.3, 0.5, 0.3]
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-          className="absolute top-0 left-1/2 transform -translate-x-1/2 w-96 h-32 bg-gradient-to-r from-green-300/20 via-emerald-300/30 to-green-400/25 rounded-full blur-2xl"
-        />
-
-        {/* Medium Green Orb - Bottom Right */}
-        <motion.div
-          animate={{
-            scale: [1.2, 1, 1.2],
-            rotate: [360, 180, 0],
-            opacity: [0.25, 0.45, 0.25]
-          }}
-          transition={{
-            duration: 30,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-          className="absolute -bottom-32 -right-32 w-64 h-64 bg-gradient-to-br from-emerald-300/30 to-green-500/25 rounded-full blur-2xl"
-        />
-
-        {/* Floating Green Accent - Center */}
-        <motion.div
-          animate={{
-            scale: [1, 1.6, 1],
-            opacity: [0.15, 0.35, 0.15],
-            rotate: [0, 360]
-          }}
-          transition={{
-            duration: 18,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-gradient-to-br from-green-300/20 to-emerald-400/25 rounded-full blur-xl"
-        />
-
-        {/* Creative Green Geometric Elements */}
-        <motion.div
-          animate={{
-            rotate: [0, 360],
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.6, 0.3]
-          }}
-          transition={{
-            duration: 22,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-          className="absolute top-1/4 right-1/4 w-20 h-20 border-2 border-green-300/40 rotate-45 rounded-lg"
-        />
-
-        <motion.div
-          animate={{
-            rotate: [360, 0],
-            y: [0, -15, 0],
-            scale: [1, 1.1, 1]
-          }}
-          transition={{
-            duration: 14,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          className="absolute bottom-1/4 left-1/4 w-16 h-16 bg-green-200/50 rounded-full"
-        />
-
-        {/* Additional Flowing Elements */}
-        <motion.div
-          animate={{
-            x: [0, 50, 0],
-            y: [0, -20, 0],
-            opacity: [0.2, 0.4, 0.2]
-          }}
-          transition={{
-            duration: 16,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          className="absolute top-1/3 left-1/3 w-24 h-6 bg-gradient-to-r from-green-300/30 to-emerald-300/40 rounded-full blur-lg"
-        />
-
-        <motion.div
-          animate={{
-            x: [0, -30, 0],
-            y: [0, 10, 0],
-            opacity: [0.15, 0.35, 0.15]
-          }}
-          transition={{
-            duration: 12,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 2
-          }}
-          className="absolute bottom-1/3 right-1/3 w-32 h-8 bg-gradient-to-l from-emerald-300/25 to-green-400/35 rounded-full blur-lg"
-        />
-      </div>
+    <section className="py-8 relative overflow-hidden">
+      {/* Clean section without background */}
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Soft Floating Images & Creative Elements */}
@@ -190,7 +70,7 @@ export default function ServiceFeatures() {
             className="absolute bottom-1/3 right-1/4 w-24 h-24 border border-gray-300/40 rotate-12"
           />
 
-          {/* SpoutPouch - Top Right with Soft Background */}
+          {/* SpoutPouch - Complete Image */}
           <motion.div
             animate={{
               y: [0, -20, 0],
@@ -202,23 +82,19 @@ export default function ServiceFeatures() {
               repeat: Infinity,
               ease: "easeInOut"
             }}
-            className="absolute top-10 right-8 w-28 h-36 md:w-36 md:h-44"
+            className="absolute top-10 right-8 w-32 h-48 md:w-40 md:h-60 opacity-60 md:opacity-75"
           >
-            {/* Soft background circle */}
-            <div className="absolute inset-0 bg-green-100/60 rounded-full blur-xl scale-75" />
-            <div className="relative w-full h-full opacity-70 md:opacity-85">
-              <Image
-                src="/images/collections/SpoutPouch.png"
-                alt="Spout Pouch"
-                fill
-                className="object-contain select-none filter drop-shadow-md"
-                draggable={false}
-                sizes="144px"
-              />
-            </div>
+            <Image
+              src="/images/collections/SpoutPouch.png"
+              alt="Spout Pouch"
+              fill
+              className="object-contain select-none filter drop-shadow-md"
+              draggable={false}
+              sizes="160px"
+            />
           </motion.div>
 
-          {/* KraftView - Top Left with Soft Background */}
+          {/* KraftView - Complete Image */}
           <motion.div
             animate={{
               y: [0, 15, 0],
@@ -231,20 +107,16 @@ export default function ServiceFeatures() {
               ease: "easeInOut",
               delay: 2
             }}
-            className="absolute top-16 left-6 w-24 h-32 md:w-32 md:h-40"
+            className="absolute top-16 left-6 w-28 h-44 md:w-36 md:h-56 opacity-55 md:opacity-70"
           >
-            {/* Soft background circle */}
-            <div className="absolute inset-0 bg-gray-100/50 rounded-full blur-xl scale-75" />
-            <div className="relative w-full h-full opacity-60 md:opacity-80">
-              <Image
-                src="/images/collections/KraftView.png"
-                alt="Kraft View"
-                fill
-                className="object-contain select-none filter drop-shadow-md"
-                draggable={false}
-                sizes="128px"
-              />
-            </div>
+            <Image
+              src="/images/collections/KraftView.png"
+              alt="Kraft View"
+              fill
+              className="object-contain select-none filter drop-shadow-md"
+              draggable={false}
+              sizes="144px"
+            />
           </motion.div>
 
           {/* Soft Creative Elements */}

@@ -113,7 +113,7 @@ export default function ImageGallery({ images, productTitle }: ImageGalleryProps
     <div className="relative">
       {/* Main image */}
       <div
-        className="aspect-square overflow-hidden rounded-lg bg-gray-100 mb-4 relative"
+        className="h-[400px] md:h-[500px] overflow-hidden rounded-lg bg-gray-100 mb-4 relative"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -123,7 +123,7 @@ export default function ImageGallery({ images, productTitle }: ImageGalleryProps
             src={images[currentImageIndex]?.node.url}
             alt={images[currentImageIndex]?.node.altText || productTitle}
             fill
-            className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+            className="object-contain object-center transition-transform duration-500 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, 50vw"
             priority
           />

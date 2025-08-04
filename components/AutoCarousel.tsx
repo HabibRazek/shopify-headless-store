@@ -54,7 +54,7 @@ export default function AutoCarousel() {
                 {extendedImages.map((image, index) => (
                   <motion.div
                     key={`${image.id}-${Math.floor(index / images.length)}`}
-                    className="flex-shrink-0 relative group w-[140px] h-[180px] md:w-[280px] md:h-[220px]"
+                    className="flex-shrink-0 relative group w-[140px] h-[200px] md:w-[280px] md:h-[280px]"
                     whileHover={{
                       scale: 1.02,
                       zIndex: 10,

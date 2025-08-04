@@ -90,12 +90,12 @@ export function ImageUpload({
       
       {value ? (
         <div className="relative group">
-          <div className="relative w-full h-48 border rounded-lg overflow-hidden bg-gray-50">
+          <div className="relative w-full h-64 border rounded-lg overflow-hidden bg-gray-50">
             <Image
               src={value}
               alt="Uploaded image"
               fill
-              className="object-cover transition-transform group-hover:scale-105"
+              className="object-contain transition-transform group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all" />
           </div>
