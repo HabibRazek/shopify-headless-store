@@ -14,6 +14,7 @@ import CustomPackaging from '@/components/CustomPackaging';
 import SocialFollow from '@/components/SocialFollow';
 import ServiceFeatures from '@/components/ServiceFeatures';
 import GrowthPartnership from '@/components/GrowthPartnership';
+import AutoCarousel from '@/components/AutoCarousel';
 
 
 export default function Home() {
@@ -23,6 +24,10 @@ export default function Home() {
       <section className="relative overflow-hidden">
         <HeroSection />
       </section>
+
+      {/* Auto Carousel Section */}
+      <AutoCarousel />
+
       {/* Service Features Section */}
       <div className="mt-10">
         <ServiceFeatures />

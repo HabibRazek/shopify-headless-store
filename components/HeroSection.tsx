@@ -16,7 +16,7 @@ const heroData = {
     cta2: "Demander Un Devis",
     ctaLink: "/products",
     heroImage: {
-        src: "/hero.png",
+        src: "/hero.jpeg",
         alt: "PackedIn - Solutions d'emballage premium"
     }
 }
@@ -33,9 +33,9 @@ export default function HeroSection() {
     const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0.8]);
 
     return (
-        <section ref={containerRef} className="relative h-[120vh] w-full  -mt-28">
-            {/* Full Cover Background Image */}
-            <div className="absolute inset-0 w-full h-full">
+        <section ref={containerRef} className="relative h-[120vh] w-full -mt-28 overflow-hidden">
+            {/* Full Cover Background Image - Desktop */}
+            <div className="absolute inset-0 w-full h-full hidden md:block">
                 <Image
                     src={heroData.heroImage.src}
                     alt={heroData.heroImage.alt}
@@ -50,6 +50,24 @@ export default function HeroSection() {
                 <div className="absolute inset-0 bg-black/40" />
                 {/* Gradient overlay for enhanced visual depth */}
                 <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
+            </div>
+
+            {/* Mobile Background Image */}
+            <div className="absolute inset-0 w-full h-full md:hidden">
+                <Image
+                    src="/mobile-hero.jpeg"
+                    alt="PackedIn - Solutions d'emballage premium"
+                    fill
+                    className="object-cover object-center select-none pointer-events-none w-full h-full"
+                    draggable={false}
+                    priority
+                    sizes="100vw"
+                    style={{ objectPosition: 'center center', objectFit: 'cover' }}
+                />
+                {/* Dark overlay for better text readability */}
+                <div className="absolute inset-0 bg-black/50" />
+                {/* Gradient overlay for enhanced visual depth */}
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-transparent" />
             </div>
 
             {/* Animated Background Elements - Desktop Only */}
@@ -81,10 +99,10 @@ export default function HeroSection() {
             </div>
 
             <motion.div
-                className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full h-full min-h-[120vh] flex items-center"
+                className="container mx-auto px-6 sm:px-8 lg:px-12 relative z-10 w-full h-full min-h-[120vh] flex items-center"
                 style={{ y, opacity }}
             >
-                <div className="flex flex-col lg:flex-row items-center lg:items-start justify-start w-full h-full pt-72 lg:pt-80">
+                <div className="flex flex-col lg:flex-row items-center lg:items-start justify-start w-full h-full pt-80 lg:pt-96">
                     {/* Floating Premium Badge - Top Right */}
                     <motion.div
                         className="absolute top-6 right-6 bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg hidden md:block"
@@ -98,8 +116,8 @@ export default function HeroSection() {
                         </div>
                     </motion.div>
 
-                    {/* Main Content - Left Aligned */}
-                    <div className="w-full lg:w-2/3 xl:w-1/2 text-center lg:text-left space-y-8">
+                    {/* Main Content - Left Aligned with More Space */}
+                    <div className="w-full lg:w-3/4 xl:w-2/3 text-center lg:text-left space-y-10 lg:space-y-12">
                         {/* Premium Badge - Animated on Desktop, Static on Mobile */}
                         <div className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm px-6 py-3 rounded-full border border-white/20 shadow-lg">
                             <div className="hidden md:block">
@@ -129,12 +147,12 @@ export default function HeroSection() {
                         </h1>
 
                         {/* Description */}
-                        <p className="text-xl text-white/90 leading-relaxed max-w-2xl mx-auto lg:mx-0 drop-shadow-md">
+                        <p className="text-xl md:text-2xl text-white/90 leading-relaxed max-w-3xl mx-auto lg:mx-0 drop-shadow-md px-4 lg:px-0">
                             {heroData.description}
                         </p>
 
                         {/* CTA Buttons */}
-                        <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center lg:justify-start">
+                        <div className="flex flex-col sm:flex-row gap-6 pt-8 justify-center lg:justify-start px-4 lg:px-0">
                             <Link href={heroData.ctaLink}>
                                 <Button size="lg" className="bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white border-0 shadow-xl hover:shadow-2xl transition-all duration-300 w-full sm:w-auto group relative overflow-hidden">
                                     {/* Animated background shine - Desktop only */}
