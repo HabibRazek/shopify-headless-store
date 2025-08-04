@@ -160,8 +160,8 @@ export default function Categories() {
             </h2>
 
             {/* Description */}
-            <p className="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-8">
-              Découvrez nos 10 collections d'emballages innovants, chacune conçue pour<br />
+            <p className="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed mb-8 text-justify md:text-center">
+              Découvrez nos 10 collections d'emballages innovants, chacune conçue pour<br className="hidden md:block" />
               répondre à des besoins spécifiques tout en maintenant la plus haute qualité.
             </p>
 
