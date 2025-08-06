@@ -1,267 +1,201 @@
 'use client';
 
+import React from 'react';
 import { motion } from 'framer-motion';
-import { Package, Truck, ThumbsUp, Shield } from 'lucide-react';
-import Image from 'next/image';
+import { ShoppingCart, Clock, Package, Recycle, Settings, Headphones, Star, Award, Shield, Zap } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 
 export default function ServiceFeatures() {
+
   const features = [
     {
-      icon: Package,
-      title: 'INVENTAIRE',
-      description: 'Prêt à expédier - nous stockons de grandes quantités de sacs de stock.',
-      bgColor: 'bg-gradient-to-br from-green-400 to-green-500',
+      icon: ShoppingCart,
+      title: "Petites quantités dès le départ",
+      description: "Commandez à partir de 50 unités pour tester le marché sans risque. Idéal pour les artisans, PME et startups.",
+      highlight: "🎯 Flexibilité sans frais de démarrage",
+      buttonText: "Demandez un devis !",
+      buttonVariant: "default" as const,
+      iconColor: "text-white",
+      bgGradient: "from-green-500 to-emerald-600",
       delay: 0.1
     },
     {
-      icon: Truck,
-      title: 'EXPÉDITION',
-      description: 'Les commandes reçues avant 15h sont expédiées le même jour ouvrable.',
-      bgColor: 'bg-gradient-to-br from-green-500 to-green-600',
+      icon: Clock,
+      title: "Délais ultra rapides",
+      description: "Production rapide et fiable, avec des délais actualisés chaque semaine.",
+      highlight: "⏰ Ne perdez plus de temps pour lancer votre produit",
+      buttonText: "En Savoir plus",
+      buttonVariant: "outline" as const,
+      iconColor: "text-white",
+      bgGradient: "from-blue-500 to-cyan-600",
       delay: 0.2
     },
     {
-      icon: ThumbsUp,
-      title: 'QUALITÉ SUPÉRIEURE',
-      description: 'Fabriqué avec des matériaux et des normes de la plus haute qualité.',
-      bgColor: 'bg-gradient-to-br from-green-600 to-green-700',
+      icon: Package,
+      title: "Commande facile & 100% en ligne",
+      description: "Configurez votre pochette, envoyez votre design, validez votre BAT et suivez la production directement en ligne.",
+      highlight: "💻 Simplicité, transparence et autonomie",
+      buttonText: "Commandez en ligne",
+      buttonVariant: "default" as const,
+      iconColor: "text-white",
+      bgGradient: "from-purple-500 to-pink-600",
       delay: 0.3
     },
     {
-      icon: Shield,
-      title: 'SERVICE FIABLE',
-      description: 'Support client professionnel et service après-vente de qualité.',
-      bgColor: 'bg-gradient-to-br from-green-700 to-green-800',
+      icon: Settings,
+      title: "Options sur mesure",
+      description: "Choisissez vos formats, matériaux, effets spéciaux, fenêtres, zip, vernis...",
+      highlight: "🎨 Un packaging parfaitement adapté à votre image",
+      buttonText: "En Savoir plus",
+      buttonVariant: "outline" as const,
+      iconColor: "text-white",
+      bgGradient: "from-orange-500 to-red-600",
       delay: 0.4
+    },
+    {
+      icon: Recycle,
+      title: "Matériaux éco-responsables",
+      description: "Emballages recyclables et biodégradables pour un impact environnemental réduit.",
+      highlight: "🌱 Respectueux de l'environnement",
+      buttonText: "En Savoir plus",
+      buttonVariant: "outline" as const,
+      iconColor: "text-white",
+      bgGradient: "from-green-600 to-teal-600",
+      delay: 0.5
+    },
+    {
+      icon: Headphones,
+      title: "Support client dédié",
+      description: "Une équipe d'experts à votre écoute pour vous accompagner dans votre projet.",
+      highlight: "🤝 Accompagnement personnalisé",
+      buttonText: "Nous contacter",
+      buttonVariant: "default" as const,
+      iconColor: "text-white",
+      bgGradient: "from-indigo-500 to-purple-600",
+      delay: 0.6
     }
   ];
 
   return (
-    <section className="py-8 relative overflow-hidden">
-      {/* Clean section without background */}
+    <section className="py-16 md:py-24 bg-gradient-to-br from-gray-50 via-white to-green-50/30 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          animate={{
+            rotate: [0, 360],
+            scale: [1, 1.2, 1]
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="absolute top-20 right-20 w-32 h-32 bg-green-200/20 rounded-full blur-3xl"
+        />
+        <motion.div
+          animate={{
+            rotate: [360, 0],
+            scale: [1, 0.8, 1]
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="absolute bottom-20 left-20 w-40 h-40 bg-blue-200/20 rounded-full blur-3xl"
+        />
+      </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Soft Floating Images & Creative Elements */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {/* Soft Animated Background Squares */}
+        {/* Header Section */}
+        <div className="text-center mb-16">
+          {/* Decorative badge */}
           <motion.div
-            animate={{
-              rotate: [0, 360],
-              scale: [1, 1.2, 1]
-            }}
-            transition={{
-              duration: 20,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-            className="absolute top-1/4 left-1/4 w-32 h-32 border-2 border-green-200/30 rotate-45"
-          />
-
-          <motion.div
-            animate={{
-              rotate: [360, 0],
-              scale: [1, 0.8, 1]
-            }}
-            transition={{
-              duration: 15,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-            className="absolute bottom-1/3 right-1/4 w-24 h-24 border border-gray-300/40 rotate-12"
-          />
-
-          {/* SpoutPouch - Complete Image */}
-          <motion.div
-            animate={{
-              y: [0, -20, 0],
-              rotate: [0, 8, 0],
-              scale: [1, 1.05, 1]
-            }}
-            transition={{
-              duration: 6,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            className="absolute top-10 right-8 w-32 h-48 md:w-40 md:h-60 opacity-60 md:opacity-75"
-          >
-            <Image
-              src="/images/collections/SpoutPouch.png"
-              alt="Spout Pouch"
-              fill
-              className="object-contain select-none filter drop-shadow-md"
-              draggable={false}
-              sizes="160px"
-            />
-          </motion.div>
-
-          {/* KraftView - Complete Image */}
-          <motion.div
-            animate={{
-              y: [0, 15, 0],
-              rotate: [0, -6, 0],
-              scale: [1, 1.03, 1]
-            }}
-            transition={{
-              duration: 7,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 2
-            }}
-            className="absolute top-16 left-6 w-28 h-44 md:w-36 md:h-56 opacity-55 md:opacity-70"
-          >
-            <Image
-              src="/images/collections/KraftView.png"
-              alt="Kraft View"
-              fill
-              className="object-contain select-none filter drop-shadow-md"
-              draggable={false}
-              sizes="144px"
-            />
-          </motion.div>
-
-          {/* Soft Creative Elements */}
-          <motion.div
-            animate={{
-              rotate: [0, 180, 360],
-              opacity: [0.1, 0.3, 0.1]
-            }}
-            transition={{
-              duration: 12,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            className="absolute top-1/2 left-1/2 w-40 h-40 border border-green-200/30 rounded-full transform -translate-x-1/2 -translate-y-1/2"
-          />
-
-          {/* Soft Floating Dots */}
-          <motion.div
-            animate={{
-              y: [0, -10, 0],
-              opacity: [0.3, 0.7, 0.3]
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            className="absolute top-1/3 right-1/3 w-3 h-3 bg-green-300/60 rounded-full"
-          />
-
-          <motion.div
-            animate={{
-              y: [0, 8, 0],
-              opacity: [0.2, 0.6, 0.2]
-            }}
-            transition={{
-              duration: 5,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 2
-            }}
-            className="absolute bottom-1/3 left-1/3 w-2 h-2 bg-gray-400/50 rounded-full"
-          />
-        </div>
-
-        {/* Compact Title Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, type: "spring", stiffness: 100 }}
-          className="text-center mb-8"
-        >
-          {/* Soft Title with Gray & Green */}
-          <motion.h2
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3"
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="inline-flex items-center mb-8"
           >
-            <span className="text-gray-800">
-              Pourquoi
-            </span>{' '}
-            <span className="bg-gradient-to-r from-green-600 via-green-500 to-emerald-500 bg-clip-text text-transparent">
-              Nous Choisir
-            </span>
-          </motion.h2>
+            <div className="relative">
+              <div className="w-16 h-16 bg-gradient-to-r from-green-600 via-green-500 to-emerald-500 rounded-full shadow-2xl flex items-center justify-center border-2 border-white/20">
+                <div className="text-white text-2xl font-bold">✨</div>
+              </div>
+            </div>
+          </motion.div>
 
-          {/* Soft Subtitle */}
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto mb-4 leading-relaxed"
-          >
-            Excellence et innovation dans chaque solution d'emballage
-          </motion.p>
-
-          {/* Soft Decorative Line */}
-          <motion.div
-            initial={{ width: 0 }}
-            whileInView={{ width: '80px' }}
-            viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="h-0.5 bg-gradient-to-r from-transparent via-green-500 to-transparent rounded-full mx-auto"
-          />
-        </motion.div>
+          >
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 sm:mb-6 leading-tight">
+              <span className="block text-black">Nos Services</span>
+              <span className="block text-green-500">Exceptionnels</span>
+            </h2>
 
-        {/* Compact Features Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 relative z-10">
-          {features.map((feature) => {
+            <p className="text-base sm:text-lg md:text-xl text-black max-w-3xl mx-auto leading-relaxed mb-6 sm:mb-8">
+              Des solutions d'emballage qui répondent à toutes vos questions
+            </p>
+          </motion.div>
+        </div>
+
+        {/* Features Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+          {features.map((feature, index) => {
             const IconComponent = feature.icon;
             return (
               <motion.div
                 key={feature.title}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: "-50px" }}
                 transition={{
-                  duration: 0.5,
+                  duration: 0.6,
                   delay: feature.delay,
                   type: "spring",
-                  stiffness: 120
+                  stiffness: 100
                 }}
-                whileHover={{
-                  y: -5,
-                  transition: { duration: 0.2 }
-                }}
-                className="text-center group"
+                className="group"
               >
-                {/* Soft Icon Container */}
-                <motion.div
-                  whileHover={{ scale: 1.05, rotate: 3 }}
-                  transition={{ duration: 0.2 }}
-                  className={`
-                    w-16 h-16 mx-auto mb-3 rounded-full
-                    ${feature.bgColor}
-                    flex items-center justify-center
-                    shadow-md group-hover:shadow-lg
-                    transition-all duration-300
-                  `}
-                >
-                  <IconComponent className="w-8 h-8 text-white" />
-                </motion.div>
+                <Card className="h-full bg-white/80 backdrop-blur-sm border border-gray-200/50 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden">
+                  <CardContent className="p-8">
+                    {/* Icon */}
+                    <motion.div
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                      transition={{ duration: 0.3 }}
+                      className={`w-16 h-16 bg-gradient-to-r ${feature.bgGradient} rounded-2xl shadow-lg flex items-center justify-center mb-6 group-hover:shadow-xl transition-shadow duration-300`}
+                    >
+                      <IconComponent className={`w-8 h-8 ${feature.iconColor}`} />
+                    </motion.div>
 
-                {/* Soft Title */}
-                <h3 className="text-sm md:text-base font-bold text-gray-800 mb-2 tracking-wide">
-                  {feature.title}
-                </h3>
+                    {/* Content */}
+                    <h3 className="text-xl font-bold text-gray-900 mb-4 leading-tight">
+                      {feature.title}
+                    </h3>
 
-                {/* Soft Description */}
-                <p className="text-xs md:text-sm text-gray-600 leading-relaxed px-1">
-                  {feature.description}
-                </p>
+                    <p className="text-gray-600 mb-4 leading-relaxed">
+                      {feature.description}
+                    </p>
 
-                {/* Soft Decorative Line */}
-                <motion.div
-                  initial={{ width: 0 }}
-                  whileInView={{ width: '40px' }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: feature.delay + 0.2 }}
-                  className="h-0.5 bg-gradient-to-r from-green-400 to-green-600 mx-auto mt-2 rounded-full"
-                />
+                    {/* Highlight */}
+                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-3 mb-6 border border-green-200/50">
+                      <p className="text-sm font-medium text-green-700">
+                        {feature.highlight}
+                      </p>
+                    </div>
+
+                    {/* Button */}
+                    <Button
+                      variant={feature.buttonVariant}
+                      className="w-full group-hover:scale-105 transition-transform duration-300"
+                    >
+                      {feature.buttonText}
+                    </Button>
+                  </CardContent>
+                </Card>
               </motion.div>
             );
           })}

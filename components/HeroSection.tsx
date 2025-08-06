@@ -1,25 +1,25 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import Link from "next/link"
-import { motion, useScroll, useTransform } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { MultiProductQuoteDialog } from "@/components/quote/MultiProductQuoteDialog"
-import { ArrowRight, Sparkles } from "lucide-react"
-import React, { useRef } from "react"
+import React, { useRef } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { MultiProductQuoteDialog } from "@/components/quote/MultiProductQuoteDialog";
+import { ArrowRight, Sparkles, Calculator } from "lucide-react";
 
 const heroData = {
-    title: "Le packaging flexible qui",
-    subtitle: "valorise votre marque",
+    title: "Le packaging flexible",
+    subtitle: " qui valorise votre marque",
     description: "Solutions d'emballage premium pour e-commerce et retail. Personnalisez vos doypacks avec notre expertise tunisienne.",
     cta1: "Découvrir Nos Produits",
     cta2: "Demander Un Devis",
     ctaLink: "/products",
     heroImage: {
-        src: "/hero.jpeg",
+        src: "/hero.png",
         alt: "PackedIn - Solutions d'emballage premium"
     }
-}
+};
 
 export default function HeroSection() {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -33,8 +33,8 @@ export default function HeroSection() {
     const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0.8]);
 
     return (
-        <section ref={containerRef} className="relative h-[120vh] w-full -mt-28 overflow-hidden">
-            {/* Full Cover Background Image - Desktop */}
+        <div ref={containerRef} className="relative h-[120vh] w-full -mt-28 overflow-hidden">
+            {/* Professional Hero Background - Desktop */}
             <div className="absolute inset-0 w-full h-full hidden md:block">
                 <Image
                     src={heroData.heroImage.src}
@@ -46,16 +46,23 @@ export default function HeroSection() {
                     sizes="100vw"
                     style={{ objectPosition: 'center center', objectFit: 'cover' }}
                 />
-                {/* Dark overlay for better text readability */}
-                <div className="absolute inset-0 bg-black/40" />
-                {/* Gradient overlay for enhanced visual depth */}
-                <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
+                {/* Enhanced dark overlay effects */}
+                <div className="absolute inset-0 bg-black/20" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/35 via-black/10 to-black/25" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/50" />
+                {/* Enhanced vignette effect */}
+                <div className="absolute inset-0"
+                    style={{
+                        background: 'radial-gradient(ellipse at center, transparent 0%, transparent 50%, rgba(0,0,0,0.35) 100%)'
+                    }} />
+                {/* Professional shine effect */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-white/5 via-transparent to-transparent" />
             </div>
 
-            {/* Mobile Background Image */}
+            {/* Professional Mobile Background */}
             <div className="absolute inset-0 w-full h-full md:hidden">
                 <Image
-                    src="/mobile-hero.jpeg"
+                    src="/hero.png"
                     alt="PackedIn - Solutions d'emballage premium"
                     fill
                     className="object-cover object-center select-none pointer-events-none w-full h-full"
@@ -64,10 +71,15 @@ export default function HeroSection() {
                     sizes="100vw"
                     style={{ objectPosition: 'center center', objectFit: 'cover' }}
                 />
-                {/* Dark overlay for better text readability */}
-                <div className="absolute inset-0 bg-black/50" />
-                {/* Gradient overlay for enhanced visual depth */}
-                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-transparent" />
+                {/* Enhanced mobile dark overlay */}
+                <div className="absolute inset-0 bg-black/25" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/5 to-black/60" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-black/10 to-black/30" />
+                {/* Enhanced mobile vignette */}
+                <div className="absolute inset-0"
+                    style={{
+                        background: 'radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(0,0,0,0.4) 100%)'
+                    }} />
             </div>
 
             {/* Animated Background Elements - Desktop Only */}
@@ -98,12 +110,12 @@ export default function HeroSection() {
                 />
             </div>
 
+            {/* Desktop with animations - Centered */}
             <motion.div
-                className="container mx-auto px-6 sm:px-8 lg:px-12 relative z-10 w-full h-full min-h-[120vh] flex items-center"
+                className="hidden md:flex container mx-auto px-6 sm:px-8 lg:px-12 relative z-20 w-full h-full min-h-[120vh] items-center justify-center"
                 style={{ y, opacity }}
             >
-                <div className="flex flex-col lg:flex-row items-center lg:items-start justify-start w-full h-full pt-80 lg:pt-96">
-                    {/* Floating Premium Badge - Top Right */}
+                <div className="flex flex-col items-center justify-center w-full h-full text-center">
                     <motion.div
                         className="absolute top-6 right-6 bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg hidden md:block"
                         initial={{ opacity: 0, y: -20 }}
@@ -116,62 +128,75 @@ export default function HeroSection() {
                         </div>
                     </motion.div>
 
-                    {/* Main Content - Left Aligned with More Space */}
-                    <div className="w-full lg:w-3/4 xl:w-2/3 text-center lg:text-left space-y-10 lg:space-y-12">
-                        {/* Premium Badge - Animated on Desktop, Static on Mobile */}
-                        <div className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm px-6 py-3 rounded-full border border-white/20 shadow-lg">
-                            <div className="hidden md:block">
-                                <motion.div
-                                    animate={{ rotate: [0, 360] }}
-                                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                                >
-                                    <Sparkles className="h-5 w-5 text-green-600" />
-                                </motion.div>
-                            </div>
-                            <div className="md:hidden">
-                                <Sparkles className="h-5 w-5 text-green-600" />
-                            </div>
-                            <span className="text-sm font-bold text-green-700 tracking-wide">
+                    <div className="w-full text-center space-y-10 lg:space-y-12 max-w-5xl mx-auto">
+                        <div
+                            className="inline-flex items-center gap-2 bg-white backdrop-blur-md px-6 py-3 rounded-full border border-white/30 shadow-2xl relative overflow-hidden"
+                            style={{
+                                boxShadow: '0 0 30px rgba(255,255,255,0.3), 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.4)'
+                            }}
+                        >
+                            <div className="absolute inset-0 bg-gradient-to-r from-white/20 via-transparent to-white/20 animate-pulse"></div>
+                            <motion.div
+                                animate={{ rotate: [0, 360] }}
+                                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                                className="relative z-10"
+                            >
+                                <Sparkles className="h-5 w-5 text-green-600 drop-shadow-sm" />
+                            </motion.div>
+                            <span
+                                className="text-sm font-bold text-green-700 tracking-wide relative z-10"
+                                style={{
+                                    textShadow: '0 1px 2px rgba(255,255,255,0.8)',
+                                    filter: 'contrast(1.2)'
+                                }}
+                            >
                                 PACKAGING PREMIUM TUNISIE
                             </span>
                         </div>
 
-                        {/* Main Title */}
                         <h1 className="text-4xl md:text-5xl lg:text-7xl font-black leading-tight">
-                            <span className="block text-white mb-2 drop-shadow-lg">
+                            <span
+                                className="block text-white mb-2 drop-shadow-2xl"
+                                style={{
+                                    textShadow: '0 4px 8px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.6)',
+                                    filter: 'contrast(1.1)'
+                                }}
+                            >
                                 {heroData.title}
                             </span>
-                            <span className="block bg-gradient-to-r from-green-400 via-green-300 to-emerald-400 bg-clip-text text-transparent drop-shadow-lg">
+                            <span
+                                className="block text-white drop-shadow-2xl"
+                                style={{
+                                    textShadow: '0 4px 8px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.6)',
+                                    filter: 'contrast(1.1)'
+                                }}
+                            >
                                 {heroData.subtitle}
                             </span>
                         </h1>
 
-                        {/* Description */}
-                        <p className="text-xl md:text-2xl text-white/90 leading-relaxed max-w-3xl mx-auto lg:mx-0 drop-shadow-md px-4 lg:px-0">
+                        <p
+                            className="text-xl md:text-2xl text-white leading-relaxed max-w-3xl mx-auto px-4 lg:px-0"
+                            style={{
+                                textShadow: '0 4px 12px rgba(0,0,0,0.9), 0 2px 6px rgba(0,0,0,0.7)',
+                                filter: 'contrast(1.1)'
+                            }}
+                        >
                             {heroData.description}
                         </p>
 
-                        {/* CTA Buttons */}
-                        <div className="flex flex-col sm:flex-row gap-6 pt-8 justify-center lg:justify-start px-4 lg:px-0">
+                        <div className="flex flex-col sm:flex-row gap-6 pt-8 justify-center px-4 lg:px-0">
                             <Link href={heroData.ctaLink}>
-                                <Button size="lg" className="bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white border-0 shadow-xl hover:shadow-2xl transition-all duration-300 w-full sm:w-auto group relative overflow-hidden">
-                                    {/* Animated background shine - Desktop only */}
-                                    <div className="hidden md:block">
-                                        <motion.div
-                                            animate={{ x: ['-100%', '100%'] }}
-                                            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                                        />
-                                    </div>
+                                <Button size="lg" className="group text-sm sm:text-base bg-gradient-to-r from-green-700 via-green-500 to-[#77db19] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white border-0 shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden px-8 py-3 w-full sm:w-64">
                                     <span className="relative z-10">{heroData.cta1}</span>
-                                    <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1 relative z-10" />
+                                    <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform duration-300 relative z-10 ml-2" />
                                 </Button>
                             </Link>
                             <MultiProductQuoteDialog
                                 trigger={
-                                    <Button variant="outline" className="border-white/30 text-white hover:bg-white/10 bg-white/5 backdrop-blur-sm px-8 py-6 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 w-full sm:w-auto group">
+                                    <Button size="lg" className="text-sm sm:text-base px-8 py-3 w-full sm:w-64 group">
                                         {heroData.cta2}
-                                        <ArrowRight className="ml-2 h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+                                        <Calculator className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300 group-hover:scale-110" />
                                     </Button>
                                 }
                             />
@@ -179,6 +204,80 @@ export default function HeroSection() {
                     </div>
                 </div>
             </motion.div>
-        </section>
+
+            {/* Mobile without animations - Centered */}
+            <div className="md:hidden container mx-auto px-6 sm:px-8 lg:px-12 relative z-20 w-full h-full min-h-[120vh] flex items-center justify-center">
+                <div className="flex flex-col items-center justify-center w-full h-full text-center">
+                    <div className="w-full text-center space-y-8 lg:space-y-10 max-w-4xl mx-auto">
+                        <div
+                            className="inline-flex items-center gap-2 bg-white backdrop-blur-md px-6 py-3 rounded-full border border-white/30 shadow-2xl relative overflow-hidden"
+                            style={{
+                                boxShadow: '0 0 30px rgba(255,255,255,0.3), 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.4)'
+                            }}
+                        >
+                            <div className="absolute inset-0 bg-gradient-to-r from-white/20 via-transparent to-white/20 animate-pulse"></div>
+                            <Sparkles className="h-5 w-5 text-green-600 drop-shadow-sm relative z-10" />
+                            <span
+                                className="text-sm font-bold text-green-700 tracking-wide relative z-10"
+                                style={{
+                                    textShadow: '0 1px 2px rgba(255,255,255,0.8)',
+                                    filter: 'contrast(1.2)'
+                                }}
+                            >
+                                PACKAGING PREMIUM TUNISIE
+                            </span>
+                        </div>
+
+                        <h1 className="text-4xl md:text-5xl lg:text-7xl font-black leading-tight">
+                            <span
+                                className="block text-white mb-2 drop-shadow-2xl"
+                                style={{
+                                    textShadow: '0 4px 8px rgba(0,0,0,0.9), 0 2px 4px rgba(0,0,0,0.7)',
+                                    filter: 'contrast(1.1)'
+                                }}
+                            >
+                                {heroData.title}
+                            </span>
+                            <span
+                                className="block text-white drop-shadow-2xl"
+                                style={{
+                                    textShadow: '0 4px 8px rgba(0,0,0,0.9), 0 2px 4px rgba(0,0,0,0.7)',
+                                    filter: 'contrast(1.1)'
+                                }}
+                            >
+                                {heroData.subtitle}
+                            </span>
+                        </h1>
+
+                        <p
+                            className="text-xl md:text-2xl text-white leading-relaxed max-w-3xl mx-auto px-4"
+                            style={{
+                                textShadow: '0 4px 12px rgba(0,0,0,0.95), 0 2px 6px rgba(0,0,0,0.8)',
+                                filter: 'contrast(1.1)'
+                            }}
+                        >
+                            {heroData.description}
+                        </p>
+
+                        <div className="flex flex-col sm:flex-row gap-6 pt-8 justify-center px-4">
+                            <Link href={heroData.ctaLink}>
+                                <Button size="lg" className="group text-sm sm:text-base bg-gradient-to-r from-green-700 via-green-500 to-[#77db19] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white border-0 shadow-xl hover:shadow-2xl transition-all duration-300 relative overflow-hidden px-8 py-3 w-full sm:w-64">
+                                    <span className="relative z-10">{heroData.cta1}</span>
+                                    <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform duration-300 relative z-10 ml-2" />
+                                </Button>
+                            </Link>
+                            <MultiProductQuoteDialog
+                                trigger={
+                                    <Button size="lg" className="text-sm sm:text-base px-8 py-3 w-full sm:w-64 group">
+                                        {heroData.cta2}
+                                        <Calculator className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300 group-hover:scale-110" />
+                                    </Button>
+                                }
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 };

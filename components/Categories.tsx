@@ -137,11 +137,13 @@ export default function Categories() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header Section matching the design */}
         <div className="text-center mb-16">
+          {/* Desktop with animations */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
+            className="hidden md:block"
           >
             
 
@@ -170,6 +172,25 @@ export default function Categories() {
               <div className="w-24 h-1 bg-green-500 rounded-full" />
             </div>
           </motion.div>
+
+          {/* Mobile without animations */}
+          <div className="md:hidden">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
+              <span className="text-gray-800">Nos</span>{' '}
+              <span className="bg-gradient-to-r from-green-600 via-green-500 to-emerald-500 bg-clip-text text-transparent">
+                Collections
+              </span>
+            </h2>
+
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
+              Découvrez notre gamme complète d'emballages flexibles, conçus pour répondre à tous vos besoins de packaging.
+            </p>
+
+            {/* Green Decorative Line */}
+            <div className="flex justify-center">
+              <div className="w-24 h-1 bg-green-500 rounded-full" />
+            </div>
+          </div>
         </div>
 
         {/* Enhanced Mobile Layout for 10 Collections */}
@@ -178,13 +199,9 @@ export default function Categories() {
         <div className="block md:hidden max-w-sm mx-auto">
           {/* First row: 3 items */}
           <div className="grid grid-cols-3 gap-3 mb-6 justify-items-center">
-            {COLLECTION_CATEGORIES.slice(0, 3).map((category, index) => (
-              <motion.div
+            {COLLECTION_CATEGORIES.slice(0, 3).map((category) => (
+              <div
                 key={category.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
                 className="flex flex-col items-center"
               >
                 <Link href={category.hasProducts ? `/collections/${category.handle}` : category.handle}>
@@ -197,7 +214,7 @@ export default function Categories() {
                         fill
                         className="object-contain z-30"
                         sizes="96px"
-                        priority={index < 3}
+                        priority={true}
                         placeholder="blur"
                         blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                       />
@@ -216,19 +233,15 @@ export default function Categories() {
                     </div>
                   </div>
                 </Link>
-              </motion.div>
+              </div>
             ))}
           </div>
 
           {/* Second row: 3 items */}
           <div className="grid grid-cols-3 gap-3 mb-6 justify-items-center">
-            {COLLECTION_CATEGORIES.slice(3, 6).map((category, index) => (
-              <motion.div
+            {COLLECTION_CATEGORIES.slice(3, 6).map((category) => (
+              <div
                 key={category.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: (index + 3) * 0.05 }}
                 className="flex flex-col items-center"
               >
                 <Link href={category.hasProducts ? `/collections/${category.handle}` : category.handle}>
@@ -259,19 +272,15 @@ export default function Categories() {
                     </div>
                   </div>
                 </Link>
-              </motion.div>
+              </div>
             ))}
           </div>
 
           {/* Third row: 2 items centered */}
           <div className="flex justify-center gap-8 mb-6">
-            {COLLECTION_CATEGORIES.slice(6, 8).map((category, index) => (
-              <motion.div
+            {COLLECTION_CATEGORIES.slice(6, 8).map((category) => (
+              <div
                 key={category.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: (index + 6) * 0.05 }}
                 className="flex flex-col items-center"
               >
                 <Link href={category.hasProducts ? `/collections/${category.handle}` : category.handle}>
@@ -302,19 +311,15 @@ export default function Categories() {
                     </div>
                   </div>
                 </Link>
-              </motion.div>
+              </div>
             ))}
           </div>
 
           {/* Fourth row: 2 items centered */}
           <div className="flex justify-center gap-8">
-            {COLLECTION_CATEGORIES.slice(8, 10).map((category, index) => (
-              <motion.div
+            {COLLECTION_CATEGORIES.slice(8, 10).map((category) => (
+              <div
                 key={category.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: (index + 8) * 0.05 }}
                 className="flex flex-col items-center"
               >
                 <Link href={category.hasProducts ? `/collections/${category.handle}` : category.handle}>
@@ -345,7 +350,7 @@ export default function Categories() {
                     </div>
                   </div>
                 </Link>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>

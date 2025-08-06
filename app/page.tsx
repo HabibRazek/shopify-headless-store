@@ -8,13 +8,13 @@ import References from '@/components/References';
 import HeroSection from '@/components/HeroSection';
 import Image from 'next/image';
 
-import WhyChooseUs from '@/components/WhyChooseUs';
 import ProductCategories from '@/components/ProductCategories';
 import CustomPackaging from '@/components/CustomPackaging';
 import SocialFollow from '@/components/SocialFollow';
-import ServiceFeatures from '@/components/ServiceFeatures';
 import GrowthPartnership from '@/components/GrowthPartnership';
-import AutoCarousel from '@/components/AutoCarousel';
+import ServiceFeatures from '@/components/ServiceFeatures';
+import WhyChooseUs from '@/components/WhyChooseUs';
+
 
 
 export default function Home() {
@@ -25,16 +25,14 @@ export default function Home() {
         <HeroSection />
       </section>
 
-      {/* Auto Carousel Section */}
-      <AutoCarousel />
 
-      {/* Service Features Section */}
       <div className="mt-10">
-        <ServiceFeatures />
+        <WhyChooseUs />
+
       </div>
       <div>
         <div className="hidden md:flex justify-end mt-[-10px] ">
-          <div className='z-30 sm:lg:mt-[-150px] animate-bounce '>
+          <div className='z-30 sm:lg:mt-[-150px] md:animate-bounce '>
             <Image
               src="/Arrow.png"
               alt="Arrow pointing to products"
@@ -56,7 +54,7 @@ export default function Home() {
 
 
       <div className="hidden md:flex justify-start ring-offset-slate-200 mt-[-120px]">
-        <div className='z-30 animate-bounce'>
+        <div className='z-30 md:animate-bounce'>
           <Image
             src="/ArrowLeft.png"
             alt="Arrow pointing to products"
@@ -64,7 +62,7 @@ export default function Home() {
             height={160}
             className="object-contain z-30 w-[120px] h-[100px] sm:w-[180px] sm:h-[160px] sm:lg:ml-10 mt-[15px]"
           />
-          
+
           <h1 className='font-extrabold mb-5 sm:text-3xl ml-[100px] mt-[-100px] lg:sm:ml-40 -rotate-12 z-30 sm:lg:mt-[-200px]'>
             Nos <br /> Categories
           </h1>
@@ -85,7 +83,7 @@ export default function Home() {
 
       {/* Curved Arrow Decorations */}
       <div className="hidden md:flex justify-start ring-offset-slate-200 mt-[20px]">
-        <div className='z-30 animate-bounce'>
+        <div className='z-30 md:animate-bounce'>
           <Image
             src="/ArrowLeft.png"
             alt="Arrow pointing to products"
@@ -103,7 +101,8 @@ export default function Home() {
       </div>
 
       <div className="mt-0 md:mt-[-100px] lg:mt-[-120px]">
-        <WhyChooseUs />
+        <ServiceFeatures />
+
       </div>
 
 
@@ -130,7 +129,7 @@ export default function Home() {
       <div className="relative">
         {/* Arrow positioned to align with social media title */}
         <div className="hidden md:flex justify-end absolute top-[80px] right-0 z-30">
-          <div className='animate-bounce'>
+          <div className='md:animate-bounce'>
             <Image
               src="/Arrow.png"
               alt="Arrow pointing to products"
