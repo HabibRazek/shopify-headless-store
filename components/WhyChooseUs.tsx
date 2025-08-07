@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 import { Package, Truck, ThumbsUp, Shield } from 'lucide-react';
-import Image from 'next/image';
 
 export default function WhyChooseUs() {
   const features = [
@@ -39,85 +38,11 @@ export default function WhyChooseUs() {
   return (
     <section className="py-8 relative overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Floating Images */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {/* SpoutPouch - Floating Animation */}
-          <div className="absolute top-10 right-8 w-32 h-48 md:w-40 md:h-60 opacity-60 md:opacity-75">
-            <motion.div
-              animate={{
-                y: [0, -20, 0],
-                rotate: [0, 8, 0],
-                scale: [1, 1.05, 1]
-              }}
-              transition={{
-                duration: 6,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              className="hidden md:block w-full h-full"
-            >
-              <Image
-                src="/images/collections/SpoutPouch.png"
-                alt="Spout Pouch"
-                fill
-                className="object-contain select-none filter drop-shadow-md"
-                draggable={false}
-                sizes="160px"
-              />
-            </motion.div>
-            <div className="md:hidden w-full h-full">
-              <Image
-                src="/images/collections/SpoutPouch.png"
-                alt="Spout Pouch"
-                fill
-                className="object-contain select-none filter drop-shadow-md"
-                draggable={false}
-                sizes="160px"
-              />
-            </div>
-          </div>
 
-          {/* KraftView - Floating Animation */}
-          <div className="absolute top-16 left-6 w-28 h-44 md:w-36 md:h-56 opacity-55 md:opacity-70">
-            <motion.div
-              animate={{
-                y: [0, 15, 0],
-                rotate: [0, -6, 0],
-                scale: [1, 1.03, 1]
-              }}
-              transition={{
-                duration: 7,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 2
-              }}
-              className="hidden md:block w-full h-full"
-            >
-              <Image
-                src="/images/collections/KraftView.png"
-                alt="Kraft View"
-                fill
-                className="object-contain select-none filter drop-shadow-md"
-                draggable={false}
-                sizes="144px"
-              />
-            </motion.div>
-            <div className="md:hidden w-full h-full">
-              <Image
-                src="/images/collections/KraftView.png"
-                alt="Kraft View"
-                fill
-                className="object-contain select-none filter drop-shadow-md"
-                draggable={false}
-                sizes="144px"
-              />
-            </div>
-          </div>
-        </div>
 
         {/* Title Section with Floating Elements */}
         <div className="text-center mb-8 relative">
-          {/* Floating Elements near Title */}
+          {/* Floating Elements near Title - Desktop Only */}
           <motion.div
             animate={{
               y: [0, -10, 0],
@@ -177,23 +102,30 @@ export default function WhyChooseUs() {
           />
 
           {/* Title matching "Nos Produits Populaires" style */}
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 sm:mb-6 leading-tight md:hidden">
+            <span className="block text-black">Pourquoi</span>
+            <span className="block text-green-500">Nous Choisir ?</span>
+          </h2>
           <motion.h2
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 sm:mb-6 leading-tight"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 sm:mb-6 leading-tight hidden md:block"
           >
             <span className="block text-black">Pourquoi</span>
             <span className="block text-green-500">Nous Choisir ?</span>
           </motion.h2>
 
+          <p className="text-base sm:text-lg md:text-xl text-black max-w-3xl mx-auto leading-relaxed mb-6 sm:mb-8 md:hidden">
+            Excellence et innovation dans chaque solution d'emballage
+          </p>
           <motion.p
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-base sm:text-lg md:text-xl text-black max-w-3xl mx-auto leading-relaxed mb-6 sm:mb-8"
+            className="text-base sm:text-lg md:text-xl text-black max-w-3xl mx-auto leading-relaxed mb-6 sm:mb-8 hidden md:block"
           >
             Excellence et innovation dans chaque solution d'emballage
           </motion.p>
@@ -205,6 +137,29 @@ export default function WhyChooseUs() {
             const IconComponent = feature.icon;
             return (
               <div key={feature.title} className="text-center group">
+                {/* Mobile Version - No Animations */}
+                <div className="md:hidden">
+                  <div className={`
+                    w-16 h-16 mx-auto mb-3 rounded-full
+                    ${feature.bgColor}
+                    flex items-center justify-center
+                    shadow-md
+                  `}>
+                    <IconComponent className="w-8 h-8 text-white" />
+                  </div>
+
+                  <h3 className="text-sm md:text-base font-bold text-gray-800 mb-2 tracking-wide">
+                    {feature.title}
+                  </h3>
+
+                  <p className="text-xs md:text-sm text-gray-600 leading-relaxed px-1">
+                    {feature.description}
+                  </p>
+
+                  <div className="w-10 h-0.5 bg-gradient-to-r from-green-400 to-green-600 mx-auto mt-2 rounded-full" />
+                </div>
+
+                {/* Desktop Version - With Animations */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -219,6 +174,7 @@ export default function WhyChooseUs() {
                     y: -5,
                     transition: { duration: 0.2 }
                   }}
+                  className="hidden md:block"
                 >
                   <motion.div
                     whileHover={{ scale: 1.05, rotate: 3 }}

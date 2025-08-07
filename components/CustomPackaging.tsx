@@ -115,37 +115,13 @@ export default function CustomPackaging() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Mobile Layout */}
         <div className="lg:hidden">
-          {/* Innovative Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="text-center mb-12"
-          >
-            <motion.div
-              initial={{ scale: 0 }}
-              whileInView={{ scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2, type: "spring", stiffness: 200 }}
-              className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] rounded-full mb-6 shadow-xl"
-            >
-              <motion.div
-                animate={{
-                  rotate: [0, 360],
-                  scale: [1, 1.1, 1]
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              >
-                <Printer className="w-10 h-10 text-white" />
-              </motion.div>
-            </motion.div>
+          {/* Clean Header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] rounded-full mb-4 shadow-lg">
+              <Printer className="w-8 h-8 text-white" />
+            </div>
 
-            <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-6 leading-tight">
+            <h2 className="text-2xl sm:text-3xl font-black text-gray-900 mb-4 leading-tight">
               <span className="block">Vous n'avez qu'une seule</span>
               <span className="block bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] bg-clip-text text-transparent">
                 chance de faire
@@ -153,248 +129,63 @@ export default function CustomPackaging() {
               <span className="block">bonne impression.</span>
             </h2>
 
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="text-gray-600 text-lg leading-relaxed max-w-2xl mx-auto"
-            >
+            <p className="text-gray-600 text-base leading-relaxed max-w-xl mx-auto px-4">
               Votre emballage est le premier contact avec vos clients. Faites-le compter avec nos solutions d'impression personnalisées sur doypacks qui reflètent parfaitement votre marque.
-            </motion.p>
-          </motion.div>
+            </p>
+          </div>
 
-          {/* Awesome Free-Floating Product Image */}
-          <motion.div
-            className="flex justify-center mb-12 relative"
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
-          >
-            <motion.div
-              className="relative hover:scale-105 transition-transform duration-300"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              {/* Multiple glowing auras */}
-              <motion.div
-                animate={{
-                  scale: [1, 1.3, 1],
-                  opacity: [0.2, 0.5, 0.2],
-                  rotate: [0, 180, 360],
-                }}
-                transition={{
-                  duration: 6,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-                className="absolute inset-0 bg-gradient-to-r from-green-700/20 via-green-500/30 to-[#77db19]/20 rounded-full blur-2xl scale-150"
+          {/* Clean Product Image */}
+          <div className="flex justify-center mb-8">
+            <div className="relative w-72 h-72 sm:w-80 sm:h-80">
+              <Image
+                src="/Doypacks-Zip.png"
+                alt="Doypacks Zip Personnalisés"
+                fill
+                className="object-contain drop-shadow-lg"
+                sizes="320px"
               />
+            </div>
+          </div>
 
-              <motion.div
-                animate={{
-                  scale: [1.2, 1, 1.2],
-                  opacity: [0.1, 0.3, 0.1],
-                  rotate: [360, 180, 0],
-                }}
-                transition={{
-                  duration: 8,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-                className="absolute inset-0 bg-gradient-to-br from-green-400/20 to-emerald-600/20 rounded-full blur-3xl scale-125"
-              />
-
-              {/* Main free-floating image */}
-              <motion.div
-                whileHover={{
-                  scale: 1.1,
-                  rotate: -2,
-                  transition: { duration: 0.3 }
-                }}
-                className="relative w-96 h-96"
-              >
-                <Image
-                  src="/Doypacks-Zip.png"
-                  alt="Doypacks Zip Personnalisés"
-                  fill
-                  className="object-contain drop-shadow-2xl filter brightness-105 contrast-105"
-                  sizes="384px"
-                />
-
-                {/* Enhanced floating particles around the image */}
-                {[...Array(12)].map((_, i) => (
-                  <motion.div
-                    key={i}
-                    animate={{
-                      y: [0, -30 - i * 2, 0],
-                      x: [0, Math.sin(i) * 15, 0],
-                      opacity: [0, 0.8, 0],
-                      scale: [0.3, 1, 0.3],
-                    }}
-                    transition={{
-                      duration: 3 + i * 0.3,
-                      repeat: Infinity,
-                      delay: i * 0.2,
-                      ease: "easeInOut"
-                    }}
-                    className={`absolute w-3 h-3 bg-gradient-to-r from-green-700 via-green-500 to-[#77db19] rounded-full shadow-lg`}
-                    style={{
-                      left: `${10 + i * 8}%`,
-                      top: `${5 + (i % 4) * 25}%`,
-                    }}
-                  />
-                ))}
-
-                {/* Orbiting elements */}
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-0"
-                >
-                  <div className="absolute top-8 right-8 w-4 h-4 bg-gradient-to-r from-green-700 to-green-500 rounded-full opacity-60 shadow-lg" />
-                </motion.div>
-
-                <motion.div
-                  animate={{ rotate: -360 }}
-                  transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-0"
-                >
-                  <div className="absolute bottom-8 left-8 w-3 h-3 bg-gradient-to-r from-green-500 to-[#77db19] rounded-full opacity-70 shadow-lg" />
-                </motion.div>
-              </motion.div>
-            </motion.div>
-          </motion.div>
-
-          {/* Innovative Features Grid */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12"
-          >
+          {/* Clean Features Grid */}
+          <div className="grid grid-cols-1 gap-3 mb-8 px-4">
             {features.map((feature, index) => {
               const IconComponent = feature.icon;
               return (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                  whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{
-                    duration: 0.6,
-                    delay: index * 0.1,
-                    type: "spring",
-                    stiffness: 100
-                  }}
-                  whileHover={{
-                    scale: 1.05,
-                    y: -5,
-                    transition: { duration: 0.2 }
-                  }}
-                  className="relative group"
-                >
-                  {/* Animated background */}
-                  <motion.div
-                    animate={{
-                      scale: [1, 1.05, 1],
-                      opacity: [0.1, 0.2, 0.1],
-                    }}
-                    transition={{
-                      duration: 3 + index * 0.5,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                    className={`absolute inset-0 bg-gradient-to-br ${feature.color} rounded-2xl blur-sm`}
-                  />
-
-                  {/* Main card */}
-                  <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/50 shadow-lg group-hover:shadow-xl transition-all duration-300">
-                    <div className="flex items-center space-x-4">
-                      <motion.div
-                        whileHover={{ rotate: 360 }}
-                        transition={{ duration: 0.5 }}
-                        className={`w-12 h-12 bg-gradient-to-br ${feature.color} rounded-xl flex items-center justify-center shadow-lg`}
-                      >
-                        <IconComponent className="w-6 h-6 text-white" />
-                      </motion.div>
-                      <span className="text-gray-800 font-semibold text-sm leading-tight flex-1">
-                        {feature.text}
-                      </span>
+                <div key={index} className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-10 h-10 bg-gradient-to-br ${feature.color} rounded-lg flex items-center justify-center shadow-md`}>
+                      <IconComponent className="w-5 h-5 text-white" />
                     </div>
+                    <span className="text-gray-800 font-medium text-sm leading-tight flex-1">
+                      {feature.text}
+                    </span>
                   </div>
-                </motion.div>
+                </div>
               );
             })}
-          </motion.div>
+          </div>
 
-          {/* Special Note with Animation */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="text-center mb-8"
-          >
-            <motion.div
-              animate={{
-                scale: [1, 1.02, 1],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              className="inline-block bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-200/50 shadow-lg"
-            >
-              <p className="text-green-700 font-bold text-lg mb-2">
+          {/* Clean Call-to-Action */}
+          <div className="text-center mb-6 px-4">
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200/50 shadow-sm mb-6">
+              <p className="text-green-700 font-bold text-base mb-1">
                 ✨ Demandez votre devis personnalisé
               </p>
               <p className="text-green-600 text-sm">
                 dès maintenant et donnez vie à votre marque
               </p>
-            </motion.div>
-          </motion.div>
+            </div>
 
-          {/* Innovative CTA Button */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-center"
-          >
             <MultiProductQuoteDialog
               trigger={
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="inline-block"
-                >
-                  <Button className="relative bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white px-10 py-4 rounded-full font-bold text-lg shadow-2xl hover:shadow-green-500/25 transition-all duration-300 overflow-hidden group">
-                    {/* Animated background */}
-                    <motion.div
-                      animate={{
-                        x: ['-100%', '100%'],
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "linear"
-                      }}
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                    />
-                    <Edit3 className="w-6 h-6 mr-3 relative z-10" />
-                    <span className="relative z-10">Demandez un Devis</span>
-                  </Button>
-                </motion.div>
+                <Button className="bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white px-8 py-3 rounded-full font-bold text-base shadow-lg transition-all duration-300 w-full sm:w-auto">
+                  <Edit3 className="w-5 h-5 mr-2" />
+                  Demandez un Devis
+                </Button>
               }
             />
-          </motion.div>
+          </div>
         </div>
 
         {/* Desktop Layout */}

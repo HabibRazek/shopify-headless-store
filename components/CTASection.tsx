@@ -12,8 +12,8 @@ export default function CTASection() {
 
   return (
     <section className="py-16 md:py-20 relative overflow-hidden">
-      {/* Enhanced Animated Background */}
-      <div className="absolute inset-0 overflow-hidden">
+      {/* Enhanced Animated Background - Desktop only */}
+      <div className="absolute inset-0 overflow-hidden hidden md:block">
         <motion.div
           animate={{
             scale: [1, 1.2, 1],
@@ -40,8 +40,96 @@ export default function CTASection() {
         />
       </div>
 
+      {/* Mobile Version - No Animations */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 min-h-[600px] sm:min-h-[500px] lg:min-h-[400px] md:hidden">
+        {/* Bottom CTA */}
+        <div className="text-center relative">
+          <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 relative overflow-hidden">
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-[0.02]">
+              <div className="h-full w-full" style={{
+                backgroundImage: `
+                  linear-gradient(90deg, #10b981 1px, transparent 1px),
+                  linear-gradient(180deg, #10b981 1px, transparent 1px)
+                `,
+                backgroundSize: '20px 20px'
+              }} />
+            </div>
+
+            {/* Content */}
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full mb-8 border border-green-200/50 shadow-lg">
+                <Sparkles className="h-4 w-4 text-green-500" />
+                <span className="text-sm font-bold text-green-500 tracking-wide">
+                  SUPPORT EXPERT
+                </span>
+              </div>
+
+              <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+                Besoin d'aide pour choisir ?
+              </h3>
+
+              <p className="text-gray-600 mb-8 max-w-2xl mx-auto text-lg leading-relaxed">
+                Notre équipe d'experts est là pour vous accompagner dans le choix
+                de la solution d'emballage parfaite pour vos produits.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <MultiProductQuoteDialog
+                  trigger={
+                    <div>
+                      <Button
+                        size="lg"
+                        className="bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white shadow-xl hover:shadow-2xl transition-all duration-300 group relative overflow-hidden"
+                      >
+                        <Calculator className="mr-2 h-4 w-4 relative z-10" />
+                        <span className="relative z-10">Demander un devis</span>
+                        <ArrowRight className="ml-2 h-4 w-4 relative z-10" />
+                      </Button>
+                    </div>
+                  }
+                />
+
+                <Link
+                  href="https://wa.me/21629362224?text=Bonjour%2C%20je%20souhaite%20contacter%20un%20expert%20pour%20mes%20besoins%20d%27emballage."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <div>
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="border-green-500/30 text-green-500 hover:bg-green-500/10 shadow-lg hover:shadow-xl transition-all duration-300 group w-full sm:w-auto"
+                    >
+                      <MessageCircle className="mr-2 h-4 w-4" />
+                      Contacter un expert
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </div>
+                </Link>
+              </div>
+
+              {/* Additional Info */}
+              <div className="mt-6 text-sm text-gray-500">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                  <span className="inline-flex items-center gap-1">
+                    <Calculator className="h-4 w-4" />
+                    Devis gratuit • Réponse sous 24h
+                  </span>
+                  <span className="inline-flex items-center gap-1">
+                    <MessageCircle className="h-4 w-4" />
+                    WhatsApp: +216 29 362 224
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop Version - With Animations */}
       <motion.div
-        className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 min-h-[600px] sm:min-h-[500px] lg:min-h-[400px]"
+        className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 min-h-[600px] sm:min-h-[500px] lg:min-h-[400px] hidden md:block"
         style={{ y }}
       >
         {/* Bottom CTA */}

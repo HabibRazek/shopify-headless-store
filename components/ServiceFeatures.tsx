@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Clock, Package, Recycle, Settings, Headphones, Star, Award, Shield, Zap } from 'lucide-react';
+import { ShoppingCart, Clock, Package, Recycle, Settings, Headphones} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -78,9 +78,9 @@ export default function ServiceFeatures() {
   ];
 
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-br from-gray-50 via-white to-green-50/30 relative overflow-hidden">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    <section className="py-2 md:py-12 mb-10 relative overflow-hidden">
+      {/* Background decorative elements - Desktop only */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none hidden md:block">
         <motion.div
           animate={{
             rotate: [0, 360],
@@ -109,27 +109,26 @@ export default function ServiceFeatures() {
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header Section */}
-        <div className="text-center mb-16">
-          {/* Decorative badge */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="inline-flex items-center mb-8"
-          >
-            <div className="relative">
-              <div className="w-16 h-16 bg-gradient-to-r from-green-600 via-green-500 to-emerald-500 rounded-full shadow-2xl flex items-center justify-center border-2 border-white/20">
-                <div className="text-white text-2xl font-bold">✨</div>
-              </div>
-            </div>
-          </motion.div>
+        <div className="text-center mb-8">
+          {/* Mobile Version - No Animations */}
+          <div className="md:hidden">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 sm:mb-6 leading-tight">
+              <span className="block text-black">Nos Services</span>
+              <span className="block text-green-500">Exceptionnels</span>
+            </h2>
 
+            <p className="text-base sm:text-lg md:text-xl text-black max-w-3xl mx-auto leading-relaxed mb-6 sm:mb-8">
+              Des solutions d'emballage qui répondent à toutes vos questions
+            </p>
+          </div>
+
+          {/* Desktop Version - With Animations */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.3 }}
+            className="hidden md:block"
           >
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 sm:mb-6 leading-tight">
               <span className="block text-black">Nos Services</span>
@@ -143,62 +142,113 @@ export default function ServiceFeatures() {
         </div>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
-          {features.map((feature, index) => {
-            const IconComponent = feature.icon;
-            return (
-              <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{
-                  duration: 0.6,
-                  delay: feature.delay,
-                  type: "spring",
-                  stiffness: 100
-                }}
-                className="group"
-              >
-                <Card className="h-full bg-white/80 backdrop-blur-sm border border-gray-200/50 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden">
-                  <CardContent className="p-8">
-                    {/* Icon */}
-                    <motion.div
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      transition={{ duration: 0.3 }}
-                      className={`w-16 h-16 bg-gradient-to-r ${feature.bgGradient} rounded-2xl shadow-lg flex items-center justify-center mb-6 group-hover:shadow-xl transition-shadow duration-300`}
-                    >
-                      <IconComponent className={`w-8 h-8 ${feature.iconColor}`} />
-                    </motion.div>
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+          {/* Mobile Version - No Animations */}
+          <div className="md:hidden grid grid-cols-2 gap-4 lg:gap-6 col-span-full">
+            {features.map((feature) => {
+              const IconComponent = feature.icon;
+              return (
+                <div
+                  key={feature.title}
+                  className="group h-full"
+                >
+                  <Card className="h-full bg-white/80 backdrop-blur-sm border border-gray-200/50 shadow-lg overflow-hidden flex flex-col">
+                    <CardContent className="p-4 flex flex-col h-full">
+                      {/* Static Icon */}
+                      <div className={`w-12 h-12 bg-gradient-to-r ${feature.bgGradient} rounded-xl shadow-lg flex items-center justify-center mb-3`}>
+                        <IconComponent className={`w-6 h-6 ${feature.iconColor}`} />
+                      </div>
 
-                    {/* Content */}
-                    <h3 className="text-xl font-bold text-gray-900 mb-4 leading-tight">
-                      {feature.title}
-                    </h3>
+                      {/* Content */}
+                      <h3 className="text-lg font-bold text-gray-900 mb-2 leading-tight">
+                        {feature.title}
+                      </h3>
 
-                    <p className="text-gray-600 mb-4 leading-relaxed">
-                      {feature.description}
-                    </p>
-
-                    {/* Highlight */}
-                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-3 mb-6 border border-green-200/50">
-                      <p className="text-sm font-medium text-green-700">
-                        {feature.highlight}
+                      <p className="text-sm text-gray-600 mb-3 leading-relaxed flex-grow">
+                        {feature.description}
                       </p>
-                    </div>
 
-                    {/* Button */}
-                    <Button
-                      variant={feature.buttonVariant}
-                      className="w-full group-hover:scale-105 transition-transform duration-300"
-                    >
-                      {feature.buttonText}
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            );
-          })}
+                      {/* Highlight */}
+                      <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-2 mb-3 border border-green-200/50">
+                        <p className="text-xs font-medium text-green-700">
+                          {feature.highlight}
+                        </p>
+                      </div>
+
+                      {/* Static Button */}
+                      <Button
+                        variant={feature.buttonVariant}
+                        size="sm"
+                        className="w-full mt-auto"
+                      >
+                        {feature.buttonText}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop Version - With Animations */}
+          <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 col-span-full">
+            {features.map((feature) => {
+              const IconComponent = feature.icon;
+              return (
+                <motion.div
+                  key={feature.title}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{
+                    duration: 0.6,
+                    delay: feature.delay,
+                    type: "spring",
+                    stiffness: 100
+                  }}
+                  className="group h-full"
+                >
+                  <Card className="h-full bg-white/80 backdrop-blur-sm border border-gray-200/50 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 overflow-hidden flex flex-col">
+                    <CardContent className="p-4 flex flex-col h-full">
+                      {/* Animated Icon */}
+                      <motion.div
+                        whileHover={{ scale: 1.1, rotate: 5 }}
+                        transition={{ duration: 0.3 }}
+                        className={`w-12 h-12 bg-gradient-to-r ${feature.bgGradient} rounded-xl shadow-lg flex items-center justify-center mb-3 group-hover:shadow-xl transition-shadow duration-300`}
+                      >
+                        <IconComponent className={`w-6 h-6 ${feature.iconColor}`} />
+                      </motion.div>
+
+                      {/* Content */}
+                      <h3 className="text-lg font-bold text-gray-900 mb-2 leading-tight">
+                        {feature.title}
+                      </h3>
+
+                      <p className="text-sm text-gray-600 mb-3 leading-relaxed flex-grow">
+                        {feature.description}
+                      </p>
+
+                      {/* Highlight */}
+                      <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-2 mb-3 border border-green-200/50">
+                        <p className="text-xs font-medium text-green-700">
+                          {feature.highlight}
+                        </p>
+                      </div>
+
+                      {/* Animated Button */}
+                      <Button
+                        variant={feature.buttonVariant}
+                        size="sm"
+                        className="w-full group-hover:scale-105 transition-transform duration-300 mt-auto"
+                      >
+                        {feature.buttonText}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>

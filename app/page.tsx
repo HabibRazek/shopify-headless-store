@@ -78,8 +78,8 @@ export default function Home() {
         <CustomPackaging />
       </div>
 
-      {/* Mobile Spacing Buffer */}
-      <div className="block md:hidden mb-20 h-16 sm:h-20"></div>
+      {/* Mobile Spacing Buffer - Minimal spacing */}
+      <div className="block md:hidden mb-1 h-1"></div>
 
       {/* Curved Arrow Decorations */}
       <div className="hidden md:flex justify-start ring-offset-slate-200 mt-[20px]">
@@ -122,7 +122,7 @@ export default function Home() {
       </div>
 
       {/* Growth Partnership Section */}
-      <div className="mt-[-20px] sm:mt-[-40px] md:mt-[-60px] lg:mt-[-80px]">
+      <div className="mt-[-5px] sm:mt-[-10px] md:mt-[-60px] lg:mt-[-80px]">
         <GrowthPartnership />
       </div>
 

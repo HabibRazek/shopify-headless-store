@@ -15,43 +15,43 @@ export default function ProductCategories() {
         {
             id: 1,
             title: "Café",
-            image: "/cafe.jpg", // You'll need to add these images
+            image: "/images/utilisation/cafe.jpg",
             alt: "Coffee beans"
         },
         {
             id: 2,
             title: "Chocolat",
-            image: "/chocolat.webp",
+            image: "/images/utilisation/chocolat.webp",
             alt: "Chocolate products"
         },
         {
             id: 3,
             title: "Aliments & snacks",
-            image: "/snacks.webp",
+            image: "/images/utilisation/snacks.webp",
             alt: "Food and snacks"
         },
         {
             id: 4,
             title: "Nourriture pour animaux",
-            image: "/croquette.webp",
+            image: "/images/utilisation/croquette.webp",
             alt: "Pet food"
         },
         {
             id: 5,
             title: "Santé & beauté",
-            image: "/beaute.jpg",
+            image: "/images/utilisation/beaute.jpg",
             alt: "Health and beauty products"
         },
         {
             id: 6,
             title: "Thé & Tisanes",
-            image: "/tisane.jpg",
+            image: "/images/utilisation/tisane.jpg",
             alt: "Tea and herbal teas"
         },
         {
             id: 7,
             title: "Épices",
-            image: "/epices.webp",
+            image: "/images/utilisation/epices.webp",
             alt: "Spices"
         }
     ];
@@ -92,11 +92,31 @@ export default function ProductCategories() {
             >
                 {/* Enhanced Header Section */}
                 <div className="text-center mb-20">
+                    {/* Mobile Version - No Animations */}
+                    <div className="md:hidden">
+                        {/* Static Icon */}
+                        <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] rounded-full mb-8 shadow-xl">
+                            <Package className="w-8 h-8 text-white" />
+                        </div>
+
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-center mb-8 leading-tight">
+                            <span className="text-green-500">Quel que soit votre produit,</span><br />
+                            <span className="text-black">nous avons la pochette qu'il vous faut.</span>
+                        </h2>
+
+                        <p className="text-xl md:text-2xl text-black leading-relaxed max-w-5xl mx-auto">
+                            Avec notre expérience dans des secteurs variés – des biscuits aux produits ménagers – nous vous garantissons un emballage
+                            qui ne se contente pas d'être beau : il préserve aussi toute la fraîcheur de vos produits.
+                        </p>
+                    </div>
+
+                    {/* Desktop Version - With Animations */}
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+                        className="hidden md:block"
                     >
                         {/* Animated Icon */}
                         <motion.div
@@ -146,64 +166,24 @@ export default function ProductCategories() {
                 </div>
 
                 {/* Enhanced Categories Grid */}
-                <motion.div
-                    className="flex justify-center"
-                    initial={{ opacity: 0, y: 50 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.8, delay: 0.5 }}
-                >
-                    {/* Mobile: Custom layout to handle 7 items nicely */}
+                <div className="flex justify-center">
+                    {/* Mobile: Custom layout to handle 7 items nicely - No Animations */}
                     <div className="block sm:hidden max-w-sm mx-auto">
                         {/* First row: 3 items */}
                         <div className="grid grid-cols-3 gap-6 mb-8 justify-items-center">
-                            {categories.slice(0, 3).map((category, index) => (
-                                <motion.div
+                            {categories.slice(0, 3).map((category) => (
+                                <div
                                     key={category.id}
-                                    initial={{ opacity: 0, y: 50, scale: 0.8 }}
-                                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                                    viewport={{ once: true }}
-                                    transition={{
-                                        duration: 0.6,
-                                        delay: index * 0.1,
-                                        type: "spring",
-                                        stiffness: 100
-                                    }}
-                                    whileHover={{
-                                        scale: 1.1,
-                                        y: -10,
-                                        transition: { duration: 0.3 }
-                                    }}
                                     className="flex flex-col items-center group cursor-pointer"
                                 >
-                                    {/* Enhanced Circular Image Container */}
-                                    <motion.div
-                                        className="relative w-20 h-20 mb-3"
-                                        whileHover={{ rotate: 5 }}
-                                        transition={{ duration: 0.3 }}
-                                    >
-                                        {/* Glowing background */}
-                                        <motion.div
-                                            animate={{
-                                                scale: [1, 1.1, 1],
-                                                opacity: [0.3, 0.6, 0.3],
-                                            }}
-                                            transition={{
-                                                duration: 3,
-                                                repeat: Infinity,
-                                                ease: "easeInOut",
-                                                delay: index * 0.2
-                                            }}
-                                            className="absolute inset-0 bg-gradient-to-br from-green-400/20 to-emerald-600/20 rounded-full blur-lg"
-                                        />
+                                    {/* Static Circular Image Container */}
+                                    <div className="relative w-20 h-20 mb-3">
+                                        {/* Static background */}
+                                        <div className="absolute inset-0 bg-gradient-to-br from-green-400/20 to-emerald-600/20 rounded-full blur-lg" />
 
                                         {/* Main image container */}
-                                        <div className="relative w-full h-full rounded-full overflow-hidden border-3 border-white shadow-xl bg-white group-hover:border-green-200 transition-colors duration-300">
-                                            <motion.div
-                                                whileHover={{ scale: 1.1 }}
-                                                transition={{ duration: 0.3 }}
-                                                className="w-full h-full"
-                                            >
+                                        <div className="relative w-full h-full rounded-full overflow-hidden border-3 border-white shadow-xl bg-white">
+                                            <div className="w-full h-full">
                                                 <Image
                                                     src={category.image}
                                                     alt={category.alt}
@@ -211,79 +191,33 @@ export default function ProductCategories() {
                                                     className="object-cover rounded-full"
                                                     sizes="80px"
                                                 />
-                                            </motion.div>
+                                            </div>
                                         </div>
+                                    </div>
 
-                                        {/* Animated hover overlay */}
-                                        <motion.div
-                                            initial={{ opacity: 0, scale: 0.8 }}
-                                            whileHover={{ opacity: 1, scale: 1 }}
-                                            transition={{ duration: 0.3 }}
-                                            className="absolute inset-0 rounded-full bg-gradient-to-br from-green-500/20 to-emerald-600/20 backdrop-blur-sm"
-                                        />
-                                    </motion.div>
-
-                                    {/* Enhanced Category Title */}
-                                    <motion.h3
-                                        className="text-xs font-bold text-green-500 text-center leading-tight max-w-20 group-hover:text-green-600 transition-colors duration-300"
-                                        whileHover={{ scale: 1.05 }}
-                                        transition={{ duration: 0.2 }}
-                                    >
+                                    {/* Static Category Title */}
+                                    <h3 className="text-xs font-bold text-green-500 text-center leading-tight max-w-20">
                                         {category.title}
-                                    </motion.h3>
-                                </motion.div>
+                                    </h3>
+                                </div>
                             ))}
                         </div>
 
                         {/* Second row: 2 items */}
                         <div className="grid grid-cols-2 gap-8 mb-8 justify-items-center">
-                            {categories.slice(3, 5).map((category, index) => (
-                                <motion.div
+                            {categories.slice(3, 5).map((category) => (
+                                <div
                                     key={category.id}
-                                    initial={{ opacity: 0, y: 50, scale: 0.8 }}
-                                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                                    viewport={{ once: true }}
-                                    transition={{
-                                        duration: 0.6,
-                                        delay: (index + 3) * 0.1,
-                                        type: "spring",
-                                        stiffness: 100
-                                    }}
-                                    whileHover={{
-                                        scale: 1.1,
-                                        y: -10,
-                                        transition: { duration: 0.3 }
-                                    }}
                                     className="flex flex-col items-center group cursor-pointer"
                                 >
-                                    {/* Enhanced Circular Image Container */}
-                                    <motion.div
-                                        className="relative w-24 h-24 mb-4"
-                                        whileHover={{ rotate: 5 }}
-                                        transition={{ duration: 0.3 }}
-                                    >
-                                        {/* Glowing background */}
-                                        <motion.div
-                                            animate={{
-                                                scale: [1, 1.1, 1],
-                                                opacity: [0.3, 0.6, 0.3],
-                                            }}
-                                            transition={{
-                                                duration: 3,
-                                                repeat: Infinity,
-                                                ease: "easeInOut",
-                                                delay: (index + 3) * 0.2
-                                            }}
-                                            className="absolute inset-0 bg-gradient-to-br from-green-400/20 to-emerald-600/20 rounded-full blur-lg"
-                                        />
+                                    {/* Static Circular Image Container */}
+                                    <div className="relative w-24 h-24 mb-4">
+                                        {/* Static background */}
+                                        <div className="absolute inset-0 bg-gradient-to-br from-green-400/20 to-emerald-600/20 rounded-full blur-lg" />
 
                                         {/* Main image container */}
-                                        <div className="relative w-full h-full rounded-full overflow-hidden border-3 border-white shadow-xl bg-white group-hover:border-green-200 transition-colors duration-300">
-                                            <motion.div
-                                                whileHover={{ scale: 1.1 }}
-                                                transition={{ duration: 0.3 }}
-                                                className="w-full h-full"
-                                            >
+                                        <div className="relative w-full h-full rounded-full overflow-hidden border-3 border-white shadow-xl bg-white">
+                                            <div className="w-full h-full">
                                                 <Image
                                                     src={category.image}
                                                     alt={category.alt}
@@ -291,79 +225,33 @@ export default function ProductCategories() {
                                                     className="object-cover rounded-full"
                                                     sizes="96px"
                                                 />
-                                            </motion.div>
+                                            </div>
                                         </div>
+                                    </div>
 
-                                        {/* Animated hover overlay */}
-                                        <motion.div
-                                            initial={{ opacity: 0, scale: 0.8 }}
-                                            whileHover={{ opacity: 1, scale: 1 }}
-                                            transition={{ duration: 0.3 }}
-                                            className="absolute inset-0 rounded-full bg-gradient-to-br from-green-500/20 to-emerald-600/20 backdrop-blur-sm"
-                                        />
-                                    </motion.div>
-
-                                    {/* Enhanced Category Title */}
-                                    <motion.h3
-                                        className="text-sm font-bold text-green-500 text-center leading-tight max-w-24 group-hover:text-green-600 transition-colors duration-300"
-                                        whileHover={{ scale: 1.05 }}
-                                        transition={{ duration: 0.2 }}
-                                    >
+                                    {/* Static Category Title */}
+                                    <h3 className="text-sm font-bold text-green-500 text-center leading-tight max-w-24">
                                         {category.title}
-                                    </motion.h3>
-                                </motion.div>
+                                    </h3>
+                                </div>
                             ))}
                         </div>
 
-                        {/* Third row: 2 items centered */}
-                        <div className="flex justify-center gap-8">
-                            {categories.slice(5, 7).map((category, index) => (
-                                <motion.div
+                        {/* Third row: 2 items */}
+                        <div className="grid grid-cols-2 gap-8 justify-items-center">
+                            {categories.slice(5, 7).map((category) => (
+                                <div
                                     key={category.id}
-                                    initial={{ opacity: 0, y: 50, scale: 0.8 }}
-                                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                                    viewport={{ once: true }}
-                                    transition={{
-                                        duration: 0.6,
-                                        delay: (index + 5) * 0.1,
-                                        type: "spring",
-                                        stiffness: 100
-                                    }}
-                                    whileHover={{
-                                        scale: 1.1,
-                                        y: -10,
-                                        transition: { duration: 0.3 }
-                                    }}
                                     className="flex flex-col items-center group cursor-pointer"
                                 >
-                                    {/* Enhanced Circular Image Container */}
-                                    <motion.div
-                                        className="relative w-24 h-24 mb-4"
-                                        whileHover={{ rotate: 5 }}
-                                        transition={{ duration: 0.3 }}
-                                    >
-                                        {/* Glowing background */}
-                                        <motion.div
-                                            animate={{
-                                                scale: [1, 1.1, 1],
-                                                opacity: [0.3, 0.6, 0.3],
-                                            }}
-                                            transition={{
-                                                duration: 3,
-                                                repeat: Infinity,
-                                                ease: "easeInOut",
-                                                delay: (index + 5) * 0.2
-                                            }}
-                                            className="absolute inset-0 bg-gradient-to-br from-green-400/20 to-emerald-600/20 rounded-full blur-lg"
-                                        />
+                                    {/* Static Circular Image Container */}
+                                    <div className="relative w-24 h-24 mb-4">
+                                        {/* Static background */}
+                                        <div className="absolute inset-0 bg-gradient-to-br from-green-400/20 to-emerald-600/20 rounded-full blur-lg" />
 
                                         {/* Main image container */}
-                                        <div className="relative w-full h-full rounded-full overflow-hidden border-3 border-white shadow-xl bg-white group-hover:border-green-200 transition-colors duration-300">
-                                            <motion.div
-                                                whileHover={{ scale: 1.1 }}
-                                                transition={{ duration: 0.3 }}
-                                                className="w-full h-full"
-                                            >
+                                        <div className="relative w-full h-full rounded-full overflow-hidden border-3 border-white shadow-xl bg-white">
+                                            <div className="w-full h-full">
                                                 <Image
                                                     src={category.image}
                                                     alt={category.alt}
@@ -371,33 +259,29 @@ export default function ProductCategories() {
                                                     className="object-cover rounded-full"
                                                     sizes="96px"
                                                 />
-                                            </motion.div>
+                                            </div>
                                         </div>
+                                    </div>
 
-                                        {/* Animated hover overlay */}
-                                        <motion.div
-                                            initial={{ opacity: 0, scale: 0.8 }}
-                                            whileHover={{ opacity: 1, scale: 1 }}
-                                            transition={{ duration: 0.3 }}
-                                            className="absolute inset-0 rounded-full bg-gradient-to-br from-green-500/20 to-emerald-600/20 backdrop-blur-sm"
-                                        />
-                                    </motion.div>
-
-                                    {/* Enhanced Category Title */}
-                                    <motion.h3
-                                        className="text-sm font-bold text-green-500 text-center leading-tight max-w-24 group-hover:text-green-600 transition-colors duration-300"
-                                        whileHover={{ scale: 1.05 }}
-                                        transition={{ duration: 0.2 }}
-                                    >
+                                    {/* Static Category Title */}
+                                    <h3 className="text-sm font-bold text-green-500 text-center leading-tight max-w-24">
                                         {category.title}
-                                    </motion.h3>
-                                </motion.div>
+                                    </h3>
+                                </div>
                             ))}
                         </div>
                     </div>
 
+
+
                     {/* Tablet and Desktop: Original grid layout */}
-                    <div className="hidden sm:grid grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-8 lg:gap-12 max-w-7xl">
+                    <motion.div
+                        className="hidden sm:grid grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-8 lg:gap-12 max-w-7xl"
+                        initial={{ opacity: 0, y: 50 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8, delay: 0.5 }}
+                    >
                         {categories.map((category, index) => (
                             <motion.div
                                 key={category.id}
@@ -496,9 +380,8 @@ export default function ProductCategories() {
                                 </motion.h3>
                             </motion.div>
                         ))}
-                    </div>
-                </motion.div>
-
+                    </motion.div>
+                </div>
             </motion.div>
         </section>
     );

@@ -1,69 +1,77 @@
 'use client';
 
 import Image from "next/image";
-import { Star, ExternalLink, Users, Award, TrendingUp, Shield } from "lucide-react";
+import { Star, Users, Award, TrendingUp, Shield } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 export default function References() {
     const { scrollYProgress } = useScroll();
     const y = useTransform(scrollYProgress, [0, 1], [0, -30]);
 
-    // Updated brand logos based on the files in the public folder with proper website links
+    // Updated brand logos with correct image paths
     const brands = [
         {
             id: 1,
-            name: "",
-            logo: "/nos-references/logo_kartago.png",
-            website: "https://kartagodattes.com/"
+            name: "Kartago Dattes",
+            logo: "/images/nos-references/logo_kartago.png",
+            website: "https://kartagodattes.com/",
+            category: "Alimentaire"
         },
         {
             id: 2,
-            name: "",
-            logo: "/nos-references/LOGO-LE-PANIER-3.png",
-            website: "https://lepanier.net/product/mais-grille-au-fromage-laperitivo/"
+            name: "Le Panier",
+            logo: "/images/nos-references/LOGO-LE-PANIER-3.png",
+            website: "https://lepanier.net/product/mais-grille-au-fromage-laperitivo/",
+            category: "Snacks"
         },
         {
             id: 3,
-            name: "",
-            logo: "/nos-references/logo-circle-small.webp",
-            website: "https://masmoudi.com/"
+            name: "Masmoudi",
+            logo: "/images/nos-references/logo-circle-small.webp",
+            website: "https://masmoudi.com/",
+            category: "Pâtisserie"
         },
         {
             id: 4,
-            name: "",
-            logo: "/nos-references/cropped-Capture-removebg-preview-1.png",
-            website: "https://my-oya.com/"
+            name: "My Oya",
+            logo: "/images/nos-references/cropped-Capture-removebg-preview-1.png",
+            website: "https://my-oya.com/",
+            category: "Cosmétique"
         },
         {
             id: 5,
-            name: "",
-            logo: "/nos-references/karina.webp",
-            website: "https://karina.tn/?_ga=2.200218669.249647480.1750010777-185105044.1750010777"
+            name: "Karina",
+            logo: "/images/nos-references/karina.webp",
+            website: "https://karina.tn/?_ga=2.200218669.249647480.1750010777-185105044.1750010777",
+            category: "Mode"
         },
         {
             id: 6,
-            name: "",
-            logo: "/nos-references/LaMaisonCaroube.webp",
-            website: "https://www.facebook.com/maisonkharoub/photos?locale=fr_FR&_ga=2.192755881.249647480.1750010777-185105044.1750010777"
+            name: "La Maison Caroube",
+            logo: "/images/nos-references/LaMaisonCaroube.webp",
+            website: "https://www.facebook.com/maisonkharoub/photos?locale=fr_FR&_ga=2.192755881.249647480.1750010777-185105044.1750010777",
+            category: "Bio"
         },
         {
             id: 7,
-            name: "",
-            logo: "/nos-references/monsapo.webp",
-            website: "https://monsapo.tn/"
+            name: "Mon Sapo",
+            logo: "/images/nos-references/monsapo.webp",
+            website: "https://monsapo.tn/",
+            category: "Cosmétique"
         },
         {
             id: 8,
-            name: "",
-            logo: "/nos-references/purnat.webp",
-            website: "https://www.instagram.com/purnat_purnat/?hl=fr&_ga=2.191705257.249647480.1750010777-185105044.1750010777#"
+            name: "Purnat",
+            logo: "/images/nos-references/purnat.webp",
+            website: "https://www.instagram.com/purnat_purnat/?hl=fr&_ga=2.191705257.249647480.1750010777-185105044.1750010777#",
+            category: "Naturel"
         },
     ];
 
     return (
         <section className="relative py-16 md:py-24 overflow-hidden">
-            {/* Enhanced Animated Background */}
-            <div className="absolute inset-0 overflow-hidden">
+            {/* Enhanced Animated Background - Desktop only */}
+            <div className="absolute inset-0 overflow-hidden hidden md:block">
                 <motion.div
                     animate={{
                         scale: [1, 1.2, 1],
@@ -90,8 +98,93 @@ export default function References() {
                 />
             </div>
 
+            {/* Mobile Version - No Animations */}
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 md:hidden">
+                {/* Enhanced Header */}
+                <div className="text-center mb-20">
+                    {/* Static Icon */}
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] rounded-full mb-8 shadow-xl">
+                        <Shield className="w-8 h-8 text-white" />
+                    </div>
+
+                    {/* Static Stats Row */}
+                    <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8 mb-12">
+                        <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full shadow-lg border border-green-200/50">
+                            <Users className="w-4 h-4 text-green-500" />
+                            <span className="text-sm font-bold text-black">50+ Clients</span>
+                        </div>
+                        <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full shadow-lg border border-green-200/50">
+                            <Award className="w-4 h-4 text-green-500" />
+                            <span className="text-sm font-bold text-black">98% Satisfaction</span>
+                        </div>
+                        <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full shadow-lg border border-green-200/50">
+                            <TrendingUp className="w-4 h-4 text-green-500" />
+                            <span className="text-sm font-bold text-black">5+ Années</span>
+                        </div>
+                    </div>
+
+                    {/* Static Main Title */}
+                    <div className="relative">
+                        {/* Static Decorative Stars */}
+                        <div className="flex items-center justify-center mb-6">
+                            <div className="flex gap-1">
+                                {[...Array(5)].map((_, i) => (
+                                    <div key={i}>
+                                        <Star className="w-6 h-6 text-green-400 fill-current" />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-8 relative">
+                            <span className="block text-black mb-2">Ils nous font</span>
+                            <span className="block text-green-500">
+                                CONFIANCE
+                            </span>
+                        </h2>
+                    </div>
+
+                    <p className="text-xl text-black max-w-3xl mx-auto leading-relaxed">
+                        Découvrez les marques prestigieuses qui nous font confiance et témoignent de notre excellence
+                    </p>
+                </div>
+
+                {/* Static Logo Grid */}
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-8 lg:gap-12 max-w-6xl mx-auto">
+                    {brands.map((brand) => (
+                        <div
+                            key={brand.id}
+                            className="group relative flex items-center justify-center"
+                        >
+                            <a
+                                href={brand.website}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block w-full"
+                                aria-label={`Visiter le site de ${brand.name}`}
+                            >
+                                {/* Clean Logo Container */}
+                                <div className="relative h-20 md:h-24 lg:h-28 w-full p-4">
+                                    <div className="relative h-full w-full">
+                                        <Image
+                                            src={brand.logo}
+                                            alt={brand.name}
+                                            fill
+                                            className="object-contain"
+                                            sizes="(max-width: 768px) 150px, (max-width: 1024px) 200px, 250px"
+                                            loading="lazy"
+                                        />
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Desktop Version - With Animations */}
             <motion.div
-                className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
+                className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 hidden md:block"
                 style={{ y }}
             >
                 {/* Enhanced Header */}
@@ -161,17 +254,15 @@ export default function References() {
                         viewport={{ once: true }}
                         transition={{ duration: 0.8, delay: 0.4 }}
                     >
-
-
-{/* Enhanced Decorative Stars */}
+                        {/* Enhanced Decorative Stars */}
                         <motion.div
-                            className=" -top-6 flex items-center justify-center -translate-x-1/2"
+                            className="flex items-center justify-center mb-6"
                             initial={{ opacity: 0, scale: 0 }}
                             whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.5, delay: 0.6 }}
                         >
-                            <div className="mx-auto flex  ">
+                            <div className="flex gap-1">
                                 {[...Array(5)].map((_, i) => (
                                     <motion.div
                                         key={i}
@@ -185,7 +276,7 @@ export default function References() {
                                             delay: i * 0.1
                                         }}
                                     >
-                                        <Star className="w-6 h-6 text-green-400 fill-current -mt-6" />
+                                        <Star className="w-6 h-6 text-green-400 fill-current" />
                                     </motion.div>
                                 ))}
                             </div>
@@ -203,8 +294,6 @@ export default function References() {
                                 CONFIANCE
                             </span>
                         </motion.h2>
-
-                        
                     </motion.div>
 
                     <motion.p
@@ -218,121 +307,56 @@ export default function References() {
                     </motion.p>
                 </div>
 
-                {/* Moving Carousel */}
-                <div className="relative overflow-hidden">
-                    {/* Infinite Scrolling Container */}
-                    <motion.div
-                        className="flex gap-6"
-                        animate={{
-                            x: [0, -100 * brands.length]
-                        }}
-                        transition={{
-                            x: {
-                                repeat: Infinity,
-                                repeatType: "loop",
-                                duration: 20,
-                                ease: "linear"
-                            }
-                        }}
-                        style={{ width: `${200 * brands.length}%` }}
-                    >
-                        {/* First set of brands */}
-                        {brands.map((brand) => (
-                            <div
-                                key={`first-${brand.id}`}
-                                className="group relative flex-shrink-0 w-64"
+                {/* Professional Logo Grid */}
+                <motion.div
+                    className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-8 lg:gap-12 max-w-6xl mx-auto"
+                    initial={{ opacity: 0, y: 50 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, delay: 0.3 }}
+                >
+                    {brands.map((brand, index) => (
+                        <motion.div
+                            key={brand.id}
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{
+                                duration: 0.6,
+                                delay: index * 0.1,
+                                type: "spring",
+                                stiffness: 100
+                            }}
+                            whileHover={{
+                                scale: 1.1,
+                                transition: { duration: 0.3 }
+                            }}
+                            className="group relative flex items-center justify-center"
+                        >
+                            <a
+                                href={brand.website}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block w-full"
+                                aria-label={`Visiter le site de ${brand.name}`}
                             >
-                                <a
-                                    href={brand.website}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="block"
-                                    aria-label={`Visiter le site de ${brand.name}`}
-                                >
-                                    {/* Card Container */}
-                                    <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group-hover:border-green-300/50">
-                                        {/* Logo Container */}
-                                        <div className="relative h-20 w-full mb-4 grayscale group-hover:grayscale-0 transition-all duration-500">
-                                            <Image
-                                                src={brand.logo}
-                                                alt={brand.name}
-                                                fill
-                                                className="object-contain"
-                                                sizes="200px"
-                                                loading="lazy"
-                                            />
-                                        </div>
-
-                                        {/* Brand Name */}
-                                        <div className="text-center">
-                                            <h3 className="font-semibold text-gray-900 group-hover:text-green-600 transition-colors duration-300">
-                                                {brand.name}
-                                            </h3>
-                                            <div className="flex items-center justify-center mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                <ExternalLink className="w-4 h-4 text-green-600" />
-                                                <span className="text-sm text-green-600 ml-1">Visiter</span>
-                                            </div>
-                                        </div>
-
-                                        {/* Hover Glow Effect */}
-                                        <div className="absolute inset-0 bg-gradient-to-t from-green-500/5 via-transparent to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
-
-                                        {/* Corner Accent */}
-                                        <div className="absolute top-0 right-0 w-8 h-8 bg-gradient-to-bl from-green-400/20 to-transparent rounded-tr-2xl rounded-bl-full" />
+                                {/* Clean Logo Container */}
+                                <div className="relative h-20 md:h-24 lg:h-28 w-full p-4 transition-all duration-300">
+                                    <div className="relative h-full w-full">
+                                        <Image
+                                            src={brand.logo}
+                                            alt={brand.name}
+                                            fill
+                                            className="object-contain transition-all duration-300 group-hover:scale-105"
+                                            sizes="(max-width: 768px) 150px, (max-width: 1024px) 200px, 250px"
+                                            loading="lazy"
+                                        />
                                     </div>
-                                </a>
-                            </div>
-                        ))}
-
-                        {/* Second set of brands for seamless loop */}
-                        {brands.map((brand) => (
-                            <div
-                                key={`second-${brand.id}`}
-                                className="group relative flex-shrink-0 w-64"
-                            >
-                                <a
-                                    href={brand.website}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="block"
-                                    aria-label={`Visiter le site de ${brand.name}`}
-                                >
-                                    {/* Card Container */}
-                                    <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 group-hover:border-green-300/50">
-                                        {/* Logo Container */}
-                                        <div className="relative h-20 w-full mb-4 grayscale group-hover:grayscale-0 transition-all duration-500">
-                                            <Image
-                                                src={brand.logo}
-                                                alt={brand.name}
-                                                fill
-                                                className="object-contain"
-                                                sizes="200px"
-                                                loading="lazy"
-                                            />
-                                        </div>
-
-                                        {/* Brand Name */}
-                                        <div className="text-center">
-                                            <h3 className="font-semibold text-gray-900 group-hover:text-green-600 transition-colors duration-300">
-                                                {brand.name}
-                                            </h3>
-                                            <div className="flex items-center justify-center mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                <ExternalLink className="w-4 h-4 text-green-600" />
-                                                <span className="text-sm text-green-600 ml-1">Visiter</span>
-                                            </div>
-                                        </div>
-
-                                        {/* Hover Glow Effect */}
-                                        <div className="absolute inset-0 bg-gradient-to-t from-green-500/5 via-transparent to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
-
-                                        {/* Corner Accent */}
-                                        <div className="absolute top-0 right-0 w-8 h-8 bg-gradient-to-bl from-green-400/20 to-transparent rounded-tr-2xl rounded-bl-full" />
-                                    </div>
-                                </a>
-                            </div>
-                        ))}
-                    </motion.div>
-                </div>
+                                </div>
+                            </a>
+                        </motion.div>
+                    ))}
+                </motion.div>
             </motion.div>
         </section>
     );
