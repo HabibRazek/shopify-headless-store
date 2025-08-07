@@ -71,14 +71,14 @@ export default function HeroSection() {
                     sizes="100vw"
                     style={{ objectPosition: 'center center', objectFit: 'cover' }}
                 />
-                {/* Enhanced mobile dark overlay */}
-                <div className="absolute inset-0 bg-black/25" />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/5 to-black/60" />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-black/10 to-black/30" />
-                {/* Enhanced mobile vignette */}
+                {/* Lighter mobile overlay */}
+                <div className="absolute inset-0 bg-black/15" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/35" />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-black/5 to-black/20" />
+                {/* Lighter mobile vignette */}
                 <div className="absolute inset-0"
                     style={{
-                        background: 'radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(0,0,0,0.4) 100%)'
+                        background: 'radial-gradient(ellipse at center, transparent 0%, transparent 50%, rgba(0,0,0,0.25) 100%)'
                     }} />
             </div>
 

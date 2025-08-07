@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-// import Image from 'next/image';
+import Image from 'next/image';
 // import { useShopContext } from '@/context/ShopContext';
 import Cart from './Cart';
 
@@ -16,7 +16,14 @@ export default function Header() {
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
-              <span className="text-xl font-bold text-gray-900">ZIPBAGS®</span>
+              <Image
+                src="/packedin.jpg"
+                alt="PackedIn Logo"
+                width={120}
+                height={40}
+                className="h-8 w-auto"
+                priority
+              />
             </Link>
           </div>
 
