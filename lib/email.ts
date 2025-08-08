@@ -179,6 +179,113 @@ export const sendSingleProductQuoteEmail = async (quoteData: {
   }
 };
 
+// Send contact form email
+export const sendContactEmail = async (contactData: {
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  subject: string;
+  message: string;
+  timestamp: string;
+}) => {
+  try {
+    const transporter = createTransporter();
+
+    const emailContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Nouveau Message de Contact</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+          .content { background: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+          .field { margin-bottom: 15px; }
+          .label { font-weight: bold; color: #555; }
+          .value { margin-top: 5px; }
+          .message-box { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 15px; }
+          .highlight { color: #28a745; font-weight: bold; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h2>📧 Nouveau Message de Contact</h2>
+            <p><strong>Reçu le:</strong> ${new Date(contactData.timestamp).toLocaleDateString('fr-FR', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })}</p>
+          </div>
+
+          <div class="content">
+            <h3>👤 Informations du Contact</h3>
+
+            <div class="field">
+              <div class="label">Nom complet:</div>
+              <div class="value">${contactData.name}</div>
+            </div>
+
+            <div class="field">
+              <div class="label">Email:</div>
+              <div class="value"><a href="mailto:${contactData.email}">${contactData.email}</a></div>
+            </div>
+
+            <div class="field">
+              <div class="label">Téléphone:</div>
+              <div class="value">${contactData.phone}</div>
+            </div>
+
+            <div class="field">
+              <div class="label">Entreprise:</div>
+              <div class="value">${contactData.company}</div>
+            </div>
+
+            <div class="field">
+              <div class="label">Sujet:</div>
+              <div class="value highlight">${contactData.subject}</div>
+            </div>
+
+            <div class="message-box">
+              <div class="label">Message:</div>
+              <div class="value" style="white-space: pre-wrap;">${contactData.message}</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 30px; padding: 20px; background: #e3f2fd; border-radius: 8px;">
+            <h4>📋 Actions recommandées:</h4>
+            <ul>
+              <li>Répondre dans les 24h</li>
+              <li>Enregistrer le contact dans le CRM</li>
+              <li>Évaluer les besoins du client</li>
+              <li>Préparer une proposition personnalisée</li>
+            </ul>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+
+    const mailOptions = {
+      from: `"Packedin Contact" <${process.env.SMTP_USER}>`,
+      to: 'packedin.tn@gmail.com',
+      replyTo: contactData.email,
+      subject: `📧 Contact: ${contactData.subject} - ${contactData.name}`,
+      html: emailContent,
+    };
+
+    const result = await transporter.sendMail(mailOptions);
+    return { success: true, messageId: result.messageId };
+  } catch (error) {
+    throw new Error(`Failed to send contact email: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+};
+
 // Test email configuration
 export const testEmailConfig = async () => {
   try {
@@ -186,9 +293,9 @@ export const testEmailConfig = async () => {
     await transporter.verify();
     return { success: true, message: 'Email configuration is valid' };
   } catch (error) {
-    return { 
-      success: false, 
-      message: `Email configuration error: ${error instanceof Error ? error.message : 'Unknown error'}` 
+    return {
+      success: false,
+      message: `Email configuration error: ${error instanceof Error ? error.message : 'Unknown error'}`
     };
   }
 };

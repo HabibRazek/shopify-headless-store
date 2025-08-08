@@ -109,6 +109,13 @@ export default function Navbar() {
               <span className="relative z-10">Blog</span>
               <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-green-500/5 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300 origin-center" />
             </Link>
+            <Link
+              href="/contact"
+              className="relative px-6 py-3 rounded-full text-sm font-medium text-gray-700 hover:text-green-700 transition-all duration-300 group overflow-hidden"
+            >
+              <span className="relative z-10">Contact</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-green-500/10 to-green-500/5 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300 origin-center" />
+            </Link>
           </nav>
 
           {/* Desktop Actions */}
@@ -231,6 +238,14 @@ export default function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <span className="relative z-10 text-base font-medium">Blog</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl scale-0 group-hover:scale-100 transition-transform duration-300 origin-left" />
+              </Link>
+              <Link
+                href="/contact"
+                className="relative px-4 sm:px-5 py-3 sm:py-4 rounded-xl text-gray-700 hover:text-primary transition-all duration-300 flex items-center group overflow-hidden touch-target"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <span className="relative z-10 text-base font-medium">Contact</span>
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl scale-0 group-hover:scale-100 transition-transform duration-300 origin-left" />
               </Link>
               {status === 'authenticated' ? (

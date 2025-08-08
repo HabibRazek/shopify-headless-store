@@ -40,16 +40,16 @@ export default function Footer() {
             <div className="bg-green-600 text-white py-3 mb-6 lg:mb-0">
                 <div className="container mx-auto px-4 text-center">
                     <p className="text-sm font-medium">
-                        5% OFFERTS À L'INSCRIPTION... <span className="text-white font-bold">PROFITEZ-EN !</span>
+                        NEWSLETTER EXCLUSIVE... <span className="text-white font-bold">RESTEZ INFORMÉ !</span>
                     </p>
                 </div>
             </div>
 
             {/* Newsletter Section */}
             <div className="relative overflow-hidden">
-                
 
-                <div className="container mx-auto px-4 pt-8 -mt-8">
+
+                <div className="container mx-auto px-4 pt-8 -mt-8 relative z-10">
                     <div className="flex flex-col lg:flex-row items-end justify-center gap-8 lg:gap-12 relative">
                         {/* Phone Image - Hidden on mobile, visible on desktop */}
                         <div className="relative flex-shrink-0 mb-[-40px] lg:mb-[-60px] hidden lg:block">
@@ -64,8 +64,8 @@ export default function Footer() {
                             </div>
                         </div>
 
-                        {/* Newsletter Content - Centered with enhanced styling */}
-                        <div className="flex-1 max-w-lg text-center lg:text-left mb-8">
+                        {/* Newsletter Content - Left aligned */}
+                        <div className="flex-1 max-w-lg text-left mb-8">
                             <div className="mb-6">
                                 <h3 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-3 leading-tight">
                                     Inscrivez-vous à notre{" "}
@@ -97,11 +97,11 @@ export default function Footer() {
                             </form>
 
                             <div className="text-sm text-gray-500 space-y-2">
-                                <p className="flex items-center justify-center lg:justify-start gap-2">
+                                <p className="flex items-center justify-start gap-2">
                                     <span className="text-green-500">✓</span>
                                     Informations sur les nouveautés, les actualités et les offres personnalisées
                                 </p>
-                                <p className="flex items-center justify-center lg:justify-start gap-2">
+                                <p className="flex items-center justify-start gap-2">
                                     <span className="text-green-500">✓</span>
                                     J'accepte les conditions générales et la politique de confidentialité
                                 </p>
@@ -114,7 +114,7 @@ export default function Footer() {
             {/* Main Green Footer */}
             <div className="bg-gradient-to-r from-green-700 via-green-600 to-green-500 text-white py-12">
                 <div className="container mx-auto px-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-center">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
                         {/* Qui Sommes-Nous */}
                         <div>
                             <h4 className="text-lg font-bold mb-4 text-white">QUI SOMMES-NOUS ?</h4>
