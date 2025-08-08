@@ -67,7 +67,7 @@ export default function Cart() {
                 <div className="flex-1 min-w-0">
                   <Link
                     href={`/products/${item.handle}`}
-                    className="text-xs sm:text-sm font-medium text-gray-900 hover:text-gray-700 line-clamp-2 block"
+                    className="text-xs sm:text-sm font-medium text-gray-900 hover:text-gray-700 block"
                     onClick={onClose}
                   >
                     {item.title}

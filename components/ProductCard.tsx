@@ -146,7 +146,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div className="flex flex-col p-3 sm:p-4 md:p-5 flex-grow">
         {/* Product Title */}
         <Link href={`/products/${handle}`} className="block group/link mb-3">
-          <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 group-hover/link:text-green-700 transition-colors duration-200 leading-tight min-h-[2.5rem] sm:min-h-[3rem] line-clamp-2">
+          <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 group-hover/link:text-green-700 transition-colors duration-200 leading-tight">
             {title}
           </h3>
         </Link>

@@ -1,11 +1,9 @@
 "use client"
 
-import { Phone, Mail, MapPin, ArrowRight, Send } from "lucide-react"
-import { FacebookIcon, InstagramIcon } from "@/components/SocialIcons"
+import { ArrowRight } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { useState } from "react"
-import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
@@ -36,179 +34,55 @@ export default function Footer() {
 
     const currentYear = new Date().getFullYear()
 
-    // Animation variants
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.1,
-                delayChildren: 0.3
-            }
-        }
-    }
-
-    const itemVariants = {
-        hidden: { y: 20, opacity: 0 },
-        visible: {
-            y: 0,
-            opacity: 1,
-            transition: { duration: 0.5 }
-        }
-    }
-
     return (
-        <footer className="relative overflow-hidden bg-gradient-to-br from-green-50 via-white to-green-50">
-            {/* Simple Background Elements */}
-            <div className="absolute inset-0">
-                {/* Subtle floating elements */}
-                <div className="absolute top-0 right-0 w-64 h-64 bg-green-100/30 rounded-full blur-3xl animate-float opacity-60" />
-                <div className="absolute bottom-0 left-0 w-80 h-80 bg-green-200/20 rounded-full blur-3xl animate-float opacity-40" style={{ animationDelay: '3s' }} />
-
-                {/* Top border */}
-                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent" />
+        <footer className="relative">
+            {/* Top Banner */}
+            <div className="bg-green-600 text-white py-3 mb-6 lg:mb-0">
+                <div className="container mx-auto px-4 text-center">
+                    <p className="text-sm font-medium">
+                        5% OFFERTS À L'INSCRIPTION... <span className="text-white font-bold">PROFITEZ-EN !</span>
+                    </p>
+                </div>
             </div>
 
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-8 sm:pt-12 md:pt-16 pb-6 sm:pb-8">
+            {/* Newsletter Section */}
+            <div className="relative overflow-hidden">
+                
 
-                {/* Simple Header - Mobile Optimized */}
-                <motion.div
-                    className="text-center mb-8 sm:mb-10 md:mb-12"
-                    variants={containerVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.1 }}
-                >
-                    <motion.div variants={itemVariants}>
-                        <div className="flex items-center justify-center mb-4 sm:mb-6">
-                            <Image
-                                src="/cropped-packedIn-LOGO-FINAL-2021-BLACK-01.webp"
-                                alt="Packedin Logo"
-                                width={80}
-                                height={26}
-                                className="opacity-80 sm:w-[100px] sm:h-[32px]"
-                            />
-                        </div>
-                        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-green-800 mb-3 sm:mb-4 px-4">
-                            Solutions d'Emballage Éco-Responsables
-                        </h2>
-                        <p className="text-base sm:text-lg text-green-700 max-w-2xl mx-auto leading-relaxed px-4">
-                            Des solutions durables pour votre entreprise
-                        </p>
-                    </motion.div>
-                </motion.div>
-
-                {/* Main Content Grid - Mobile Responsive */}
-                <motion.div
-                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-8 sm:mb-10 md:mb-12"
-                    variants={containerVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.1 }}
-                >
-                    {/* Contact Information - Mobile Optimized */}
-                    <motion.div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-green-200/50 hover:border-green-300 transition-all duration-300 shadow-lg hover:shadow-xl" variants={itemVariants}>
-                        <div className="flex items-center mb-4 sm:mb-6">
-                            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-500 rounded-full flex items-center justify-center mr-3 sm:mr-4">
-                                <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                            </div>
-                            <div>
-                                <h3 className="text-base sm:text-lg font-bold text-green-800">Nous Contacter</h3>
-                                <p className="text-green-600 text-xs sm:text-sm">Restons en contact</p>
+                <div className="container mx-auto px-4 pt-8 -mt-8">
+                    <div className="flex flex-col lg:flex-row items-end justify-center gap-8 lg:gap-12 relative">
+                        {/* Phone Image - Hidden on mobile, visible on desktop */}
+                        <div className="relative flex-shrink-0 mb-[-40px] lg:mb-[-60px] hidden lg:block">
+                            <div className="relative">
+                                <Image
+                                    src="/packedin-phone.png"
+                                    alt="Packedin Mobile App"
+                                    width={200}
+                                    height={400}
+                                    className="max-w-[150px] lg:max-w-[200px] h-auto transform -rotate-2"
+                                />
                             </div>
                         </div>
 
-                        <div className="space-y-3 sm:space-y-4">
-                            <div className="flex items-start">
-                                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-green-100 rounded-full flex items-center justify-center mr-2 sm:mr-3 mt-0.5">
-                                    <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
-                                </div>
-                                <div>
-                                    <p className="text-green-800 font-medium text-sm sm:text-base">Nabeul</p>
-                                    <p className="text-green-600 text-xs sm:text-sm">Tunisie</p>
-                                </div>
+                        {/* Newsletter Content - Centered with enhanced styling */}
+                        <div className="flex-1 max-w-lg text-center lg:text-left mb-8">
+                            <div className="mb-6">
+                                <h3 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-3 leading-tight">
+                                    Inscrivez-vous à notre{" "}
+                                    <span className="text-green-600 bg-gradient-to-r from-green-600 to-green-500 bg-clip-text text-transparent">
+                                        NEWSLETTER
+                                    </span>
+                                </h3>
+                                <p className="text-gray-600 text-base lg:text-lg leading-relaxed">
+                                    et recevez nos offres exclusives et nos actualités en avant-première
+                                </p>
                             </div>
 
-                            <div className="flex items-start">
-                                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-green-100 rounded-full flex items-center justify-center mr-2 sm:mr-3 mt-0.5">
-                                    <Phone className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
-                                </div>
-                                <div>
-                                    <div className="space-y-1">
-                                        <a href="tel:+21650095115" className="text-green-800 font-medium hover:text-green-600 transition-colors text-sm sm:text-base block">
-                                            +216 50 095 115
-                                        </a>
-                                        <a href="tel:+21620387333" className="text-green-800 font-medium hover:text-green-600 transition-colors text-sm sm:text-base block">
-                                            +216 20 387 333
-                                        </a>
-                                    </div>
-                                    <p className="text-green-600 text-xs sm:text-sm mt-1">Lun-Ven: 8h00 - 17h00</p>
-                                </div>
-                            </div>
-
-                            <div className="flex items-start">
-                                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-green-100 rounded-full flex items-center justify-center mr-2 sm:mr-3 mt-0.5">
-                                    <Mail className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
-                                </div>
-                                <div>
-                                    <a href="mailto:contact@packedin.tn" className="text-green-800 font-medium hover:text-green-600 transition-colors text-sm sm:text-base break-all">
-                                        contact@packedin.tn
-                                    </a>
-                                    <p className="text-green-600 text-xs sm:text-sm">Réponse sous 24h</p>
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
-
-                    {/* Quick Links - Mobile Optimized */}
-                    <motion.div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-green-200/50 hover:border-green-300 transition-all duration-300 shadow-lg hover:shadow-xl" variants={itemVariants}>
-                        <div className="flex items-center mb-4 sm:mb-6">
-                            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-500 rounded-full flex items-center justify-center mr-3 sm:mr-4">
-                                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                            </div>
-                            <div>
-                                <h3 className="text-base sm:text-lg font-bold text-green-800">Navigation</h3>
-                                <p className="text-green-600 text-xs sm:text-sm">Explorez nos services</p>
-                            </div>
-                        </div>
-
-                        <div className="space-y-2 sm:space-y-3">
-                            {[
-                                { href: "/products", label: "Nos Produits" },
-                                { href: "/collections", label: "Collections" },
-                                { href: "/about", label: "À Propos" },
-                                { href: "/contact", label: "Contact" }
-                            ].map((link, index) => (
-                                <Link
-                                    key={index}
-                                    href={link.href}
-                                    className="flex items-center text-green-700 hover:text-green-500 transition-colors group py-1"
-                                >
-                                    <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 mr-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />
-                                    <span className="font-medium text-sm sm:text-base">{link.label}</span>
-                                </Link>
-                            ))}
-                        </div>
-                    </motion.div>
-
-                    {/* Newsletter & Social - Mobile Optimized */}
-                    <motion.div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-green-200/50 hover:border-green-300 transition-all duration-300 shadow-lg hover:shadow-xl md:col-span-2 lg:col-span-1" variants={itemVariants}>
-                        <div className="flex items-center mb-4 sm:mb-6">
-                            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-500 rounded-full flex items-center justify-center mr-3 sm:mr-4">
-                                <Send className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                            </div>
-                            <div>
-                                <h3 className="text-base sm:text-lg font-bold text-green-800">Newsletter</h3>
-                                <p className="text-green-600 text-xs sm:text-sm">Restez informé</p>
-                            </div>
-                        </div>
-
-                        <form onSubmit={handleSubmit} className="mb-4 sm:mb-6">
-                            <div className="flex flex-col sm:flex-row gap-2">
+                            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 mb-4">
                                 <Input
                                     type="email"
-                                    placeholder="Votre email"
-                                    className="bg-white/70 border-green-200 text-green-800 placeholder:text-green-600 focus:border-green-500 transition-all duration-300 text-sm sm:text-base"
+                                    placeholder="votre.email@exemple.com"
+                                    className="flex-1 bg-white border-gray-300 text-gray-800 placeholder:text-gray-500 focus:border-green-500 focus:ring-2 focus:ring-green-200 rounded-lg px-4 py-3 text-base shadow-sm"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
@@ -216,115 +90,151 @@ export default function Footer() {
                                 <Button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="bg-green-500 hover:bg-green-600 text-white border-0 px-4 sm:px-6 text-sm sm:text-base"
+                                    className="bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-green-500 text-white px-8 py-3 font-semibold border-0 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 text-base"
                                 >
-                                    {isSubmitting ? "..." : "OK"}
+                                    {isSubmitting ? "..." : "JE M'INSCRIS"}
                                 </Button>
-                            </div>
-                        </form>
+                            </form>
 
-                        <div>
-                            <h4 className="text-green-800 font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Suivez-nous</h4>
-                            <div className="flex space-x-2 sm:space-x-3">
-                                {[
-                                    {
-                                        icon: <FacebookIcon className="h-3 w-3 sm:h-4 sm:w-4" />,
-                                        label: "Facebook",
-                                        href: "https://www.facebook.com/search/top?q=packedin.tn"
-                                    },
-                                    {
-                                        icon: <InstagramIcon className="h-3 w-3 sm:h-4 sm:w-4" />,
-                                        label: "Instagram",
-                                        href: "https://www.instagram.com/packedin.tn/?fbclid=IwY2xjawK7765leHRuA2FlbQIxMABicmlkETFFcXlUZllPVGE5dXRmWXlvAR56MyK3IOPJiH8Izak9lCRwJjl3J9iSKntIABqh1VNQRcv-QwhAWnpodLQALA_aem_sNu9ZJ26oFcMnyYGb1rJsw#"
-                                    }
-                                ].map((social, index) => (
-                                    <a
-                                        key={index}
-                                        href={social.href}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 hover:bg-green-200 rounded-full flex items-center justify-center text-green-600 hover:text-green-700 transition-all duration-300 hover:scale-110"
-                                        aria-label={social.label}
-                                    >
-                                        {social.icon}
-                                    </a>
-                                ))}
+                            <div className="text-sm text-gray-500 space-y-2">
+                                <p className="flex items-center justify-center lg:justify-start gap-2">
+                                    <span className="text-green-500">✓</span>
+                                    Informations sur les nouveautés, les actualités et les offres personnalisées
+                                </p>
+                                <p className="flex items-center justify-center lg:justify-start gap-2">
+                                    <span className="text-green-500">✓</span>
+                                    J'accepte les conditions générales et la politique de confidentialité
+                                </p>
                             </div>
-                        </div>
-                    </motion.div>
-                </motion.div>
-
-                {/* Bottom Section */}
-                <motion.div
-                    className="border-t border-green-200/50 pt-8"
-                    variants={itemVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.1 }}
-                >
-                    {/* Quote Section */}
-                    <div className="text-center mb-8">
-                        <blockquote className="text-base lg:text-lg text-green-700 italic max-w-3xl mx-auto leading-relaxed">
-                            "Chez Packedin, nous nous engageons à fournir des solutions d'emballage éco-responsables qui respectent l'environnement tout en répondant aux besoins de votre entreprise."
-                        </blockquote>
-                        <div className="flex items-center justify-center mt-6">
-                            <div className="h-px bg-gradient-to-r from-transparent via-green-300 to-transparent w-24" />
-                            <div className="mx-4">
-                                <div className="w-2 h-2 bg-green-500 rounded-full" />
-                            </div>
-                            <div className="h-px bg-gradient-to-r from-transparent via-green-300 to-transparent w-24" />
                         </div>
                     </div>
+                </div>
 
-                    {/* Copyright & Legal */}
-                    <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-green-200/50">
-                        <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
-                            <div className="flex items-center">
-                                <div className="w-10 h-10  flex items-center justify-center mr-3">
-                                    <Image
-                                        src="/packedin.jpg"
-                                        alt="Packedin Logo"
-                                        width={20}
-                                        height={20}
-                                        className="opacity-80"
-                                    />
-                                </div>
-                                <div>
-                                    <p className="text-green-800 font-semibold">
-                                        © {currentYear} Packedin
-                                    </p>
-                                    <p className="text-green-600 text-sm">
-                                        Tous droits réservés
-                                    </p>
-                                </div>
-                            </div>
+            </div>
 
-                            <div className="flex flex-wrap justify-center gap-4 lg:gap-6">
-                                {[
-                                    { href: "/mentions-legales", label: "Mentions Légales" },
-                                    { href: "/politique-confidentialite", label: "Confidentialité" },
-                                    { href: "/conditions-generales", label: "CGV" },
-                                    { href: "/contact", label: "Contact" }
-                                ].map((link, index) => (
-                                    <Link
-                                        key={index}
-                                        href={link.href}
-                                        className="text-green-600 hover:text-green-500 transition-colors text-sm font-medium hover:underline decoration-green-500 underline-offset-4"
-                                    >
-                                        {link.label}
+            {/* Main Green Footer */}
+            <div className="bg-gradient-to-r from-green-700 via-green-600 to-green-500 text-white py-12">
+                <div className="container mx-auto px-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-center">
+                        {/* Qui Sommes-Nous */}
+                        <div>
+                            <h4 className="text-lg font-bold mb-4 text-white">QUI SOMMES-NOUS ?</h4>
+                            <ul className="space-y-2 text-sm">
+                                <li>
+                                    <Link href="/about" className="hover:text-green-200 transition-colors inline-flex items-center">
+                                        <ArrowRight className="w-3 h-3 mr-2" />
+                                        Pourquoi choisir Packedin
                                     </Link>
-                                ))}
-                            </div>
+                                </li>
+                                <li>
+                                    <Link href="/collections" className="hover:text-green-200 transition-colors inline-flex items-center">
+                                        <ArrowRight className="w-3 h-3 mr-2" />
+                                        Fabrication tunisienne
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/" className="hover:text-green-200 transition-colors inline-flex items-center">
+                                        <ArrowRight className="w-3 h-3 mr-2" />
+                                        Packedin
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/legal" className="hover:text-green-200 transition-colors inline-flex items-center">
+                                        <ArrowRight className="w-3 h-3 mr-2" />
+                                        Mentions légales
+                                    </Link>
+                                </li>
+                            </ul>
                         </div>
 
-                        {/* Additional Info */}
-                        <div className="mt-6 pt-6 border-t border-green-200/50 text-center">
-                            <p className="text-green-600 text-sm">
-                                Développé avec ❤️ pour un avenir durable
+                        {/* Service Client */}
+                        <div>
+                            <h4 className="text-lg font-bold mb-4 text-white">SERVICE CLIENT</h4>
+                            <ul className="space-y-2 text-sm">
+                                <li>
+                                    <Link href="/contact" className="hover:text-green-200 transition-colors inline-flex items-center">
+                                        <ArrowRight className="w-3 h-3 mr-2" />
+                                        Besoin d'aide
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/privacy" className="hover:text-green-200 transition-colors inline-flex items-center">
+                                        <ArrowRight className="w-3 h-3 mr-2" />
+                                        Protection des données
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/shipping" className="hover:text-green-200 transition-colors inline-flex items-center">
+                                        <ArrowRight className="w-3 h-3 mr-2" />
+                                        Préparation des colis
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/returns" className="hover:text-green-200 transition-colors inline-flex items-center">
+                                        <ArrowRight className="w-3 h-3 mr-2" />
+                                        Retours et échanges
+                                    </Link>
+                                </li>
+                            </ul>
+                        </div>
+
+                        {/* Vos Questions */}
+                        <div>
+                            <h4 className="text-lg font-bold mb-4 text-white">VOS QUESTIONS</h4>
+                            <ul className="space-y-2 text-sm">
+                                <li>
+                                    <Link href="/contact" className="hover:text-green-200 transition-colors inline-flex items-center">
+                                        <ArrowRight className="w-3 h-3 mr-2" />
+                                        Assistance & Contact
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/faq" className="hover:text-green-200 transition-colors inline-flex items-center">
+                                        <ArrowRight className="w-3 h-3 mr-2" />
+                                        Questions fréquentes
+                                    </Link>
+                                </li>
+                            </ul>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+
+            {/* Copyright Section */}
+            <div className="bg-green-800 text-white py-4">
+                <div className="container mx-auto px-4">
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div className="flex items-center">
+                            <Image
+                                src="/packedin.ico"
+                                alt="Packedin Logo"
+                                width={20}
+                                height={20}
+                                className="mr-3"
+                            />
+                            <p className="text-sm">
+                                © {currentYear} Packedin. Tous droits réservés.
                             </p>
                         </div>
+
+                        <div className="flex flex-wrap justify-center gap-4 text-sm">
+                            <Link href="/mentions-legales" className="hover:text-green-200 transition-colors">
+                                Mentions Légales
+                            </Link>
+                            <Link href="/politique-confidentialite" className="hover:text-green-200 transition-colors">
+                                Confidentialité
+                            </Link>
+                            <Link href="/conditions-generales" className="hover:text-green-200 transition-colors">
+                                CGV
+                            </Link>
+                            <Link href="/contact" className="hover:text-green-200 transition-colors">
+                                Contact
+                            </Link>
+                        </div>
                     </div>
-                </motion.div>
+                </div>
             </div>
         </footer>
     )

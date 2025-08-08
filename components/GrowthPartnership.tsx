@@ -9,71 +9,41 @@ export default function GrowthPartnership() {
       icon: Lightbulb,
       title: 'Start-up',
       description: 'Accompagnement personnalisé pour les nouvelles entreprises avec des solutions flexibles et adaptées.',
-      bgColor: 'bg-gradient-to-br from-green-400 to-green-500',
-      delay: 0.1
+      bgColor: 'bg-gradient-to-br from-green-500 to-green-600'
     },
     {
       icon: TrendingUp,
       title: 'Croissance',
       description: 'Solutions évolutives pour soutenir votre expansion et augmenter vos volumes de production.',
-      bgColor: 'bg-gradient-to-br from-green-500 to-green-600',
-      delay: 0.2
+      bgColor: 'bg-gradient-to-br from-green-600 to-green-700'
     },
     {
       icon: Globe,
       title: 'Marque Globale',
       description: 'Partenariat stratégique pour les marques établies avec des besoins internationaux avancés.',
-      bgColor: 'bg-gradient-to-br from-green-600 to-green-700',
-      delay: 0.3
+      bgColor: 'bg-gradient-to-br from-green-700 to-green-800'
     }
   ];
 
   return (
-    <section className="py-4 md:py-24 mb-12 md:mb-0 bg-gradient-to-br from-gray-50 via-white to-green-50/30 relative overflow-hidden">
-      {/* Enhanced Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 180, 360],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-          className="absolute top-20 right-20 w-32 h-32 bg-green-200/20 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{
-            scale: [1.1, 1, 1.1],
-            rotate: [360, 180, 0],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-          className="absolute bottom-20 left-20 w-40 h-40 bg-blue-200/20 rounded-full blur-3xl"
-        />
-      </div>
+    <section className="py-8 md:py-16 mb-4 md:mb-8 relative">{/* Removed background and reduced spacing */}
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Enhanced Section Title */}
-        <div className="text-center mb-6 md:mb-16">
+        <div className="text-center mb-4 md:mb-8">
           {/* Mobile Version - No Animations */}
           <div className="md:hidden">
             {/* Static Icon */}
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] rounded-full mb-8 shadow-xl">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] rounded-full mb-4 shadow-xl">
               <Rocket className="w-8 h-8 text-white" />
             </div>
 
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 sm:mb-6 leading-tight">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-2 sm:mb-3 leading-tight">
               <span className="block text-black">Nous Grandissons</span>
               <span className="block text-green-500">Avec Vous</span>
             </h2>
 
-            <p className="text-base sm:text-lg md:text-xl text-black max-w-3xl mx-auto leading-relaxed mb-6 sm:mb-8">
+            <p className="text-base sm:text-lg md:text-xl text-black max-w-3xl mx-auto leading-relaxed mb-4 sm:mb-6">
               Votre partenaire de confiance à chaque étape de votre croissance
             </p>
           </div>
@@ -86,7 +56,7 @@ export default function GrowthPartnership() {
               whileInView={{ scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2, type: "spring", stiffness: 200 }}
-              className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] rounded-full mb-8 shadow-xl"
+              className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] rounded-full mb-4 shadow-xl"
             >
               <motion.div
                 animate={{
@@ -109,12 +79,12 @@ export default function GrowthPartnership() {
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.3 }}
             >
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4 sm:mb-6 leading-tight">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-2 sm:mb-3 leading-tight">
                 <span className="block text-black">Nous Grandissons</span>
                 <span className="block text-green-500">Avec Vous</span>
               </h2>
 
-              <p className="text-base sm:text-lg md:text-xl text-black max-w-3xl mx-auto leading-relaxed mb-6 sm:mb-8">
+              <p className="text-base sm:text-lg md:text-xl text-black max-w-3xl mx-auto leading-relaxed mb-4 sm:mb-6">
                 Votre partenaire de confiance à chaque étape de votre croissance
               </p>
             </motion.div>
@@ -122,141 +92,106 @@ export default function GrowthPartnership() {
         </div>
 
         {/* Growth Stages */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
-          {/* Mobile Version - No Animations */}
-          <div className="md:hidden grid grid-cols-1 gap-8 lg:gap-12">
-            {growthStages.map((stage) => {
+        <div className="relative">
+          {/* Mobile Version - Simple and Professional */}
+          <div className="md:hidden grid grid-cols-1 gap-6">
+            {growthStages.map((stage, index) => {
               const IconComponent = stage.icon;
               return (
                 <div
                   key={stage.title}
-                  className="relative group"
+                  className="relative"
                 >
-                  {/* Static Card Container */}
-                  <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-200/50 overflow-hidden">
+                  {/* Simple Mobile Card Container */}
+                  <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300">
 
-                    {/* Static Background */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-green-400/20 via-emerald-500/10 to-blue-400/20 rounded-2xl opacity-20" />
-
-                    {/* Static Icon */}
+                    {/* Simple Mobile Icon */}
                     <div className={`
-                      w-16 h-16 mx-auto mb-6 rounded-full relative z-10
+                      w-16 h-16 mx-auto mb-4 rounded-full
                       ${stage.bgColor}
                       flex items-center justify-center
-                      shadow-lg
+                      shadow-md
                     `}>
                       <IconComponent className="w-8 h-8 text-white" />
                     </div>
 
-                    {/* Static Title */}
-                    <h3 className="text-xl font-bold text-gray-800 mb-4 text-center relative z-10">
+                    {/* Simple Mobile Title */}
+                    <h3 className="text-lg font-semibold text-gray-800 mb-3 text-center">
                       {stage.title}
                     </h3>
 
-                    {/* Static Description */}
-                    <p className="text-gray-600 text-center leading-relaxed relative z-10">
+                    {/* Simple Mobile Description */}
+                    <p className="text-gray-600 text-center leading-relaxed text-sm">
                       {stage.description}
                     </p>
 
-                    {/* Static Decorative Line */}
-                    <div className="h-1 bg-gradient-to-r from-green-400 to-green-600 mx-auto mt-6 rounded-full relative z-10 w-20" />
+                    {/* Simple Mobile Decorative Line */}
+                    <div className="h-0.5 bg-gray-300 mx-auto mt-4 rounded-full w-16" />
+
+                    {/* Mobile Step Indicator */}
+                    <div className="mt-3 pt-3 border-t border-gray-100">
+                      <div className="flex justify-center items-center space-x-2">
+                        <div className="w-1.5 h-1.5 bg-gray-400 rounded-full" />
+                        <span className="text-xs text-gray-400 font-medium tracking-wider uppercase">
+                          Étape {index + 1}
+                        </span>
+                        <div className="w-1.5 h-1.5 bg-gray-400 rounded-full" />
+                      </div>
+                    </div>
                   </div>
                 </div>
               );
             })}
           </div>
 
-          {/* Desktop Version - With Animations */}
-          <div className="hidden md:grid md:grid-cols-3 gap-8 lg:gap-12">
+          {/* Desktop Version - Simple and Professional */}
+          <div className="hidden md:grid md:grid-cols-3 gap-8 lg:gap-12 relative">
             {growthStages.map((stage, index) => {
               const IconComponent = stage.icon;
               return (
-                <motion.div
+                <div
                   key={stage.title}
-                  initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{
-                    duration: 0.7,
-                    delay: stage.delay,
-                    type: "spring",
-                    stiffness: 100
-                  }}
-                  whileHover={{
-                    y: -15,
-                    scale: 1.05,
-                    transition: { duration: 0.3 }
-                  }}
                   className="relative group"
                 >
-                  {/* Enhanced Card Container */}
-                  <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-gray-200/50 group-hover:border-green-300/50 overflow-hidden">
+                  {/* Simple Professional Card Container */}
+                  <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-200">
 
-                    {/* Animated Background */}
-                    <motion.div
-                      animate={{
-                        scale: [1, 1.1, 1],
-                        opacity: [0.1, 0.2, 0.1],
-                      }}
-                      transition={{
-                        duration: 4,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                        delay: index * 0.5
-                      }}
-                      className="absolute inset-0 bg-gradient-to-br from-green-400/20 via-emerald-500/10 to-blue-400/20 rounded-2xl"
-                    />
+                    {/* Simple Professional Icon */}
+                    <div className={`
+                      w-16 h-16 mx-auto mb-6 rounded-full
+                      ${stage.bgColor}
+                      flex items-center justify-center
+                      shadow-md
+                    `}>
+                      <IconComponent className="w-8 h-8 text-white" />
+                    </div>
 
-                    {/* Icon */}
-                    <motion.div
-                      whileHover={{ scale: 1.2, rotate: 10 }}
-                      transition={{ duration: 0.3 }}
-                      className={`
-                        w-16 h-16 mx-auto mb-6 rounded-full relative z-10
-                        ${stage.bgColor}
-                        flex items-center justify-center
-                        shadow-lg group-hover:shadow-xl
-                        transition-all duration-300
-                      `}
-                  >
-                    <IconComponent className="w-8 h-8 text-white" />
-                  </motion.div>
+                    {/* Simple Professional Title */}
+                    <h3 className="text-xl font-semibold text-gray-800 mb-4 text-center">
+                      {stage.title}
+                    </h3>
 
-                  {/* Title */}
-                  <motion.h3
-                    className="text-xl font-bold text-gray-800 mb-4 text-center relative z-10"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    {stage.title}
-                  </motion.h3>
+                    {/* Simple Professional Description */}
+                    <p className="text-gray-600 text-center leading-relaxed text-base">
+                      {stage.description}
+                    </p>
 
-                  {/* Description */}
-                  <p className="text-gray-600 text-center leading-relaxed relative z-10">
-                    {stage.description}
-                  </p>
+                    {/* Simple Decorative Line */}
+                    <div className="h-0.5 bg-gray-300 mx-auto mt-6 rounded-full w-16" />
 
-                  {/* Decorative Elements */}
-                  <motion.div
-                    initial={{ width: 0 }}
-                    whileInView={{ width: '80px' }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1, delay: stage.delay + 0.5 }}
-                    className="h-1 bg-gradient-to-r from-green-400 to-green-600 mx-auto mt-6 rounded-full relative z-10"
-                  />
+                    {/* Simple Card Footer */}
+                    <div className="mt-4 pt-4 border-t border-gray-100">
+                      <div className="flex justify-center items-center space-x-2">
+                        <div className="w-1.5 h-1.5 bg-gray-400 rounded-full" />
+                        <span className="text-xs text-gray-400 font-medium tracking-wider uppercase">
+                          Étape {index + 1}
+                        </span>
+                        <div className="w-1.5 h-1.5 bg-gray-400 rounded-full" />
+                      </div>
+                    </div>
                 </div>
 
-                {/* Connection Lines (for desktop) */}
-                {index < growthStages.length - 1 && (
-                  <motion.div
-                    initial={{ scaleX: 0 }}
-                    whileInView={{ scaleX: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 1, delay: stage.delay + 0.8 }}
-                    className="hidden lg:block absolute top-1/2 -right-6 lg:-right-12 w-6 lg:w-12 h-0.5 bg-gradient-to-r from-green-400 to-green-600 transform -translate-y-1/2 z-10"
-                  />
-                )}
-              </motion.div>
+                </div>
             );
           })}
           </div>
