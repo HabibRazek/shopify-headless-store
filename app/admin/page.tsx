@@ -16,7 +16,8 @@ import {
   TrendingUp,
   Calendar,
   Clock,
-  Activity
+  Activity,
+  MessageSquare
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -126,24 +127,24 @@ export default function AdminDashboard() {
 
   const quickActions = [
     {
+      title: 'Messages Contact',
+      description: 'Voir les messages reçus',
+      href: '/admin/messages',
+      icon: MessageSquare,
+      color: 'bg-green-600 hover:bg-green-700'
+    },
+    {
       title: 'Nouvel Article',
       description: 'Créer un nouveau post de blog',
       href: '/admin/blog/posts/new',
       icon: Plus,
-      color: 'bg-green-600 hover:bg-green-700'
+      color: 'bg-blue-600 hover:bg-blue-700'
     },
     {
       title: 'Gérer Utilisateurs',
       description: 'Administrer les comptes utilisateurs',
       href: '/admin/users',
       icon: Users,
-      color: 'bg-blue-600 hover:bg-blue-700'
-    },
-    {
-      title: 'Voir Articles',
-      description: 'Gérer les articles existants',
-      href: '/admin/blog/posts',
-      icon: FileText,
       color: 'bg-purple-600 hover:bg-purple-700'
     },
     {

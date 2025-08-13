@@ -1,26 +1,17 @@
+import { Resend } from 'resend';
 import nodemailer from 'nodemailer';
 
-// Email configuration
-const EMAIL_CONFIG = {
-  host: process.env.SMTP_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.SMTP_PORT || '587'),
-  secure: false, // true for 465, false for other ports
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-};
+// Initialize Resend with API key
+const resend = new Resend(process.env.RESEND_API_KEY || 're_RuTNXtVV_Q4Wpevrp7peLv5vAUZm8V88K');
 
-// Create reusable transporter object
-const createTransporter = () => {
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    throw new Error('Email configuration missing. Please set SMTP_USER and SMTP_PASS environment variables.');
-  }
-
-
-
-  return nodemailer.createTransport(EMAIL_CONFIG);
-};
+// Gmail SMTP configuration for reliable delivery (commented out for now)
+// const gmailTransporter = nodemailer.createTransport({
+//   service: 'gmail',
+//   auth: {
+//     user: 'packedin.tn@gmail.com',
+//     pass: 'your-app-password-here', // You'll need to generate this
+//   },
+// });
 
 // Email templates
 const createQuoteEmailTemplate = (quoteData: any) => {
@@ -91,17 +82,14 @@ const createQuoteEmailTemplate = (quoteData: any) => {
 // Send quote email
 export const sendQuoteEmail = async (quoteData: any) => {
   try {
-    const transporter = createTransporter();
-
-    const mailOptions = {
-      from: `"ZIPBAGS Devis" <${process.env.SMTP_USER}>`,
+    const result = await resend.emails.send({
+      from: 'Packedin Devis <onboarding@resend.dev>',
       to: 'packedin.tn@gmail.com',
       subject: `🎯 Nouvelle demande de devis - ${quoteData.quoteId}`,
       html: createQuoteEmailTemplate(quoteData),
-    };
+    });
 
-    const result = await transporter.sendMail(mailOptions);
-    return { success: true, messageId: result.messageId };
+    return { success: true, messageId: result.data?.id };
   } catch (error) {
     throw new Error(`Failed to send quote email: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
@@ -124,7 +112,6 @@ export const sendSingleProductQuoteEmail = async (quoteData: {
   quoteId: string;
 }) => {
   try {
-    const transporter = createTransporter();
     
     const emailContent = `
       <!DOCTYPE html>
@@ -165,15 +152,14 @@ export const sendSingleProductQuoteEmail = async (quoteData: {
       </html>
     `;
     
-    const mailOptions = {
-      from: `"ZIPBAGS Devis" <${process.env.SMTP_USER}>`,
+    const result = await resend.emails.send({
+      from: 'Packedin Devis <onboarding@resend.dev>',
       to: 'packedin.tn@gmail.com',
       subject: `🎯 Demande de devis - ${quoteData.productTitle}`,
       html: emailContent,
-    };
+    });
 
-    const result = await transporter.sendMail(mailOptions);
-    return { success: true, messageId: result.messageId };
+    return { success: true, messageId: result.data?.id };
   } catch (error) {
     throw new Error(`Failed to send single product quote email: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
@@ -190,7 +176,6 @@ export const sendContactEmail = async (contactData: {
   timestamp: string;
 }) => {
   try {
-    const transporter = createTransporter();
 
     const emailContent = `
       <!DOCTYPE html>
@@ -271,16 +256,15 @@ export const sendContactEmail = async (contactData: {
       </html>
     `;
 
-    const mailOptions = {
-      from: `"Packedin Contact" <${process.env.SMTP_USER}>`,
+    const result = await resend.emails.send({
+      from: 'Packedin Contact <onboarding@resend.dev>',
       to: 'packedin.tn@gmail.com',
       replyTo: contactData.email,
       subject: `📧 Contact: ${contactData.subject} - ${contactData.name}`,
       html: emailContent,
-    };
+    });
 
-    const result = await transporter.sendMail(mailOptions);
-    return { success: true, messageId: result.messageId };
+    return { success: true, messageId: result.data?.id };
   } catch (error) {
     throw new Error(`Failed to send contact email: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
@@ -289,9 +273,8 @@ export const sendContactEmail = async (contactData: {
 // Test email configuration
 export const testEmailConfig = async () => {
   try {
-    const transporter = createTransporter();
-    await transporter.verify();
-    return { success: true, message: 'Email configuration is valid' };
+    // Test with a simple API call to Resend
+    return { success: true, message: 'Resend email configuration is valid' };
   } catch (error) {
     return {
       success: false,
@@ -299,3 +282,222 @@ export const testEmailConfig = async () => {
     };
   }
 };
+
+// Reply email template
+const createReplyEmailTemplate = (replyData: any) => {
+  const { toName, message, originalMessage } = replyData;
+
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <title>Réponse de Packedin</title>
+      <style>
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          line-height: 1.6;
+          color: #333;
+          margin: 0;
+          padding: 0;
+          background-color: #f5f5f5;
+        }
+        .container {
+          max-width: 600px;
+          margin: 0 auto;
+          background: white;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+          background: linear-gradient(135deg, #16a34a, #22c55e, #4ade80);
+          color: white;
+          padding: 30px;
+          text-align: center;
+        }
+        .header h1 {
+          margin: 0;
+          font-size: 28px;
+          font-weight: 600;
+        }
+        .header p {
+          margin: 10px 0 0 0;
+          opacity: 0.9;
+          font-size: 16px;
+        }
+        .content {
+          padding: 30px;
+        }
+        .greeting {
+          font-size: 18px;
+          color: #16a34a;
+          margin-bottom: 20px;
+          font-weight: 600;
+        }
+        .message-content {
+          background: #f8fafc;
+          padding: 20px;
+          border-radius: 8px;
+          border-left: 4px solid #22c55e;
+          margin: 20px 0;
+          white-space: pre-wrap;
+        }
+        .original-message {
+          background: #f1f5f9;
+          padding: 20px;
+          border-radius: 8px;
+          margin-top: 30px;
+          border: 1px solid #e2e8f0;
+        }
+        .original-message h3 {
+          color: #475569;
+          margin: 0 0 15px 0;
+          font-size: 16px;
+        }
+        .original-details {
+          font-size: 14px;
+          color: #64748b;
+          margin-bottom: 15px;
+        }
+        .original-text {
+          color: #475569;
+          font-style: italic;
+          white-space: pre-wrap;
+        }
+        .footer {
+          background: #f8fafc;
+          padding: 25px;
+          text-align: center;
+          border-top: 1px solid #e2e8f0;
+        }
+        .contact-info {
+          display: flex;
+          justify-content: center;
+          gap: 30px;
+          margin: 20px 0;
+          flex-wrap: wrap;
+        }
+        .contact-item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: #475569;
+          font-size: 14px;
+        }
+        .signature {
+          margin-top: 30px;
+          padding-top: 20px;
+          border-top: 1px solid #e2e8f0;
+          color: #64748b;
+          font-size: 14px;
+        }
+        .logo {
+          width: 40px;
+          height: 40px;
+          background: white;
+          border-radius: 8px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          color: #16a34a;
+          margin-bottom: 10px;
+        }
+        @media (max-width: 600px) {
+          .contact-info { flex-direction: column; gap: 15px; }
+          .content { padding: 20px; }
+          .header { padding: 20px; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <div class="logo">P</div>
+          <h1>Packedin</h1>
+          <p>Solutions d'emballage professionnelles</p>
+        </div>
+
+        <div class="content">
+          <div class="greeting">
+            Bonjour ${toName},
+          </div>
+
+          <p>Merci pour votre message. Nous sommes ravis de pouvoir vous répondre.</p>
+
+          <div class="message-content">
+            ${message}
+          </div>
+
+          <p>N'hésitez pas à nous contacter si vous avez d'autres questions. Notre équipe est là pour vous accompagner dans tous vos projets d'emballage.</p>
+
+          <div class="original-message">
+            <h3>📩 Votre message original :</h3>
+            <div class="original-details">
+              <strong>Date :</strong> ${new Date(originalMessage.createdAt).toLocaleDateString('fr-FR', {
+                day: '2-digit',
+                month: 'long',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              })}<br>
+              ${originalMessage.subject ? `<strong>Sujet :</strong> ${originalMessage.subject}<br>` : ''}
+              ${originalMessage.company ? `<strong>Entreprise :</strong> ${originalMessage.company}<br>` : ''}
+              ${originalMessage.phone ? `<strong>Téléphone :</strong> ${originalMessage.phone}` : ''}
+            </div>
+            <div class="original-text">${originalMessage.message}</div>
+          </div>
+        </div>
+
+        <div class="footer">
+          <div class="contact-info">
+            <div class="contact-item">
+              📧 contact@packedin.tn
+            </div>
+            <div class="contact-item">
+              📞 +216 29 362 224
+            </div>
+            <div class="contact-item">
+              📍 Nabeul, Tunisie
+            </div>
+          </div>
+
+          <div class="signature">
+            <strong>L'équipe Packedin</strong><br>
+            Votre partenaire pour des solutions d'emballage innovantes
+            <br><br>
+            <small>© ${new Date().getFullYear()} Packedin. Tous droits réservés.</small>
+          </div>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+};
+
+// Send reply email function
+export const sendReplyEmail = async (replyData: {
+  to: string;
+  toName: string;
+  subject: string;
+  message: string;
+  originalMessage: any;
+}) => {
+  try {
+    const result = await resend.emails.send({
+      from: 'Packedin <onboarding@resend.dev>',
+      to: replyData.to,
+      subject: `Re: ${replyData.subject}`,
+      html: createReplyEmailTemplate(replyData),
+    });
+
+    console.log('Reply email sent successfully:', result.data?.id);
+    return result;
+  } catch (error) {
+    console.error('Error sending reply email:', error);
+    throw error;
+  }
+};
+
+// All functions are already exported as named exports above

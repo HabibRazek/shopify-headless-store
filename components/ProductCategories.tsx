@@ -101,7 +101,7 @@ export default function ProductCategories() {
 
                         <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-center mb-8 leading-tight">
                             <span className="text-green-500">Quel que soit votre produit,</span><br />
-                            <span className="text-black">nous avons la pochette qu'il vous faut.</span>
+                            <span className="text-black">nous avons la pochette qu'il mérite.</span>
                         </h2>
 
                         <p className="text-xl md:text-2xl text-black leading-relaxed max-w-5xl mx-auto">
@@ -149,7 +149,7 @@ export default function ProductCategories() {
                             transition={{ duration: 0.6, delay: 0.3 }}
                         >
                             <span className="text-green-500">Quel que soit votre produit,</span><br />
-                            <span className="text-black">nous avons la pochette qu'il vous faut.</span>
+                            <span className="text-black">nous avons la pochette qu'il mérite.</span>
                         </motion.h2>
 
                         <motion.p

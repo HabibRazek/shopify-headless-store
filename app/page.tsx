@@ -14,6 +14,7 @@ import SocialFollow from '@/components/SocialFollow';
 import GrowthPartnership from '@/components/GrowthPartnership';
 import ServiceFeatures from '@/components/ServiceFeatures';
 import WhyChooseUs from '@/components/WhyChooseUs';
+import Newsletter from '@/components/Newsletter';
 
 
 
@@ -144,9 +145,14 @@ export default function Home() {
         </div>
 
         {/* Social Follow Component */}
-        <div className="mt-[-10px] sm:mt-[-20px] md:mt-[-30px]">
+        <div className="mt-[-10px] sm:mt-[-20px] md:mt-[-30px] sm:mb-28">
           <SocialFollow />
         </div>
+      </div>
+
+      {/* Newsletter Section - Only on Landing Page */}
+      <div className="mt-[-20px] sm:mt-[-40px] md:mt-[-60px] lg:mt-[-80px]">
+        <Newsletter />
       </div>
     </div>
   );

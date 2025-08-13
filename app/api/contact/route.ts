@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendContactEmail } from '@/lib/email';
+import { prisma } from '@/lib/prisma';
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,26 +24,47 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Send contact email
+    // Save contact message to database
     try {
-      await sendContactEmail({
-        name,
-        email,
-        phone: phone || 'Non spécifié',
-        company: company || 'Non spécifiée',
-        subject: subject || 'Demande de contact',
-        message,
-        timestamp: new Date().toISOString()
+      const contactMessage = await prisma.contactMessage.create({
+        data: {
+          name,
+          email,
+          phone: phone || null,
+          company: company || null,
+          subject: subject || null,
+          message,
+          status: 'unread'
+        }
       });
+
+      // Send contact email
+      try {
+        console.log('Attempting to send contact email...');
+        const emailResult = await sendContactEmail({
+          name,
+          email,
+          phone: phone || 'Non spécifié',
+          company: company || 'Non spécifiée',
+          subject: subject || 'Demande de contact',
+          message,
+          timestamp: new Date().toISOString()
+        });
+        console.log('Contact email sent successfully:', emailResult);
+      } catch (emailError) {
+        console.error('Email sending failed:', emailError);
+        // Don't fail the request if email fails, message is still saved
+      }
 
       return NextResponse.json({
         success: true,
-        message: 'Message envoyé avec succès'
+        message: 'Message envoyé avec succès',
+        id: contactMessage.id
       });
-    } catch (emailError) {
-      console.error('Email sending failed:', emailError);
+    } catch (dbError) {
+      console.error('Database error:', dbError);
       return NextResponse.json(
-        { error: 'Erreur lors de l\'envoi de l\'email' },
+        { error: 'Erreur lors de la sauvegarde du message' },
         { status: 500 }
       );
     }

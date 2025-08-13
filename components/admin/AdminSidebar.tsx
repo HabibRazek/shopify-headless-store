@@ -18,6 +18,7 @@ import {
   Receipt,
   BarChart3,
   HelpCircle,
+  MessageSquare,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -45,10 +46,15 @@ const navigationItems: NavItem[] = [
     icon: LayoutDashboard,
   },
   {
+    title: 'Messages',
+    href: '/admin/messages',
+    icon: MessageSquare,
+    badge: 'Nouveau',
+  },
+  {
     title: 'Factures',
     href: '/admin/factures',
     icon: Receipt,
-    badge: 'Nouveau',
   },
   {
     title: 'Gestion des Utilisateurs',

@@ -45,7 +45,7 @@ export default function CustomPackaging() {
             className="object-contain z-30 w-[120px] h-[100px] sm:w-[180px] sm:h-[160px] mt-[15px] rotate-[-90deg]"
           />
           <h1 className='font-extrabold sm:text-3xl sm:mr-20 rotate-2 z-30'>
-            Emballez le <br /> a votre facon
+            Emballez  <br /> à votre façon
           </h1>
         </div>
       </div>
