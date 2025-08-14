@@ -19,6 +19,7 @@ import {
   BarChart3,
   HelpCircle,
   MessageSquare,
+  Package,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -60,6 +61,11 @@ const navigationItems: NavItem[] = [
     title: 'Gestion des Utilisateurs',
     href: '/admin/users',
     icon: Users,
+  },
+  {
+    title: 'Service d\'Impression',
+    href: '/admin/print-service',
+    icon: Package,
   },
   {
     title: 'Blog',

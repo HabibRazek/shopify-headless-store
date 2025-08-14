@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
     const { to, subject, message } = await request.json();
 
     // Create Gmail transporter
-    const transporter = nodemailer.createTransporter({
+    const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: 'packedin.tn@gmail.com',

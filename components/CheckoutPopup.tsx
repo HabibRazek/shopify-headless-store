@@ -509,19 +509,32 @@ export default function CheckoutPopup({ isOpen, onClose }: CheckoutPopupProps) {
                       {/* Bank Transfer Details */}
                       {formData.paymentMethod === 'bankTransfer' && (
                         <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
-                          <h4 className="font-medium text-green-800 mb-2 text-sm">Informations bancaires</h4>
+                          <div className="flex items-center gap-2 mb-3">
+                            <Image
+                              src="/amen_bank.jpg"
+                              alt="AMEN Bank"
+                              width={40}
+                              height={26}
+                              className="object-contain"
+                            />
+                            <h4 className="font-medium text-green-800 text-sm">Informations bancaires</h4>
+                          </div>
                           <div className="grid grid-cols-1 gap-2 text-xs">
                             <div className="flex justify-between">
                               <span className="font-medium text-gray-700">Banque:</span>
-                              <span className="text-gray-600">BIAT</span>
+                              <span className="text-gray-600">AMEN BANK</span>
                             </div>
-                            <div className="flex justify-between">
-                              <span className="font-medium text-gray-700">Bénéficiaire:</span>
-                              <span className="text-gray-600">ZIPBAGS SARL</span>
+                            <div className="flex flex-col gap-1">
+                              <span className="font-medium text-gray-700">Agence:</span>
+                              <span className="text-gray-600">AGENCE NABEUL 47 Av. Habib Thameur, Nabeul</span>
+                            </div>
+                            <div className="flex flex-col gap-1">
+                              <span className="font-medium text-gray-700">Titulaire du compte:</span>
+                              <span className="text-gray-600">Ste KWD 'Kings Worldwide Distribution'</span>
                             </div>
                             <div className="flex justify-between">
                               <span className="font-medium text-gray-700">RIB:</span>
-                              <span className="text-gray-600 font-mono">08 006 0123456789 12</span>
+                              <span className="text-gray-600 font-mono bg-white px-1 py-0.5 rounded border select-all">07 300 0006 101 120 410 71</span>
                             </div>
                           </div>
                           <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded-md">

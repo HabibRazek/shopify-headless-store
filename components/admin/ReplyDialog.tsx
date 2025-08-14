@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Send,
@@ -58,7 +58,7 @@ export default function ReplyDialog({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Set default subject when message changes
-  useState(() => {
+  useEffect(() => {
     if (message) {
       const defaultSubject = message.subject || 'Votre demande de contact';
       setReplySubject(defaultSubject);

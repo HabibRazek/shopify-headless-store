@@ -500,4 +500,27 @@ export const sendReplyEmail = async (replyData: {
   }
 };
 
+// Generic send email function
+export const sendEmail = async (emailData: {
+  to: string;
+  subject: string;
+  html: string;
+  from?: string;
+}) => {
+  try {
+    const result = await resend.emails.send({
+      from: emailData.from || 'Packedin <onboarding@resend.dev>',
+      to: emailData.to,
+      subject: emailData.subject,
+      html: emailData.html,
+    });
+
+    console.log('✅ Email sent successfully:', result);
+    return result;
+  } catch (error) {
+    console.error('❌ Error sending email:', error);
+    throw new Error(`Failed to send email: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+};
+
 // All functions are already exported as named exports above

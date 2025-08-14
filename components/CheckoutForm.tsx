@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useShopContext } from '@/context/ShopContext';
 import { formatPrice } from '@/lib/utils';
 import { toast } from 'sonner';
+import Image from 'next/image';
 
 type FormData = {
   firstName: string;
@@ -494,23 +495,32 @@ export default function CheckoutForm({ onClose }: { onClose: () => void }) {
           {/* Bank Transfer Details */}
           {formData.paymentMethod === 'bankTransfer' && (
             <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-              <h4 className="font-medium text-green-800 mb-3">Informations bancaires</h4>
+              <div className="flex items-center gap-3 mb-4">
+                <Image
+                  src="/amen_bank.jpg"
+                  alt="AMEN Bank"
+                  width={60}
+                  height={40}
+                  className="object-contain"
+                />
+                <h4 className="font-medium text-green-800">Informations bancaires</h4>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="font-medium text-gray-700">Banque:</p>
-                  <p className="text-gray-600">Banque Internationale Arabe de Tunisie</p>
+                  <p className="text-gray-600">AMEN BANK</p>
                 </div>
                 <div>
-                  <p className="font-medium text-gray-700">Bénéficiaire:</p>
-                  <p className="text-gray-600">ZIPBAGS SARL</p>
+                  <p className="font-medium text-gray-700">Agence:</p>
+                  <p className="text-gray-600">AGENCE NABEUL 47 Av. Habib Thameur, Nabeul</p>
+                </div>
+                <div>
+                  <p className="font-medium text-gray-700">Titulaire du compte:</p>
+                  <p className="text-gray-600">Ste KWD 'Kings Worldwide Distribution'</p>
                 </div>
                 <div>
                   <p className="font-medium text-gray-700">RIB:</p>
-                  <p className="text-gray-600 font-mono">08 006 0123456789 12</p>
-                </div>
-                <div>
-                  <p className="font-medium text-gray-700">Code SWIFT:</p>
-                  <p className="text-gray-600 font-mono">BIATTNTT</p>
+                  <p className="text-gray-600 font-mono bg-white px-2 py-1 rounded border select-all">07 300 0006 101 120 410 71</p>
                 </div>
               </div>
 

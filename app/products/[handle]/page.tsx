@@ -189,14 +189,11 @@ export default function ProductPage() {
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 <span className="text-sm font-semibold text-green-700">PRODUIT PREMIUM</span>
               </div>
-
               <h1 className="text-3xl sm:text-3xl lg:text-4xl font-black tracking-tight text-gray-900 leading-tight mb-4">
                 {product.title}
               </h1>
-
               <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-green-700 rounded-full"></div>
             </div>
-
             {/* Professional Price Display */}
             <div className="mb-6">
               <div className="py-4">
@@ -246,7 +243,6 @@ export default function ProductPage() {
                 </div>
               </div>
             )}
-
             {/* Enhanced Quantity selector - Moved up */}
             <div className="mb-6">
               <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-3">
@@ -257,7 +253,6 @@ export default function ProductPage() {
                 </div>
                 Quantité
               </h3>
-
               <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
                 <div className="flex items-center justify-center max-w-xs mx-auto">
                   <button
@@ -286,7 +281,6 @@ export default function ProductPage() {
                     </svg>
                   </button>
                 </div>
-
                 <div className="mt-4 text-center">
                   <p className="text-sm text-gray-600">
                     <span className="font-semibold text-green-700">Stock disponible</span> • Commande minimum: 1 unité
@@ -294,7 +288,6 @@ export default function ProductPage() {
                 </div>
               </div>
             </div>
-
             {/* Enhanced Action buttons - Moved up */}
             <div className="mb-8 flex flex-col sm:flex-row gap-4">
               <button
@@ -304,11 +297,9 @@ export default function ProductPage() {
               >
                 {/* Enhanced background shine */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-500" />
-
                 <HiOutlineShoppingBag className="mr-3 h-6 w-6 relative z-10" />
                 <span className="relative z-10">Ajouter au Panier</span>
               </button>
-
               <button
                 type="button"
                 className="flex-1 flex items-center justify-center rounded-xl border-2 border-green-500 bg-white hover:bg-green-50 px-8 py-4 text-lg font-bold text-green-700 hover:text-green-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-4 focus:ring-green-300 relative overflow-hidden group"
@@ -332,7 +323,6 @@ export default function ProductPage() {
         <div className="mt-16 lg:grid lg:grid-cols-3 lg:gap-x-12">
           {/* Left column - Description */}
           <div className="lg:col-span-2">
-
             {/* Enhanced Description */}
             <div className="mb-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
@@ -373,7 +363,6 @@ export default function ProductPage() {
 
           {/* Right column - Shipping and Contact Info */}
           <div className="mt-10 lg:mt-0">
-
             {/* Enhanced Shipping information */}
             <div className="border-t border-gray-200 pt-8">
               <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">

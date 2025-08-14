@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Edit3, Sparkles, Zap, Star, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { MultiProductQuoteDialog } from '@/components/quote/MultiProductQuoteDialog';
+import { PrintServiceDialog } from '@/components/PrintServiceDialog';
 import Image from 'next/image';
 
 
@@ -177,14 +178,25 @@ export default function CustomPackaging() {
               </p>
             </div>
 
-            <MultiProductQuoteDialog
-              trigger={
-                <Button className="bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white px-8 py-3 rounded-full font-bold text-base shadow-lg transition-all duration-300 w-full sm:w-auto">
-                  <Edit3 className="w-5 h-5 mr-2" />
-                  Demandez un Devis
-                </Button>
-              }
-            />
+            <div className="flex flex-col sm:flex-row gap-6 mx-4 justify-center items-center">
+              <MultiProductQuoteDialog
+                trigger={
+                  <Button className="bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white px-6 py-2 rounded-full font-medium text-sm shadow-lg transition-all duration-300 w-full sm:w-auto">
+                    <Edit3 className="w-4 h-4 mr-2" />
+                    Demandez un Devis
+                  </Button>
+                }
+              />
+
+              <PrintServiceDialog
+                trigger={
+                  <Button variant="outline" className="border-green-500 text-green-700 hover:bg-green-50 px-6 py-2 rounded-full font-medium text-sm shadow-lg transition-all duration-300 w-full sm:w-auto">
+                    <Printer className="w-4 h-4 mr-4" />
+                    Service d'Impression
+                  </Button>
+                }
+              />
+            </div>
           </div>
         </div>
 
@@ -302,6 +314,7 @@ export default function CustomPackaging() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.6 }}
+                className="flex gap-8 justify-center items-center"
               >
                 <MultiProductQuoteDialog
                   trigger={
@@ -310,7 +323,7 @@ export default function CustomPackaging() {
                       whileTap={{ scale: 0.95 }}
                       className="inline-block"
                     >
-                      <Button className="relative bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white px-12 py-5 rounded-full font-bold text-xl shadow-2xl hover:shadow-green-500/25 transition-all duration-300 overflow-hidden group">
+                      <Button className="relative bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white px-8 py-3 rounded-full font-semibold text-base shadow-2xl hover:shadow-green-500/25 transition-all duration-300 overflow-hidden group">
                         {/* Animated background */}
                         <motion.div
                           animate={{
@@ -323,8 +336,23 @@ export default function CustomPackaging() {
                           }}
                           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
                         />
-                        <Edit3 className="w-6 h-6 mr-3 relative z-10" />
+                        <Edit3 className="w-5 h-5 mr-2 relative z-10" />
                         <span className="relative z-10">Demandez un Devis</span>
+                      </Button>
+                    </motion.div>
+                  }
+                />
+
+                <PrintServiceDialog
+                  trigger={
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="inline-block"
+                    >
+                      <Button variant="outline" className="relative border-2 border-green-500 text-green-700 hover:bg-green-50 px-8 py-3 rounded-full font-semibold text-base shadow-2xl hover:shadow-green-500/25 transition-all duration-300 overflow-hidden group">
+                        <Printer className="w-5 h-5 mr-2 relative z-10" />
+                        <span className="relative z-10">Service d'Impression</span>
                       </Button>
                     </motion.div>
                   }

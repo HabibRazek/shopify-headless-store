@@ -281,3 +281,42 @@ enum InvoiceStatus {
   OVERDUE
   CANCELLED
 }
+
+model PrintServiceRequest {
+  id              String                @id @default(cuid())
+  customerName    String
+  customerEmail   String
+  customerPhone   String?
+  company         String?
+  material        PrintMaterial
+  dimensions      String                // Format: "10x15", "12x20", etc.
+  quantity        Int                   // Minimum 300
+  deliveryDate    DateTime
+  designFileUrl   String?               // UploadThing file URL
+  designFileName  String?
+  notes           String?
+  status          PrintServiceStatus    @default(PENDING)
+  adminNotes      String?
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([material])
+  @@map("print_service_requests")
+}
+
+enum PrintMaterial {
+  KRAFT_VIEW
+  KRAFT_ALU
+}
+
+enum PrintServiceStatus {
+  PENDING
+  IN_REVIEW
+  APPROVED
+  IN_PRODUCTION
+  READY
+  DELIVERED
+  CANCELLED
+}
