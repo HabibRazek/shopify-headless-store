@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import AdminSidebar from './AdminSidebar';
-import AdminHeader from './AdminHeader';
+import AdminTopNavbar from './AdminTopNavbar';
 import { FullScreenLoader } from '@/components/ui/loader';
 
 interface AdminLayoutProps {
@@ -67,8 +67,8 @@ export default function AdminLayout({
   }
 
   return (
-    <div className="admin-layout h-screen admin-gradient-bg flex overflow-hidden">
-      {/* Sidebar */}
+    <div className="admin-layout h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex overflow-hidden">
+      {/* Professional Sidebar */}
       <AdminSidebar
         isCollapsed={isCollapsed}
         setIsCollapsed={setIsCollapsed}
@@ -76,26 +76,24 @@ export default function AdminLayout({
         setIsMobileOpen={setIsMobileOpen}
       />
 
-      {/* Main Content */}
+      {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Header */}
-        <AdminHeader
-          title={title}
-          description={description}
-          actions={actions}
-          isCollapsed={isCollapsed}
-          setIsMobileOpen={setIsMobileOpen}
-        />
+        {/* Top Navigation Bar */}
+        <AdminTopNavbar />
 
-        {/* Page Content */}
-        <main className="flex-1 overflow-auto admin-scrollbar">
+        {/* Main Content with Professional Spacing */}
+        <main className="flex-1 overflow-auto bg-gradient-to-br from-gray-50 via-white to-gray-100">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="p-6 h-full admin-fade-in"
+            className="h-full"
           >
-            {children}
+            <div className="max-w-full mx-auto px-3 sm:px-4 lg:px-6 py-6">
+              <div className="space-y-6">
+                {children}
+              </div>
+            </div>
           </motion.div>
         </main>
       </div>

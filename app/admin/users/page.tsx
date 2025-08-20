@@ -30,6 +30,9 @@ import CreateUserModal from '@/components/admin/CreateUserModal';
 import EditUserModal from '@/components/admin/EditUserModal';
 import ResetPasswordModal from '@/components/admin/ResetPasswordModal';
 import AdminLayout from '@/components/admin/AdminLayout';
+import DataTable from '@/components/admin/DataTable';
+import StatusBadge, { getStatusVariant } from '@/components/admin/StatusBadge';
+import Avatar from '@/components/admin/Avatar';
 
 interface User {
   id: string;
@@ -173,258 +176,286 @@ export default function UsersManagementPage() {
     return variants[status as keyof typeof variants] || variants.active;
   };
 
-  return (
-    <AdminLayout
-      title="Gestion des Utilisateurs"
-      description="Gérez les comptes utilisateurs et leurs permissions"
-      actions={
-        <Button
-          onClick={() => setShowCreateModal(true)}
-          className="bg-green-600 hover:bg-green-700 text-white"
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'active':
+        return <UserCheck className="h-4 w-4 text-green-500" />;
+      case 'suspended':
+        return <UserX className="h-4 w-4 text-red-500" />;
+      default:
+        return <Users className="h-4 w-4 text-gray-500" />;
+    }
+  };
+
+  const getRoleLabel = (role: string) => {
+    switch (role) {
+      case 'super_admin':
+        return 'Super Admin';
+      case 'admin':
+        return 'Admin';
+      case 'user':
+        return 'Utilisateur';
+      default:
+        return role;
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case 'active':
+        return 'Actif';
+      case 'inactive':
+        return 'Inactif';
+      case 'suspended':
+        return 'Suspendu';
+      default:
+        return status;
+    }
+  };
+
+  // Define table columns
+  const columns = [
+    {
+      key: 'id',
+      label: 'ID',
+      width: '120px',
+      sortable: true,
+      render: (value: string) => (
+        <span className="text-sm font-mono text-gray-900 bg-gradient-to-r from-gray-100 to-gray-200 px-3 py-1.5 rounded-lg shadow-sm">
+          #{value.slice(-8)}
+        </span>
+      )
+    },
+    {
+      key: 'name',
+      label: 'Utilisateur',
+      sortable: true,
+      render: (value: string, row: any) => (
+        <div className="flex items-center group">
+          <Avatar
+            name={value || row.email}
+            size="lg"
+            variant="green"
+            className="mr-4 shadow-lg group-hover:shadow-xl transition-shadow"
+          />
+          <div>
+            <div className="text-sm font-semibold text-gray-900 group-hover:text-purple-700 transition-colors">
+              {value || 'Nom non défini'}
+            </div>
+            <div className="text-sm text-gray-500 flex items-center gap-1.5 mt-1">
+              <span>{row.email}</span>
+            </div>
+            {row.phone && (
+              <div className="text-xs text-gray-400 mt-0.5 font-medium">{row.phone}</div>
+            )}
+          </div>
+        </div>
+      )
+    },
+    {
+      key: 'role',
+      label: 'Rôle',
+      width: '140px',
+      sortable: true,
+      render: (value: string) => (
+        <StatusBadge
+          status={value}
+          variant={value === 'super_admin' ? 'purple' : value === 'admin' ? 'success' : 'info'}
+          size="lg"
         >
-          <Plus className="h-4 w-4 mr-2" />
-          Nouvel Utilisateur
-        </Button>
-      }
-    >
-      {loading && users.length === 0 ? (
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
-        </div>
-      ) : (
-        <div className="space-y-6">
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Users className="h-5 w-5 text-blue-600" />
-              <div>
-                <p className="text-sm text-gray-600">Total</p>
-                <p className="text-xl font-bold">{pagination.totalUsers}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <UserCheck className="h-5 w-5 text-green-600" />
-              <div>
-                <p className="text-sm text-gray-600">Actifs</p>
-                <p className="text-xl font-bold">
-                  {users.filter(u => u.status === 'active').length}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <UserX className="h-5 w-5 text-red-600" />
-              <div>
-                <p className="text-sm text-gray-600">Inactifs</p>
-                <p className="text-xl font-bold">
-                  {users.filter(u => u.status !== 'active').length}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Users className="h-5 w-5 text-purple-600" />
-              <div>
-                <p className="text-sm text-gray-600">Admins</p>
-                <p className="text-xl font-bold">
-                  {users.filter(u => u.role === 'admin' || u.role === 'super_admin').length}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Filters and Search */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Rechercher par nom ou email..."
-                  value={searchTerm}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-            <Select value={roleFilter} onValueChange={(value) => handleFilterChange('role', value === 'all' ? '' : value)}>
-              <SelectTrigger className="w-full sm:w-40">
-                <SelectValue placeholder="Rôle" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tous les rôles</SelectItem>
-                <SelectItem value="user">Utilisateur</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
-                <SelectItem value="super_admin">Super Admin</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={statusFilter} onValueChange={(value) => handleFilterChange('status', value === 'all' ? '' : value)}>
-              <SelectTrigger className="w-full sm:w-40">
-                <SelectValue placeholder="Statut" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tous les statuts</SelectItem>
-                <SelectItem value="active">Actif</SelectItem>
-                <SelectItem value="inactive">Inactif</SelectItem>
-                <SelectItem value="suspended">Suspendu</SelectItem>
-              </SelectContent>
-            </Select>
+          {getRoleLabel(value)}
+        </StatusBadge>
+      )
+    },
+    {
+      key: 'status',
+      label: 'Statut',
+      width: '140px',
+      sortable: true,
+      render: (value: string) => (
+        <StatusBadge
+          status={value}
+          variant={getStatusVariant(value)}
+          icon={getStatusIcon(value)}
+          size="lg"
+        >
+          {getStatusLabel(value)}
+        </StatusBadge>
+      )
+    },
+    {
+      key: '_count',
+      label: 'Activité',
+      width: '120px',
+      render: (value: any) => (
+        <div className="text-center">
+          <div className="text-sm font-semibold text-gray-900">
+            {value.orders} commandes
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Users Table */}
-      <Card>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Utilisateur</TableHead>
-                  <TableHead>Rôle</TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead>Commandes</TableHead>
-                  <TableHead>Date d'inscription</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {users.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell>
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                          <span className="text-green-600 font-medium text-sm">
-                            {user.name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase()}
-                          </span>
-                        </div>
-                        <div>
-                          <p className="font-medium text-gray-900">{user.name || 'Sans nom'}</p>
-                          <p className="text-sm text-gray-500">{user.email}</p>
-                          {user.phone && (
-                            <p className="text-xs text-gray-400">{user.phone}</p>
-                          )}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={getRoleBadge(user.role)}>
-                        {user.role === 'super_admin' ? 'Super Admin' :
-                         user.role === 'admin' ? 'Admin' : 'Utilisateur'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={getStatusBadge(user.status)}>
-                        {user.status === 'active' ? 'Actif' :
-                         user.status === 'inactive' ? 'Inactif' : 'Suspendu'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        <p>{user._count.orders} commandes</p>
-                        <p className="text-gray-500">{user._count.blogPosts} articles</p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        <p>{format(new Date(user.createdAt), 'dd MMM yyyy', { locale: fr })}</p>
-                        <p className="text-gray-500">
-                          {format(new Date(user.createdAt), 'HH:mm')}
-                        </p>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onClick={() => {
-                              setSelectedUser(user);
-                              setShowEditModal(true);
-                            }}
-                          >
-                            <Edit className="h-4 w-4 mr-2" />
-                            Modifier
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => {
-                              setSelectedUser(user);
-                              setShowResetPasswordModal(true);
-                            }}
-                          >
-                            <Key className="h-4 w-4 mr-2" />
-                            Réinitialiser mot de passe
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => {
-                              setSelectedUser(user);
-                              setShowDeleteModal(true);
-                            }}
-                            className="text-red-600"
-                          >
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Supprimer
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Pagination */}
-      {pagination.totalPages > 1 && (
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-600">
-            Page {pagination.currentPage} sur {pagination.totalPages}
-            ({pagination.totalUsers} utilisateurs au total)
-          </p>
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(currentPage - 1)}
-              disabled={!pagination.hasPrevPage}
-            >
-              <ChevronLeft className="h-4 w-4" />
-              Précédent
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage(currentPage + 1)}
-              disabled={!pagination.hasNextPage}
-            >
-              Suivant
-              <ChevronRight className="h-4 w-4" />
-            </Button>
+          <div className="text-xs text-gray-500">
+            {value.blogPosts} articles
           </div>
         </div>
-      )}
+      )
+    },
+    {
+      key: 'createdAt',
+      label: 'Date d\'inscription',
+      width: '140px',
+      sortable: true,
+      render: (value: string) => (
+        <div className="text-center">
+          <div className="text-sm font-semibold text-gray-900">
+            {format(new Date(value), 'dd/MM/yyyy', { locale: fr })}
+          </div>
+          <div className="text-xs text-gray-500">
+            {format(new Date(value), 'HH:mm', { locale: fr })}
+          </div>
+        </div>
+      )
+    },
+    {
+      key: 'actions',
+      label: 'Actions',
+      width: '160px',
+      align: 'right' as const,
+      render: (_: any, row: any) => (
+        <div className="flex items-center justify-end gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedUser(row);
+              setShowEditModal(true);
+            }}
+            className="h-9 w-9 p-0 hover:bg-blue-50 hover:text-blue-600 rounded-lg shadow-sm border border-transparent hover:border-blue-200 transition-all"
+          >
+            <Edit className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedUser(row);
+              setShowResetPasswordModal(true);
+            }}
+            className="h-9 w-9 p-0 hover:bg-green-50 hover:text-green-600 rounded-lg shadow-sm border border-transparent hover:border-green-200 transition-all"
+          >
+            <Key className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedUser(row);
+              setShowDeleteModal(true);
+            }}
+            className="h-9 w-9 p-0 hover:bg-red-50 hover:text-red-600 rounded-lg shadow-sm border border-transparent hover:border-red-200 transition-all"
+          >
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </div>
+      )
+    }
+  ];
+
+  // Calculate statistics
+  const stats = [
+    {
+      label: 'Total des utilisateurs',
+      value: pagination.totalUsers,
+      icon: <Users className="w-6 h-6 text-white" />,
+      color: 'bg-gradient-to-r from-blue-500 to-blue-600',
+      change: '+12% ce mois',
+      changeType: 'increase' as const
+    },
+    {
+      label: 'Utilisateurs actifs',
+      value: users.filter(u => u.status === 'active').length,
+      icon: <UserCheck className="w-6 h-6 text-white" />,
+      color: 'bg-gradient-to-r from-green-500 to-green-600',
+      change: '+5% cette semaine',
+      changeType: 'increase' as const
+    },
+    {
+      label: 'Utilisateurs inactifs',
+      value: users.filter(u => u.status !== 'active').length,
+      icon: <UserX className="w-6 h-6 text-white" />,
+      color: 'bg-gradient-to-r from-red-500 to-red-600',
+      change: '-2% ce mois',
+      changeType: 'decrease' as const
+    },
+    {
+      label: 'Administrateurs',
+      value: users.filter(u => u.role === 'admin' || u.role === 'super_admin').length,
+      icon: <Users className="w-6 h-6 text-white" />,
+      color: 'bg-gradient-to-r from-purple-500 to-purple-600',
+      change: '3 actifs',
+      changeType: 'neutral' as const
+    }
+  ];
+
+  return (
+    <AdminLayout>
+      <DataTable
+        title="Gestion des Utilisateurs"
+        subtitle="Gérez les comptes utilisateurs et leurs permissions de manière professionnelle"
+        columns={columns}
+        data={users}
+        loading={loading}
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder="Rechercher par nom, email, téléphone..."
+        filters={[
+          {
+            key: 'role',
+            label: 'Rôle',
+            options: [
+              { value: 'all', label: 'Tous les rôles' },
+              { value: 'user', label: 'Utilisateur' },
+              { value: 'admin', label: 'Admin' },
+              { value: 'super_admin', label: 'Super Admin' }
+            ],
+            value: roleFilter,
+            onChange: setRoleFilter
+          },
+          {
+            key: 'status',
+            label: 'Statut',
+            options: [
+              { value: 'all', label: 'Tous les statuts' },
+              { value: 'active', label: 'Actif' },
+              { value: 'inactive', label: 'Inactif' },
+              { value: 'suspended', label: 'Suspendu' }
+            ],
+            value: statusFilter,
+            onChange: setStatusFilter
+          }
+        ]}
+        actions={
+          <Button
+            onClick={() => setShowCreateModal(true)}
+            className="bg-green-600 hover:bg-green-700 text-white h-10 gap-2 shadow-sm"
+          >
+            <Plus className="h-4 w-4" />
+            Nouvel Utilisateur
+          </Button>
+        }
+        emptyState={{
+          icon: <Users className="w-16 h-16" />,
+          title: 'Aucun utilisateur trouvé',
+          description: 'Aucun utilisateur ne correspond aux critères de recherche actuels. Créez un nouvel utilisateur pour commencer.'
+        }}
+        onRowClick={(user) => {
+          setSelectedUser(user);
+          setShowEditModal(true);
+        }}
+        showStats={true}
+        stats={stats}
+      />
 
       {/* Delete Confirmation Modal */}
       <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
@@ -472,8 +503,6 @@ export default function UsersManagementPage() {
         user={selectedUser}
         onPasswordReset={fetchUsers}
       />
-        </div>
-      )}
     </AdminLayout>
   );
 }

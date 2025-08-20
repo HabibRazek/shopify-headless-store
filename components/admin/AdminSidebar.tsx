@@ -20,6 +20,7 @@ import {
   HelpCircle,
   MessageSquare,
   Package,
+  ShoppingCart,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -47,10 +48,15 @@ const navigationItems: NavItem[] = [
     icon: LayoutDashboard,
   },
   {
+    title: 'Commandes',
+    href: '/admin/orders',
+    icon: ShoppingCart,
+  },
+  {
     title: 'Messages',
     href: '/admin/messages',
     icon: MessageSquare,
-    badge: 'Nouveau',
+    badge: '3',
   },
   {
     title: 'Factures',
@@ -66,6 +72,7 @@ const navigationItems: NavItem[] = [
     title: 'Service d\'Impression',
     href: '/admin/print-service',
     icon: Package,
+    badge: 'Nouveau',
   },
   {
     title: 'Blog',

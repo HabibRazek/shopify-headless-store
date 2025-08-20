@@ -1,34 +1,30 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+
 import { toast } from 'sonner';
+import AdminLayout from '@/components/admin/AdminLayout';
+import DataTable from '@/components/admin/DataTable';
+import StatusBadge from '@/components/admin/StatusBadge';
+import Avatar from '@/components/admin/Avatar';
 import {
-  Search,
-  Filter,
-  Eye,
   Edit,
   Download,
   Package,
-  Calendar,
-  User,
-  Mail,
-  Phone,
-  Building,
-  FileText,
-  Hash,
   Clock,
   CheckCircle,
   XCircle,
-  AlertCircle
+  AlertCircle,
+  Eye,
+  Mail,
+  Plus,
+  User,
 } from 'lucide-react';
 
 interface PrintServiceRequest {
@@ -69,25 +65,37 @@ export default function PrintServiceAdminPage() {
   const [requests, setRequests] = useState<PrintServiceRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
-  const [materialFilter, setMaterialFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [materialFilter, setMaterialFilter] = useState('all');
   const [selectedRequest, setSelectedRequest] = useState<PrintServiceRequest | null>(null);
-  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editStatus, setEditStatus] = useState('');
   const [editAdminNotes, setEditAdminNotes] = useState('');
   const [updating, setUpdating] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
-  useEffect(() => {
-    fetchRequests();
-  }, [statusFilter, materialFilter]);
+  // New print demand state
+  const [isNewDialogOpen, setIsNewDialogOpen] = useState(false);
+  const [newRequest, setNewRequest] = useState({
+    customerName: '',
+    customerEmail: '',
+    customerPhone: '',
+    company: '',
+    material: 'KRAFT_VIEW' as 'KRAFT_VIEW' | 'KRAFT_ALU',
+    dimensions: '',
+    quantity: 300,
+    deliveryDate: '',
+    notes: ''
+  });
+  const [creating, setCreating] = useState(false);
 
-  const fetchRequests = async () => {
+  const fetchRequests = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
-      if (statusFilter) params.append('status', statusFilter);
-      if (materialFilter) params.append('material', materialFilter);
+      if (statusFilter && statusFilter !== 'all') params.append('status', statusFilter);
+      if (materialFilter && materialFilter !== 'all') params.append('material', materialFilter);
 
       const response = await fetch(`/api/print-service?${params.toString()}`);
       if (response.ok) {
@@ -96,41 +104,22 @@ export default function PrintServiceAdminPage() {
       } else {
         toast.error('Erreur lors du chargement des demandes');
       }
-    } catch (error) {
+    } catch {
       toast.error('Erreur lors du chargement des demandes');
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter, materialFilter]);
 
-  const filteredRequests = requests.filter(request =>
-    request.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    request.customerEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    request.id.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  useEffect(() => {
+    fetchRequests();
+  }, [fetchRequests]);
 
-  const getStatusBadge = (status: string) => {
-    const statusOption = statusOptions.find(option => option.value === status);
-    return (
-      <Badge className={statusOption?.color || 'bg-gray-100 text-gray-800'}>
-        {statusOption?.label || status}
-      </Badge>
-    );
-  };
 
-  const getMaterialBadge = (material: string) => {
-    const materialOption = materialOptions.find(option => option.value === material);
-    return (
-      <Badge variant="outline">
-        {materialOption?.label || material}
-      </Badge>
-    );
-  };
 
-  const openDetailDialog = (request: PrintServiceRequest) => {
-    setSelectedRequest(request);
-    setIsDetailDialogOpen(true);
-  };
+
+
+
 
   const openEditDialog = (request: PrintServiceRequest) => {
     setSelectedRequest(request);
@@ -162,7 +151,7 @@ export default function PrintServiceAdminPage() {
       } else {
         toast.error('Erreur lors de la mise à jour');
       }
-    } catch (error) {
+    } catch {
       toast.error('Erreur lors de la mise à jour');
     } finally {
       setUpdating(false);
@@ -177,6 +166,45 @@ export default function PrintServiceAdminPage() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const createNewRequest = async () => {
+    try {
+      setCreating(true);
+      const response = await fetch('/api/print-service', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...newRequest,
+          status: 'PENDING'
+        }),
+      });
+
+      if (response.ok) {
+        toast.success('Demande créée avec succès');
+        setIsNewDialogOpen(false);
+        setNewRequest({
+          customerName: '',
+          customerEmail: '',
+          customerPhone: '',
+          company: '',
+          material: 'KRAFT_VIEW',
+          dimensions: '',
+          quantity: 300,
+          deliveryDate: '',
+          notes: ''
+        });
+        fetchRequests();
+      } else {
+        toast.error('Erreur lors de la création de la demande');
+      }
+    } catch {
+      toast.error('Erreur lors de la création de la demande');
+    } finally {
+      setCreating(false);
+    }
   };
 
   const getStatusIcon = (status: string) => {
@@ -200,347 +228,244 @@ export default function PrintServiceAdminPage() {
     }
   };
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Service d'Impression</h1>
-        <p className="text-gray-600">Gestion des demandes d'impression personnalisée</p>
-      </div>
 
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Filter className="w-5 h-5" />
-            Filtres et Recherche
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <Label htmlFor="search">Rechercher</Label>
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  id="search"
-                  placeholder="Nom, email, ID..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
+
+  // Define table columns with enhanced features
+  const columns = [
+    {
+      key: 'id',
+      label: 'ID',
+      width: '120px',
+      sortable: true,
+      render: (value: string) => (
+        <span className="text-sm font-mono text-gray-900 bg-gradient-to-r from-gray-100 to-gray-200 px-3 py-1.5 rounded-lg shadow-sm">
+          #{value.slice(-8)}
+        </span>
+      )
+    },
+    {
+      key: 'customerName',
+      label: 'Client',
+      sortable: true,
+      render: (value: string, row: PrintServiceRequest) => (
+        <div className="flex items-center group">
+          <Avatar name={value} size="lg" variant="green" className="mr-4 shadow-lg group-hover:shadow-xl transition-shadow" />
+          <div>
+            <div className="text-sm font-semibold text-gray-900 group-hover:text-green-700 transition-colors">{value}</div>
+            <div className="text-sm text-gray-500 flex items-center gap-1.5 mt-1">
+              <Mail className="w-3.5 h-3.5" />
+              {row.customerEmail}
             </div>
-            <div>
-              <Label htmlFor="status-filter">Statut</Label>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Tous les statuts" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">Tous les statuts</SelectItem>
-                  {statusOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="material-filter">Matériau</Label>
-              <Select value={materialFilter} onValueChange={setMaterialFilter}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Tous les matériaux" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">Tous les matériaux</SelectItem>
-                  {materialOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-end">
-              <Button onClick={fetchRequests} variant="outline" className="w-full">
-                Actualiser
-              </Button>
-            </div>
+            {row.company && (
+              <div className="text-xs text-gray-400 mt-0.5 font-medium">{row.company}</div>
+            )}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      )
+    },
+    {
+      key: 'material',
+      label: 'Matériau',
+      width: '140px',
+      sortable: true,
+      render: (value: string) => (
+        <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm ${
+          value === 'kraft_view'
+            ? 'bg-gradient-to-r from-amber-100 to-amber-200 text-amber-800 border border-amber-300'
+            : 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border border-blue-300'
+        }`}>
+          {value === 'kraft_view' ? 'Kraft View' : 'Kraft Alu'}
+        </span>
+      )
+    },
+    {
+      key: 'dimensions',
+      label: 'Dimensions',
+      width: '120px',
+      sortable: true,
+      render: (value: string) => (
+        <span className="text-sm font-mono font-semibold text-gray-900 bg-gray-50 px-2 py-1 rounded border">{value} cm</span>
+      )
+    },
+    {
+      key: 'quantity',
+      label: 'Quantité',
+      width: '120px',
+      sortable: true,
+      render: (value: number) => (
+        <div className="text-center">
+          <span className="text-lg font-bold text-gray-900">{value.toLocaleString()}</span>
+          <div className="text-xs text-gray-500 font-medium">unités</div>
+        </div>
+      )
+    },
+    {
+      key: 'status',
+      label: 'Statut',
+      width: '140px',
+      sortable: true,
+      render: (value: string) => (
+        <StatusBadge
+          status={value}
+          icon={getStatusIcon(value)}
+          size="lg"
+        >
+          {statusOptions.find(s => s.value === value)?.label}
+        </StatusBadge>
+      )
+    },
+    {
+      key: 'createdAt',
+      label: 'Date',
+      width: '140px',
+      sortable: true,
+      render: (value: string) => (
+        <div className="text-center">
+          <div className="text-sm font-semibold text-gray-900">
+            {new Date(value).toLocaleDateString('fr-FR')}
+          </div>
+          <div className="text-xs text-gray-500">
+            {new Date(value).toLocaleTimeString('fr-FR', {
+              hour: '2-digit',
+              minute: '2-digit'
+            })}
+          </div>
+        </div>
+      )
+    },
+    {
+      key: 'actions',
+      label: 'Actions',
+      width: '140px',
+      align: 'right' as const,
+      render: (_: string, row: PrintServiceRequest) => (
+        <div className="flex items-center justify-end gap-2">
 
-      {/* Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {statusOptions.slice(0, 4).map((status) => {
-          const count = requests.filter(r => r.status === status.value).length;
-          return (
-            <Card key={status.value}>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">{status.label}</p>
-                    <p className="text-2xl font-bold">{count}</p>
-                  </div>
-                  <div className={`p-2 rounded-full ${status.color}`}>
-                    {getStatusIcon(status.value)}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
-
-      {/* Requests List */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Demandes d'Impression ({filteredRequests.length})</CardTitle>
-          <CardDescription>
-            Liste de toutes les demandes d'impression personnalisée
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto"></div>
-              <p className="mt-2 text-gray-600">Chargement...</p>
-            </div>
-          ) : filteredRequests.length === 0 ? (
-            <div className="text-center py-8">
-              <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">Aucune demande trouvée</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {filteredRequests.map((request) => (
-                <motion.div
-                  key={request.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-4 mb-2">
-                        <h3 className="font-medium text-gray-900">{request.customerName}</h3>
-                        {getStatusBadge(request.status)}
-                        {getMaterialBadge(request.material)}
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
-                        <div className="flex items-center gap-2">
-                          <Mail className="w-4 h-4" />
-                          {request.customerEmail}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Package className="w-4 h-4" />
-                          {request.dimensions} cm - {request.quantity} unités
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4" />
-                          {new Date(request.deliveryDate).toLocaleDateString('fr-FR')}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => openDetailDialog(request)}
-                      >
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => openEditDialog(request)}
-                      >
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      {request.designFileUrl && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => downloadDesignFile(request.designFileUrl!, request.designFileName || 'design')}
-                        >
-                          <Download className="w-4 h-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              openEditDialog(row);
+            }}
+            className="h-9 w-9 p-0 hover:bg-blue-50 hover:text-blue-600 rounded-lg shadow-sm border border-transparent hover:border-blue-200 transition-all"
+          >
+            <Edit className="w-4 h-4" />
+          </Button>
+          {row.designFileUrl && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                downloadDesignFile(row.designFileUrl!, row.designFileName || 'design');
+              }}
+              className="h-9 w-9 p-0 hover:bg-purple-50 hover:text-purple-600 rounded-lg shadow-sm border border-transparent hover:border-purple-200 transition-all"
+            >
+              <Download className="w-4 h-4" />
+            </Button>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      )
+    }
+  ];
 
-      {/* Detail Dialog */}
-      <Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Détails de la Demande</DialogTitle>
-            <DialogDescription>
-              Informations complètes de la demande d'impression
-            </DialogDescription>
-          </DialogHeader>
+  // Calculate statistics
+  const stats = [
+    {
+      label: 'Total des demandes',
+      value: requests.length,
+      icon: <Package className="w-6 h-6 text-white" />,
+      color: 'bg-gradient-to-r from-blue-500 to-blue-600',
+      change: '+12% ce mois',
+      changeType: 'increase' as const
+    },
+    {
+      label: 'En attente',
+      value: requests.filter(r => r.status === 'PENDING').length,
+      icon: <Clock className="w-6 h-6 text-white" />,
+      color: 'bg-gradient-to-r from-yellow-500 to-yellow-600',
+      change: '+5% cette semaine',
+      changeType: 'increase' as const
+    },
+    {
+      label: 'Approuvées',
+      value: requests.filter(r => r.status === 'APPROVED').length,
+      icon: <CheckCircle className="w-6 h-6 text-white" />,
+      color: 'bg-gradient-to-r from-green-500 to-green-600',
+      change: '+8% ce mois',
+      changeType: 'increase' as const
+    },
+    {
+      label: 'En production',
+      value: requests.filter(r => r.status === 'IN_PRODUCTION').length,
+      icon: <Package className="w-6 h-6 text-white" />,
+      color: 'bg-gradient-to-r from-purple-500 to-purple-600',
+      change: '3 en cours',
+      changeType: 'neutral' as const
+    }
+  ];
 
-          {selectedRequest && (
-            <div className="space-y-6">
-              {/* Customer Information */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <User className="w-5 h-5" />
-                      Informations Client
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <User className="w-4 h-4 text-gray-500" />
-                      <span className="font-medium">Nom:</span>
-                      <span>{selectedRequest.customerName}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Mail className="w-4 h-4 text-gray-500" />
-                      <span className="font-medium">Email:</span>
-                      <span>{selectedRequest.customerEmail}</span>
-                    </div>
-                    {selectedRequest.customerPhone && (
-                      <div className="flex items-center gap-2">
-                        <Phone className="w-4 h-4 text-gray-500" />
-                        <span className="font-medium">Téléphone:</span>
-                        <span>{selectedRequest.customerPhone}</span>
-                      </div>
-                    )}
-                    {selectedRequest.company && (
-                      <div className="flex items-center gap-2">
-                        <Building className="w-4 h-4 text-gray-500" />
-                        <span className="font-medium">Entreprise:</span>
-                        <span>{selectedRequest.company}</span>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+  return (
+    <AdminLayout>
+      <DataTable
+        title="Service d'Impression"
+        subtitle="Gestion professionnelle des demandes d'impression personnalisée"
+        columns={columns}
+        data={requests}
+        loading={loading}
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder="Rechercher par nom, email, ID, matériau..."
+        filters={[
+          {
+            key: 'status',
+            label: 'Statut',
+            options: [
+              { value: 'all', label: 'Tous les statuts' },
+              ...statusOptions
+            ],
+            value: statusFilter,
+            onChange: setStatusFilter
+          },
+          {
+            key: 'material',
+            label: 'Matériau',
+            options: [
+              { value: 'all', label: 'Tous les matériaux' },
+              ...materialOptions
+            ],
+            value: materialFilter,
+            onChange: setMaterialFilter
+          }
+        ]}
+        actions={
+          <Button
+            onClick={() => setIsNewDialogOpen(true)}
+            className="bg-green-600 hover:bg-green-700 text-white h-10 gap-2 shadow-sm"
+          >
+            <Plus className="h-4 w-4" />
+            Nouveau
+          </Button>
+        }
+        emptyState={{
+          icon: <Package className="w-16 h-16" />,
+          title: 'Aucune demande trouvée',
+          description: 'Aucune demande d\'impression ne correspond aux critères de recherche actuels.'
+        }}
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Package className="w-5 h-5" />
-                      Détails Produit
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">Matériau:</span>
-                      {getMaterialBadge(selectedRequest.material)}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">Dimensions:</span>
-                      <span>{selectedRequest.dimensions} cm</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Hash className="w-4 h-4 text-gray-500" />
-                      <span className="font-medium">Quantité:</span>
-                      <span>{selectedRequest.quantity} unités</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-gray-500" />
-                      <span className="font-medium">Date souhaitée:</span>
-                      <span>{new Date(selectedRequest.deliveryDate).toLocaleDateString('fr-FR')}</span>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+        showStats={true}
+        stats={stats}
+        pagination={{
+          currentPage,
+          pageSize,
+          totalItems: requests.length,
+          onPageChange: setCurrentPage,
+          onPageSizeChange: setPageSize
+        }}
+      />
 
-              {/* Status and Notes */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <AlertCircle className="w-5 h-5" />
-                      Statut et Suivi
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">Statut actuel:</span>
-                      {getStatusBadge(selectedRequest.status)}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">Créée le:</span>
-                      <span>{new Date(selectedRequest.createdAt).toLocaleDateString('fr-FR')}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">Dernière MAJ:</span>
-                      <span>{new Date(selectedRequest.updatedAt).toLocaleDateString('fr-FR')}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Hash className="w-4 h-4 text-gray-500" />
-                      <span className="font-medium">ID:</span>
-                      <span className="font-mono text-sm">{selectedRequest.id}</span>
-                    </div>
-                  </CardContent>
-                </Card>
 
-                {selectedRequest.designFileUrl && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <FileText className="w-5 h-5" />
-                        Fichier Design
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">Nom du fichier:</span>
-                        <span>{selectedRequest.designFileName || 'Non spécifié'}</span>
-                      </div>
-                      <Button
-                        onClick={() => downloadDesignFile(selectedRequest.designFileUrl!, selectedRequest.designFileName || 'design')}
-                        className="w-full"
-                      >
-                        <Download className="w-4 h-4 mr-2" />
-                        Télécharger le Design
-                      </Button>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
-
-              {/* Notes */}
-              {(selectedRequest.notes || selectedRequest.adminNotes) && (
-                <div className="space-y-4">
-                  {selectedRequest.notes && (
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Notes du Client</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-gray-700">{selectedRequest.notes}</p>
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  {selectedRequest.adminNotes && (
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Notes Administrateur</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-gray-700">{selectedRequest.adminNotes}</p>
-                      </CardContent>
-                    </Card>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
 
       {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
@@ -597,6 +522,167 @@ export default function PrintServiceAdminPage() {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+
+      {/* New Print Demand Dialog */}
+      <Dialog open={isNewDialogOpen} onOpenChange={setIsNewDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Nouvelle Demande d'Impression</DialogTitle>
+            <DialogDescription>
+              Créer une nouvelle demande d'impression personnalisée
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6">
+            {/* Customer Information */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium flex items-center gap-2">
+                <User className="w-5 h-5" />
+                Informations Client
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="customerName">Nom du client *</Label>
+                  <input
+                    id="customerName"
+                    type="text"
+                    value={newRequest.customerName}
+                    onChange={(e) => setNewRequest({...newRequest, customerName: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    placeholder="Nom complet"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="customerEmail">Email *</Label>
+                  <input
+                    id="customerEmail"
+                    type="email"
+                    value={newRequest.customerEmail}
+                    onChange={(e) => setNewRequest({...newRequest, customerEmail: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    placeholder="email@exemple.com"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="customerPhone">Téléphone</Label>
+                  <input
+                    id="customerPhone"
+                    type="tel"
+                    value={newRequest.customerPhone}
+                    onChange={(e) => setNewRequest({...newRequest, customerPhone: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    placeholder="+216 XX XXX XXX"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="company">Entreprise</Label>
+                  <input
+                    id="company"
+                    type="text"
+                    value={newRequest.company}
+                    onChange={(e) => setNewRequest({...newRequest, company: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    placeholder="Nom de l'entreprise"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Product Details */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium flex items-center gap-2">
+                <Package className="w-5 h-5" />
+                Détails du Produit
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="material">Matériau *</Label>
+                  <Select value={newRequest.material} onValueChange={(value: 'KRAFT_VIEW' | 'KRAFT_ALU') => setNewRequest({...newRequest, material: value})}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionner un matériau" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {materialOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="dimensions">Dimensions (cm) *</Label>
+                  <input
+                    id="dimensions"
+                    type="text"
+                    value={newRequest.dimensions}
+                    onChange={(e) => setNewRequest({...newRequest, dimensions: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    placeholder="ex: 10×15, 12×20"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="quantity">Quantité (min. 300) *</Label>
+                  <input
+                    id="quantity"
+                    type="number"
+                    min="300"
+                    value={newRequest.quantity}
+                    onChange={(e) => setNewRequest({...newRequest, quantity: parseInt(e.target.value) || 300})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="deliveryDate">Date de livraison souhaitée *</Label>
+                  <input
+                    id="deliveryDate"
+                    type="date"
+                    value={newRequest.deliveryDate}
+                    onChange={(e) => setNewRequest({...newRequest, deliveryDate: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Notes */}
+            <div>
+              <Label htmlFor="notes">Notes additionnelles</Label>
+              <Textarea
+                id="notes"
+                value={newRequest.notes}
+                onChange={(e) => setNewRequest({...newRequest, notes: e.target.value})}
+                placeholder="Informations supplémentaires, instructions spéciales..."
+                rows={3}
+                className="w-full"
+              />
+            </div>
+
+            {/* Actions */}
+            <div className="flex justify-end gap-3 pt-4 border-t">
+              <Button
+                variant="outline"
+                onClick={() => setIsNewDialogOpen(false)}
+                disabled={creating}
+              >
+                Annuler
+              </Button>
+              <Button
+                onClick={createNewRequest}
+                disabled={creating || !newRequest.customerName || !newRequest.customerEmail || !newRequest.dimensions || !newRequest.deliveryDate}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                {creating ? 'Création...' : 'Créer la demande'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </AdminLayout>
   );
 }

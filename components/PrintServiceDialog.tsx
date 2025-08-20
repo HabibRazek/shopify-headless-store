@@ -175,7 +175,7 @@ Téléphone: +216 29 362 224
 
       if (response.ok) {
         const responseData = await response.json();
-        toast.success('Votre demande a été envoyée avec succès!');
+        toast.success('Votre demande a été enregistrée avec succès!');
         setStep(4); // Success step
       } else {
         const errorData = await response.json();
