@@ -20,12 +20,10 @@
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "prisma generate && next build",
-    "build:production": "npm run clean && npm run build",
     "start": "next start -p 3000",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "type-check": "tsc --noEmit",
-    "clean": "node scripts/clean-build.js",
     "check": "npm run type-check && npm run lint",
     "deploy:check": "npm run check && npm run build"
   },
