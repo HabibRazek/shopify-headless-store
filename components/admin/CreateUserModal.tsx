@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { toast } from 'sonner';
 import { Eye, EyeOff, RefreshCw } from 'lucide-react';
 
@@ -95,14 +95,18 @@ export default function CreateUserModal({ open, onOpenChange, onUserCreated }: C
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Créer un nouvel utilisateur</DialogTitle>
-          <DialogDescription>
+    <Drawer open={open} onOpenChange={onOpenChange}>
+      <DrawerContent className="max-w-2xl mx-auto">
+        <DrawerHeader className="border-b border-gray-100 pb-4">
+          <DrawerTitle className="text-xl font-semibold text-gray-900">
+            Créer un nouvel utilisateur
+          </DrawerTitle>
+          <DrawerDescription className="text-gray-600">
             Ajoutez un nouveau compte utilisateur au système
-          </DialogDescription>
-        </DialogHeader>
+          </DrawerDescription>
+        </DrawerHeader>
+
+        <div className="p-6 max-h-[80vh] overflow-y-auto">
         
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Name */}
@@ -212,25 +216,34 @@ export default function CreateUserModal({ open, onOpenChange, onUserCreated }: C
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end space-x-2 pt-4">
+          <div className="flex justify-end space-x-3 pt-6 border-t border-gray-100 mt-6">
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={loading}
+              className="border-gray-300 text-gray-700 hover:bg-gray-50"
             >
               Annuler
             </Button>
             <Button
               type="submit"
               disabled={loading}
-              className="bg-green-600 hover:bg-green-700 text-white"
+              className="bg-gradient-to-r from-gray-900 to-[#B4E50D] hover:from-gray-800 hover:to-[#9BC70A] text-white shadow-lg hover:shadow-xl transition-all duration-300"
             >
-              {loading ? 'Création...' : 'Créer l\'utilisateur'}
+              {loading ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  Création...
+                </>
+              ) : (
+                'Créer l\'utilisateur'
+              )}
             </Button>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
 }

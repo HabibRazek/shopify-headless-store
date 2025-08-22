@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -24,7 +25,6 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -43,12 +43,12 @@ interface NavItem {
 
 const navigationItems: NavItem[] = [
   {
-    title: 'Tableau de Bord',
+    title: 'Dashboard',
     href: '/admin',
     icon: LayoutDashboard,
   },
   {
-    title: 'Commandes',
+    title: 'Orders',
     href: '/admin/orders',
     icon: ShoppingCart,
   },
@@ -56,23 +56,22 @@ const navigationItems: NavItem[] = [
     title: 'Messages',
     href: '/admin/messages',
     icon: MessageSquare,
-    badge: '3',
+    badge: '12',
   },
   {
-    title: 'Factures',
+    title: 'Invoices',
     href: '/admin/factures',
     icon: Receipt,
   },
   {
-    title: 'Gestion des Utilisateurs',
+    title: 'Users',
     href: '/admin/users',
     icon: Users,
   },
   {
-    title: 'Service d\'Impression',
+    title: 'Print Service',
     href: '/admin/print-service',
     icon: Package,
-    badge: 'Nouveau',
   },
   {
     title: 'Blog',
@@ -85,7 +84,7 @@ const navigationItems: NavItem[] = [
         icon: FileText,
       },
       {
-        title: 'Catégories',
+        title: 'Categories',
         href: '/admin/blog/categories',
         icon: Folder,
       },
@@ -97,12 +96,12 @@ const navigationItems: NavItem[] = [
     ],
   },
   {
-    title: 'Statistiques',
+    title: 'Analytics',
     href: '/admin/analytics',
     icon: BarChart3,
   },
   {
-    title: 'Paramètres',
+    title: 'Settings',
     href: '/admin/settings',
     icon: Settings,
   },
@@ -164,25 +163,25 @@ export default function AdminSidebar({
             }
           }}
           className={cn(
-            'flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-xl transition-all duration-200 group relative',
+            'flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 group relative',
             level > 0 && 'ml-4 pl-6',
             active
-              ? 'bg-gradient-to-r from-green-100 to-green-50 text-green-700 shadow-md border border-green-200'
-              : 'text-gray-600 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 hover:text-gray-900 hover:shadow-sm',
+              ? 'bg-gray-100 text-gray-900 shadow-sm'
+              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
             isCollapsed && level === 0 && 'justify-center px-2'
           )}
         >
           <item.icon className={cn(
-            'flex-shrink-0 transition-colors',
-            active ? 'text-green-600' : 'text-gray-400 group-hover:text-gray-600',
-            isCollapsed ? 'h-5 w-5' : 'h-4 w-4'
+            'flex-shrink-0 transition-all duration-200',
+            active ? 'text-gray-700' : 'text-gray-500',
+            isCollapsed ? 'h-5 w-5' : 'h-5 w-5'
           )} />
           
           {!isCollapsed && (
             <>
               <span className="flex-1 truncate">{item.title}</span>
               {item.badge && (
-                <Badge variant="secondary" className="bg-green-100 text-green-700 text-xs">
+                <Badge variant="secondary" className="bg-gray-100 text-gray-600 text-xs font-medium border-0 rounded-md">
                   {item.badge}
                 </Badge>
               )}
@@ -228,33 +227,31 @@ export default function AdminSidebar({
   };
 
   const sidebarContent = (
-    <div className="flex flex-col h-full bg-white border-r border-gray-200 shadow-lg">
-      {/* Header */}
+    <div className="flex flex-col h-full bg-white border-r border-gray-200 shadow-sm">
+      {/* Clean Professional Header */}
       <div className={cn(
-        'flex items-center gap-3 p-4 border-b border-gray-200 bg-gradient-to-r from-green-50 to-green-100',
-        isCollapsed && 'justify-center px-2'
+        'flex items-center p-4 border-b border-gray-100',
+        isCollapsed && 'justify-center px-3'
       )}>
         {!isCollapsed ? (
-          <>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] rounded-xl flex items-center justify-center shadow-md">
-                <span className="text-white font-bold text-lg">P</span>
-              </div>
-              <div>
-                <h2 className="font-bold text-gray-900 text-lg">Packedin</h2>
-                <p className="text-xs text-green-600 font-medium">Admin Panel</p>
-              </div>
-            </div>
-          </>
+          <div className="relative h-10 w-28 flex-shrink-0">
+            <Image
+              src="/cropped-packedIn-LOGO-FINAL-2021-BLACK-01.webp"
+              alt="Packedin Logo"
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
         ) : (
-          <div className="w-10 h-10 bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] rounded-xl flex items-center justify-center shadow-md">
-            <span className="text-white font-bold text-lg">P</span>
+          <div className="w-8 h-8 bg-gray-600 rounded-lg flex items-center justify-center">
+            <span className="text-white font-semibold text-sm">P</span>
           </div>
         )}
       </div>
 
-      {/* Navigation */}
-      <div className="flex-1 overflow-y-auto py-4 scrollbar-hide">
+      {/* Clean Navigation */}
+      <div className="flex-1 overflow-y-auto py-4">
         <nav className="space-y-1 px-3">
           {navigationItems.map((item) => (
             <NavItemComponent key={item.href} item={item} />
@@ -263,20 +260,17 @@ export default function AdminSidebar({
 
         {!isCollapsed && (
           <>
-            <Separator className="my-4 mx-3" />
-            
+            <div className="my-4 mx-3 border-t border-gray-100"></div>
+
             {/* Quick Actions */}
             <div className="px-3">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">
-                Actions Rapides
-              </p>
               <div className="space-y-1">
                 <Link
                   href="/admin/help"
-                  className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-600 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 rounded-xl transition-all duration-200 hover:shadow-sm"
+                  className="flex items-center gap-3 px-3 py-2.5 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-all duration-200"
                 >
-                  <HelpCircle className="h-4 w-4" />
-                  Aide
+                  <HelpCircle className="h-5 w-5 text-gray-500" />
+                  <span className="font-medium">Centre d'Aide</span>
                 </Link>
               </div>
             </div>
@@ -284,20 +278,20 @@ export default function AdminSidebar({
         )}
       </div>
 
-      {/* User Info & Collapse Button */}
-      <div className="border-t border-gray-200 p-3 bg-gradient-to-r from-gray-50 to-gray-100">
+      {/* Clean User Info & Collapse Button */}
+      <div className="border-t border-gray-100 p-3">
         {!isCollapsed && session?.user && (
-          <div className="flex items-center gap-3 p-3 rounded-xl bg-white shadow-sm border border-gray-200 mb-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] rounded-full flex items-center justify-center shadow-sm">
-              <span className="text-white font-medium text-sm">
+          <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 mb-3">
+            <div className="w-8 h-8 bg-gray-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-semibold text-sm">
                 {session.user.name?.charAt(0)?.toUpperCase() || 'A'}
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-gray-900 truncate">
+              <p className="text-sm font-medium text-gray-900 truncate">
                 {session.user.name || 'Admin'}
               </p>
-              <p className="text-xs text-green-600 font-medium truncate">
+              <p className="text-xs text-gray-500 truncate">
                 {session.user.email}
               </p>
             </div>
@@ -310,7 +304,7 @@ export default function AdminSidebar({
             size="sm"
             onClick={() => setIsCollapsed(!isCollapsed)}
             className={cn(
-              'flex-1 justify-center hover:bg-green-50 hover:text-green-600 transition-colors rounded-xl',
+              'flex-1 justify-center hover:bg-gray-100 transition-all duration-200 rounded-lg',
               isCollapsed && 'px-2'
             )}
           >
@@ -319,7 +313,7 @@ export default function AdminSidebar({
             ) : (
               <>
                 <ChevronLeft className="h-4 w-4 mr-2" />
-                Réduire
+                <span className="font-medium">Réduire</span>
               </>
             )}
           </Button>
@@ -330,12 +324,12 @@ export default function AdminSidebar({
 
   return (
     <>
-      {/* Desktop Sidebar */}
+      {/* Clean Desktop Sidebar */}
       <motion.aside
         initial={false}
-        animate={{ width: isCollapsed ? 80 : 280 }}
+        animate={{ width: isCollapsed ? 64 : 280 }}
         transition={{ duration: 0.3, ease: 'easeInOut' }}
-        className="hidden md:flex flex-col h-screen sticky top-0 z-40"
+        className="hidden md:flex flex-col h-screen sticky top-0 z-40 mr-2 sm:mr-4"
       >
         {sidebarContent}
       </motion.aside>
@@ -360,7 +354,7 @@ export default function AdminSidebar({
               animate={{ x: 0 }}
               exit={{ x: -280 }}
               transition={{ duration: 0.3, ease: 'easeInOut' }}
-              className="fixed left-0 top-0 h-full w-80 z-50 md:hidden"
+              className="fixed left-0 top-0 h-full w-80 z-50 md:hidden shadow-lg"
             >
               {sidebarContent}
             </motion.aside>

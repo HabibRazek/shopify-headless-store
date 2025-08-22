@@ -1,12 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import {
   ChevronLeft,
   ChevronRight,
   Search,
-  Filter,
   Download,
   Eye,
   Edit,
@@ -44,7 +42,7 @@ import {
 } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { toast } from 'sonner';
-import OrderDetailsModal from './OrderDetailsModal';
+import OrderDetailsDrawer from './OrderDetailsDrawer';
 
 interface OrderItem {
   id: string;
@@ -85,13 +83,13 @@ interface OrdersDataTableProps {
 }
 
 const statusColors = {
-  pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  pending_payment: 'bg-orange-100 text-orange-800 border-orange-200',
-  confirmed: 'bg-blue-100 text-blue-800 border-blue-200',
-  processing: 'bg-purple-100 text-purple-800 border-purple-200',
-  completed: 'bg-green-100 text-green-800 border-green-200',
-  cancelled: 'bg-red-100 text-red-800 border-red-200',
-  refunded: 'bg-gray-100 text-gray-800 border-gray-200',
+  pending: 'bg-gradient-to-r from-[#B4E50D]/20 to-[#B4E50D]/30 text-[#6B7C00] border-[#B4E50D]/40 shadow-md',
+  pending_payment: 'bg-gradient-to-r from-[#093FB4]/20 to-[#093FB4]/30 text-[#093FB4] border-[#093FB4]/40 shadow-md',
+  confirmed: 'bg-gradient-to-r from-[#B4E50D]/20 to-[#B4E50D]/30 text-[#6B7C00] border-[#B4E50D]/40 shadow-md',
+  processing: 'bg-gradient-to-r from-[#093FB4]/20 to-[#093FB4]/30 text-[#093FB4] border-[#093FB4]/40 shadow-md',
+  completed: 'bg-gradient-to-r from-[#B4E50D]/25 to-[#B4E50D]/35 text-[#6B7C00] border-[#B4E50D]/50 shadow-lg font-semibold',
+  cancelled: 'bg-gradient-to-r from-red-100 to-red-200 text-red-800 border-red-300 shadow-md',
+  refunded: 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800 border-gray-300 shadow-md',
 };
 
 const statusLabels = {
@@ -112,12 +110,13 @@ export default function OrdersDataTable({ className }: OrdersDataTableProps) {
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [isDetailsDrawerOpen, setIsDetailsDrawerOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [stats, setStats] = useState<Record<string, number>>({});
-  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+
   const itemsPerPage = 10;
 
   useEffect(() => {
@@ -192,7 +191,14 @@ export default function OrdersDataTable({ className }: OrdersDataTableProps) {
 
       if (!response.ok) throw new Error('Failed to update order');
 
-      toast.success('Statut de la commande mis à jour');
+      const result = await response.json();
+
+      if (result.shopifyUpdated) {
+        toast.success('Statut mis à jour dans Shopify et localement');
+      } else {
+        toast.success('Statut mis à jour localement');
+      }
+
       fetchOrders();
     } catch (error) {
       console.error('Error updating order:', error);
@@ -224,11 +230,11 @@ export default function OrdersDataTable({ className }: OrdersDataTableProps) {
 
   const handleViewDetails = (orderId: string) => {
     setSelectedOrderId(orderId);
-    setIsDetailsModalOpen(true);
+    setIsDetailsDrawerOpen(true);
   };
 
-  const handleCloseDetailsModal = () => {
-    setIsDetailsModalOpen(false);
+  const handleCloseDetailsDrawer = () => {
+    setIsDetailsDrawerOpen(false);
     setSelectedOrderId(null);
   };
 
@@ -236,46 +242,67 @@ export default function OrdersDataTable({ className }: OrdersDataTableProps) {
     <div className={`space-y-6 ${className}`}>
       {/* Header with Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {Object.entries(stats).map(([status, count]) => (
-          <Card key={status} className="border-l-4 border-l-green-500">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">
-                    {statusLabels[status as keyof typeof statusLabels] || status}
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900">{count}</p>
+        {Object.entries(stats).map(([status, count]) => {
+          const borderColors = {
+            pending: 'border-l-[#B4E50D]',
+            pending_payment: 'border-l-[#093FB4]',
+            confirmed: 'border-l-[#B4E50D]',
+            processing: 'border-l-[#093FB4]',
+            completed: 'border-l-[#B4E50D]',
+            cancelled: 'border-l-red-400',
+            refunded: 'border-l-gray-400',
+          };
+
+
+          return (
+            <Card key={status} className={`border-l-4 ${borderColors[status as keyof typeof borderColors] || 'border-l-gray-400'} shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-white to-gray-50/50`}>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600">
+                      {statusLabels[status as keyof typeof statusLabels] || status}
+                    </p>
+                    <p className="text-2xl font-bold text-gray-900">{count}</p>
+                  </div>
+                  <Badge className={statusColors[status as keyof typeof statusColors] || 'bg-gray-100'}>
+                    {count}
+                  </Badge>
                 </div>
-                <Badge className={statusColors[status as keyof typeof statusColors] || 'bg-gray-100'}>
-                  {count}
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
-      {/* Filters and Actions */}
-      <Card>
-        <CardHeader>
+
+      <Card className="shadow-lg border-l-4 border-l-[#B4E50D] bg-gradient-to-r from-white to-gray-50/30">
+        <CardHeader className="bg-gradient-to-r from-[#B4E50D]/5 to-[#093FB4]/5 border-b border-[#093FB4]/10">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <CardTitle className="text-xl font-semibold text-gray-900">
+            <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
+              <div className="w-2 h-6 bg-gradient-to-b from-[#B4E50D] to-[#093FB4] rounded-full"></div>
               Gestion des Commandes ({totalCount})
             </CardTitle>
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <Button
                 onClick={syncShopifyOrders}
                 disabled={syncing}
-                className="bg-green-600 hover:bg-green-700 text-white"
+                className="bg-gradient-to-r from-gray-900 to-[#B4E50D] hover:from-gray-800 hover:to-[#9BC70A] text-white shadow-lg hover:shadow-xl transition-all duration-300 border-0 font-semibold"
               >
                 {syncing ? (
                   <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
                 ) : (
-                  <RefreshCw className="h-4 w-4 mr-2" />
+                  <img
+                    src="/shopify-logo-png-transparent.png"
+                    alt="Shopify"
+                    className="h-4 w-4 mr-2"
+                  />
                 )}
                 Synchroniser Shopify
               </Button>
-              <Button variant="outline">
+              <Button
+                variant="outline"
+                className="bg-gradient-to-r from-[#093FB4]/10 to-[#093FB4]/20 border-[#093FB4]/30 text-[#093FB4] hover:from-[#093FB4]/20 hover:to-[#093FB4]/30 hover:border-[#093FB4]/50 shadow-md hover:shadow-lg transition-all duration-300 font-medium"
+              >
                 <Download className="h-4 w-4 mr-2" />
                 Exporter
               </Button>
@@ -312,13 +339,13 @@ export default function OrdersDataTable({ className }: OrdersDataTableProps) {
             </Select>
           </div>
 
-          {/* Orders Table */}
-          <div className="border rounded-lg overflow-hidden">
+
+          <div className="border-2 border-[#093FB4]/20 rounded-xl overflow-hidden shadow-xl bg-gradient-to-br from-white to-gray-50/50">
             <Table>
               <TableHeader>
-                <TableRow className="bg-gray-50">
-                  <TableHead 
-                    className="cursor-pointer hover:bg-gray-100 transition-colors"
+                <TableRow className="bg-gradient-to-r from-[#B4E50D]/10 via-[#093FB4]/10 to-[#B4E50D]/10 border-b-2 border-[#093FB4]/30">
+                  <TableHead
+                    className="cursor-pointer hover:bg-gradient-to-r hover:from-[#B4E50D]/20 hover:to-[#093FB4]/20 transition-all duration-300 font-semibold text-gray-800"
                     onClick={() => handleSort('orderNumber')}
                   >
                     <div className="flex items-center gap-2">
@@ -326,9 +353,9 @@ export default function OrdersDataTable({ className }: OrdersDataTableProps) {
                       {getSortIcon('orderNumber')}
                     </div>
                   </TableHead>
-                  <TableHead>Client</TableHead>
-                  <TableHead 
-                    className="cursor-pointer hover:bg-gray-100 transition-colors"
+                  <TableHead className="font-semibold text-gray-800">Client</TableHead>
+                  <TableHead
+                    className="cursor-pointer hover:bg-gradient-to-r hover:from-[#B4E50D]/20 hover:to-[#093FB4]/20 transition-all duration-300 font-semibold text-gray-800"
                     onClick={() => handleSort('total')}
                   >
                     <div className="flex items-center gap-2">
@@ -336,10 +363,10 @@ export default function OrdersDataTable({ className }: OrdersDataTableProps) {
                       {getSortIcon('total')}
                     </div>
                   </TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead>Livraison</TableHead>
-                  <TableHead 
-                    className="cursor-pointer hover:bg-gray-100 transition-colors"
+                  <TableHead className="font-semibold text-gray-800">Statut</TableHead>
+                  <TableHead className="font-semibold text-gray-800">Livraison</TableHead>
+                  <TableHead
+                    className="cursor-pointer hover:bg-gradient-to-r hover:from-[#B4E50D]/20 hover:to-[#093FB4]/20 transition-all duration-300 font-semibold text-gray-800"
                     onClick={() => handleSort('createdAt')}
                   >
                     <div className="flex items-center gap-2">
@@ -347,7 +374,7 @@ export default function OrdersDataTable({ className }: OrdersDataTableProps) {
                       {getSortIcon('createdAt')}
                     </div>
                   </TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="text-right font-semibold text-gray-800">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -367,12 +394,17 @@ export default function OrdersDataTable({ className }: OrdersDataTableProps) {
                   </TableRow>
                 ) : (
                   orders.map((order) => (
-                    <TableRow key={order.id} className="hover:bg-gray-50 transition-colors">
+                    <TableRow key={order.id} className="hover:bg-gradient-to-r hover:from-[#B4E50D]/5 hover:to-[#093FB4]/5 transition-all duration-300 border-b border-gray-100 hover:border-[#093FB4]/20">
                       <TableCell className="font-medium">
                         <div>
-                          <p className="font-semibold text-gray-900">#{order.orderNumber}</p>
+                          <p className="font-bold text-gray-900 flex items-center gap-2">
+                            <span className="w-1 h-4 bg-gradient-to-b from-[#B4E50D] to-[#093FB4] rounded-full"></span>
+                            #{order.orderNumber}
+                          </p>
                           {order.shopifyOrderId && (
-                            <p className="text-xs text-gray-500">Shopify: {order.shopifyOrderId}</p>
+                            <span className="text-xs text-[#093FB4] bg-gradient-to-r from-[#093FB4]/10 to-[#093FB4]/20 px-2 py-0.5 rounded-full inline-block w-fit mt-1 font-medium border border-[#093FB4]/30">
+                              Shopify
+                            </span>
                           )}
                         </div>
                       </TableCell>
@@ -380,7 +412,7 @@ export default function OrdersDataTable({ className }: OrdersDataTableProps) {
                         <div className="flex items-center gap-3">
                           <Avatar className="h-8 w-8">
                             <AvatarImage src={order.user?.image || ''} />
-                            <AvatarFallback className="bg-green-100 text-green-700">
+                            <AvatarFallback className="bg-gray-100 text-gray-700">
                               {order.user?.name?.charAt(0)?.toUpperCase() || 'G'}
                             </AvatarFallback>
                           </Avatar>
@@ -416,7 +448,11 @@ export default function OrdersDataTable({ className }: OrdersDataTableProps) {
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="hover:bg-gradient-to-r hover:from-[#B4E50D]/20 hover:to-[#093FB4]/20 hover:text-[#093FB4] transition-all duration-300 rounded-lg shadow-sm hover:shadow-md"
+                            >
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
@@ -452,17 +488,18 @@ export default function OrdersDataTable({ className }: OrdersDataTableProps) {
               <p className="text-sm text-gray-500">
                 Affichage de {((currentPage - 1) * itemsPerPage) + 1} à {Math.min(currentPage * itemsPerPage, totalCount)} sur {totalCount} commandes
               </p>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setCurrentPage(currentPage - 1)}
                   disabled={currentPage === 1}
+                  className="bg-gradient-to-r from-[#B4E50D]/10 to-[#B4E50D]/20 border-[#B4E50D]/30 text-[#6B7C00] hover:from-[#B4E50D]/20 hover:to-[#B4E50D]/30 hover:border-[#B4E50D]/50 shadow-md hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
                 >
                   <ChevronLeft className="h-4 w-4" />
                   Précédent
                 </Button>
-                <span className="text-sm font-medium px-3 py-1 bg-green-100 text-green-700 rounded">
+                <span className="text-sm font-semibold px-4 py-2 bg-gradient-to-r from-[#B4E50D]/20 to-[#B4E50D]/30 text-[#6B7C00] rounded-lg shadow-md border border-[#B4E50D]/40">
                   {currentPage} / {totalPages}
                 </span>
                 <Button
@@ -470,6 +507,7 @@ export default function OrdersDataTable({ className }: OrdersDataTableProps) {
                   size="sm"
                   onClick={() => setCurrentPage(currentPage + 1)}
                   disabled={currentPage === totalPages}
+                  className="bg-gradient-to-r from-[#B4E50D]/10 to-[#B4E50D]/20 border-[#B4E50D]/30 text-[#6B7C00] hover:from-[#B4E50D]/20 hover:to-[#B4E50D]/30 hover:border-[#B4E50D]/50 shadow-md hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
                 >
                   Suivant
                   <ChevronRight className="h-4 w-4" />
@@ -480,11 +518,11 @@ export default function OrdersDataTable({ className }: OrdersDataTableProps) {
         </CardContent>
       </Card>
 
-      {/* Order Details Modal */}
-      <OrderDetailsModal
+
+      <OrderDetailsDrawer
         orderId={selectedOrderId}
-        isOpen={isDetailsModalOpen}
-        onClose={handleCloseDetailsModal}
+        isOpen={isDetailsDrawerOpen}
+        onClose={handleCloseDetailsDrawer}
       />
     </div>
   );

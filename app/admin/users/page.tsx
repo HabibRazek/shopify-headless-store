@@ -32,7 +32,6 @@ import ResetPasswordModal from '@/components/admin/ResetPasswordModal';
 import AdminLayout from '@/components/admin/AdminLayout';
 import DataTable from '@/components/admin/DataTable';
 import StatusBadge, { getStatusVariant } from '@/components/admin/StatusBadge';
-import Avatar from '@/components/admin/Avatar';
 
 interface User {
   id: string;
@@ -363,99 +362,350 @@ export default function UsersManagementPage() {
   ];
 
   // Calculate statistics
-  const stats = [
-    {
-      label: 'Total des utilisateurs',
-      value: pagination.totalUsers,
-      icon: <Users className="w-6 h-6 text-white" />,
-      color: 'bg-gradient-to-r from-blue-500 to-blue-600',
-      change: '+12% ce mois',
-      changeType: 'increase' as const
-    },
-    {
-      label: 'Utilisateurs actifs',
-      value: users.filter(u => u.status === 'active').length,
-      icon: <UserCheck className="w-6 h-6 text-white" />,
-      color: 'bg-gradient-to-r from-green-500 to-green-600',
-      change: '+5% cette semaine',
-      changeType: 'increase' as const
-    },
-    {
-      label: 'Utilisateurs inactifs',
-      value: users.filter(u => u.status !== 'active').length,
-      icon: <UserX className="w-6 h-6 text-white" />,
-      color: 'bg-gradient-to-r from-red-500 to-red-600',
-      change: '-2% ce mois',
-      changeType: 'decrease' as const
-    },
-    {
-      label: 'Administrateurs',
-      value: users.filter(u => u.role === 'admin' || u.role === 'super_admin').length,
-      icon: <Users className="w-6 h-6 text-white" />,
-      color: 'bg-gradient-to-r from-purple-500 to-purple-600',
-      change: '3 actifs',
-      changeType: 'neutral' as const
-    }
-  ];
+  const stats = {
+    total: users.length,
+    active: users.filter(u => u.status === 'active').length,
+    inactive: users.filter(u => u.status === 'inactive' || u.status === 'suspended').length,
+    admins: users.filter(u => u.role === 'admin' || u.role === 'super_admin').length
+  };
 
   return (
     <AdminLayout>
-      <DataTable
-        title="Gestion des Utilisateurs"
-        subtitle="Gérez les comptes utilisateurs et leurs permissions de manière professionnelle"
-        columns={columns}
-        data={users}
-        loading={loading}
-        searchValue={searchTerm}
-        onSearchChange={setSearchTerm}
-        searchPlaceholder="Rechercher par nom, email, téléphone..."
-        filters={[
-          {
-            key: 'role',
-            label: 'Rôle',
-            options: [
-              { value: 'all', label: 'Tous les rôles' },
-              { value: 'user', label: 'Utilisateur' },
-              { value: 'admin', label: 'Admin' },
-              { value: 'super_admin', label: 'Super Admin' }
-            ],
-            value: roleFilter,
-            onChange: setRoleFilter
-          },
-          {
-            key: 'status',
-            label: 'Statut',
-            options: [
-              { value: 'all', label: 'Tous les statuts' },
-              { value: 'active', label: 'Actif' },
-              { value: 'inactive', label: 'Inactif' },
-              { value: 'suspended', label: 'Suspendu' }
-            ],
-            value: statusFilter,
-            onChange: setStatusFilter
-          }
-        ]}
-        actions={
-          <Button
-            onClick={() => setShowCreateModal(true)}
-            className="bg-green-600 hover:bg-green-700 text-white h-10 gap-2 shadow-sm"
-          >
-            <Plus className="h-4 w-4" />
-            Nouvel Utilisateur
-          </Button>
-        }
-        emptyState={{
-          icon: <Users className="w-16 h-16" />,
-          title: 'Aucun utilisateur trouvé',
-          description: 'Aucun utilisateur ne correspond aux critères de recherche actuels. Créez un nouvel utilisateur pour commencer.'
-        }}
-        onRowClick={(user) => {
-          setSelectedUser(user);
-          setShowEditModal(true);
-        }}
-        showStats={true}
-        stats={stats}
-      />
+      <div className="space-y-4 max-w-full overflow-hidden">
+        {/* Professional Page Header */}
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+          <div className="px-4 sm:px-8 py-4 sm:py-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-[#B4E50D] to-[#9BC70A] rounded-lg flex items-center justify-center shadow-lg">
+                    <Users className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+                  </div>
+                  <h1 className="text-xl sm:text-3xl font-bold text-gray-900">Gestion des Utilisateurs</h1>
+                </div>
+                <p className="text-gray-600 text-sm sm:text-lg">Gérez les comptes utilisateurs et leurs permissions</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  <p className="text-sm text-gray-500">Total utilisateurs</p>
+                  <p className="text-sm font-medium text-gray-900">{users.length}</p>
+                </div>
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Statistics Section */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900">Aperçu des Utilisateurs</h2>
+              <p className="text-sm text-gray-600 mt-1">Statistiques en temps réel de vos utilisateurs</p>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span>Données en direct</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="border-l-4 border-l-[#B4E50D] bg-gradient-to-r from-[#B4E50D]/10 to-transparent shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Total Utilisateurs</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">{stats.total}</p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#B4E50D] to-[#9BC70A] rounded-full flex items-center justify-center shadow-md">
+                    <Users className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-l-4 border-l-[#B4E50D] bg-gradient-to-r from-[#B4E50D]/10 to-transparent shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Utilisateurs Actifs</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">{stats.active}</p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#B4E50D] to-[#9BC70A] rounded-full flex items-center justify-center shadow-md">
+                    <UserCheck className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-l-4 border-l-[#B4E50D] bg-gradient-to-r from-[#B4E50D]/10 to-transparent shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Utilisateurs Inactifs</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">{stats.inactive}</p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#B4E50D] to-[#9BC70A] rounded-full flex items-center justify-center shadow-md">
+                    <UserX className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-l-4 border-l-[#B4E50D] bg-gradient-to-r from-[#B4E50D]/10 to-transparent shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Administrateurs</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">{stats.admins}</p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#B4E50D] to-[#9BC70A] rounded-full flex items-center justify-center shadow-md">
+                    <Key className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Controls Section */}
+        <Card className="shadow-sm border-gray-200">
+          <CardContent className="p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+              <div className="flex items-center gap-3">
+                <h3 className="text-lg font-medium text-gray-900">Actions et Filtres</h3>
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Temps réel</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Button
+                  size="sm"
+                  className="bg-gradient-to-r from-gray-900 to-[#B4E50D] hover:from-gray-800 hover:to-[#9BC70A] text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                  onClick={() => setShowCreateModal(true)}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nouvel Utilisateur
+                </Button>
+              </div>
+            </div>
+
+            {/* Search and Filter Section */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <span>Recherche et Filtres</span>
+                <div className="flex-1 h-px bg-gray-200"></div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex-1">
+                  <div className="relative">
+                    <Input
+                      placeholder="Rechercher par nom, email, téléphone..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full pl-10 border-gray-300 focus:border-green-500 focus:ring-green-500"
+                    />
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Search className="h-4 w-4 text-gray-400" />
+                    </div>
+                  </div>
+                </div>
+
+                <Select value={roleFilter} onValueChange={setRoleFilter}>
+                  <SelectTrigger className="w-full sm:w-56 border-gray-300 focus:border-green-500 focus:ring-green-500">
+                    <SelectValue placeholder="Filtrer par rôle" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Tous les rôles</SelectItem>
+                    <SelectItem value="user">Utilisateur</SelectItem>
+                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="super_admin">Super Admin</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-full sm:w-56 border-gray-300 focus:border-green-500 focus:ring-green-500">
+                    <SelectValue placeholder="Filtrer par statut" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Tous les statuts</SelectItem>
+                    <SelectItem value="active">Actif</SelectItem>
+                    <SelectItem value="inactive">Inactif</SelectItem>
+                    <SelectItem value="suspended">Suspendu</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Data Table Section */}
+        <Card className="shadow-sm border-gray-200">
+          <CardHeader className="pb-4 border-b border-gray-100">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg font-medium text-gray-900">Liste des Utilisateurs</CardTitle>
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                <span>Mise à jour en temps réel</span>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400"></div>
+                <span className="ml-2 text-gray-600">Chargement des utilisateurs...</span>
+              </div>
+            ) : users.length === 0 ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="text-center">
+                  <Users className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Aucun utilisateur trouvé</h3>
+                  <p className="text-gray-500 mb-6">Aucun utilisateur ne correspond aux critères de recherche actuels.</p>
+                  <Button
+                    onClick={() => setShowCreateModal(true)}
+                    className="bg-gradient-to-r from-gray-900 to-[#B4E50D] hover:from-gray-800 hover:to-[#9BC70A] text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Créer le premier utilisateur
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-b border-gray-200 bg-gray-50/50">
+                      <TableHead className="text-left py-4 px-6 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Utilisateur
+                      </TableHead>
+                      <TableHead className="text-left py-4 px-6 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Rôle
+                      </TableHead>
+                      <TableHead className="text-center py-4 px-6 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Statut
+                      </TableHead>
+                      <TableHead className="text-center py-4 px-6 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Commandes
+                      </TableHead>
+                      <TableHead className="text-left py-4 px-6 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Créé le
+                      </TableHead>
+                      <TableHead className="text-center py-4 px-6 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Actions
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {users.map((user) => (
+                      <TableRow
+                        key={user.id}
+                        className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors cursor-pointer"
+                        onClick={() => {
+                          setSelectedUser(user);
+                          setShowEditModal(true);
+                        }}
+                      >
+                        <TableCell className="py-4 px-6">
+                          <div>
+                            <div className="text-sm font-semibold text-gray-900">
+                              {user.name || 'Nom non défini'}
+                            </div>
+                            <div className="text-sm text-gray-500">{user.email}</div>
+                            {user.phone && (
+                              <div className="text-xs text-gray-400 mt-0.5">{user.phone}</div>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-4 px-6">
+                          <Badge
+                            variant={user.role === 'super_admin' ? 'destructive' : user.role === 'admin' ? 'default' : 'secondary'}
+                            className="text-xs font-medium"
+                          >
+                            {user.role === 'super_admin' ? 'Super Admin' :
+                             user.role === 'admin' ? 'Admin' : 'Utilisateur'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="py-4 px-6 text-center">
+                          <StatusBadge
+                            status={user.status}
+                            variant={getStatusVariant(user.status)}
+                            label={getStatusLabel(user.status)}
+                          />
+                        </TableCell>
+                        <TableCell className="py-4 px-6 text-center">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-[#B4E50D]/10 text-[#6B7C00] border border-[#B4E50D]/20">
+                            {user._count.orders}
+                          </span>
+                        </TableCell>
+                        <TableCell className="py-4 px-6">
+                          <div className="text-sm font-medium text-gray-900">
+                            {format(new Date(user.createdAt), 'dd MMM yyyy', { locale: fr })}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {format(new Date(user.createdAt), 'HH:mm')}
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-4 px-6 text-center">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                className="h-8 w-8 p-0 hover:bg-gray-100"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48">
+                              <DropdownMenuItem
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedUser(user);
+                                  setShowEditModal(true);
+                                }}
+                                className="cursor-pointer"
+                              >
+                                <Edit className="mr-2 h-4 w-4" />
+                                Modifier
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedUser(user);
+                                  setShowResetPasswordModal(true);
+                                }}
+                                className="cursor-pointer"
+                              >
+                                <Key className="mr-2 h-4 w-4" />
+                                Réinitialiser mot de passe
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedUser(user);
+                                  setShowDeleteModal(true);
+                                }}
+                                className="text-red-600 cursor-pointer"
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Supprimer
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Delete Confirmation Modal */}
       <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>

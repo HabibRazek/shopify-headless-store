@@ -14,15 +14,21 @@ import {
   Calendar,
   Clock,
   Activity,
-  User
+  User,
+  Search,
+  MoreHorizontal,
+  RefreshCw,
+  BookOpen
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import AdminLayout from '@/components/admin/AdminLayout';
-import DataTable from '@/components/admin/DataTable';
 import StatusBadge, { getStatusVariant } from '@/components/admin/StatusBadge';
-import Avatar from '@/components/admin/Avatar';
 
 interface BlogPost {
   id: string;
@@ -330,82 +336,324 @@ export default function BlogAdminPage() {
   ];
 
   // Calculate statistics
-  const stats = [
-    {
-      label: 'Total des articles',
-      value: blogStats.totalPosts,
-      icon: <FileText className="w-6 h-6 text-white" />,
-      color: 'bg-gradient-to-r from-blue-500 to-blue-600',
-      change: '+12% ce mois',
-      changeType: 'increase' as const
-    },
-    {
-      label: 'Articles publiés',
-      value: blogStats.publishedPosts,
-      icon: <Eye className="w-6 h-6 text-white" />,
-      color: 'bg-gradient-to-r from-green-500 to-green-600',
-      change: '+8% ce mois',
-      changeType: 'increase' as const
-    },
-    {
-      label: 'Brouillons',
-      value: blogStats.draftPosts,
-      icon: <Edit className="w-6 h-6 text-white" />,
-      color: 'bg-gradient-to-r from-yellow-500 to-yellow-600',
-      change: '3 nouveaux',
-      changeType: 'neutral' as const
-    },
-    {
-      label: 'Total des vues',
-      value: blogStats.totalViews,
-      icon: <TrendingUp className="w-6 h-6 text-white" />,
-      color: 'bg-gradient-to-r from-purple-500 to-purple-600',
-      change: '+15% ce mois',
-      changeType: 'increase' as const
-    }
-  ];
+  const stats = {
+    total: blogStats.totalPosts,
+    published: blogStats.publishedPosts,
+    drafts: blogStats.draftPosts,
+    views: blogStats.totalViews
+  };
+
+  // State for search and filters
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
 
   return (
     <AdminLayout>
-      <DataTable
-        title="Gestion du Blog"
-        subtitle="Gérez vos articles, catégories et tags de manière professionnelle"
-        columns={columns}
-        data={recentPosts}
-        loading={isLoading}
-        searchValue=""
-        onSearchChange={() => {}}
-        searchPlaceholder="Rechercher par titre, auteur, catégorie..."
-        filters={[
-          {
-            key: 'published',
-            label: 'Statut',
-            options: [
-              { value: 'all', label: 'Tous les statuts' },
-              { value: 'true', label: 'Publié' },
-              { value: 'false', label: 'Brouillon' }
-            ],
-            value: 'all',
-            onChange: () => {}
-          }
-        ]}
-        actions={
-          <Link href="/admin/blog/posts/new">
-            <Button className="bg-green-600 hover:bg-green-700 text-white h-10 gap-2 shadow-sm">
-              <Plus className="h-4 w-4" />
-              Nouvel Article
-            </Button>
+      <div className="space-y-4 max-w-full overflow-hidden">
+        {/* Professional Page Header */}
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+          <div className="px-4 sm:px-8 py-4 sm:py-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-[#B4E50D] to-[#9BC70A] rounded-lg flex items-center justify-center shadow-lg">
+                    <BookOpen className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+                  </div>
+                  <h1 className="text-xl sm:text-3xl font-bold text-gray-900">Gestion du Blog</h1>
+                </div>
+                <p className="text-gray-600 text-sm sm:text-lg">Gérez vos articles, catégories et tags de manière professionnelle</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  <p className="text-sm text-gray-500">Total articles</p>
+                  <p className="text-sm font-medium text-gray-900">{stats.total}</p>
+                </div>
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Link href="/admin/blog/posts">
+            <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer border-l-4 border-l-[#B4E50D]">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#B4E50D] to-[#9BC70A] rounded-full flex items-center justify-center shadow-md">
+                    <FileText className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">Articles</h3>
+                    <p className="text-sm text-gray-600">Gérer les articles</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </Link>
-        }
-        emptyState={{
-          icon: <FileText className="w-16 h-16" />,
-          title: 'Aucun article trouvé',
-          description: 'Aucun article ne correspond aux critères de recherche actuels. Créez votre premier article pour commencer.'
-        }}
-        onRowClick={(post) => window.open(`/blog/${post.slug}`, '_blank')}
-        showStats={true}
-        stats={stats}
-      />
+
+          <Link href="/admin/blog/categories">
+            <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer border-l-4 border-l-[#B4E50D]">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#B4E50D] to-[#9BC70A] rounded-full flex items-center justify-center shadow-md">
+                    <Folder className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">Catégories</h3>
+                    <p className="text-sm text-gray-600">Organiser par catégories</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link href="/admin/blog/tags">
+            <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer border-l-4 border-l-[#B4E50D]">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#B4E50D] to-[#9BC70A] rounded-full flex items-center justify-center shadow-md">
+                    <Tag className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">Tags</h3>
+                    <p className="text-sm text-gray-600">Gérer les étiquettes</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
+
+        {/* Statistics Section */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900">Aperçu du Blog</h2>
+              <p className="text-sm text-gray-600 mt-1">Statistiques en temps réel de votre blog</p>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span>Données en direct</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="border-l-4 border-l-[#B4E50D] bg-gradient-to-r from-[#B4E50D]/10 to-transparent shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Total Articles</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">{stats.total}</p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#B4E50D] to-[#9BC70A] rounded-full flex items-center justify-center shadow-md">
+                    <FileText className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-l-4 border-l-[#B4E50D] bg-gradient-to-r from-[#B4E50D]/10 to-transparent shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Articles Publiés</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">{stats.published}</p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#B4E50D] to-[#9BC70A] rounded-full flex items-center justify-center shadow-md">
+                    <Eye className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-l-4 border-l-[#B4E50D] bg-gradient-to-r from-[#B4E50D]/10 to-transparent shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Brouillons</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">{stats.drafts}</p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#B4E50D] to-[#9BC70A] rounded-full flex items-center justify-center shadow-md">
+                    <Edit className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-l-4 border-l-[#B4E50D] bg-gradient-to-r from-[#B4E50D]/10 to-transparent shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Total Vues</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">{stats.views.toLocaleString()}</p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#B4E50D] to-[#9BC70A] rounded-full flex items-center justify-center shadow-md">
+                    <TrendingUp className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Recent Posts Section */}
+        <Card className="shadow-sm border-gray-200">
+          <CardHeader className="pb-4 border-b border-gray-100">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg font-medium text-gray-900">Articles Récents</CardTitle>
+              <Link href="/admin/blog/posts/new">
+                <Button
+                  size="sm"
+                  className="bg-gradient-to-r from-gray-900 to-[#B4E50D] hover:from-gray-800 hover:to-[#9BC70A] text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nouvel Article
+                </Button>
+              </Link>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            {isLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <RefreshCw className="h-8 w-8 animate-spin text-gray-400" />
+                <span className="ml-2 text-gray-600">Chargement des articles...</span>
+              </div>
+            ) : recentPosts.length === 0 ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="text-center">
+                  <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Aucun article trouvé</h3>
+                  <p className="text-gray-500 mb-6">Créez votre premier article pour commencer.</p>
+                  <Link href="/admin/blog/posts/new">
+                    <Button className="bg-gradient-to-r from-gray-900 to-[#B4E50D] hover:from-gray-800 hover:to-[#9BC70A] text-white shadow-lg hover:shadow-xl transition-all duration-300">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Créer le premier article
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-b border-gray-200 bg-gray-50/50">
+                      <TableHead className="text-left py-4 px-6 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Article
+                      </TableHead>
+                      <TableHead className="text-left py-4 px-6 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Catégorie
+                      </TableHead>
+                      <TableHead className="text-center py-4 px-6 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Statut
+                      </TableHead>
+                      <TableHead className="text-center py-4 px-6 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Vues
+                      </TableHead>
+                      <TableHead className="text-left py-4 px-6 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Date
+                      </TableHead>
+                      <TableHead className="text-center py-4 px-6 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Actions
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {recentPosts.map((post) => (
+                      <TableRow
+                        key={post.id}
+                        className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors cursor-pointer"
+                        onClick={() => window.open(`/blog/${post.slug}`, '_blank')}
+                      >
+                        <TableCell className="py-4 px-6">
+                          <div>
+                            <div className="text-sm font-semibold text-gray-900 line-clamp-1">
+                              {post.title}
+                            </div>
+                            {post.excerpt && (
+                              <div className="text-sm text-gray-500 line-clamp-2 mt-1">{post.excerpt}</div>
+                            )}
+                            {post.author && (
+                              <div className="text-xs text-gray-400 mt-1">Par {post.author.name}</div>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-4 px-6">
+                          {post.category ? (
+                            <Badge variant="secondary" className="text-xs font-medium">
+                              {post.category.name}
+                            </Badge>
+                          ) : (
+                            <span className="text-gray-400 text-xs">Aucune</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="py-4 px-6 text-center">
+                          <Badge
+                            variant={post.published ? 'default' : 'secondary'}
+                            className={`text-xs font-medium ${
+                              post.published ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                            }`}
+                          >
+                            {post.published ? 'Publié' : 'Brouillon'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="py-4 px-6 text-center">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-[#B4E50D]/10 text-[#6B7C00] border border-[#B4E50D]/20">
+                            {post.views.toLocaleString()}
+                          </span>
+                        </TableCell>
+                        <TableCell className="py-4 px-6">
+                          <div className="text-sm font-medium text-gray-900">
+                            {new Date(post.createdAt).toLocaleDateString('fr-FR')}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {new Date(post.createdAt).toLocaleDateString('fr-FR', { weekday: 'short' })}
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-4 px-6 text-center">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                className="h-8 w-8 p-0 hover:bg-gray-100"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48">
+                              <DropdownMenuItem
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  window.open(`/admin/blog/posts/${post.slug}`, '_blank');
+                                }}
+                                className="cursor-pointer"
+                              >
+                                <Edit className="mr-2 h-4 w-4" />
+                                Modifier
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  window.open(`/blog/${post.slug}`, '_blank');
+                                }}
+                                className="cursor-pointer"
+                              >
+                                <Eye className="mr-2 h-4 w-4" />
+                                Voir l'article
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </AdminLayout>
   );
 }

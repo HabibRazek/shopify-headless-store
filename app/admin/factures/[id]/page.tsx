@@ -303,234 +303,147 @@ export default function InvoiceDetailPage() {
       description={`Détails de la facture pour ${invoice.companyName}`}
       actions={actionButtons}
     >
-      <div className="space-y-6">
-        {/* Invoice Header */}
-        <Card className="border-0 shadow-lg">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-2xl font-bold text-gray-900">
-                  {invoice.invoiceNumber}
+      <div className="w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Main Content */}
+          <div className="lg:col-span-2 space-y-4">
+            {/* Invoice Header */}
+            <Card className="border-0 shadow-sm bg-white">
+              <CardHeader className="border-b border-gray-100 pb-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-lg font-semibold text-gray-900">
+                      Facture: {invoice.invoiceNumber}
+                    </CardTitle>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Créée le {new Date(invoice.createdAt).toLocaleDateString('fr-FR')}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-xs text-gray-500">Packedin.tn</div>
+                    <div className="text-xs text-gray-500">Kings Worldwide Distribution</div>
+                    <div className="text-xs text-gray-500">Megrine Business Center, Tunisia</div>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-4">
+                <div className="flex items-center justify-between">
+                  <Badge className={`${getStatusColor(invoice.status)} border flex items-center gap-2 px-3 py-1`}>
+                    {getStatusIcon(invoice.status)}
+                    {getStatusText(invoice.status)}
+                  </Badge>
+                  <div className="text-sm text-gray-600">
+                    Dernière modification: {new Date(invoice.updatedAt).toLocaleDateString('fr-FR')}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Client Information */}
+            <Card className="border-0 shadow-sm bg-white">
+              <CardHeader className="border-b border-gray-100 pb-3">
+                <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <Building className="h-4 w-4 text-gray-600" />
+                  Détails du Client
                 </CardTitle>
-                <p className="text-gray-500 mt-1">
-                  Créée le {new Date(invoice.createdAt).toLocaleDateString('fr-FR')}
-                </p>
-              </div>
-              <Badge className={`${getStatusColor(invoice.status)} border flex items-center gap-2 px-4 py-2`}>
-                {getStatusIcon(invoice.status)}
-                {getStatusText(invoice.status)}
-              </Badge>
-            </div>
-          </CardHeader>
-        </Card>
+              </CardHeader>
+              <CardContent className="pt-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="text-xs font-medium text-gray-700">Nom de l'entreprise</label>
+                    <p className="text-sm font-semibold text-gray-900 mt-1">{invoice.companyName}</p>
+                  </div>
 
-        {/* Company Information */}
-        <Card className="border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <Building className="h-5 w-5 text-green-600" />
-              Informations Client
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <label className="text-sm font-medium text-gray-500">Entreprise</label>
-              <p className="text-lg font-semibold text-gray-900">{invoice.companyName}</p>
-            </div>
+                  {invoice.matriculeFiscale && (
+                    <div>
+                      <label className="text-xs font-medium text-gray-700">Matricule Fiscale</label>
+                      <p className="text-sm text-gray-900 mt-1">{invoice.matriculeFiscale}</p>
+                    </div>
+                  )}
 
-            {invoice.matriculeFiscale && (
-              <div>
-                <label className="text-sm font-medium text-gray-500">Matricule Fiscale</label>
-                <p className="text-gray-900">{invoice.matriculeFiscale}</p>
-              </div>
-            )}
+                  <div>
+                    <label className="text-xs font-medium text-gray-700">Personne de contact</label>
+                    <p className="text-sm text-gray-900 mt-1">{invoice.contactPerson}</p>
+                  </div>
 
-            <div>
-              <label className="text-sm font-medium text-gray-500">Contact</label>
-              <p className="text-gray-900">{invoice.contactPerson}</p>
-            </div>
+                  <div>
+                    <label className="text-xs font-medium text-gray-700">Email</label>
+                    <p className="text-sm text-gray-900 mt-1">{invoice.email}</p>
+                  </div>
 
-            <div>
-              <label className="text-sm font-medium text-gray-500">Email</label>
-              <p className="text-gray-900">{invoice.email}</p>
-            </div>
+                  <div>
+                    <label className="text-xs font-medium text-gray-700">Téléphone</label>
+                    <p className="text-sm text-gray-900 mt-1">{invoice.phone}</p>
+                  </div>
 
-            <div>
-              <label className="text-sm font-medium text-gray-500">Téléphone</label>
-              <p className="text-gray-900">{invoice.phone}</p>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium text-gray-500">Adresse</label>
-              <p className="text-gray-900">{invoice.address}</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Invoice Details Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Invoice Information */}
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3">
-                <FileText className="h-5 w-5 text-green-600" />
-                Détails de la Facture
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <label className="text-sm font-medium text-gray-500 block mb-1">Date de facture</label>
-                  <p className="font-semibold text-gray-900">
-                    {new Date(invoice.invoiceDate).toLocaleDateString('fr-FR', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </p>
+                  <div className="md:col-span-3">
+                    <label className="text-xs font-medium text-gray-700">Adresse</label>
+                    <p className="text-sm text-gray-900 mt-1">{invoice.address}</p>
+                  </div>
                 </div>
+              </CardContent>
+            </Card>
 
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <label className="text-sm font-medium text-gray-500 block mb-1">Date d'échéance</label>
-                  <p className="font-semibold text-gray-900">
-                    {new Date(invoice.dueDate).toLocaleDateString('fr-FR', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </p>
-                </div>
-              </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <label className="text-sm font-medium text-gray-500 block mb-1">Devise</label>
-                  <p className="font-semibold text-gray-900">{invoice.currency}</p>
-                </div>
 
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <label className="text-sm font-medium text-gray-500 block mb-1">Dernière modification</label>
-                  <p className="font-semibold text-gray-900">
-                    {new Date(invoice.updatedAt).toLocaleDateString('fr-FR')}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
 
-          {/* Quick Stats */}
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3">
-                <Hash className="h-5 w-5 text-green-600" />
-                Statistiques Rapides
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                  <label className="text-sm font-medium text-blue-600 block mb-1">Nombre d'articles</label>
-                  <p className="text-2xl font-bold text-blue-700">
-                    {invoice.items?.length || 0}
-                  </p>
-                </div>
 
-                <div className="bg-green-50 p-3 rounded-lg border border-green-200">
-                  <label className="text-sm font-medium text-green-600 block mb-1">Quantité totale</label>
-                  <p className="text-2xl font-bold text-green-700">
-                    {invoice.items?.reduce((sum, item) => sum + item.quantity, 0) || 0}
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-purple-50 p-3 rounded-lg border border-purple-200">
-                  <label className="text-sm font-medium text-purple-600 block mb-1">Prix moyen/article</label>
-                  <p className="text-lg font-bold text-purple-700">
-                    {invoice.items && invoice.items.length > 0
-                      ? formatPrice(
-                          invoice.items.reduce((sum, item) => sum + item.unitPrice, 0) / invoice.items.length,
-                          invoice.currency
-                        )
-                      : formatPrice(0, invoice.currency)
-                    }
-                  </p>
-                </div>
-
-                <div className="bg-amber-50 p-3 rounded-lg border border-amber-200">
-                  <label className="text-sm font-medium text-amber-600 block mb-1">Remise totale</label>
-                  <p className="text-lg font-bold text-amber-700">
-                    {invoice.totalDiscount > 0
-                      ? `-${formatPrice(invoice.totalDiscount, invoice.currency)}`
-                      : 'Aucune'
-                    }
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Invoice Items */}
-        {invoice.items && invoice.items.length > 0 && (
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3">
-                <Package className="h-5 w-5 text-green-600" />
-                Articles ({invoice.items.length})
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-gray-200">
-                      <th className="text-left py-3 px-4 font-medium text-gray-500">Article</th>
-                      <th className="text-center py-3 px-4 font-medium text-gray-500">Quantité</th>
-                      <th className="text-right py-3 px-4 font-medium text-gray-500">Prix unitaire</th>
-                      <th className="text-center py-3 px-4 font-medium text-gray-500">Remise</th>
-                      <th className="text-right py-3 px-4 font-medium text-gray-500">Total</th>
-                    </tr>
-                  </thead>
+            {/* Invoice Items */}
+            <Card className="border-0 shadow-sm bg-white">
+              <CardHeader className="border-b border-gray-100 pb-3">
+                <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <Package className="h-4 w-4 text-gray-600" />
+                  Détails des Articles ({invoice.items?.length || 0})
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-4">
+                {invoice.items && invoice.items.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-gray-200">
+                          <th className="text-left py-2 px-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Article</th>
+                          <th className="text-center py-2 px-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Qté</th>
+                          <th className="text-right py-2 px-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Prix Unit.</th>
+                          <th className="text-center py-2 px-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Remise</th>
+                          <th className="text-right py-2 px-3 text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                        </tr>
+                      </thead>
                   <tbody>
                     {invoice.items.map((item) => (
                       <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50">
-                        <td className="py-4 px-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                              <ShoppingCart className="h-5 w-5 text-green-600" />
+                        <td className="py-3 px-3">
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+                              <Package className="h-4 w-4 text-gray-600" />
                             </div>
                             <div>
-                              <p className="font-medium text-gray-900">{item.productName}</p>
+                              <p className="text-sm font-medium text-gray-900">{item.productName}</p>
                               {item.productId && (
-                                <p className="text-sm text-gray-500">ID: {item.productId}</p>
+                                <p className="text-xs text-gray-500">ID: {item.productId}</p>
                               )}
                             </div>
                           </div>
                         </td>
-                        <td className="py-4 px-4 text-center">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        <td className="py-3 px-3 text-center">
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                             {item.quantity}
                           </span>
                         </td>
-                        <td className="py-4 px-4 text-right text-gray-900 font-medium">
+                        <td className="py-3 px-3 text-right text-sm font-medium text-gray-900">
                           {formatPrice(item.unitPrice, invoice.currency)}
                         </td>
-                        <td className="py-4 px-4 text-center">
+                        <td className="py-3 px-3 text-center">
                           {item.discount > 0 ? (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
                               -{item.discount}%
                             </span>
                           ) : (
-                            <span className="text-gray-400">-</span>
+                            <span className="text-gray-400 text-xs">-</span>
                           )}
                         </td>
-                        <td className="py-4 px-4 text-right">
-                          <span className="font-semibold text-gray-900">
-                            {formatPrice(item.total, invoice.currency)}
-                          </span>
+                        <td className="py-3 px-3 text-right text-sm font-bold text-gray-900">
+                          {formatPrice(item.total, invoice.currency)}
                         </td>
                       </tr>
                     ))}
@@ -548,133 +461,179 @@ export default function InvoiceDetailPage() {
                       </td>
                     </tr>
                   </tfoot>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+                    </table>
+                  </div>
+                ) : (
+                  <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-lg">
+                    <Package className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                    <p className="text-gray-500 mb-4">Aucun article dans cette facture</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
-        {/* Printing Details */}
-        {invoice.printing?.includePrinting && (
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3">
-                <FileText className="h-5 w-5 text-green-600" />
-                Impression Personnalisée
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <label className="text-sm font-medium text-gray-500 block mb-1">Dimensions</label>
-                  <p className="text-lg font-semibold text-gray-900">{invoice.printing.dimensions}</p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <label className="text-sm font-medium text-gray-500 block mb-1">Quantité</label>
-                  <p className="text-lg font-semibold text-gray-900">{invoice.printing.quantity}</p>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <label className="text-sm font-medium text-gray-500 block mb-1">Prix par unité</label>
-                  <p className="text-lg font-semibold text-gray-900">
-                    {formatPrice(invoice.printing.printingPricePerUnit, invoice.currency)}
-                  </p>
-                </div>
-                <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                  <label className="text-sm font-medium text-green-600 block mb-1">Total impression</label>
-                  <p className="text-xl font-bold text-green-700">
-                    {formatPrice(invoice.printing.total, invoice.currency)}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
 
-        {/* Invoice Totals */}
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <Hash className="h-5 w-5 text-green-600" />
-              Récapitulatif Financier
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {/* Items Summary */}
-              {invoice.items && invoice.items.length > 0 && (
-                <div className="bg-white p-4 rounded-lg border border-green-200">
-                  <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
-                    <Package className="h-4 w-4 text-green-600" />
-                    Articles ({invoice.items.length})
-                  </h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Sous-total articles:</span>
-                      <span className="font-semibold">
-                        {formatPrice(
-                          invoice.items.reduce((sum, item) => sum + (item.quantity * item.unitPrice), 0),
-                          invoice.currency
-                        )}
-                      </span>
+
+
+          </div>
+
+          {/* Right Column - Summary */}
+          <div className="lg:col-span-1 space-y-4">
+            {/* Client Details Summary */}
+            <Card className="border-0 shadow-sm bg-white">
+              <CardHeader className="border-b border-gray-100 pb-3">
+                <CardTitle className="text-base font-semibold text-gray-900">
+                  Détails du Client
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-4">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                      <Building className="h-4 w-4 text-gray-600" />
                     </div>
-                    {invoice.totalDiscount > 0 && (
+                    <div>
+                      <div className="font-medium text-gray-900">{invoice.companyName}</div>
+                      <div className="text-sm text-gray-500">{invoice.contactPerson}</div>
+                    </div>
+                  </div>
+                  <div className="text-sm text-gray-600">{invoice.email}</div>
+                  <div className="text-sm text-gray-600">{invoice.phone}</div>
+                  <div className="text-sm text-gray-600">{invoice.address}</div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Basic Info */}
+            <Card className="border-0 shadow-sm bg-white">
+              <CardHeader className="border-b border-gray-100 pb-3">
+                <CardTitle className="text-base font-semibold text-gray-900">
+                  Informations de Base
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-4 space-y-3">
+                <div>
+                  <label className="text-xs font-medium text-gray-700">Date de Facture</label>
+                  <div className="text-sm text-gray-900 mt-1">
+                    {new Date(invoice.invoiceDate).toLocaleDateString('fr-FR')}
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-gray-700">Date d'Échéance</label>
+                  <div className="text-sm text-gray-900 mt-1">
+                    {new Date(invoice.dueDate).toLocaleDateString('fr-FR')}
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-gray-700">Statut</label>
+                  <div className="text-sm text-gray-900 mt-1 capitalize">
+                    {getStatusText(invoice.status)}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Printing Options */}
+            {invoice.printing?.includePrinting && (
+              <Card className="border-0 shadow-sm bg-white">
+                <CardHeader className="border-b border-gray-100 pb-3">
+                  <CardTitle className="text-base font-semibold text-gray-900">
+                    Options d'Impression
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-4">
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-xs font-medium text-gray-700">Dimensions</label>
+                      <div className="text-sm text-gray-900 mt-1">{invoice.printing.dimensions}</div>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-gray-700">Quantité</label>
+                      <div className="text-sm text-gray-900 mt-1">{invoice.printing.quantity}</div>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-gray-700">Prix par unité</label>
+                      <div className="text-sm text-gray-900 mt-1">
+                        {formatPrice(invoice.printing.printingPricePerUnit, invoice.currency)}
+                      </div>
+                    </div>
+                    <div className="p-3 bg-gray-50 rounded-lg border">
                       <div className="flex justify-between items-center">
-                        <span className="text-gray-600">Remises appliquées:</span>
-                        <span className="font-semibold text-red-600">
-                          -{formatPrice(invoice.totalDiscount, invoice.currency)}
+                        <span className="text-xs font-medium text-gray-700">Total impression:</span>
+                        <span className="text-sm font-bold text-gray-900">
+                          {formatPrice(invoice.printingCosts, invoice.currency)}
                         </span>
                       </div>
-                    )}
-                    <div className="flex justify-between items-center pt-2 border-t border-gray-200">
-                      <span className="font-medium text-gray-700">Total articles:</span>
-                      <span className="font-bold text-gray-900">
-                        {formatPrice(invoice.subtotal, invoice.currency)}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Summary */}
+            <Card className="border-0 shadow-sm bg-white">
+              <CardContent className="pt-4">
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Sous-total</span>
+                    <span className="text-gray-900">{formatPrice(invoice.subtotal, invoice.currency)}</span>
+                  </div>
+
+                  {invoice.totalDiscount > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Remise</span>
+                      <span className="text-red-600">-{formatPrice(invoice.totalDiscount, invoice.currency)}</span>
+                    </div>
+                  )}
+
+                  {invoice.printingCosts > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Impression</span>
+                      <span className="text-gray-900">{formatPrice(invoice.printingCosts, invoice.currency)}</span>
+                    </div>
+                  )}
+
+                  <div className="border-t border-gray-200 pt-3">
+                    <div className="flex justify-between">
+                      <span className="font-semibold text-gray-900">Total</span>
+                      <span className="font-bold text-xl text-gray-900">
+                        {formatPrice(invoice.total, invoice.currency)}
                       </span>
                     </div>
                   </div>
                 </div>
-              )}
 
-              {/* Printing Summary */}
-              {invoice.printing?.includePrinting && invoice.printingCosts > 0 && (
-                <div className="bg-white p-4 rounded-lg border border-blue-200">
-                  <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-blue-600" />
-                    Impression Personnalisée
-                  </h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Coût impression:</span>
-                      <span className="font-bold text-blue-600">
-                        {formatPrice(invoice.printingCosts, invoice.currency)}
-                      </span>
-                    </div>
+                <div className="mt-6 space-y-3">
+                  <Button
+                    onClick={handleEdit}
+                    className="w-full bg-gradient-to-r from-gray-900 to-[#B4E50D] hover:from-black hover:to-[#9FD000] text-white"
+                  >
+                    <Edit className="h-4 w-4 mr-2" />
+                    Modifier Facture
+                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={handleDownload}
+                      className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Télécharger
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={handleDelete}
+                      className="flex-1 border-red-300 text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Supprimer
+                    </Button>
                   </div>
                 </div>
-              )}
-
-              <Separator className="my-4" />
-
-              {/* Grand Total */}
-              <div className="bg-gradient-to-r from-green-600 to-green-700 p-6 rounded-lg text-white">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <span className="text-green-100 text-sm">Total TTC</span>
-                    <p className="text-2xl font-bold">
-                      {formatPrice(invoice.total, invoice.currency)}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-green-100 text-sm">Statut</span>
-                    <p className="text-lg font-semibold">
-                      {getStatusText(invoice.status)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </AdminLayout>
   );

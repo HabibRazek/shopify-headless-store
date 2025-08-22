@@ -89,7 +89,7 @@ export default function AdminLayout({
             transition={{ duration: 0.3 }}
             className="h-full"
           >
-            <div className="max-w-full mx-auto px-3 sm:px-4 lg:px-6 py-6">
+            <div className="max-w-full mx-auto pl-2 sm:pl-4 pr-4 sm:pr-6 py-6">
               <div className="space-y-6">
                 {children}
               </div>

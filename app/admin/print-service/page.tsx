@@ -2,17 +2,18 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 import AdminLayout from '@/components/admin/AdminLayout';
-import DataTable from '@/components/admin/DataTable';
 import StatusBadge from '@/components/admin/StatusBadge';
-import Avatar from '@/components/admin/Avatar';
 import {
   Edit,
   Download,
@@ -25,6 +26,12 @@ import {
   Mail,
   Plus,
   User,
+  Search,
+  MoreHorizontal,
+  RefreshCw,
+  FileText,
+  Calendar,
+  Printer
 } from 'lucide-react';
 
 interface PrintServiceRequest {
@@ -371,169 +378,442 @@ export default function PrintServiceAdminPage() {
   ];
 
   // Calculate statistics
-  const stats = [
-    {
-      label: 'Total des demandes',
-      value: requests.length,
-      icon: <Package className="w-6 h-6 text-white" />,
-      color: 'bg-gradient-to-r from-blue-500 to-blue-600',
-      change: '+12% ce mois',
-      changeType: 'increase' as const
-    },
-    {
-      label: 'En attente',
-      value: requests.filter(r => r.status === 'PENDING').length,
-      icon: <Clock className="w-6 h-6 text-white" />,
-      color: 'bg-gradient-to-r from-yellow-500 to-yellow-600',
-      change: '+5% cette semaine',
-      changeType: 'increase' as const
-    },
-    {
-      label: 'Approuvées',
-      value: requests.filter(r => r.status === 'APPROVED').length,
-      icon: <CheckCircle className="w-6 h-6 text-white" />,
-      color: 'bg-gradient-to-r from-green-500 to-green-600',
-      change: '+8% ce mois',
-      changeType: 'increase' as const
-    },
-    {
-      label: 'En production',
-      value: requests.filter(r => r.status === 'IN_PRODUCTION').length,
-      icon: <Package className="w-6 h-6 text-white" />,
-      color: 'bg-gradient-to-r from-purple-500 to-purple-600',
-      change: '3 en cours',
-      changeType: 'neutral' as const
-    }
-  ];
+  const stats = {
+    total: requests.length,
+    pending: requests.filter(r => r.status === 'PENDING').length,
+    approved: requests.filter(r => r.status === 'APPROVED').length,
+    inProduction: requests.filter(r => r.status === 'IN_PRODUCTION').length
+  };
 
   return (
     <AdminLayout>
-      <DataTable
-        title="Service d'Impression"
-        subtitle="Gestion professionnelle des demandes d'impression personnalisée"
-        columns={columns}
-        data={requests}
-        loading={loading}
-        searchValue={searchTerm}
-        onSearchChange={setSearchTerm}
-        searchPlaceholder="Rechercher par nom, email, ID, matériau..."
-        filters={[
-          {
-            key: 'status',
-            label: 'Statut',
-            options: [
-              { value: 'all', label: 'Tous les statuts' },
-              ...statusOptions
-            ],
-            value: statusFilter,
-            onChange: setStatusFilter
-          },
-          {
-            key: 'material',
-            label: 'Matériau',
-            options: [
-              { value: 'all', label: 'Tous les matériaux' },
-              ...materialOptions
-            ],
-            value: materialFilter,
-            onChange: setMaterialFilter
-          }
-        ]}
-        actions={
-          <Button
-            onClick={() => setIsNewDialogOpen(true)}
-            className="bg-green-600 hover:bg-green-700 text-white h-10 gap-2 shadow-sm"
-          >
-            <Plus className="h-4 w-4" />
-            Nouveau
-          </Button>
-        }
-        emptyState={{
-          icon: <Package className="w-16 h-16" />,
-          title: 'Aucune demande trouvée',
-          description: 'Aucune demande d\'impression ne correspond aux critères de recherche actuels.'
-        }}
-
-        showStats={true}
-        stats={stats}
-        pagination={{
-          currentPage,
-          pageSize,
-          totalItems: requests.length,
-          onPageChange: setCurrentPage,
-          onPageSizeChange: setPageSize
-        }}
-      />
-
-
-
-      {/* Edit Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Modifier la Demande</DialogTitle>
-            <DialogDescription>
-              Mettre à jour le statut et ajouter des notes
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="edit-status">Statut</Label>
-              <Select value={editStatus} onValueChange={setEditStatus}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner un statut" />
-                </SelectTrigger>
-                <SelectContent>
-                  {statusOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="edit-admin-notes">Notes Administrateur</Label>
-              <Textarea
-                id="edit-admin-notes"
-                value={editAdminNotes}
-                onChange={(e) => setEditAdminNotes(e.target.value)}
-                placeholder="Ajouter des notes internes..."
-                rows={4}
-              />
-            </div>
-
-            <div className="flex justify-end gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setIsEditDialogOpen(false)}
-              >
-                Annuler
-              </Button>
-              <Button
-                onClick={updateRequest}
-                disabled={updating}
-              >
-                {updating ? 'Mise à jour...' : 'Mettre à jour'}
-              </Button>
+      <div className="space-y-4 max-w-full overflow-hidden">
+        {/* Professional Page Header */}
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+          <div className="px-4 sm:px-8 py-4 sm:py-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-[#B4E50D] to-[#9BC70A] rounded-lg flex items-center justify-center shadow-lg">
+                    <Printer className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+                  </div>
+                  <h1 className="text-xl sm:text-3xl font-bold text-gray-900">Service d'Impression</h1>
+                </div>
+                <p className="text-gray-600 text-sm sm:text-lg">Gestion professionnelle des demandes d'impression personnalisée</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  <p className="text-sm text-gray-500">Total demandes</p>
+                  <p className="text-sm font-medium text-gray-900">{requests.length}</p>
+                </div>
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              </div>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
 
-      {/* New Print Demand Dialog */}
-      <Dialog open={isNewDialogOpen} onOpenChange={setIsNewDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Nouvelle Demande d'Impression</DialogTitle>
-            <DialogDescription>
+        {/* Statistics Section */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900">Aperçu des Demandes</h2>
+              <p className="text-sm text-gray-600 mt-1">Statistiques en temps réel de vos demandes d'impression</p>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span>Données en direct</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="border-l-4 border-l-[#B4E50D] bg-gradient-to-r from-[#B4E50D]/10 to-transparent shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Total Demandes</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">{stats.total}</p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#B4E50D] to-[#9BC70A] rounded-full flex items-center justify-center shadow-md">
+                    <Package className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-l-4 border-l-[#B4E50D] bg-gradient-to-r from-[#B4E50D]/10 to-transparent shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">En Attente</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">{stats.pending}</p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#B4E50D] to-[#9BC70A] rounded-full flex items-center justify-center shadow-md">
+                    <Clock className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-l-4 border-l-[#B4E50D] bg-gradient-to-r from-[#B4E50D]/10 to-transparent shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Approuvées</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">{stats.approved}</p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#B4E50D] to-[#9BC70A] rounded-full flex items-center justify-center shadow-md">
+                    <CheckCircle className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-l-4 border-l-[#B4E50D] bg-gradient-to-r from-[#B4E50D]/10 to-transparent shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">En Production</p>
+                    <p className="text-2xl font-bold text-gray-900 mt-1">{stats.inProduction}</p>
+                  </div>
+                  <div className="w-12 h-12 bg-gradient-to-br from-[#B4E50D] to-[#9BC70A] rounded-full flex items-center justify-center shadow-md">
+                    <Package className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Controls Section */}
+        <Card className="shadow-sm border-gray-200">
+          <CardContent className="p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+              <div className="flex items-center gap-3">
+                <h3 className="text-lg font-medium text-gray-900">Actions et Filtres</h3>
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Temps réel</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Button
+                  size="sm"
+                  className="bg-gradient-to-r from-gray-900 to-[#B4E50D] hover:from-gray-800 hover:to-[#9BC70A] text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                  onClick={() => setIsNewDialogOpen(true)}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nouvelle Demande
+                </Button>
+              </div>
+            </div>
+
+            {/* Search and Filter Section */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <span>Recherche et Filtres</span>
+                <div className="flex-1 h-px bg-gray-200"></div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex-1">
+                  <div className="relative">
+                    <Input
+                      placeholder="Rechercher par nom, email, ID, matériau..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full pl-10 border-gray-300 focus:border-green-500 focus:ring-green-500"
+                    />
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Search className="h-4 w-4 text-gray-400" />
+                    </div>
+                  </div>
+                </div>
+
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-full sm:w-56 border-gray-300 focus:border-green-500 focus:ring-green-500">
+                    <SelectValue placeholder="Filtrer par statut" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Tous les statuts</SelectItem>
+                    {statusOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select value={materialFilter} onValueChange={setMaterialFilter}>
+                  <SelectTrigger className="w-full sm:w-56 border-gray-300 focus:border-green-500 focus:ring-green-500">
+                    <SelectValue placeholder="Filtrer par matériau" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Tous les matériaux</SelectItem>
+                    {materialOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Data Table Section */}
+        <Card className="shadow-sm border-gray-200">
+          <CardHeader className="pb-4 border-b border-gray-100">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg font-medium text-gray-900">Liste des Demandes d'Impression</CardTitle>
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                <span>Mise à jour en temps réel</span>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            {loading ? (
+              <div className="flex items-center justify-center py-12">
+                <RefreshCw className="h-8 w-8 animate-spin text-gray-400" />
+                <span className="ml-2 text-gray-600">Chargement des demandes...</span>
+              </div>
+            ) : requests.length === 0 ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="text-center">
+                  <Package className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Aucune demande trouvée</h3>
+                  <p className="text-gray-500 mb-6">Aucune demande d'impression ne correspond aux critères de recherche actuels.</p>
+                  <Button
+                    onClick={() => setIsNewDialogOpen(true)}
+                    className="bg-gradient-to-r from-gray-900 to-[#B4E50D] hover:from-gray-800 hover:to-[#9BC70A] text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Créer la première demande
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-b border-gray-200 bg-gray-50/50">
+                      <TableHead className="text-left py-4 px-6 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Client
+                      </TableHead>
+                      <TableHead className="text-left py-4 px-6 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Matériau
+                      </TableHead>
+                      <TableHead className="text-center py-4 px-6 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Dimensions
+                      </TableHead>
+                      <TableHead className="text-center py-4 px-6 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Quantité
+                      </TableHead>
+                      <TableHead className="text-center py-4 px-6 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Statut
+                      </TableHead>
+                      <TableHead className="text-left py-4 px-6 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Date Livraison
+                      </TableHead>
+                      <TableHead className="text-center py-4 px-6 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        Actions
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {requests.map((request) => (
+                      <TableRow
+                        key={request.id}
+                        className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors"
+                      >
+                        <TableCell className="py-4 px-6">
+                          <div>
+                            <div className="text-sm font-semibold text-gray-900">
+                              {request.customerName}
+                            </div>
+                            <div className="text-sm text-gray-500">{request.customerEmail}</div>
+                            {request.company && (
+                              <div className="text-xs text-gray-400 mt-0.5">{request.company}</div>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-4 px-6">
+                          <Badge
+                            variant={request.material === 'KRAFT_VIEW' ? 'secondary' : 'default'}
+                            className="text-xs font-medium"
+                          >
+                            {request.material === 'KRAFT_VIEW' ? 'Kraft View' : 'Kraft Alu'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="py-4 px-6 text-center">
+                          <span className="text-sm font-mono font-medium text-gray-900 bg-gray-50 px-2 py-1 rounded border">
+                            {request.dimensions} cm
+                          </span>
+                        </TableCell>
+                        <TableCell className="py-4 px-6 text-center">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-[#B4E50D]/10 text-[#6B7C00] border border-[#B4E50D]/20">
+                            {request.quantity.toLocaleString()}
+                          </span>
+                        </TableCell>
+                        <TableCell className="py-4 px-6 text-center">
+                          <Badge
+                            variant={
+                              request.status === 'PENDING' ? 'secondary' :
+                              request.status === 'APPROVED' ? 'default' :
+                              request.status === 'IN_PRODUCTION' ? 'secondary' :
+                              request.status === 'DELIVERED' ? 'default' :
+                              request.status === 'CANCELLED' ? 'destructive' : 'secondary'
+                            }
+                            className={`text-xs font-medium ${
+                              request.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
+                              request.status === 'APPROVED' ? 'bg-green-100 text-green-800' :
+                              request.status === 'IN_PRODUCTION' ? 'bg-blue-100 text-blue-800' :
+                              request.status === 'DELIVERED' ? 'bg-green-100 text-green-800' :
+                              request.status === 'CANCELLED' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'
+                            }`}
+                          >
+                            {statusOptions.find(s => s.value === request.status)?.label || request.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="py-4 px-6">
+                          <div className="text-sm font-medium text-gray-900">
+                            {new Date(request.deliveryDate).toLocaleDateString('fr-FR')}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {new Date(request.deliveryDate).toLocaleDateString('fr-FR', { weekday: 'short' })}
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-4 px-6 text-center">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                className="h-8 w-8 p-0 hover:bg-gray-100"
+                              >
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-48">
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setSelectedRequest(request);
+                                  setEditStatus(request.status);
+                                  setEditAdminNotes(request.adminNotes || '');
+                                  setIsEditDialogOpen(true);
+                                }}
+                                className="cursor-pointer"
+                              >
+                                <Edit className="mr-2 h-4 w-4" />
+                                Modifier
+                              </DropdownMenuItem>
+                              {request.designFileUrl && (
+                                <DropdownMenuItem
+                                  onClick={() => window.open(request.designFileUrl, '_blank')}
+                                  className="cursor-pointer"
+                                >
+                                  <Download className="mr-2 h-4 w-4" />
+                                  Télécharger fichier
+                                </DropdownMenuItem>
+                              )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Edit Drawer */}
+      <Drawer open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DrawerContent className="max-w-2xl mx-auto">
+          <DrawerHeader className="border-b border-gray-100 pb-4">
+            <DrawerTitle className="text-xl font-semibold text-gray-900">
+              Modifier la Demande
+            </DrawerTitle>
+            <DrawerDescription className="text-gray-600">
+              Mettre à jour le statut et ajouter des notes
+            </DrawerDescription>
+          </DrawerHeader>
+
+          <div className="p-6 max-h-[80vh] overflow-y-auto">
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="edit-status">Statut</Label>
+                <Select value={editStatus} onValueChange={setEditStatus}>
+                  <SelectTrigger className="border-gray-300 focus:border-green-500 focus:ring-green-500">
+                    <SelectValue placeholder="Sélectionner un statut" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {statusOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="edit-admin-notes">Notes Administrateur</Label>
+                <Textarea
+                  id="edit-admin-notes"
+                  value={editAdminNotes}
+                  onChange={(e) => setEditAdminNotes(e.target.value)}
+                  placeholder="Ajouter des notes internes..."
+                  rows={4}
+                  className="border-gray-300 focus:border-green-500 focus:ring-green-500"
+                />
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-6 border-t border-gray-100 mt-6">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsEditDialogOpen(false)}
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                >
+                  Annuler
+                </Button>
+                <Button
+                  onClick={updateRequest}
+                  disabled={updating}
+                  className="bg-gradient-to-r from-gray-900 to-[#B4E50D] hover:from-gray-800 hover:to-[#9BC70A] text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  {updating ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                      Mise à jour...
+                    </>
+                  ) : (
+                    'Mettre à jour'
+                  )}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DrawerContent>
+      </Drawer>
+
+      {/* New Print Demand Drawer */}
+      <Drawer open={isNewDialogOpen} onOpenChange={setIsNewDialogOpen}>
+        <DrawerContent className="max-w-4xl mx-auto">
+          <DrawerHeader className="border-b border-gray-100 pb-4">
+            <DrawerTitle className="text-xl font-semibold text-gray-900">
+              Nouvelle Demande d'Impression
+            </DrawerTitle>
+            <DrawerDescription className="text-gray-600">
               Créer une nouvelle demande d'impression personnalisée
-            </DialogDescription>
-          </DialogHeader>
+            </DrawerDescription>
+          </DrawerHeader>
 
-          <div className="space-y-6">
+          <div className="p-6 max-h-[80vh] overflow-y-auto">
+            <div className="space-y-6">
             {/* Customer Information */}
             <div className="space-y-4">
               <h3 className="text-lg font-medium flex items-center gap-2">
@@ -664,25 +944,34 @@ export default function PrintServiceAdminPage() {
             </div>
 
             {/* Actions */}
-            <div className="flex justify-end gap-3 pt-4 border-t">
+            <div className="flex justify-end space-x-3 pt-6 border-t border-gray-100 mt-6">
               <Button
                 variant="outline"
                 onClick={() => setIsNewDialogOpen(false)}
                 disabled={creating}
+                className="border-gray-300 text-gray-700 hover:bg-gray-50"
               >
                 Annuler
               </Button>
               <Button
                 onClick={createNewRequest}
                 disabled={creating || !newRequest.customerName || !newRequest.customerEmail || !newRequest.dimensions || !newRequest.deliveryDate}
-                className="bg-green-600 hover:bg-green-700"
+                className="bg-gradient-to-r from-gray-900 to-[#B4E50D] hover:from-gray-800 hover:to-[#9BC70A] text-white shadow-lg hover:shadow-xl transition-all duration-300"
               >
-                {creating ? 'Création...' : 'Créer la demande'}
+                {creating ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                    Création...
+                  </>
+                ) : (
+                  'Créer la demande'
+                )}
               </Button>
             </div>
+            </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </DrawerContent>
+      </Drawer>
     </AdminLayout>
   );
 }

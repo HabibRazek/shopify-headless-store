@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { toast } from 'sonner';
 import { Eye, EyeOff, RefreshCw, Copy } from 'lucide-react';
 
@@ -98,14 +98,18 @@ export default function ResetPasswordModal({ open, onOpenChange, user, onPasswor
   if (!user) return null;
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Réinitialiser le mot de passe</DialogTitle>
-          <DialogDescription>
+    <Drawer open={open} onOpenChange={handleClose}>
+      <DrawerContent className="max-w-2xl mx-auto">
+        <DrawerHeader className="border-b border-gray-100 pb-4">
+          <DrawerTitle className="text-xl font-semibold text-gray-900">
+            Réinitialiser le mot de passe
+          </DrawerTitle>
+          <DrawerDescription className="text-gray-600">
             Définir un nouveau mot de passe pour <strong>{user.name || user.email}</strong>
-          </DialogDescription>
-        </DialogHeader>
+          </DrawerDescription>
+        </DrawerHeader>
+
+        <div className="p-6 max-h-[80vh] overflow-y-auto">
         
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* New Password */}
@@ -190,25 +194,34 @@ export default function ResetPasswordModal({ open, onOpenChange, user, onPasswor
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end space-x-2 pt-4">
+          <div className="flex justify-end space-x-3 pt-6 border-t border-gray-100 mt-6">
             <Button
               type="button"
               variant="outline"
               onClick={handleClose}
               disabled={loading}
+              className="border-gray-300 text-gray-700 hover:bg-gray-50"
             >
               Annuler
             </Button>
             <Button
               type="submit"
               disabled={loading || !newPassword}
-              className="bg-green-600 hover:bg-green-700 text-white"
+              className="bg-gradient-to-r from-gray-900 to-[#B4E50D] hover:from-gray-800 hover:to-[#9BC70A] text-white shadow-lg hover:shadow-xl transition-all duration-300"
             >
-              {loading ? 'Réinitialisation...' : 'Réinitialiser'}
+              {loading ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  Réinitialisation...
+                </>
+              ) : (
+                'Réinitialiser'
+              )}
             </Button>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
 }

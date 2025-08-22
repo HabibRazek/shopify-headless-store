@@ -40,9 +40,10 @@ interface ShopifyOrder {
   }>;
 }
 
-async function fetchShopifyOrders(limit = 250, sinceId?: string): Promise<{
+async function fetchShopifyOrders(limit = 250, sinceId?: string, pageInfo?: string): Promise<{
   orders: ShopifyOrder[];
   hasMore: boolean;
+  nextPageInfo?: string;
 }> {
   const adminAccessToken = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
   const shopDomain = process.env.SHOPIFY_ADMIN_DOMAIN;
@@ -52,13 +53,16 @@ async function fetchShopifyOrders(limit = 250, sinceId?: string): Promise<{
     throw new Error('Missing Shopify Admin API credentials');
   }
 
-  // Fetch all orders including archived ones
-  let url = `https://${shopDomain}/admin/api/${apiVersion}/orders.json?limit=${limit}&status=any&financial_status=any&fulfillment_status=any`;
-  if (sinceId) {
+  // Fetch all orders including archived ones with comprehensive parameters
+  let url = `https://${shopDomain}/admin/api/${apiVersion}/orders.json?limit=${limit}&status=any&financial_status=any&fulfillment_status=any&fields=id,name,email,created_at,updated_at,cancelled_at,closed_at,processed_at,currency,total_price,subtotal_price,total_tax,total_discounts,financial_status,fulfillment_status,order_status_url,line_items,shipping_address,billing_address,customer,tags,note,order_number,source_name`;
+
+  if (pageInfo) {
+    url += `&page_info=${pageInfo}`;
+  } else if (sinceId) {
     url += `&since_id=${sinceId}`;
   }
 
-  console.log(`📡 Fetching orders from: ${url}`);
+  console.log(`📡 Fetching orders from Shopify (limit: ${limit})...`);
 
   const response = await fetch(url, {
     method: 'GET',
@@ -79,11 +83,20 @@ async function fetchShopifyOrders(limit = 250, sinceId?: string): Promise<{
 
   console.log(`📦 Fetched ${orders.length} orders from Shopify`);
 
-  // Check if there are more orders by looking at the response headers
+  // Check pagination using Link header
   const linkHeader = response.headers.get('Link');
-  const hasMore = linkHeader ? linkHeader.includes('rel="next"') : false;
+  let hasMore = false;
+  let nextPageInfo = undefined;
 
-  return { orders, hasMore };
+  if (linkHeader) {
+    const nextMatch = linkHeader.match(/<[^>]*[?&]page_info=([^&>]+)[^>]*>;\s*rel="next"/);
+    if (nextMatch) {
+      hasMore = true;
+      nextPageInfo = nextMatch[1];
+    }
+  }
+
+  return { orders, hasMore, nextPageInfo };
 }
 
 async function syncOrderToDatabase(shopifyOrder: ShopifyOrder, prisma: any) {
@@ -91,7 +104,7 @@ async function syncOrderToDatabase(shopifyOrder: ShopifyOrder, prisma: any) {
     // Check if order already exists
     const existingOrder = await prisma.order.findFirst({
       where: {
-        shopifyOrderId: shopifyOrder.id
+        shopifyOrderId: String(shopifyOrder.id)
       }
     });
 
@@ -130,23 +143,29 @@ async function syncOrderToDatabase(shopifyOrder: ShopifyOrder, prisma: any) {
       }
     }
 
-    // Create new order
+    // Create new order data
+    const orderData: any = {
+      orderNumber: shopifyOrder.name.replace('#', ''),
+      shopifyOrderId: String(shopifyOrder.id),
+      status: mapShopifyStatus(shopifyOrder.financial_status, shopifyOrder.fulfillment_status),
+      total: parseFloat(shopifyOrder.total_price),
+      currency: shopifyOrder.currency,
+      paymentMethod: 'Shopify',
+      shippingAddress: shopifyOrder.shipping_address?.address1,
+      shippingCity: shopifyOrder.shipping_address?.city,
+      shippingCountry: shopifyOrder.shipping_address?.country,
+      shippingPostalCode: shopifyOrder.shipping_address?.zip,
+      createdAt: new Date(shopifyOrder.created_at),
+      updatedAt: new Date(shopifyOrder.updated_at),
+    };
+
+    // Only add userId if user exists
+    if (user?.id) {
+      orderData.userId = user.id;
+    }
+
     const newOrder = await prisma.order.create({
-      data: {
-        userId: user?.id || 'guest',
-        orderNumber: shopifyOrder.name.replace('#', ''),
-        shopifyOrderId: shopifyOrder.id,
-        status: mapShopifyStatus(shopifyOrder.financial_status, shopifyOrder.fulfillment_status),
-        total: parseFloat(shopifyOrder.total_price),
-        currency: shopifyOrder.currency,
-        paymentMethod: 'Shopify',
-        shippingAddress: shopifyOrder.shipping_address?.address1,
-        shippingCity: shopifyOrder.shipping_address?.city,
-        shippingCountry: shopifyOrder.shipping_address?.country,
-        shippingPostalCode: shopifyOrder.shipping_address?.zip,
-        createdAt: new Date(shopifyOrder.created_at),
-        updatedAt: new Date(shopifyOrder.updated_at),
-      }
+      data: orderData
     });
 
     // Create order items
@@ -200,22 +219,19 @@ export async function POST(request: NextRequest) {
     let totalCreated = 0;
     let hasMore = true;
     let sinceId: string | undefined;
+    let pageInfo: string | undefined;
+    let batchCount = 0;
 
-    console.log('🔄 Starting Shopify orders synchronization...');
-
-    // First, let's try to get all orders without pagination to see total count
-    try {
-      const initialResponse = await fetchShopifyOrders(1);
-      console.log(`🔍 Starting sync process...`);
-    } catch (error) {
-      console.error('❌ Failed to connect to Shopify:', error);
-      throw error;
-    }
+    console.log('🔄 Starting comprehensive Shopify orders synchronization...');
 
     while (hasMore) {
       try {
-        const { orders, hasMore: moreOrders } = await fetchShopifyOrders(250, sinceId);
+        batchCount++;
+        console.log(`📦 Processing batch ${batchCount}...`);
+
+        const { orders, hasMore: moreOrders, nextPageInfo } = await fetchShopifyOrders(250, sinceId, pageInfo);
         hasMore = moreOrders;
+        pageInfo = nextPageInfo;
 
         if (orders.length === 0) {
           console.log('📭 No more orders to process');
@@ -232,7 +248,7 @@ export async function POST(request: NextRequest) {
           for (const shopifyOrder of chunk) {
             try {
               const existingOrder = await prisma.order.findFirst({
-                where: { shopifyOrderId: shopifyOrder.id }
+                where: { shopifyOrderId: String(shopifyOrder.id) }
               });
 
               await syncOrderToDatabase(shopifyOrder, prisma);
@@ -254,10 +270,12 @@ export async function POST(request: NextRequest) {
           }
         }
 
-        // Set sinceId for next iteration
-        if (orders.length > 0) {
+        // Set pagination info for next iteration
+        if (orders.length > 0 && !pageInfo) {
           sinceId = orders[orders.length - 1].id;
           console.log(`➡️ Next batch will start from order ID: ${sinceId}`);
+        } else if (pageInfo) {
+          console.log(`➡️ Next batch will use page info: ${pageInfo.substring(0, 20)}...`);
         }
 
         // Add a small delay to avoid rate limiting

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?: "default" | "secondary" | "destructive" | "outline";
 }
 
@@ -16,7 +16,7 @@ function Badge({ className, variant = "default", ...props }: BadgeProps) {
   };
 
   return (
-    <div
+    <span
       className={cn(baseClasses, variantClasses[variant], className)}
       {...props}
     />

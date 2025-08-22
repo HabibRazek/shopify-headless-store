@@ -345,443 +345,547 @@ export default function CreateInvoicePage() {
 
 
   return (
-    <AdminLayout
-      title="Créer une Facture"
-      description="Créez une nouvelle facture pour vos clients"
-      actions={
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            onClick={() => router.back()}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Retour
-          </Button>
-          <Button
-            onClick={() => handleSave('draft')}
-            disabled={isLoading}
-            className="bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white flex items-center gap-2"
-          >
-            <Save className="h-4 w-4" />
-            {isLoading ? 'Création...' : 'Créer la Facture'}
-          </Button>
-        </div>
-      }
-    >
-      <div className="space-y-8">
-        {/* Company Information Section */}
-        <Card className="border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <Building className="h-5 w-5 text-green-600" />
-              Informations de l'Entreprise
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="companyName" className="flex items-center gap-2">
-                  <Building className="h-4 w-4" />
-                  Nom de l'entreprise *
-                </Label>
-                <Input
-                  id="companyName"
-                  value={form.companyName}
-                  onChange={(e) => updateForm('companyName', e.target.value)}
-                  placeholder="Ex: Ste Packedin Solutions"
-                  required
-                />
-              </div>
+    <div className="min-h-screen bg-gray-50">
+      <AdminLayout
+        title="Nouvelle Facture"
+        description="Créez une nouvelle facture pour vos clients"
+        actions={
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              onClick={() => router.back()}
+              className="flex items-center gap-2 border-gray-300 text-gray-700 hover:bg-gray-50"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Retour
+            </Button>
+            <Button
+              onClick={() => handleSave('draft')}
+              disabled={isLoading}
+              className="bg-gradient-to-r from-gray-900 to-[#B4E50D] hover:from-black hover:to-[#9FD000] text-white flex items-center gap-2 px-6"
+            >
+              <Save className="h-4 w-4" />
+              {isLoading ? 'Création...' : 'Créer la Facture'}
+            </Button>
+          </div>
+        }
+      >
+        <div className="w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left Column - Main Form */}
+            <div className="lg:col-span-2 space-y-4">
+              {/* Invoice Header */}
+              <Card className="border-0 shadow-sm bg-white">
+                <CardHeader className="border-b border-gray-100 pb-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-lg font-semibold text-gray-900">
+                        Nouvelle Facture: {form.invoiceNumber}
+                      </CardTitle>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Créée le {new Date().toLocaleDateString('fr-FR')}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xs text-gray-500">Packedin.tn</div>
+                      <div className="text-xs text-gray-500">Kings Worldwide Distribution</div>
+                      <div className="text-xs text-gray-500">Megrine Business Center, Tunisia</div>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="invoiceNumber" className="text-xs font-medium text-gray-700">
+                        Numéro de facture
+                      </Label>
+                      <Input
+                        id="invoiceNumber"
+                        value={form.invoiceNumber}
+                        onChange={(e) => updateForm('invoiceNumber', e.target.value)}
+                        className="mt-1 h-8 text-sm border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="invoiceDate" className="text-xs font-medium text-gray-700">
+                        Date de facture
+                      </Label>
+                      <Input
+                        id="invoiceDate"
+                        type="date"
+                        value={form.invoiceDate}
+                        onChange={(e) => updateForm('invoiceDate', e.target.value)}
+                        className="mt-1 h-8 text-sm border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="dueDate" className="text-xs font-medium text-gray-700">
+                        Date d'échéance
+                      </Label>
+                      <Input
+                        id="dueDate"
+                        type="date"
+                        value={form.dueDate}
+                        onChange={(e) => updateForm('dueDate', e.target.value)}
+                        className="mt-1 h-8 text-sm border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-              <div className="space-y-2">
-                <Label htmlFor="matriculeFiscale" className="flex items-center gap-2">
-                  <Hash className="h-4 w-4" />
-                  MF (Matricule Fiscale)
-                </Label>
-                <Input
-                  id="matriculeFiscale"
-                  value={form.matriculeFiscale}
-                  onChange={(e) => updateForm('matriculeFiscale', e.target.value)}
-                  placeholder="Matricule Fiscale (optionnel)"
-                  title="Matricule Fiscale (optionnel - tout format accepté)"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="contactPerson" className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  Personne de contact *
-                </Label>
-                <Input
-                  id="contactPerson"
-                  value={form.contactPerson}
-                  onChange={(e) => updateForm('contactPerson', e.target.value)}
-                  placeholder="Ex: M. Ahmed Packedin"
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="email" className="flex items-center gap-2">
-                  <Mail className="h-4 w-4" />
-                  Adresse email *
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => updateForm('email', e.target.value)}
-                  placeholder="Ex: contact@packedin.tn"
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="phone" className="flex items-center gap-2">
-                  <Phone className="h-4 w-4" />
-                  Numéro de téléphone *
-                </Label>
-                <Input
-                  id="phone"
-                  value={form.phone}
-                  onChange={(e) => updateForm('phone', e.target.value)}
-                  placeholder="Ex: 29 362 224"
-                  required
-                />
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="address" className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
-                Adresse complète *
-              </Label>
-              <Textarea
-                id="address"
-                value={form.address}
-                onChange={(e) => updateForm('address', e.target.value)}
-                placeholder="Ex: Zone Industrielle Packedin, Ariana 2080"
-                rows={3}
-                required
-              />
-            </div>
-          </CardContent>
-        </Card>
+              {/* Client Details */}
+              <Card className="border-0 shadow-sm bg-white">
+                <CardHeader className="border-b border-gray-100 pb-3">
+                  <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                    <User className="h-4 w-4 text-gray-600" />
+                    Détails du Client
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="companyName" className="text-xs font-medium text-gray-700">
+                        Nom de l'entreprise *
+                      </Label>
+                      <Input
+                        id="companyName"
+                        value={form.companyName}
+                        onChange={(e) => updateForm('companyName', e.target.value)}
+                        placeholder="Nom de l'entreprise"
+                        className="mt-1 h-8 text-sm border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="matriculeFiscale" className="text-sm font-medium text-gray-700">
+                        Matricule Fiscale
+                      </Label>
+                      <Input
+                        id="matriculeFiscale"
+                        value={form.matriculeFiscale}
+                        onChange={(e) => updateForm('matriculeFiscale', e.target.value)}
+                        placeholder="Matricule Fiscale (optionnel)"
+                        className="mt-1 border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="contactPerson" className="text-sm font-medium text-gray-700">
+                        Personne de contact *
+                      </Label>
+                      <Input
+                        id="contactPerson"
+                        value={form.contactPerson}
+                        onChange={(e) => updateForm('contactPerson', e.target.value)}
+                        placeholder="Nom du contact"
+                        className="mt-1 border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                        Email *
+                      </Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={form.email}
+                        onChange={(e) => updateForm('email', e.target.value)}
+                        placeholder="email@entreprise.com"
+                        className="mt-1 border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="phone" className="text-sm font-medium text-gray-700">
+                        Téléphone *
+                      </Label>
+                      <Input
+                        id="phone"
+                        value={form.phone}
+                        onChange={(e) => updateForm('phone', e.target.value)}
+                        placeholder="+216 XX XXX XXX"
+                        className="mt-1 border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="address" className="text-sm font-medium text-gray-700">
+                        Adresse *
+                      </Label>
+                      <Textarea
+                        id="address"
+                        value={form.address}
+                        onChange={(e) => updateForm('address', e.target.value)}
+                        placeholder="Adresse complète"
+                        className="mt-1 border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                        rows={3}
+                        required
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-        {/* Invoice Details Section */}
-        <Card className="border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <FileText className="h-5 w-5 text-green-600" />
-              Détails de la Facture
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="invoiceNumber" className="flex items-center gap-2">
-                  <Hash className="h-4 w-4" />
-                  Numéro de facture
-                </Label>
-                <Input
-                  id="invoiceNumber"
-                  value={form.invoiceNumber}
-                  onChange={(e) => updateForm('invoiceNumber', e.target.value)}
-                  placeholder="INV-2024-001"
-                />
-              </div>
+              {/* Item Details */}
+              <Card className="border-0 shadow-sm bg-white">
+                <CardHeader className="border-b border-gray-100 pb-4">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                      <Package className="h-5 w-5 text-gray-600" />
+                      Détails des Articles
+                    </CardTitle>
+                    <Button
+                      onClick={addItem}
+                      className="bg-gradient-to-r from-gray-900 to-[#B4E50D] hover:from-black hover:to-[#9FD000] text-white text-sm px-4 py-2"
+                      size="sm"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Ajouter Article
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  {form.items.length === 0 ? (
+                    <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-lg">
+                      <Package className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                      <p className="text-gray-500 mb-4">Aucun article ajouté</p>
+                      <Button
+                        onClick={addItem}
+                        variant="outline"
+                        className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Ajouter votre premier article
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {/* Table Header */}
+                      <div className="grid grid-cols-12 gap-4 text-sm font-medium text-gray-500 border-b border-gray-100 pb-3">
+                        <div className="col-span-4">ARTICLE</div>
+                        <div className="col-span-2 text-center">ORDRE/TYPE</div>
+                        <div className="col-span-2 text-center">TAUX</div>
+                        <div className="col-span-2 text-center">MONTANT</div>
+                        <div className="col-span-2 text-right">ACTIONS</div>
+                      </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="invoiceDate" className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  Date de facture
-                </Label>
-                <Input
-                  id="invoiceDate"
-                  type="date"
-                  value={form.invoiceDate}
-                  onChange={(e) => updateForm('invoiceDate', e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="dueDate" className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  Date d'échéance
-                </Label>
-                <Input
-                  id="dueDate"
-                  type="date"
-                  value={form.dueDate}
-                  onChange={(e) => updateForm('dueDate', e.target.value)}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Product Selection Section */}
-        <Card className="border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <span className="flex items-center gap-3">
-                <Package className="h-5 w-5 text-green-600" />
-                Sélection des Produits
-              </span>
-              <Button
-                onClick={addItem}
-                className="bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 hover:to-[#77db19] text-white"
-                size="sm"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Ajouter un produit
-              </Button>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {form.items.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <Package className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                <p>Aucun produit ajouté. Cliquez sur "Ajouter un produit" pour commencer.</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {form.items.map((item) => (
-                  <motion.div
-                    key={item.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="p-4 border border-gray-200 rounded-lg bg-gray-50"
-                  >
-                    <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
-                      <div className="md:col-span-2">
-                        <Label className="text-sm font-medium">Produit</Label>
-                        <Select
-                          value={item.productId}
-                          onValueChange={(value) => updateItem(item.id, 'productId', value)}
-                          disabled={isLoadingProducts}
+                      {/* Items */}
+                      {form.items.map((item, index) => (
+                        <motion.div
+                          key={item.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="grid grid-cols-12 gap-4 items-center py-4 border-b border-gray-50 last:border-b-0"
                         >
-                          <SelectTrigger>
-                            <SelectValue placeholder={
-                              isLoadingProducts
-                                ? "Chargement des produits..."
-                                : productError
-                                  ? "Erreur de chargement"
-                                  : "Sélectionner un produit"
-                            } />
+                          <div className="col-span-4">
+                            <Select
+                              value={item.productId}
+                              onValueChange={(value) => updateItem(item.id, 'productId', value)}
+                              disabled={isLoadingProducts}
+                            >
+                              <SelectTrigger className="border-gray-200 focus:border-gray-900 focus:ring-gray-900">
+                                <SelectValue placeholder={
+                                  isLoadingProducts
+                                    ? "Chargement..."
+                                    : productError
+                                      ? "Erreur"
+                                      : "Sélectionner un produit"
+                                } />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {productError ? (
+                                  <SelectItem value="error" disabled>
+                                    Erreur: {productError}
+                                  </SelectItem>
+                                ) : products.length === 0 ? (
+                                  <SelectItem value="empty" disabled>
+                                    Aucun produit disponible
+                                  </SelectItem>
+                                ) : (
+                                  products.map((product) => (
+                                    <SelectItem key={product.id} value={product.id}>
+                                      {product.title}
+                                    </SelectItem>
+                                  ))
+                                )}
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div className="col-span-2 text-center">
+                            <Input
+                              type="number"
+                              min="1"
+                              value={item.quantity}
+                              onChange={(e) => updateItem(item.id, 'quantity', parseInt(e.target.value) || 1)}
+                              className="text-center border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                              placeholder="01"
+                            />
+                          </div>
+
+                          <div className="col-span-2 text-center">
+                            <Input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              value={item.unitPrice}
+                              onChange={(e) => updateItem(item.id, 'unitPrice', parseFloat(e.target.value) || 0)}
+                              className="text-center border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                              placeholder="0.00"
+                            />
+                          </div>
+
+                          <div className="col-span-2 text-center">
+                            <div className="text-lg font-semibold text-gray-900">
+                              {formatPrice(item.total, 'TND')}
+                            </div>
+                          </div>
+
+                          <div className="col-span-2 text-right">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeItem(item.id)}
+                              className="text-gray-400 hover:text-red-600 hover:bg-red-50"
+                            >
+                              <Minus className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </motion.div>
+                      ))}
+
+                      {/* Add Item Button */}
+                      <div className="pt-4">
+                        <Button
+                          onClick={addItem}
+                          variant="ghost"
+                          className="text-gray-600 hover:text-gray-900 hover:bg-gray-50 w-full border-2 border-dashed border-gray-200 hover:border-gray-300"
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Ajouter Article
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+            </div>
+
+            {/* Right Column - Summary */}
+            <div className="lg:col-span-1 space-y-4">
+              {/* Client Details Summary */}
+              <Card className="border-0 shadow-sm bg-white">
+                <CardHeader className="border-b border-gray-100 pb-3">
+                  <CardTitle className="text-base font-semibold text-gray-900">
+                    Détails du Client
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-4">
+                  {form.companyName ? (
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                          <User className="h-4 w-4 text-gray-600" />
+                        </div>
+                        <div>
+                          <div className="font-medium text-gray-900">{form.companyName}</div>
+                          <div className="text-sm text-gray-500">{form.contactPerson}</div>
+                        </div>
+                      </div>
+                      {form.email && (
+                        <div className="text-sm text-gray-600">{form.email}</div>
+                      )}
+                      {form.phone && (
+                        <div className="text-sm text-gray-600">{form.phone}</div>
+                      )}
+                      {form.address && (
+                        <div className="text-sm text-gray-600">{form.address}</div>
+                      )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full mt-4 border-gray-300 text-gray-700 hover:bg-gray-50"
+                      >
+                        Ajouter Client
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <User className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                      <p className="text-gray-500 text-sm">Aucun client sélectionné</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Basic Info */}
+              <Card className="border-0 shadow-sm bg-white">
+                <CardHeader className="border-b border-gray-100 pb-3">
+                  <CardTitle className="text-base font-semibold text-gray-900">
+                    Informations de Base
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-4 space-y-3">
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700">Date de Facture</Label>
+                    <div className="text-sm text-gray-900 mt-1">
+                      {form.invoiceDate ? new Date(form.invoiceDate).toLocaleDateString('fr-FR') : 'Non définie'}
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700">Date d'Échéance</Label>
+                    <div className="text-sm text-gray-900 mt-1">
+                      {form.dueDate ? new Date(form.dueDate).toLocaleDateString('fr-FR') : 'Non définie'}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Printing Options */}
+              <Card className="border-0 shadow-sm bg-white">
+                <CardHeader className="border-b border-gray-100 pb-4">
+                  <CardTitle className="text-lg font-semibold text-gray-900">
+                    Options d'Impression
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <Checkbox
+                      id="includePrinting"
+                      checked={form.doypacks.includePrinting}
+                      onCheckedChange={(checked) => updateDoypacks('includePrinting', checked)}
+                    />
+                    <Label htmlFor="includePrinting" className="text-sm font-medium">
+                      Inclure l'impression
+                    </Label>
+                  </div>
+
+                  {form.doypacks.includePrinting && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="space-y-4"
+                    >
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Dimensions</Label>
+                        <Select
+                          value={form.doypacks.dimensions}
+                          onValueChange={(value) => updateDoypacks('dimensions', value)}
+                        >
+                          <SelectTrigger className="mt-1 border-gray-200 focus:border-gray-900 focus:ring-gray-900">
+                            <SelectValue placeholder="Sélectionner" />
                           </SelectTrigger>
                           <SelectContent>
-                            {productError ? (
-                              <SelectItem value="error" disabled>
-                                Erreur: {productError}
-                              </SelectItem>
-                            ) : products.length === 0 ? (
-                              <SelectItem value="empty" disabled>
-                                Aucun produit disponible
-                              </SelectItem>
-                            ) : (
-                              products.map((product) => (
-                                <SelectItem key={product.id} value={product.id}>
-                                  {product.title} - {formatPrice(parseFloat(product.priceRange.minVariantPrice.amount), product.priceRange.minVariantPrice.currencyCode)}
-                                </SelectItem>
-                              ))
-                            )}
+                            <SelectItem value="16x26+4">16 x 26 + 4 cm</SelectItem>
+                            <SelectItem value="10x15+3">10 x 15 + 3 cm</SelectItem>
+                            <SelectItem value="20x30+5">20 x 30 + 5 cm</SelectItem>
+                            <SelectItem value="12x18+4">12 x 18 + 4 cm</SelectItem>
                           </SelectContent>
                         </Select>
-                        {productError && (
-                          <p className="text-sm text-red-600 mt-1">
-                            Impossible de charger les produits. Veuillez rafraîchir la page.
-                          </p>
-                        )}
                       </div>
 
                       <div>
-                        <Label className="text-sm font-medium">Quantité</Label>
+                        <Label className="text-sm font-medium text-gray-700">Quantité</Label>
                         <Input
                           type="number"
                           min="1"
-                          value={item.quantity}
-                          onChange={(e) => updateItem(item.id, 'quantity', parseInt(e.target.value) || 1)}
+                          value={form.doypacks.quantity}
+                          onChange={(e) => updateDoypacks('quantity', parseInt(e.target.value) || 0)}
+                          className="mt-1 border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                          placeholder="500"
                         />
                       </div>
 
                       <div>
-                        <Label className="text-sm font-medium">Prix unitaire (TND)</Label>
+                        <Label className="text-sm font-medium text-gray-700">Prix par unité (TND)</Label>
                         <Input
                           type="number"
                           step="0.01"
                           min="0"
-                          value={item.unitPrice}
-                          onChange={(e) => updateItem(item.id, 'unitPrice', parseFloat(e.target.value) || 0)}
+                          value={form.doypacks.printingPricePerUnit}
+                          onChange={(e) => updateDoypacks('printingPricePerUnit', parseFloat(e.target.value) || 0)}
+                          className="mt-1 border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                          placeholder="0.35"
                         />
                       </div>
 
-                      <div>
-                        <Label className="text-sm font-medium">Remise (%)</Label>
-                        <Input
-                          type="number"
-                          min="0"
-                          max="100"
-                          value={item.discount}
-                          onChange={(e) => updateItem(item.id, 'discount', parseFloat(e.target.value) || 0)}
-                        />
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label className="text-sm font-medium">Total</Label>
-                          <div className="text-lg font-bold text-green-600">
-                            {formatPrice(item.total, 'TND')}
-                          </div>
+                      <div className="p-3 bg-gray-50 rounded-lg border">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium text-gray-700">Total impression:</span>
+                          <span className="font-bold text-gray-900">
+                            {formatPrice(form.doypacks.total, 'TND')}
+                          </span>
                         </div>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => removeItem(item.id)}
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                        >
-                          <Minus className="h-4 w-4" />
-                        </Button>
+                      </div>
+                    </motion.div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Summary */}
+              <Card className="border-0 shadow-sm bg-white">
+                <CardContent className="pt-6">
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Sous-total</span>
+                      <span className="text-gray-900">{formatPrice(form.subtotal, 'TND')}</span>
+                    </div>
+
+                    {form.totalDiscount > 0 && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">Remise</span>
+                        <span className="text-red-600">-{formatPrice(form.totalDiscount, 'TND')}</span>
+                      </div>
+                    )}
+
+                    {form.printingCosts > 0 && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">Impression</span>
+                        <span className="text-gray-900">{formatPrice(form.printingCosts, 'TND')}</span>
+                      </div>
+                    )}
+
+                    <div className="border-t border-gray-200 pt-3">
+                      <div className="flex justify-between">
+                        <span className="font-semibold text-gray-900">Total</span>
+                        <span className="font-bold text-xl text-gray-900">
+                          {formatPrice(form.total, 'TND')}
+                        </span>
                       </div>
                     </div>
-                  </motion.div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                  </div>
 
-        {/* Doypack Customization Section */}
-        <Card className="border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <CheckSquare className="h-5 w-5 text-green-600" />
-              Personnalisation Doypacks
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="includePrinting"
-                checked={form.doypacks.includePrinting}
-                onCheckedChange={(checked) => updateDoypacks('includePrinting', checked)}
-              />
-              <Label htmlFor="includePrinting" className="text-sm font-medium">
-                Inclure l'impression
-              </Label>
-            </div>
-
-            {form.doypacks.includePrinting && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                className="space-y-4 p-4 bg-green-50 rounded-lg border border-green-200"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="dimensions">Dimensions des doypacks</Label>
-                    <Select
-                      value={form.doypacks.dimensions}
-                      onValueChange={(value) => updateDoypacks('dimensions', value)}
+                  <div className="mt-6 space-y-3">
+                    <Button
+                      onClick={() => handleSave('sent')}
+                      disabled={isLoading}
+                      className="w-full bg-gradient-to-r from-gray-900 to-[#B4E50D] hover:from-black hover:to-[#9FD000] text-white"
                     >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Sélectionner les dimensions" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="16x26+4">16 x 26 + 4 cm</SelectItem>
-                        <SelectItem value="10x15+3">10 x 15 + 3 cm</SelectItem>
-                        <SelectItem value="20x30+5">20 x 30 + 5 cm</SelectItem>
-                        <SelectItem value="12x18+4">12 x 18 + 4 cm</SelectItem>
-                        <SelectItem value="custom">Dimensions personnalisées</SelectItem>
-                      </SelectContent>
-                    </Select>
+                      Envoyer Facture
+                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50"
+                      >
+                        Aperçu
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50"
+                      >
+                        Télécharger
+                      </Button>
+                    </div>
                   </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="printingQuantity">Quantité</Label>
-                    <Input
-                      id="printingQuantity"
-                      type="number"
-                      min="1"
-                      value={form.doypacks.quantity}
-                      onChange={(e) => updateDoypacks('quantity', parseInt(e.target.value) || 0)}
-                      placeholder="Ex: 500"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="printingPrice">Prix par unité (TND)</Label>
-                    <Input
-                      id="printingPrice"
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={form.doypacks.printingPricePerUnit}
-                      onChange={(e) => updateDoypacks('printingPricePerUnit', parseFloat(e.target.value) || 0)}
-                      placeholder="Ex: 0.35"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between p-3 bg-white rounded border">
-                  <span className="font-medium">Total impression:</span>
-                  <span className="text-lg font-bold text-green-600">
-                    {formatPrice(form.doypacks.total, 'TND')}
-                  </span>
-                </div>
-
-                <div className="text-sm text-green-700 bg-green-100 p-3 rounded">
-                  <strong>Note:</strong> Les remises ne s'appliquent pas aux coûts d'impression.
-                </div>
-              </motion.div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Totals Section */}
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <Calculator className="h-5 w-5 text-green-600" />
-              Récapitulatif des Totaux
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center py-2 border-b border-green-200">
-                <span className="text-gray-700">Sous-total (produits):</span>
-                <span className="font-semibold">{formatPrice(form.subtotal, 'TND')}</span>
-              </div>
-
-              {form.totalDiscount > 0 && (
-                <div className="flex justify-between items-center py-2 border-b border-green-200">
-                  <span className="text-gray-700">Remise totale:</span>
-                  <span className="font-semibold text-red-600">-{formatPrice(form.totalDiscount, 'TND')}</span>
-                </div>
-              )}
-
-              {form.printingCosts > 0 && (
-                <div className="flex justify-between items-center py-2 border-b border-green-200">
-                  <span className="text-gray-700">Coûts d'impression:</span>
-                  <span className="font-semibold">{formatPrice(form.printingCosts, 'TND')}</span>
-                </div>
-              )}
-
-              <Separator />
-
-              <div className="flex justify-between items-center py-3">
-                <span className="text-xl font-bold text-gray-900">Total TTC:</span>
-                <span className="text-2xl font-bold text-green-600">
-                  {formatPrice(form.total, 'TND')}
-                </span>
-              </div>
+                </CardContent>
+              </Card>
             </div>
-          </CardContent>
-        </Card>
-
-
-      </div>
-    </AdminLayout>
+          </div>
+        </div>
+      </AdminLayout>
+    </div>
   );
 }

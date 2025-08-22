@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { toast } from 'sonner';
+import { RefreshCw } from 'lucide-react';
 
 interface User {
   id: string;
@@ -92,14 +93,18 @@ export default function EditUserModal({ open, onOpenChange, user, onUserUpdated 
   if (!user) return null;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Modifier l'utilisateur</DialogTitle>
-          <DialogDescription>
+    <Drawer open={open} onOpenChange={onOpenChange}>
+      <DrawerContent className="max-w-2xl mx-auto">
+        <DrawerHeader className="border-b border-gray-100 pb-4">
+          <DrawerTitle className="text-xl font-semibold text-gray-900">
+            Modifier l'utilisateur
+          </DrawerTitle>
+          <DrawerDescription className="text-gray-600">
             Modifiez les informations de l'utilisateur
-          </DialogDescription>
-        </DialogHeader>
+          </DrawerDescription>
+        </DrawerHeader>
+
+        <div className="p-6 max-h-[80vh] overflow-y-auto">
         
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Name */}
@@ -169,25 +174,34 @@ export default function EditUserModal({ open, onOpenChange, user, onUserUpdated 
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end space-x-2 pt-4">
+          <div className="flex justify-end space-x-3 pt-6 border-t border-gray-100 mt-6">
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={loading}
+              className="border-gray-300 text-gray-700 hover:bg-gray-50"
             >
               Annuler
             </Button>
             <Button
               type="submit"
               disabled={loading}
-              className="bg-green-600 hover:bg-green-700 text-white"
+              className="bg-gradient-to-r from-gray-900 to-[#B4E50D] hover:from-gray-800 hover:to-[#9BC70A] text-white shadow-lg hover:shadow-xl transition-all duration-300"
             >
-              {loading ? 'Mise à jour...' : 'Mettre à jour'}
+              {loading ? (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                  Mise à jour...
+                </>
+              ) : (
+                'Mettre à jour'
+              )}
             </Button>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
 }

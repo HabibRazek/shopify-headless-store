@@ -574,477 +574,519 @@ export default function EditInvoicePage() {
   }
 
   return (
-    <AdminLayout
-      title={`Modifier la facture ${form.invoiceNumber}`}
-      description={`Modification de la facture pour ${form.companyName}`}
-      actions={
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            onClick={() => router.push(`/admin/factures/${params.id}`)}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Annuler
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => router.push(`/admin/factures/${params.id}`)}
-            className="flex items-center gap-2"
-          >
-            <Eye className="h-4 w-4" />
-            Voir détails
-          </Button>
-          <Button
-            variant="outline"
-            onClick={handleDownloadPDF}
-            className="flex items-center gap-2"
-          >
-            <Printer className="h-4 w-4" />
-            Télécharger PDF
-          </Button>
-          <Button
-            onClick={() => handleSave('draft')}
-            disabled={isSaving}
-            className="flex items-center gap-2 bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd] hover:from-green-800 hover:via-green-600 text-white hover:to-green-400"
-          >
-            <Save className="h-4 w-4" />
-            {isSaving ? 'Sauvegarde...' : 'Sauvegarder'}
-          </Button>
-        </div>
-      }
-    >
-      <div className="space-y-8">
-        {/* Company Information */}
-        <Card className="border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <Building className="h-5 w-5 text-green-600" />
-              Informations de l'Entreprise
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Label htmlFor="companyName" className="flex items-center gap-2">
-                  <Building className="h-4 w-4" />
-                  Nom de l'entreprise *
-                </Label>
-                <Input
-                  id="companyName"
-                  value={form.companyName}
-                  onChange={(e) => updateForm('companyName', e.target.value)}
-                  placeholder="Nom de l'entreprise"
-                  required
-                />
-              </div>
+    <div className="min-h-screen bg-gray-50">
+      <AdminLayout
+        title={`Modifier la facture ${form.invoiceNumber}`}
+        description={`Modification de la facture pour ${form.companyName}`}
+        actions={
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              onClick={() => router.push(`/admin/factures/${params.id}`)}
+              className="flex items-center gap-2 border-gray-300 text-gray-700 hover:bg-gray-50"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Annuler
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => router.push(`/admin/factures/${params.id}`)}
+              className="flex items-center gap-2 border-gray-300 text-gray-700 hover:bg-gray-50"
+            >
+              <Eye className="h-4 w-4" />
+              Voir détails
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleDownloadPDF}
+              className="flex items-center gap-2 border-gray-300 text-gray-700 hover:bg-gray-50"
+            >
+              <Printer className="h-4 w-4" />
+              Télécharger PDF
+            </Button>
+            <Button
+              onClick={() => handleSave('draft')}
+              disabled={isSaving}
+              className="flex items-center gap-2 bg-gradient-to-r from-gray-900 to-[#B4E50D] hover:from-black hover:to-[#9FD000] text-white px-6"
+            >
+              <Save className="h-4 w-4" />
+              {isSaving ? 'Sauvegarde...' : 'Sauvegarder'}
+            </Button>
+          </div>
+        }
+      >
+        <div className="w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left Column - Main Form */}
+            <div className="lg:col-span-2 space-y-4">
+              {/* Invoice Header */}
+              <Card className="border-0 shadow-sm bg-white">
+                <CardHeader className="border-b border-gray-100 pb-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-xl font-semibold text-gray-900">
+                        Facture: {form.invoiceNumber}
+                      </CardTitle>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Modifiée le {new Date().toLocaleDateString('fr-FR')}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm text-gray-500">Packedin.tn</div>
+                      <div className="text-sm text-gray-500">Kings Worldwide Distribution</div>
+                      <div className="text-sm text-gray-500">Megrine Business Center, Tunisia</div>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div>
+                      <Label htmlFor="invoiceNumber" className="text-sm font-medium text-gray-700">
+                        Numéro de facture
+                      </Label>
+                      <Input
+                        id="invoiceNumber"
+                        value={form.invoiceNumber}
+                        onChange={(e) => updateForm('invoiceNumber', e.target.value)}
+                        className="mt-1 border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="invoiceDate" className="text-sm font-medium text-gray-700">
+                        Date de facture
+                      </Label>
+                      <Input
+                        id="invoiceDate"
+                        type="date"
+                        value={form.invoiceDate}
+                        onChange={(e) => updateForm('invoiceDate', e.target.value)}
+                        className="mt-1 border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="dueDate" className="text-sm font-medium text-gray-700">
+                        Date d'échéance
+                      </Label>
+                      <Input
+                        id="dueDate"
+                        type="date"
+                        value={form.dueDate}
+                        onChange={(e) => updateForm('dueDate', e.target.value)}
+                        className="mt-1 border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="status" className="text-sm font-medium text-gray-700">
+                        Statut
+                      </Label>
+                      <Select value={form.status} onValueChange={(value) => updateForm('status', value)}>
+                        <SelectTrigger className="mt-1 border-gray-200 focus:border-gray-900 focus:ring-gray-900">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="DRAFT">Brouillon</SelectItem>
+                          <SelectItem value="SENT">Envoyée</SelectItem>
+                          <SelectItem value="PAID">Payée</SelectItem>
+                          <SelectItem value="OVERDUE">En retard</SelectItem>
+                          <SelectItem value="CANCELLED">Annulée</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-              <div>
-                <Label htmlFor="matriculeFiscale" className="flex items-center gap-2">
-                  <Hash className="h-4 w-4" />
-                  MF (Matricule Fiscale)
-                </Label>
-                <Input
-                  id="matriculeFiscale"
-                  value={form.matriculeFiscale}
-                  onChange={(e) => updateForm('matriculeFiscale', e.target.value)}
-                  placeholder="Matricule Fiscale (optionnel)"
-                  title="Matricule Fiscale (optionnel - tout format accepté)"
-                />
-              </div>
+              {/* Client Details */}
+              <Card className="border-0 shadow-sm bg-white">
+                <CardHeader className="border-b border-gray-100 pb-4">
+                  <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                    <User className="h-5 w-5 text-gray-600" />
+                    Détails du Client
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <Label htmlFor="companyName" className="text-sm font-medium text-gray-700">
+                        Nom de l'entreprise *
+                      </Label>
+                      <Input
+                        id="companyName"
+                        value={form.companyName}
+                        onChange={(e) => updateForm('companyName', e.target.value)}
+                        placeholder="Nom de l'entreprise"
+                        className="mt-1 border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="matriculeFiscale" className="text-sm font-medium text-gray-700">
+                        Matricule Fiscale
+                      </Label>
+                      <Input
+                        id="matriculeFiscale"
+                        value={form.matriculeFiscale}
+                        onChange={(e) => updateForm('matriculeFiscale', e.target.value)}
+                        placeholder="Matricule Fiscale (optionnel)"
+                        className="mt-1 border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="contactPerson" className="text-sm font-medium text-gray-700">
+                        Personne de contact *
+                      </Label>
+                      <Input
+                        id="contactPerson"
+                        value={form.contactPerson}
+                        onChange={(e) => updateForm('contactPerson', e.target.value)}
+                        placeholder="Nom du contact"
+                        className="mt-1 border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                        Email *
+                      </Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={form.email}
+                        onChange={(e) => updateForm('email', e.target.value)}
+                        placeholder="email@entreprise.com"
+                        className="mt-1 border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="phone" className="text-sm font-medium text-gray-700">
+                        Téléphone *
+                      </Label>
+                      <Input
+                        id="phone"
+                        value={form.phone}
+                        onChange={(e) => updateForm('phone', e.target.value)}
+                        placeholder="+216 XX XXX XXX"
+                        className="mt-1 border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="address" className="text-sm font-medium text-gray-700">
+                        Adresse *
+                      </Label>
+                      <Textarea
+                        id="address"
+                        value={form.address}
+                        onChange={(e) => updateForm('address', e.target.value)}
+                        placeholder="Adresse complète"
+                        className="mt-1 border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                        rows={3}
+                        required
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-              <div>
-                <Label htmlFor="contactPerson" className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  Personne de contact *
-                </Label>
-                <Input
-                  id="contactPerson"
-                  value={form.contactPerson}
-                  onChange={(e) => updateForm('contactPerson', e.target.value)}
-                  placeholder="Nom du contact"
-                  required
-                />
-              </div>
+              {/* Item Details */}
+              <Card className="border-0 shadow-sm bg-white">
+                <CardHeader className="border-b border-gray-100 pb-4">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                      <Package className="h-5 w-5 text-gray-600" />
+                      Détails des Articles
+                    </CardTitle>
+                    <Button
+                      onClick={addItem}
+                      className="bg-gradient-to-r from-gray-900 to-[#B4E50D] hover:from-black hover:to-[#9FD000] text-white text-sm px-4 py-2"
+                      size="sm"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Ajouter Article
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  {form.items.length === 0 ? (
+                    <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-lg">
+                      <Package className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                      <p className="text-gray-500 mb-4">Aucun article ajouté</p>
+                      <Button
+                        onClick={addItem}
+                        variant="outline"
+                        className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Ajouter votre premier article
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {/* Table Header */}
+                      <div className="grid grid-cols-12 gap-4 text-sm font-medium text-gray-500 border-b border-gray-100 pb-3">
+                        <div className="col-span-4">ARTICLE</div>
+                        <div className="col-span-2 text-center">ORDRE/TYPE</div>
+                        <div className="col-span-2 text-center">TAUX</div>
+                        <div className="col-span-2 text-center">MONTANT</div>
+                        <div className="col-span-2 text-right">ACTIONS</div>
+                      </div>
 
-              <div>
-                <Label htmlFor="email" className="flex items-center gap-2">
-                  <Mail className="h-4 w-4" />
-                  Email *
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => updateForm('email', e.target.value)}
-                  placeholder="email@entreprise.com"
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="phone" className="flex items-center gap-2">
-                  <Phone className="h-4 w-4" />
-                  Téléphone *
-                </Label>
-                <Input
-                  id="phone"
-                  value={form.phone}
-                  onChange={(e) => updateForm('phone', e.target.value)}
-                  placeholder="+216 XX XXX XXX"
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="address" className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4" />
-                  Adresse *
-                </Label>
-                <Textarea
-                  id="address"
-                  value={form.address}
-                  onChange={(e) => updateForm('address', e.target.value)}
-                  placeholder="Adresse complète"
-                  required
-                  rows={3}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Invoice Details */}
-        <Card className="border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <FileText className="h-5 w-5 text-green-600" />
-              Détails de la Facture
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <Label htmlFor="invoiceNumber" className="flex items-center gap-2">
-                  <Hash className="h-4 w-4" />
-                  Numéro de facture *
-                </Label>
-                <Input
-                  id="invoiceNumber"
-                  value={form.invoiceNumber}
-                  onChange={(e) => updateForm('invoiceNumber', e.target.value)}
-                  placeholder="INV-2024-001"
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="invoiceDate" className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  Date de facture *
-                </Label>
-                <Input
-                  id="invoiceDate"
-                  type="date"
-                  value={form.invoiceDate}
-                  onChange={(e) => updateForm('invoiceDate', e.target.value)}
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="dueDate" className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  Date d'échéance *
-                </Label>
-                <Input
-                  id="dueDate"
-                  type="date"
-                  value={form.dueDate}
-                  onChange={(e) => updateForm('dueDate', e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Label htmlFor="status" className="flex items-center gap-2">
-                  <CheckSquare className="h-4 w-4" />
-                  Statut
-                </Label>
-                <Select value={form.status} onValueChange={(value) => updateForm('status', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner le statut" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="DRAFT">Brouillon</SelectItem>
-                    <SelectItem value="SENT">Envoyée</SelectItem>
-                    <SelectItem value="PAID">Payée</SelectItem>
-                    <SelectItem value="OVERDUE">En retard</SelectItem>
-                    <SelectItem value="CANCELLED">Annulée</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Invoice Items */}
-        <Card className="border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <Package className="h-5 w-5 text-green-600" />
-              Articles de la Facture
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {form.items.length === 0 ? (
-              <div className="text-center py-8 border-2 border-dashed border-gray-300 rounded-lg">
-                <ShoppingCart className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500 mb-4">Aucun article ajouté</p>
-                <Button onClick={addItem} className="bg-gradient-to-r from-green-700 via-green-500 to-[#77db19bd]">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Ajouter un article
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {form.items.map((item) => (
-                  <motion.div
-                    key={item.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="p-4 border border-gray-200 rounded-lg bg-gray-50"
-                  >
-                    <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
-                      <div className="md:col-span-2">
-                        <Label className="text-sm font-medium text-gray-700">Produit</Label>
-                        <div className="space-y-2">
-                          <Select
-                            value={(() => {
-                              // First check if we have a direct product ID match
-                              if (item.productId && products.find(p => p.id === item.productId)) {
-                                return item.productId;
-                              }
-
-                              // Then try to find matching product by name
-                              const matchingProduct = findMatchingProduct(item);
-                              return matchingProduct ? matchingProduct.id : '';
-                            })()}
-                            onValueChange={(value) => {
-                              try {
-                                const selectedProduct = products.find(p => p.id === value);
-
-                                if (selectedProduct) {
-                                  // Create updated item with all changes at once
-                                  const updatedItems = form.items.map(currentItem => {
-                                    if (currentItem.id === item.id) {
-                                      const price = getProductPrice(selectedProduct);
-                                      const unitPrice = parseFloat(price) || 0;
-
-                                      // Calculate new total
-                                      const quantity = Number(currentItem.quantity) || 0;
-                                      const discount = Number(currentItem.discount) || 0;
-                                      const itemSubtotal = quantity * unitPrice;
-                                      const discountAmount = (itemSubtotal * discount) / 100;
-                                      const total = Math.max(0, itemSubtotal - discountAmount);
-
-                                      return {
-                                        ...currentItem,
-                                        productId: value,
-                                        productName: selectedProduct.title,
-                                        unitPrice: unitPrice,
-                                        total: total
-                                      };
-                                    }
-                                    return currentItem;
-                                  });
-
-                                  // Update all items at once to ensure consistency
-                                  updateForm('items', updatedItems);
-
-                                  toast.success(`Produit mis à jour: ${selectedProduct.title}`, {
-                                    duration: 2000,
-                                  });
-                                } else {
-                                  toast.error('Produit non trouvé');
+                      {/* Items */}
+                      {form.items.map((item, index) => (
+                        <motion.div
+                          key={item.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                          className="grid grid-cols-12 gap-4 items-center py-4 border-b border-gray-50 last:border-b-0"
+                        >
+                          <div className="col-span-4">
+                            <Select
+                              value={(() => {
+                                // First check if we have a direct product ID match
+                                if (item.productId && products.find(p => p.id === item.productId)) {
+                                  return item.productId;
                                 }
-                              } catch (error) {
-                                console.error('Error in product selection:', error);
-                                toast.error('Erreur lors de la sélection du produit');
-                              }
-                            }}
-                          >
-                            <SelectTrigger>
-                              <SelectValue
-                                placeholder="Sélectionner un produit"
-                                className={(() => {
-                                  const matchingProduct = findMatchingProduct(item);
-                                  return matchingProduct ? '' : 'text-gray-500';
-                                })()}
-                              />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {/* Show current product if not found in Shopify */}
-                              {item.productName && !findMatchingProduct(item) && (
-                                <SelectItem value={item.productId || 'current'} disabled>
-                                  {item.productName} (Produit actuel - non disponible)
-                                </SelectItem>
-                              )}
 
-                              {products.map((product) => (
-                                <SelectItem key={product.id} value={product.id}>
-                                  {product.title}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                                // Then try to find matching product by name
+                                const matchingProduct = findMatchingProduct(item);
+                                return matchingProduct ? matchingProduct.id : '';
+                              })()}
+                              onValueChange={(value) => {
+                                try {
+                                  const selectedProduct = products.find(p => p.id === value);
 
-                          {/* Clear product button */}
-                          {(item.productId || item.productName) && (
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={() => {
-                                updateItem(item.id, 'productId', '');
-                                updateItem(item.id, 'productName', '');
-                                updateItem(item.id, 'unitPrice', 0);
-                                toast.info('Produit effacé');
-                              }}
-                              className="text-xs text-gray-500 hover:text-gray-700"
-                            >
-                              Effacer
-                            </Button>
-                          )}
+                                  if (selectedProduct) {
+                                    // Create updated item with all changes at once
+                                    const updatedItems = form.items.map(currentItem => {
+                                      if (currentItem.id === item.id) {
+                                        const price = getProductPrice(selectedProduct);
+                                        const unitPrice = parseFloat(price) || 0;
 
-                          {/* Show current product name if no matching product found in Shopify */}
-                          {item.productName && !findMatchingProduct(item) && products.length > 0 && (
-                            <div className="p-2 bg-amber-50 border border-amber-200 rounded-md">
-                              <p className="text-sm text-amber-700">
-                                <strong>Produit actuel:</strong> {item.productName}
-                              </p>
-                              <p className="text-xs text-amber-600 mt-1">
-                                Ce produit n'est plus disponible dans Shopify. Vous pouvez sélectionner un nouveau produit ou modifier manuellement le nom.
-                              </p>
-                            </div>
-                          )}
+                                        // Calculate new total
+                                        const quantity = Number(currentItem.quantity) || 0;
+                                        const discount = Number(currentItem.discount) || 0;
+                                        const itemSubtotal = quantity * unitPrice;
+                                        const discountAmount = (itemSubtotal * discount) / 100;
+                                        const total = Math.max(0, itemSubtotal - discountAmount);
 
-                          {/* Show matching info for debugging */}
-                          {item.productName && findMatchingProduct(item) && (
-                            <div className="p-2 bg-green-50 border border-green-200 rounded-md">
-                              <p className="text-xs text-green-600">
-                                ✅ Produit trouvé: {findMatchingProduct(item)?.title}
-                              </p>
-                            </div>
-                          )}
-
-
-
-                          {/* Manual product name input with auto-search */}
-                          <div className="relative">
-                            <Input
-                              key={`${item.id}-${item.productName}-${item.productId}`}
-                              placeholder="Ou saisir le nom du produit manuellement"
-                              value={item.productName || ''}
-                              onChange={(e) => {
-                                const newProductName = e.target.value;
-
-                                // Update the product name immediately
-                                updateItem(item.id, 'productName', newProductName);
-
-                                // Try to find a matching product in Shopify
-                                if (newProductName.trim().length > 2) {
-                                  // Find best matching product
-                                  const exactMatch = products.find(p =>
-                                    p.title.toLowerCase() === newProductName.toLowerCase()
-                                  );
-
-                                  const partialMatch = products.find(p =>
-                                    p.title.toLowerCase().includes(newProductName.toLowerCase()) ||
-                                    newProductName.toLowerCase().includes(p.title.toLowerCase())
-                                  );
-
-                                  const matchingProduct = exactMatch || partialMatch;
-
-                                  if (matchingProduct) {
-                                    // Only auto-update if it's an exact match or very close match
-                                    if (exactMatch || matchingProduct.title.toLowerCase().includes(newProductName.toLowerCase())) {
-                                      updateItem(item.id, 'productId', matchingProduct.id);
-
-                                      // Only update name if it's an exact match
-                                      if (exactMatch) {
-                                        updateItem(item.id, 'productName', matchingProduct.title);
+                                        return {
+                                          ...currentItem,
+                                          productId: value,
+                                          productName: selectedProduct.title,
+                                          unitPrice: unitPrice,
+                                          total: total
+                                        };
                                       }
+                                      return currentItem;
+                                    });
 
-                                      const price = getProductPrice(matchingProduct);
-                                      updateItem(item.id, 'unitPrice', parseFloat(price) || 0);
+                                    // Update all items at once to ensure consistency
+                                    updateForm('items', updatedItems);
 
-                                      if (exactMatch) {
-                                        toast.success(`Produit trouvé: ${matchingProduct.title}`, {
-                                          duration: 2000,
-                                        });
-                                      }
-                                    }
+                                    toast.success(`Produit mis à jour: ${selectedProduct.title}`, {
+                                      duration: 2000,
+                                    });
                                   } else {
-                                    // Clear product ID if no match found
-                                    updateItem(item.id, 'productId', '');
+                                    toast.error('Produit non trouvé');
                                   }
-                                } else if (newProductName.trim().length === 0) {
-                                  // Clear everything if input is empty
-                                  updateItem(item.id, 'productId', '');
-                                  updateItem(item.id, 'unitPrice', 0);
+                                } catch (error) {
+                                  console.error('Error in product selection:', error);
+                                  toast.error('Erreur lors de la sélection du produit');
                                 }
                               }}
-                              className="text-sm"
-                            />
+                            >
+                              <SelectTrigger className="border-gray-200 focus:border-gray-900 focus:ring-gray-900">
+                                <SelectValue
+                                  placeholder="Sélectionner un produit"
+                                  className={(() => {
+                                    const matchingProduct = findMatchingProduct(item);
+                                    return matchingProduct ? '' : 'text-gray-500';
+                                  })()}
+                                />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {/* Show current product if not found in Shopify */}
+                                {item.productName && !findMatchingProduct(item) && (
+                                  <SelectItem value={item.productId || 'current'} disabled>
+                                    {item.productName} (Produit actuel - non disponible)
+                                  </SelectItem>
+                                )}
 
-                            {/* Show matching suggestions */}
-                            {item.productName && item.productName.length > 2 && (
-                              <div className="absolute top-full left-0 right-0 z-10 mt-1">
-                                {(() => {
-                                  const suggestions = products.filter(p =>
-                                    p.title.toLowerCase().includes(item.productName.toLowerCase()) &&
-                                    p.id !== item.productId
-                                  ).slice(0, 3);
+                                {products.map((product) => (
+                                  <SelectItem key={product.id} value={product.id}>
+                                    {product.title}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
 
-                                  if (suggestions.length > 0) {
-                                    return (
-                                      <div className="bg-white border border-gray-200 rounded-md shadow-lg">
-                                        {suggestions.map((product) => (
-                                          <button
-                                            key={product.id}
-                                            type="button"
-                                            className="w-full text-left px-3 py-2 hover:bg-gray-50 text-sm border-b border-gray-100 last:border-b-0"
-                                            onClick={() => {
-                                              updateItem(item.id, 'productId', product.id);
-                                              updateItem(item.id, 'productName', product.title);
-
-                                              const price = getProductPrice(product);
-                                              updateItem(item.id, 'unitPrice', parseFloat(price) || 0);
-
-                                              toast.success(`Produit sélectionné: ${product.title}`, {
-                                                duration: 2000,
-                                              });
-                                            }}
-                                          >
-                                            <div className="font-medium text-gray-900">{product.title}</div>
-                                            <div className="text-xs text-gray-500">
-                                              Prix: {getProductPrice(product)} TND
-                                            </div>
-                                          </button>
-                                        ))}
-                                      </div>
-                                    );
-                                  }
-                                  return null;
-                                })()}
-                              </div>
-                            )}
                           </div>
+
+                          <div className="col-span-2 text-center">
+                            <Input
+                              type="number"
+                              min="1"
+                              value={item.quantity}
+                              onChange={(e) => updateItem(item.id, 'quantity', parseInt(e.target.value) || 1)}
+                              className="text-center border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                              placeholder="01"
+                            />
+                          </div>
+
+                          <div className="col-span-2 text-center">
+                            <Input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              value={item.unitPrice}
+                              onChange={(e) => updateItem(item.id, 'unitPrice', parseFloat(e.target.value) || 0)}
+                              className="text-center border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                              placeholder="0.00"
+                            />
+                          </div>
+
+                          <div className="col-span-2 text-center">
+                            <div className="text-lg font-semibold text-gray-900">
+                              {formatPrice(item.total, 'TND')}
+                            </div>
+                          </div>
+
+                          <div className="col-span-2 text-right">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeItem(item.id)}
+                              className="text-gray-400 hover:text-red-600 hover:bg-red-50"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </motion.div>
+                      ))}
+
+                      {/* Add Item Button */}
+                      <div className="pt-4">
+                        <Button
+                          onClick={addItem}
+                          variant="ghost"
+                          className="text-gray-600 hover:text-gray-900 hover:bg-gray-50 w-full border-2 border-dashed border-gray-200 hover:border-gray-300"
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Ajouter Article
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+            </div>
+
+            {/* Right Column - Summary */}
+            <div className="lg:col-span-1 space-y-4">
+              {/* Client Details Summary */}
+              <Card className="border-0 shadow-sm bg-white">
+                <CardHeader className="border-b border-gray-100 pb-4">
+                  <CardTitle className="text-lg font-semibold text-gray-900">
+                    Détails du Client
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  {form.companyName ? (
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                          <User className="h-4 w-4 text-gray-600" />
                         </div>
+                        <div>
+                          <div className="font-medium text-gray-900">{form.companyName}</div>
+                          <div className="text-sm text-gray-500">{form.contactPerson}</div>
+                        </div>
+                      </div>
+                      {form.email && (
+                        <div className="text-sm text-gray-600">{form.email}</div>
+                      )}
+                      {form.phone && (
+                        <div className="text-sm text-gray-600">{form.phone}</div>
+                      )}
+                      {form.address && (
+                        <div className="text-sm text-gray-600">{form.address}</div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <User className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                      <p className="text-gray-500 text-sm">Aucun client sélectionné</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Basic Info */}
+              <Card className="border-0 shadow-sm bg-white">
+                <CardHeader className="border-b border-gray-100 pb-4">
+                  <CardTitle className="text-lg font-semibold text-gray-900">
+                    Informations de Base
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-6 space-y-4">
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700">Date de Facture</Label>
+                    <div className="text-sm text-gray-900 mt-1">
+                      {form.invoiceDate ? new Date(form.invoiceDate).toLocaleDateString('fr-FR') : 'Non définie'}
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700">Date d'Échéance</Label>
+                    <div className="text-sm text-gray-900 mt-1">
+                      {form.dueDate ? new Date(form.dueDate).toLocaleDateString('fr-FR') : 'Non définie'}
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700">Statut</Label>
+                    <div className="text-sm text-gray-900 mt-1 capitalize">
+                      {form.status.toLowerCase()}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Printing Options */}
+              <Card className="border-0 shadow-sm bg-white">
+                <CardHeader className="border-b border-gray-100 pb-4">
+                  <CardTitle className="text-lg font-semibold text-gray-900">
+                    Options d'Impression
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <Checkbox
+                      id="includePrinting"
+                      checked={form.doypacks.includePrinting}
+                      onCheckedChange={(checked) => updateDoypacks('includePrinting', Boolean(checked))}
+                    />
+                    <Label htmlFor="includePrinting" className="text-sm font-medium">
+                      Inclure l'impression
+                    </Label>
+                  </div>
+
+                  {form.doypacks.includePrinting && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="space-y-4"
+                    >
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Dimensions</Label>
+                        <Input
+                          value={form.doypacks.dimensions}
+                          onChange={(e) => updateDoypacks('dimensions', e.target.value)}
+                          className="mt-1 border-gray-200 focus:border-gray-900 focus:ring-gray-900"
+                          placeholder="ex: 15x20 cm"
+                        />
                       </div>
 
                       <div>
@@ -1052,171 +1094,101 @@ export default function EditInvoicePage() {
                         <Input
                           type="number"
                           min="1"
-                          value={item.quantity}
-                          onChange={(e) => updateItem(item.id, 'quantity', parseInt(e.target.value) || 1)}
-                          className="text-center"
+                          value={form.doypacks.quantity}
+                          onChange={(e) => updateDoypacks('quantity', parseInt(e.target.value) || 0)}
+                          className="mt-1 border-gray-200 focus:border-gray-900 focus:ring-gray-900"
                         />
                       </div>
 
                       <div>
-                        <Label className="text-sm font-medium text-gray-700">Prix unitaire (TND)</Label>
+                        <Label className="text-sm font-medium text-gray-700">Prix par unité (TND)</Label>
                         <Input
                           type="number"
                           step="0.01"
                           min="0"
-                          value={item.unitPrice}
-                          onChange={(e) => updateItem(item.id, 'unitPrice', parseFloat(e.target.value) || 0)}
+                          value={form.doypacks.printingPricePerUnit}
+                          onChange={(e) => updateDoypacks('printingPricePerUnit', parseFloat(e.target.value) || 0)}
+                          className="mt-1 border-gray-200 focus:border-gray-900 focus:ring-gray-900"
                         />
                       </div>
 
-                      <div>
-                        <Label className="text-sm font-medium text-gray-700">Remise (%)</Label>
-                        <Input
-                          type="number"
-                          min="0"
-                          max="100"
-                          value={item.discount}
-                          onChange={(e) => updateItem(item.id, 'discount', parseFloat(e.target.value) || 0)}
-                          className="text-center"
-                        />
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label className="text-sm font-medium text-gray-700">Total</Label>
-                          <p className="text-lg font-bold text-green-600">{formatPrice(item.total, 'TND')}</p>
+                      <div className="p-3 bg-gray-50 rounded-lg border">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium text-gray-700">Total impression:</span>
+                          <span className="font-bold text-gray-900">
+                            {formatPrice(form.doypacks.total, 'TND')}
+                          </span>
                         </div>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => removeItem(item.id)}
-                          className="text-red-600 border-red-600 hover:bg-red-50"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                      </div>
+                    </motion.div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Summary */}
+              <Card className="border-0 shadow-sm bg-white">
+                <CardContent className="pt-6">
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Sous-total</span>
+                      <span className="text-gray-900">{formatPrice(form.subtotal, 'TND')}</span>
+                    </div>
+
+                    {form.totalDiscount > 0 && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">Remise</span>
+                        <span className="text-red-600">-{formatPrice(form.totalDiscount, 'TND')}</span>
+                      </div>
+                    )}
+
+                    {form.printingCosts > 0 && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">Impression</span>
+                        <span className="text-gray-900">{formatPrice(form.printingCosts, 'TND')}</span>
+                      </div>
+                    )}
+
+                    <div className="border-t border-gray-200 pt-3">
+                      <div className="flex justify-between">
+                        <span className="font-semibold text-gray-900">Total</span>
+                        <span className="font-bold text-xl text-gray-900">
+                          {formatPrice(form.total, 'TND')}
+                        </span>
                       </div>
                     </div>
-                  </motion.div>
-                ))}
+                  </div>
 
-                <Button
-                  onClick={addItem}
-                  variant="outline"
-                  className="w-full border-dashed border-green-600 text-green-600 hover:bg-green-50"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Ajouter un autre article
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Printing Customization */}
-        <Card className="border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <Printer className="h-5 w-5 text-green-600" />
-              Impression Personnalisée
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="includePrinting"
-                checked={form.doypacks.includePrinting}
-                onCheckedChange={(checked) => updateDoypacks('includePrinting', Boolean(checked))}
-              />
-              <Label htmlFor="includePrinting" className="text-sm font-medium">
-                Inclure l'impression personnalisée
-              </Label>
+                  <div className="mt-6 space-y-3">
+                    <Button
+                      onClick={() => handleSave('sent')}
+                      disabled={isSaving}
+                      className="w-full bg-gradient-to-r from-gray-900 to-[#B4E50D] hover:from-black hover:to-[#9FD000] text-white"
+                    >
+                      Envoyer Facture
+                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => router.push(`/admin/factures/${params.id}`)}
+                        className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50"
+                      >
+                        Aperçu
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={handleDownloadPDF}
+                        className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50"
+                      >
+                        Télécharger
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-
-            {form.doypacks.includePrinting && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-200"
-              >
-                <div>
-                  <Label htmlFor="dimensions" className="text-sm font-medium text-gray-700">
-                    Dimensions
-                  </Label>
-                  <Input
-                    id="dimensions"
-                    value={form.doypacks.dimensions}
-                    onChange={(e) => updateDoypacks('dimensions', e.target.value)}
-                    placeholder="ex: 15x20 cm"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="printingQuantity" className="text-sm font-medium text-gray-700">
-                    Quantité
-                  </Label>
-                  <Input
-                    id="printingQuantity"
-                    type="number"
-                    min="1"
-                    value={form.doypacks.quantity}
-                    onChange={(e) => updateDoypacks('quantity', parseInt(e.target.value) || 0)}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="printingPrice" className="text-sm font-medium text-gray-700">
-                    Prix par unité (TND)
-                  </Label>
-                  <Input
-                    id="printingPrice"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={form.doypacks.printingPricePerUnit}
-                    onChange={(e) => updateDoypacks('printingPricePerUnit', parseFloat(e.target.value) || 0)}
-                  />
-                </div>
-
-                <div className="md:col-span-3 text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <p className="text-sm text-blue-600 mb-1">Total impression</p>
-                  <p className="text-2xl font-bold text-blue-700">{formatPrice(form.doypacks.total, 'TND')}</p>
-                </div>
-              </motion.div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Financial Summary */}
-        <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-green-100">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3">
-              <Calculator className="h-5 w-5 text-green-600" />
-              Récapitulatif Financier
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="text-center p-4 bg-white rounded-lg">
-                <p className="text-sm text-gray-500">Sous-total</p>
-                <p className="text-xl font-bold text-gray-900">{formatPrice(form.subtotal, 'TND')}</p>
-              </div>
-              <div className="text-center p-4 bg-white rounded-lg">
-                <p className="text-sm text-gray-500">Remise</p>
-                <p className="text-xl font-bold text-red-600">-{formatPrice(form.totalDiscount, 'TND')}</p>
-              </div>
-              <div className="text-center p-4 bg-white rounded-lg">
-                <p className="text-sm text-gray-500">Impression</p>
-                <p className="text-xl font-bold text-blue-600">{formatPrice(form.printingCosts, 'TND')}</p>
-              </div>
-              <div className="text-center p-4 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg">
-                <p className="text-sm text-green-100">Total TTC</p>
-                <p className="text-2xl font-bold">{formatPrice(form.total, 'TND')}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </AdminLayout>
+          </div>
+        </div>
+      </AdminLayout>
+    </div>
   );
 }

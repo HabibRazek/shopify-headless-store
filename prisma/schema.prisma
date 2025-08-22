@@ -69,7 +69,7 @@ model VerificationToken {
 
 model Order {
   id                 String      @id @default(cuid())
-  userId             String
+  userId             String?
   orderNumber        String      @unique
   shopifyOrderId     String?
   status             String
@@ -83,7 +83,7 @@ model Order {
   shippingCity       String?
   shippingCountry    String?
   shippingPostalCode String?
-  user               User        @relation(fields: [userId], references: [id])
+  user               User?       @relation(fields: [userId], references: [id])
   items              OrderItem[]
 }
 

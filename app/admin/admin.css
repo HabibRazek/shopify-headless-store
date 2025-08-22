@@ -25,9 +25,9 @@
 }
 
 .admin-nav-item.active {
-  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-  border-left: 3px solid #16a34a;
-  box-shadow: 0 2px 4px rgba(34, 197, 94, 0.1);
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  border-left: 3px solid #374151;
+  box-shadow: 0 2px 4px rgba(55, 65, 81, 0.1);
 }
 
 .admin-card {
@@ -44,15 +44,15 @@
 }
 
 .admin-button-primary {
-  background: linear-gradient(135deg, #16a34a 0%, #22c55e 50%, #77db19bd 100%);
+  background: linear-gradient(135deg, #374151 0%, #4b5563 50%, #6b7280 100%);
   border: none;
-  box-shadow: 0 4px 6px -1px rgba(34, 197, 94, 0.3);
+  box-shadow: 0 4px 6px -1px rgba(55, 65, 81, 0.3);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .admin-button-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 8px -1px rgba(34, 197, 94, 0.4);
+  box-shadow: 0 6px 8px -1px rgba(55, 65, 81, 0.4);
 }
 
 .admin-status-indicator {
@@ -130,11 +130,11 @@
 
 /* Admin gradient backgrounds */
 .admin-gradient-bg {
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #bbf7d0 100%);
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 50%, #e5e7eb 100%);
 }
 
 .admin-gradient-text {
-  background: linear-gradient(135deg, #16a34a 0%, #22c55e 50%, #77db19bd 100%);
+  background: linear-gradient(135deg, #374151 0%, #4b5563 50%, #6b7280 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
