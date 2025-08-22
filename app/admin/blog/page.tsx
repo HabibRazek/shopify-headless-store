@@ -11,24 +11,20 @@ import {
   Eye,
   BarChart3,
   TrendingUp,
-  Calendar,
-  Clock,
   Activity,
   User,
-  Search,
   MoreHorizontal,
   RefreshCw,
   BookOpen
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import AdminLayout from '@/components/admin/AdminLayout';
-import StatusBadge, { getStatusVariant } from '@/components/admin/StatusBadge';
+import StatusBadge from '@/components/admin/StatusBadge';
+import Avatar from '@/components/admin/Avatar';
 
 interface BlogPost {
   id: string;
