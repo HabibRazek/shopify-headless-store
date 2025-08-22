@@ -32,7 +32,7 @@ import ResetPasswordModal from '@/components/admin/ResetPasswordModal';
 import AdminLayout from '@/components/admin/AdminLayout';
 import DataTable from '@/components/admin/DataTable';
 import StatusBadge, { getStatusVariant } from '@/components/admin/StatusBadge';
-import Avatar from '@/components/admin/Avatar';
+import Avatar from '@/components/admin/Avatar'; // Custom Avatar component
 
 interface User {
   id: string;

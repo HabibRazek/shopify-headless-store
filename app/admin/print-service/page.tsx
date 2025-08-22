@@ -14,7 +14,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { toast } from 'sonner';
 import AdminLayout from '@/components/admin/AdminLayout';
 import StatusBadge from '@/components/admin/StatusBadge';
-import Avatar from '@/components/admin/Avatar';
+import Avatar from '@/components/admin/Avatar'; // Custom Avatar component
 import {
   Edit,
   Download,

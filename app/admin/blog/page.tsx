@@ -24,7 +24,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import AdminLayout from '@/components/admin/AdminLayout';
 import StatusBadge from '@/components/admin/StatusBadge';
-import Avatar from '@/components/admin/Avatar';
+import Avatar from '@/components/admin/Avatar'; // Custom Avatar component
 
 interface BlogPost {
   id: string;
