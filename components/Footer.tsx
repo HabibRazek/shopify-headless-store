@@ -1,11 +1,37 @@
 "use client"
 
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, Mail } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { toast } from "sonner"
 
 export default function Footer() {
     const currentYear = new Date().getFullYear()
+    const [email, setEmail] = useState("")
+    const [isSubmitting, setIsSubmitting] = useState(false)
+
+    const handleNewsletterSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+
+        if (!email) {
+            toast.error("Veuillez entrer votre adresse email")
+            return
+        }
+
+        setIsSubmitting(true)
+
+        // Simulate API call
+        setTimeout(() => {
+            toast.success("Merci pour votre inscription!", {
+                description: "Vous recevrez bientôt nos dernières actualités."
+            })
+            setEmail("")
+            setIsSubmitting(false)
+        }, 1500)
+    }
 
     return (
         <footer className="relative">
@@ -13,7 +39,7 @@ export default function Footer() {
             {/* Main Green Footer */}
             <div className="bg-gradient-to-r from-green-700 via-green-600 to-green-500 text-white py-12">
                 <div className="container mx-auto px-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-left">
                         {/* Qui Sommes-Nous */}
                         <div>
                             <h4 className="text-lg font-bold mb-4 text-white">QUI SOMMES-NOUS ?</h4>
@@ -95,6 +121,33 @@ export default function Footer() {
                             </ul>
                         </div>
 
+                        {/* Newsletter */}
+                        <div>
+                            <h4 className="text-lg font-bold mb-4 text-white">NEWSLETTER</h4>
+                            <p className="text-sm text-green-100 mb-4">
+                                Recevez nos offres exclusives et actualités
+                            </p>
+                            <form onSubmit={handleNewsletterSubmit} className="space-y-3">
+                                <div className="relative">
+                                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white w-4 h-4" />
+                                    <Input
+                                        type="email"
+                                        placeholder="votre.email@exemple.com"
+                                        className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-green-100 focus:border-white focus:ring-2 focus:ring-white/20 focus:bg-white/20 rounded-lg text-sm"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <Button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className="w-full bg-white text-green-600 hover:bg-green-50 font-semibold py-2 px-4 rounded-lg transition-all duration-200 text-sm"
+                                >
+                                    {isSubmitting ? "..." : "S'INSCRIRE"}
+                                </Button>
+                            </form>
+                        </div>
 
                     </div>
                 </div>
