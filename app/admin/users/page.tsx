@@ -32,6 +32,7 @@ import ResetPasswordModal from '@/components/admin/ResetPasswordModal';
 import AdminLayout from '@/components/admin/AdminLayout';
 import DataTable from '@/components/admin/DataTable';
 import StatusBadge, { getStatusVariant } from '@/components/admin/StatusBadge';
+import Avatar from '@/components/admin/Avatar';
 
 interface User {
   id: string;
@@ -633,8 +634,9 @@ export default function UsersManagementPage() {
                           <StatusBadge
                             status={user.status}
                             variant={getStatusVariant(user.status)}
-                            label={getStatusLabel(user.status)}
-                          />
+                          >
+                            {getStatusLabel(user.status)}
+                          </StatusBadge>
                         </TableCell>
                         <TableCell className="py-4 px-6 text-center">
                           <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-[#B4E50D]/10 text-[#6B7C00] border border-[#B4E50D]/20">

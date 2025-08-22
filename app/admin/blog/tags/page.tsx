@@ -410,7 +410,7 @@ export default function AdminBlogTagsPage() {
                                 Modifier
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                onClick={() => handleDelete(tag.id)}
+                                onClick={() => handleDelete(tag)}
                                 disabled={tag._count.posts > 0}
                                 className={`cursor-pointer ${
                                   tag._count.posts > 0
