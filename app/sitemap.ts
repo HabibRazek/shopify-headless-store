@@ -1,6 +1,26 @@
 import { MetadataRoute } from 'next'
 import { prisma } from '@/lib/prisma'
 
+// Function to fetch all products for sitemap
+async function getAllProducts() {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const response = await fetch(`${baseUrl}/api/products`, {
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      return [];
+    }
+
+    const data = await response.json();
+    return data.products?.edges || [];
+  } catch (error) {
+    console.error('Error fetching products for sitemap:', error);
+    return [];
+  }
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://packedin.tn'
   
@@ -115,5 +135,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error('Error fetching blog posts for sitemap:', error)
   }
 
-  return [...staticPages, ...collectionPages, ...blogPages]
+  // Get all products for sitemap
+  const products = await getAllProducts();
+
+  // Product pages
+  const productPages = products.map((product: any) => ({
+    url: `${baseUrl}/products/${product.node.handle}`,
+    lastModified: new Date(product.node.updatedAt || new Date()),
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }));
+
+  return [...staticPages, ...collectionPages, ...blogPages, ...productPages]
 }
