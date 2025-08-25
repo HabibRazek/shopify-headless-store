@@ -18,9 +18,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Catalogue Produits - Emballages Flexibles Premium | Packedin",
     description: "Plus de 100 emballages flexibles disponibles : doypacks kraft, sachets zip, emballages alimentaires personnalisés. Livraison rapide en Tunisie.",
+    url: '/products',
+    type: 'website',
     images: [
       {
-        url: "/products-catalog-og.jpg",
+        url: "/cropped-packedIn-LOGO-FINAL-2021-BLACK-01.webp",
         width: 1200,
         height: 630,
         alt: "Catalogue Emballages Flexibles Packedin",
@@ -28,9 +30,10 @@ export const metadata: Metadata = {
     ],
   },
   twitter: {
+    card: 'summary_large_image',
     title: "Catalogue Produits - Emballages Flexibles Premium | Packedin",
     description: "Plus de 100 emballages flexibles disponibles : doypacks kraft, sachets zip, emballages alimentaires personnalisés.",
-    images: ["/products-catalog-twitter.jpg"],
+    images: ["/cropped-packedIn-LOGO-FINAL-2021-BLACK-01.webp"],
   },
   alternates: {
     canonical: "/products",

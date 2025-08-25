@@ -121,32 +121,39 @@ export default function Footer() {
                             </ul>
                         </div>
 
-                        {/* Newsletter */}
+                        {/* Contact Info */}
                         <div>
-                            <h4 className="text-lg font-bold mb-4 text-white">NEWSLETTER</h4>
-                            <p className="text-sm text-green-100 mb-4">
-                                Recevez nos offres exclusives et actualités
-                            </p>
-                            <form onSubmit={handleNewsletterSubmit} className="space-y-3">
-                                <div className="relative">
-                                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white w-4 h-4" />
-                                    <Input
-                                        type="email"
-                                        placeholder="votre.email@exemple.com"
-                                        className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-green-100 focus:border-white focus:ring-2 focus:ring-white/20 focus:bg-white/20 rounded-lg text-sm"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        required
-                                    />
+                            <h4 className="text-lg font-bold mb-4 text-white">NOUS CONTACTER</h4>
+                            <div className="space-y-3 text-sm">
+                                <div>
+                                    <p className="font-semibold text-green-100 mb-1">📍 Adresse</p>
+                                    <p className="text-white">Megrine Business Center</p>
+                                    <p className="text-white">Megrine, Ben Arous, Tunisie</p>
                                 </div>
-                                <Button
-                                    type="submit"
-                                    disabled={isSubmitting}
-                                    className="w-full bg-white text-green-600 hover:bg-green-50 font-semibold py-2 px-4 rounded-lg transition-all duration-200 text-sm"
-                                >
-                                    {isSubmitting ? "..." : "S'INSCRIRE"}
-                                </Button>
-                            </form>
+                                <div>
+                                    <p className="font-semibold text-green-100 mb-1">📞 Téléphone</p>
+                                    <a href="tel:+21629362224" className="text-white hover:text-green-200 transition-colors">
+                                        +216 29 362 224
+                                    </a>
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-green-100 mb-1">📱 WhatsApp</p>
+                                    <a href="https://wa.me/21620387333" className="text-white hover:text-green-200 transition-colors">
+                                        +216 20 387 333
+                                    </a>
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-green-100 mb-1">✉️ Email</p>
+                                    <a href="mailto:packedin.tn@gmail.com" className="text-white hover:text-green-200 transition-colors">
+                                        packedin.tn@gmail.com
+                                    </a>
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-green-100 mb-1">🕒 Horaires</p>
+                                    <p className="text-white">Lun-Ven: 8h-17h</p>
+                                    <p className="text-white">Sam: 8h-12h</p>
+                                </div>
+                            </div>
                         </div>
 
                     </div>
@@ -157,17 +164,20 @@ export default function Footer() {
             <div className="bg-green-800 text-white py-4">
                 <div className="container mx-auto px-4">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                        <div className="flex items-center">
-                            <Image
-                                src="/packedin.ico"
-                                alt="Packedin Logo"
-                                width={20}
-                                height={20}
-                                className="mr-3"
-                            />
-                            <p className="text-sm">
-                                © {currentYear} Packedin. Tous droits réservés.
-                            </p>
+                        <div className="flex flex-col md:flex-row items-center gap-2">
+                            <div className="flex items-center">
+                                <Image
+                                    src="/packedin.ico"
+                                    alt="Packedin Logo"
+                                    width={20}
+                                    height={20}
+                                    className="mr-3"
+                                />
+                                <div className="text-sm">
+                                    <p>© {currentYear} Packedin (Kings Worldwide Distribution)</p>
+                                    <p className="text-green-200 text-xs">Leader en emballages flexibles en Tunisie depuis 2021</p>
+                                </div>
+                            </div>
                         </div>
 
                         <div className="flex flex-wrap justify-center gap-4 text-sm">

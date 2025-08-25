@@ -1,7 +1,9 @@
 'use client';
 
-
 import FeaturedProductsClient from '@/components/FeaturedProductsClient';
+import WebsiteSchema from '@/components/seo/WebsiteSchema';
+import FAQSchema from '@/components/seo/FAQSchema';
+import BreadcrumbSchema from '@/components/seo/BreadcrumbSchema';
 import Categories from '@/components/Categories';
 import CTASection from '@/components/CTASection';
 import References from '@/components/References';
@@ -19,8 +21,16 @@ import WhyChooseUs from '@/components/WhyChooseUs';
 
 
 export default function Home() {
+  const breadcrumbItems = [
+    { name: 'Accueil', url: '/' }
+  ];
+
   return (
     <div className="overflow-x-hidden">
+      {/* SEO Schema Components */}
+      <WebsiteSchema />
+      <FAQSchema />
+      <BreadcrumbSchema items={breadcrumbItems} />
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <HeroSection />
